@@ -1,0 +1,110 @@
+>> ./etc/check-ordering.conf = regular
+foofoo
+foobar
+>> ./etc/contents1 = regular
+jjj
+jjj
+>> ./etc/contents2 = regular
+mmm
+mmm
+>> ./etc/holorc = symlink
+../../../holorc
+>> ./etc/link-and-script.conf = regular
+ljj
+ljj
+>> ./etc/link-through-scripts.conf = regular
+nnn
+mmm
+mmm
+ooo
+>> ./etc/plain-and-plain.conf = regular
+ccc
+ccc
+>> ./etc/plain-and-script.conf = regular
+eee
+eee
+fff
+>> ./etc/script-and-script.conf = regular
+hhh
+ggg
+ggg
+iii
+>> ./usr/share/holo/files/01-first/etc/link-and-script.conf = symlink
+contents1
+>> ./usr/share/holo/files/01-first/etc/link-through-scripts.conf.holoscript = regular
+#!/bin/sh
+echo 'nnn'
+cat
+>> ./usr/share/holo/files/01-first/etc/plain-and-plain.conf = regular
+bbb
+bbb
+>> ./usr/share/holo/files/01-first/etc/plain-and-script.conf = regular
+eee
+eee
+>> ./usr/share/holo/files/01-first/etc/script-and-script.conf.holoscript = regular
+#!/bin/sh
+echo 'hhh'
+cat
+>> ./usr/share/holo/files/02-second/etc/link-and-script.conf.holoscript = regular
+#!/bin/sh
+sed 's/^j/l/'
+>> ./usr/share/holo/files/02-second/etc/link-through-scripts.conf.holoscript = regular
+#!/bin/sh
+cat
+echo 'ooo'
+>> ./usr/share/holo/files/02-second/etc/plain-and-plain.conf = regular
+ccc
+ccc
+>> ./usr/share/holo/files/02-second/etc/plain-and-script.conf.holoscript = regular
+#!/bin/sh
+cat
+echo "fff"
+>> ./usr/share/holo/files/02-second/etc/script-and-script.conf.holoscript = regular
+#!/bin/sh
+cat
+echo 'iii'
+>> ./usr/share/holo/files/03-order/etc/check-ordering.conf = regular
+foo
+bar
+>> ./usr/share/holo/files/03-order/etc/check-ordering.conf.holoscript = regular
+#!/bin/sh
+sed 's/^/foo/'
+>> ./var/lib/holo/files/base/etc/check-ordering.conf = regular
+test
+>> ./var/lib/holo/files/base/etc/link-and-script.conf = regular
+kkk
+kkk
+>> ./var/lib/holo/files/base/etc/link-through-scripts.conf = symlink
+contents2
+>> ./var/lib/holo/files/base/etc/plain-and-plain.conf = regular
+aaa
+aaa
+>> ./var/lib/holo/files/base/etc/plain-and-script.conf = regular
+ddd
+ddd
+>> ./var/lib/holo/files/base/etc/script-and-script.conf = regular
+ggg
+ggg
+>> ./var/lib/holo/files/provisioned/etc/check-ordering.conf = regular
+foofoo
+foobar
+>> ./var/lib/holo/files/provisioned/etc/link-and-script.conf = regular
+ljj
+ljj
+>> ./var/lib/holo/files/provisioned/etc/link-through-scripts.conf = regular
+nnn
+mmm
+mmm
+ooo
+>> ./var/lib/holo/files/provisioned/etc/plain-and-plain.conf = regular
+ccc
+ccc
+>> ./var/lib/holo/files/provisioned/etc/plain-and-script.conf = regular
+eee
+eee
+fff
+>> ./var/lib/holo/files/provisioned/etc/script-and-script.conf = regular
+hhh
+ggg
+ggg
+iii

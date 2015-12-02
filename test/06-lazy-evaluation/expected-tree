@@ -1,0 +1,25 @@
+>> ./etc/bar.conf = regular
+original bar
+>> ./etc/foo.conf = regular
+modified file
+>> ./etc/holorc = symlink
+../../../holorc
+>> ./usr/share/holo/files/01-first/etc/bar.conf.holoscript = regular
+#!/bin/sh
+echo ERROR >&2
+exit 1
+>> ./usr/share/holo/files/01-first/etc/foo.conf.holoscript = regular
+#!/bin/sh
+echo ERROR >&2
+exit 1
+>> ./usr/share/holo/files/02-second/etc/foo.conf = regular
+new file
+>> ./usr/share/holo/files/03-third/etc/foo.conf.holoscript = regular
+#!/bin/sh
+sed s/new/modified/
+>> ./var/lib/holo/files/base/etc/bar.conf = regular
+original bar
+>> ./var/lib/holo/files/base/etc/foo.conf = regular
+original
+>> ./var/lib/holo/files/provisioned/etc/foo.conf = regular
+modified file

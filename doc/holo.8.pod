@@ -1,0 +1,231 @@
+=encoding UTF-8
+
+=head1 NAME
+
+holo - minimal configuration management
+
+=head1 SYNOPSIS
+
+holo B<apply> [I<-f|--force>] [I<entity> ...]
+
+holo B<diff> [I<entity> ...]
+
+holo B<scan> [I<-s|--short>] [I<entity> ...]
+
+holo B<--help|--version>
+
+=head1 DESCRIPTION
+
+Holo adds a few sprinkles on top of package management to make it suitable for
+basic configuration management tasks. Its prime directive is to have all
+configuration statically declared and defined within packages, which can be
+installed to add new configuration, or uninstalled to remove configuration from
+a system.
+
+Package management already offers 99% of the needed tools: Metapackages (usually
+called "holograms" or "holodecks" in Holo) can pull in other packages as
+dependencies, thus installing the software required for a certain task, and
+contain their own files to configure the software installed.
+
+Holo adds facilties to work around shortcomings (from the configuration
+management perspective) of the package management.
+
+=head2 Provisioning of files via the configuration repository
+
+The configuration repository at F</usr/share/holo/files> can be used to resolve
+file conflicts when multiple packages (holograms or system packages) work on
+the same configuration file. Each file in the repository works on a certain
+B<target>, as determined by its file name:
+
+    /usr/share/holo/files/20-webserver/etc/nginx/nginx.conf
+                           ^          --+------------------
+                           |            |
+                           |            +-- path to target
+                           |
+                           +-- disambiguator
+
+The disambiguator is always required, and allows multiple repository entries to
+operate on the same target (sorted alphabetically by their disambiguator). The
+pattern of putting a number at the start of the disambiguator is not required,
+but useful to control the ordering of repo files.
+
+Repository entries are applied on the B<target base>, the initial version of
+the target that was found at the target path during the first C<holo apply>
+run.  This target base is saved at F</var/lib/holo/files/base/$target> and will
+be updated automatically when the package management installed an updated
+version of the target base as F<$target.rpmnew>, F<$target.dpkg-dist>, etc.
+(The exact paths depend on the package manager.)
+
+Repository entries that are plain files or symlinks will just overwrite the
+target base (or all previous entries), whereas executable repository entries
+with an extra C<.holoscript> suffix can be used to modify the target base (or
+the result of a previous application step). The target contents will be piped
+through the script. This is typically used when the default configuration for an
+application shall be used, but with some minor modifications. The following
+example uses the default configuration for L<pacman(8)>, but enables the "Color"
+option:
+
+    $ cat /usr/share/holo/files/20-enable-color/etc/pacman.conf.holoscript
+    #!/bin/sh
+    sed 's/^#\s*Color$/Color/'
+
+    $ sudo holo apply /etc/pacman.conf
+
+    Working on /etc/pacman.conf
+      store at /var/lib/holo/files/base/etc/pacman.conf
+      passthru /usr/share/holo/files/20-enable-color/etc/pacman.conf.holoscript
+
+When writing the new target file, ownership and permissions will be copied from
+the target base, and thus from the original target file. Furthermore, a copy of
+the provisioned target file is written to
+F</var/lib/holo/files/provisioned/$target> for use by C<holo diff $target>.
+
+=head2 Provisioning of user accounts and groups
+
+B<WARNING:> The functionality described in this section is provided by the
+B<holo-users-groups> plugin which now is shipped separately. A documentation
+update is underway.
+
+Entity definitions can be added to automatically provision user accounts and
+groups to L<passwd(5)> and L<group(5)>. Provisioning uses the standard commands
+L<useradd(8)>, L<usermod(8)>, L<groupadd(8)> and L<groupmod(8)>.
+
+Entity definitions are placed at F</usr/share/holo/users-groups/*.toml> and are
+written in TOML. The following fields are accepted for users and groups:
+
+    [[group]]
+    name    = "mygroup"            # string,  the group name
+    system  = false                # if true, gives --system to groupadd
+    gid     = 1001                 # integer, given to groupadd as --gid
+
+    [[user]]
+    name    = "myuser"             # string,  the user name
+    system  = false                # if true, gives --system to useradd
+    comment = "My Own User"        # string,  given to useradd as --comment
+    uid     = 1023                 # integer, given to useradd as --uid
+    group   = "mygroup"            # string,  given to useradd as --gid
+    groups  = [ "audio", "video" ] # strings, given to useradd as --groups
+    home    = "/var/lib/myuser"    # string,  given to useradd as --home-dir
+    shell   = "/usr/bin/zsh"       # string,  given to useradd as --shell
+
+In either case, C<name> is the only required attribute. Multiple entity
+definitions may apply to the same entity if they have the same C<name>
+attribute. This can be useful if a base hologram creates the entity and a later
+hologram requires more specific configuration for this entity. When entity
+definitions are stacked on each other, they are not allowed to contradict
+one another. (Different lists of auxiliary groups are allowed and will be
+merged.)
+
+=head2 Running custom scripts during provisioning
+
+B<WARNING:> The functionality described in this section is provided by the
+B<holo-run-scripts> plugin which now is shipped separately. A documentation
+update is underway.
+
+Executable files placed at F</usr/share/holo/run-scripts/> will be run (in
+alphabetical order) by C<holo apply> after all other entities (files, users and
+groups) have been provisioned.
+
+=head2 Dealing with manual changes
+
+When an entity (target file, user or group) provisioned by Holo is modified by
+the user or another program, the next C<holo apply> run will complain about this
+and refuse to overwrite the manual changes.
+
+    $ sudo rm /etc/pacman.conf
+    $ sudo usermod --uid 2003 user:test
+    $ sudo holo apply /etc/pacman.conf
+
+    Working on /etc/pacman.conf
+         apply /usr/share/holo/files/01-base/etc/pacman.conf
+
+    !! skipping target: file has been deleted by user (use --force to restore)
+
+    Working on user:test
+      found in /usr/share/holo/users-groups/01-base.toml
+          with UID: 1003
+
+    !! User has UID: 2003, expected 1003 (use --force to overwrite)
+
+The difference between the last provisioned and the actual entity can be
+inspected in detail with C<holo diff>, and as suggested in the error messages,
+C<holo apply --force> will restore the entities to the state described by the
+configuration repository.
+
+=head1 OPERATIONS
+
+All operations act on all entities (target files, users and groups) by default,
+but can be restricted to certain entities by adding their names to the command
+line. Target files are identified by their absolute path (e.g.
+C</etc/sddm/sddm.conf>), users and groups are identifed as C<type:name>, e.g.
+C<user:mysql> or C<group:sudo>).
+
+=over 4
+
+=item B<apply> [I<-f|--force>] [I<entity> ...]
+
+Read the configuration repository and entity definitions and apply the selected
+(or all) targets. Also, when repository files or target files have been deleted,
+but there still exist target bases in F</var/lib/holo/files/base>, scrub these.
+
+Scrubbing means to delete the target base if the target file has also been
+deleted, or to restore the target base when only the repository entries have
+been deleted. You can always run C<holo scan> beforehand to check what will be
+done.
+
+By default, Holo will refuse to provision entities that have been changed by the
+user or by other programs. Apply B<--force> to overwrite such changes.
+
+=item B<diff> [I<entity> ...]
+
+Print a L<diff(1)> between the last provisioned version of each selected target
+file and the actual contents of that target file.
+
+=item B<scan> [I<-s|--short>] [I<entity> ...]
+
+Read the configuration repository and entity definitions, and report what
+C<holo apply> will do to apply these entities. This acts like a dry run for
+C<holo apply> that usually does not require super-user privileges.
+
+With B<--short>, only lists the names of all entities.
+
+=back
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<--help>
+
+Print out usage information.
+
+=item B<--version>
+
+Print out Holo's version string including the release name.
+
+=back
+
+=for Comment
+################################################################################
+# NOTE: This document generates both the manpage and the website's             #
+#       man-holo.html. The following sections only appear in the manpage.      #
+################################################################################
+
+=begin :man
+
+=head1 SEE ALSO
+
+L<holo-build(8)> can optionally be used in conjunction with Holo to simplify
+the package build process.
+
+=head1 AUTHOR
+
+Stefan Majewsky
+
+Further documentation is available at the project homepage: http://holocm.org
+
+Please report any issues and feature requests at Github: http://github.com/holocm/holo/issues
+
+=end :man
+
+=cut

@@ -1,0 +1,29 @@
+diff --git a/target/etc/link-over-link.conf b/target/etc/link-over-link.conf
+new file mode 120000
+--- /dev/null
++++ b/target/etc/link-over-link.conf
+@@ -0,0 +1 @@
++hhh
+\ No newline at end of file
+diff --git a/target/etc/link-over-plain.conf b/target/etc/link-over-plain.conf
+new file mode 100644
+--- /dev/null
++++ b/target/etc/link-over-plain.conf
+@@ -0,0 +1,2 @@
++fff
++fff
+diff --git a/target/etc/plain-over-link.conf b/target/etc/plain-over-link.conf
+new file mode 120000
+--- /dev/null
++++ b/target/etc/plain-over-link.conf
+@@ -0,0 +1 @@
++ggg
+\ No newline at end of file
+diff --git a/target/etc/plain-over-plain.conf b/target/etc/plain-over-plain.conf
+new file mode 100644
+--- /dev/null
++++ b/target/etc/plain-over-plain.conf
+@@ -0,0 +1,2 @@
++eee
++eee
+!! target/etc/stock-file-is-directory.conf is not a manageable file

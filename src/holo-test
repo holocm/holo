@@ -1,0 +1,120 @@
+#!/bin/bash
+#
+# Copyright 2015 Stefan Majewsky <majewsky@gmx.net>
+#
+# This file is part of Holo.
+#
+# Holo is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# Holo is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# Holo. If not, see <http://www.gnu.org/licenses/>.
+#
+
+# from which directory where we called?
+ORIGINAL_CWD="$PWD"
+
+# by default, use installed Holo binary
+: ${HOLO_BINARY:=holo}
+
+run_testcase() {
+    local TEST_NAME=$1
+    echo ">> Running test case $TEST_NAME..."
+
+    # determine testcase location
+    local TESTCASE_DIR="$ORIGINAL_CWD/$TEST_NAME"
+    if [ ! -d "$TESTCASE_DIR" ]; then
+        echo "Cannot run $TEST_NAME: testcase not found" >&2
+        return 1
+    fi
+    # set cwd!
+    cd "$TESTCASE_DIR"
+
+    # setup chroot for holo run
+    rm -rf -- target/
+    cp -R source/ target/
+    mkdir -p target/usr/share/holo/files
+    mkdir -p target/usr/share/holo/run-scripts
+    mkdir -p target/usr/share/holo/users-groups
+    mkdir -p target/var/lib/holo/files/base
+    mkdir -p target/var/lib/holo/files/provisioned
+
+    # fix a bug with Travis (Travis has an ancient git which incorrectly prints
+    # paths relative to the nearest git root instead of the $PWD when called
+    # with the "git diff --no-index -- FILE FILE" syntax, which changes the
+    # diff-output of the unit tests for holo-files; to fix this, we put a
+    # temporary git root at the $PWD)
+    git init >/dev/null
+
+    # consistent file modes in the target/ directory (for test reproducability)
+    find target/ -type f                     -exec chmod 0644 {} +
+    find target/ -type f -name \*.sh         -exec chmod 0755 {} +
+    find target/ -type f -name \*.holoscript -exec chmod 0755 {} +
+    find target/ -type d                     -exec chmod 0755 {} +
+
+    # setup environment for holo run
+    export HOLO_ROOT_DIR="./target/"
+    export HOLO_CURRENT_DISTRIBUTION=unittest
+    # the test may define a custom environment, mostly for $HOLO_CURRENT_DISTRIBUTION
+    [ -f env.sh ] && source ./env.sh
+
+    # run holo (the sed strips ANSI colors from the output)
+    $HOLO_BINARY scan          2>&1 | sed 's/\x1b\[[0-9;]*m//g' > scan-output
+    $HOLO_BINARY diff          2>&1 | sed 's/\x1b\[[0-9;]*m//g' > diff-output
+    $HOLO_BINARY apply         2>&1 | sed 's/\x1b\[[0-9;]*m//g' > apply-output
+    # if "holo apply" reports that certain operations will only be performed with --force, do so now
+    grep -q -- --force apply-output && \
+    $HOLO_BINARY apply --force 2>&1 | sed 's/\x1b\[[0-9;]*m//g' > apply-force-output
+
+    # clean up the useless Git repo we created earlier to fix a Travis bug
+    rm -rf -- .git
+
+    # dump the contents of the target directory into a single file for better diff'ing
+    # (NOTE: I concede that this is slightly messy.)
+    cd "$TESTCASE_DIR/target/"
+    find \( -type f -printf '>> %p = regular\n' -exec cat {} \; \) -o \( -type l -printf '>> %p = symlink\n' -exec readlink {} \; \) \
+        | perl -E 'local $/; print for sort split /^(?=>>)/m, <>' > "$TESTCASE_DIR/tree"
+    cd "$TESTCASE_DIR/"
+
+    local EXIT_CODE=0
+
+    # use diff to check the actual run with our expectations
+    for FILE in tree scan-output diff-output apply-output apply-force-output; do
+        if [ -f $FILE ]; then
+            if diff -q expected-$FILE $FILE >/dev/null; then true; else
+                echo "!! The $FILE deviates from our expectation. Diff follows:"
+                diff -u expected-$FILE $FILE 2>&1 | sed 's/^/    /'
+                EXIT_CODE=1
+            fi
+        fi
+    done
+
+    return $EXIT_CODE
+}
+
+TESTED_THING="$1"
+if [ "$TESTED_THING" = "" ]; then
+    echo "Usage: $0 <name_of_thing_to_test> <directory>..." >&2
+    echo "See man:holo-test(7) for details." >&2
+    exit 255
+fi
+shift
+
+# testcase names given - run these testcases
+TEST_EXIT_CODE=0
+for TESTCASE in "$@"; do
+    run_testcase $TESTCASE || TEST_EXIT_CODE=1
+done
+
+if [ $TEST_EXIT_CODE = 0 ]; then
+    echo ">> All tests for $TESTED_THING completed successfully."
+else
+    echo "!! Some or all tests for $TESTED_THING failed. Please check the output above for more information."
+fi
+exit $TEST_EXIT_CODE

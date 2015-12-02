@@ -1,0 +1,46 @@
+diff --git a/target/etc/link-through-link.conf b/target/etc/link-through-link.conf
+new file mode 120000
+--- /dev/null
++++ b/target/etc/link-through-link.conf
+@@ -0,0 +1 @@
++contents
+\ No newline at end of file
+diff --git a/target/etc/link-through-plain.conf b/target/etc/link-through-plain.conf
+new file mode 120000
+--- /dev/null
++++ b/target/etc/link-through-plain.conf
+@@ -0,0 +1 @@
++contents
+\ No newline at end of file
+diff --git a/target/etc/plain-through-link.conf b/target/etc/plain-through-link.conf
+new file mode 100644
+--- /dev/null
++++ b/target/etc/plain-through-link.conf
+@@ -0,0 +1,3 @@
++tomato
++apple
++banana
+diff --git a/target/etc/plain-through-plain.conf b/target/etc/plain-through-plain.conf
+new file mode 100644
+--- /dev/null
++++ b/target/etc/plain-through-plain.conf
+@@ -0,0 +1,3 @@
++foo
++bar
++baz
+diff --git a/target/etc/plain-with-nonzero-exitcode.conf b/target/etc/plain-with-nonzero-exitcode.conf
+new file mode 100644
+--- /dev/null
++++ b/target/etc/plain-with-nonzero-exitcode.conf
+@@ -0,0 +1,3 @@
++foo
++bar
++baz
+diff --git a/target/etc/plain-with-stderr.conf b/target/etc/plain-with-stderr.conf
+new file mode 100644
+--- /dev/null
++++ b/target/etc/plain-with-stderr.conf
+@@ -0,0 +1,3 @@
++foo
++bar
++baz

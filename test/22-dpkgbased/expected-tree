@@ -1,0 +1,26 @@
+>> ./etc/holorc = symlink
+../../../holorc
+>> ./etc/targetfile-with-dpkg-dist.conf = regular
+d
+e
+f
+>> ./etc/targetfile-with-dpkg-old.conf = regular
+bbb
+>> ./usr/share/holo/files/01-first/etc/targetfile-with-dpkg-dist.conf.holoscript = symlink
+/usr/bin/sort
+>> ./usr/share/holo/files/01-first/etc/targetfile-with-dpkg-old.conf.holoscript = symlink
+/usr/bin/uniq
+>> ./var/lib/holo/files/base/etc/targetfile-with-dpkg-dist.conf = regular
+d
+f
+e
+>> ./var/lib/holo/files/base/etc/targetfile-with-dpkg-old.conf = regular
+bbb
+bbb
+bbb
+>> ./var/lib/holo/files/provisioned/etc/targetfile-with-dpkg-dist.conf = regular
+d
+e
+f
+>> ./var/lib/holo/files/provisioned/etc/targetfile-with-dpkg-old.conf = regular
+bbb

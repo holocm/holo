@@ -1,0 +1,61 @@
+=encoding UTF-8
+
+=head1 NAME
+
+holorc - configuration file for L<holo(8)>
+
+=head1 DESCRIPTION
+
+The holorc file defines which plugins will be loaded and used by Holo, and in
+which order. Blank lines, and comment lines starting with a C<#> character are ignored.
+
+The format of each command line is:
+
+    plugin $PLUGIN_ID
+
+where C<$PLUGIN_ID> is the alphanumeric identifier of the plugin. The plugin identifier is
+encoded in several paths that are relevant for the plugin:
+
+=over 4
+
+=item *
+
+The plugin executable is installed at F</usr/lib/holo/holo-$PLUGIN_ID>.
+
+=item *
+
+Configuration packages install resources for this plugin below F</usr/share/holo/$PLUGIN_ID/>.
+
+=item *
+
+The plugin stores its state at F</var/lib/holo/$PLUGIN_ID/>.
+
+=back
+
+=head1 BEST PRACTICES
+
+Plugins are encouraged to add themselves to F</etc/holorc> at install time by
+installing a holoscript, as detailed in the L<holo-plugin-interface(7)>
+specification. If plugins are installed this way, you can observe this with the
+C<holo scan> command. For example:
+
+    $ holo scan /etc/holorc
+
+    /etc/holorc
+        store at /var/lib/holo/files/base/etc/holorc
+        passthru /usr/share/holo/files/00-holo-users-groups/etc/holorc.holoscript
+        passthru /usr/share/holo/files/95-holo-run-scripts/etc/holorc.holoscript
+
+=head1 SEE ALSO
+
+L<holo(8)>, L<holo-plugin-interface(7)>
+
+=head1 AUTHOR
+
+Stefan Majewsky
+
+Further documentation is available at the project homepage: http://holocm.org
+
+Please report any issues and feature requests at Github: http://github.com/holocm/holo/issues
+
+=cut

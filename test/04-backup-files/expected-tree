@@ -1,0 +1,17 @@
+>> ./etc/holorc = symlink
+../../../holorc
+>> ./etc/repofile-deleted.conf = regular
+eee
+eee
+>> ./etc/still-existing.conf = regular
+bbb
+bbb
+>> ./usr/share/holo/files/01-first/etc/still-existing.conf = regular
+bbb
+bbb
+>> ./var/lib/holo/files/base/etc/still-existing.conf = regular
+aaa
+aaa
+>> ./var/lib/holo/files/provisioned/etc/still-existing.conf = regular
+bbb
+bbb

@@ -1,0 +1,3 @@
+#!/bin/sh
+sed s/a/x/
+exit 1

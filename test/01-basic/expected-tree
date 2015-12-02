@@ -1,0 +1,49 @@
+>> ./etc/holorc = symlink
+../../../holorc
+>> ./etc/link-over-link.conf = symlink
+ddd
+>> ./etc/link-over-plain.conf = symlink
+ccc
+>> ./etc/plain-over-link.conf = regular
+bbb
+bbb
+>> ./etc/plain-over-plain.conf = regular
+aaa
+aaa
+>> ./etc/stock-file-is-directory.conf/.keep = regular
+>> ./usr/share/holo/files/01-normal/etc/link-over-link.conf = symlink
+ddd
+>> ./usr/share/holo/files/01-normal/etc/link-over-plain.conf = symlink
+ccc
+>> ./usr/share/holo/files/01-normal/etc/plain-over-link.conf = regular
+bbb
+bbb
+>> ./usr/share/holo/files/01-normal/etc/plain-over-plain.conf = regular
+aaa
+aaa
+>> ./usr/share/holo/files/02-errors/etc/stock-file-is-directory.conf = regular
+stock file is directory D:
+>> ./usr/share/holo/files/02-errors/etc/stock-file-missing.conf = regular
+no stock file D:
+>> ./usr/share/holo/files/not-a-repo-file.conf = regular
+not a repo file
+>> ./var/lib/holo/files/base/etc/link-over-link.conf = symlink
+hhh
+>> ./var/lib/holo/files/base/etc/link-over-plain.conf = regular
+fff
+fff
+>> ./var/lib/holo/files/base/etc/plain-over-link.conf = symlink
+ggg
+>> ./var/lib/holo/files/base/etc/plain-over-plain.conf = regular
+eee
+eee
+>> ./var/lib/holo/files/provisioned/etc/link-over-link.conf = symlink
+ddd
+>> ./var/lib/holo/files/provisioned/etc/link-over-plain.conf = symlink
+ccc
+>> ./var/lib/holo/files/provisioned/etc/plain-over-link.conf = regular
+bbb
+bbb
+>> ./var/lib/holo/files/provisioned/etc/plain-over-plain.conf = regular
+aaa
+aaa

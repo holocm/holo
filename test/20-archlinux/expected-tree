@@ -1,0 +1,16 @@
+>> ./etc/holorc = symlink
+../../../holorc
+>> ./etc/targetfile-with-pacnew.conf = regular
+d
+e
+f
+>> ./usr/share/holo/files/01-first/etc/targetfile-with-pacnew.conf.holoscript = symlink
+/usr/bin/sort
+>> ./var/lib/holo/files/base/etc/targetfile-with-pacnew.conf = regular
+d
+f
+e
+>> ./var/lib/holo/files/provisioned/etc/targetfile-with-pacnew.conf = regular
+d
+e
+f

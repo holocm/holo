@@ -1,0 +1,11 @@
+
+target/etc/repofile-deleted.conf (all repository files were deleted)
+     restore target/var/lib/holo/files/base/etc/repofile-deleted.conf
+
+target/etc/still-existing.conf
+    store at target/var/lib/holo/files/base/etc/still-existing.conf
+       apply target/usr/share/holo/files/01-first/etc/still-existing.conf
+
+target/etc/targetfile-deleted.conf (target was deleted)
+      delete target/var/lib/holo/files/base/etc/targetfile-deleted.conf
+

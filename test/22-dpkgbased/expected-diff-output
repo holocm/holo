@@ -1,0 +1,8 @@
+diff --git a/target/etc/targetfile-with-dpkg-old.conf b/target/etc/targetfile-with-dpkg-old.conf
+--- a/target/etc/targetfile-with-dpkg-old.conf
++++ b/target/etc/targetfile-with-dpkg-old.conf
+@@ -1 +1,3 @@
+-aaa
++bbb
++bbb
++bbb

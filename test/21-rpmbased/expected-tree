@@ -1,0 +1,26 @@
+>> ./etc/holorc = symlink
+../../../holorc
+>> ./etc/targetfile-with-rpmnew.conf = regular
+d
+e
+f
+>> ./etc/targetfile-with-rpmsave.conf = regular
+bbb
+>> ./usr/share/holo/files/01-first/etc/targetfile-with-rpmnew.conf.holoscript = symlink
+/usr/bin/sort
+>> ./usr/share/holo/files/01-first/etc/targetfile-with-rpmsave.conf.holoscript = symlink
+/usr/bin/uniq
+>> ./var/lib/holo/files/base/etc/targetfile-with-rpmnew.conf = regular
+d
+f
+e
+>> ./var/lib/holo/files/base/etc/targetfile-with-rpmsave.conf = regular
+bbb
+bbb
+bbb
+>> ./var/lib/holo/files/provisioned/etc/targetfile-with-rpmnew.conf = regular
+d
+e
+f
+>> ./var/lib/holo/files/provisioned/etc/targetfile-with-rpmsave.conf = regular
+bbb

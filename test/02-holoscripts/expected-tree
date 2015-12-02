@@ -1,0 +1,98 @@
+>> ./etc/contents = regular
+foo
+foo
+foo
+baz
+bar
+bar
+>> ./etc/holorc = symlink
+../../../holorc
+>> ./etc/link-through-link.conf = regular
+foo
+baz
+bar
+>> ./etc/link-through-plain.conf = regular
+foo
+foo
+foo
+buz
+bur
+bur
+>> ./etc/plain-through-link.conf = regular
+apple
+banana
+tomato
+>> ./etc/plain-through-plain.conf = regular
+foo
+qux
+baz
+>> ./etc/plain-with-nonzero-exitcode.conf = regular
+foo
+bar
+baz
+>> ./etc/plain-with-stderr.conf = regular
+foo
+bor
+boz
+>> ./usr/share/holo/files/02-holoscripts/etc/link-through-link.conf.holoscript = symlink
+/usr/bin/uniq
+>> ./usr/share/holo/files/02-holoscripts/etc/link-through-plain.conf.holoscript = regular
+#!/bin/sh
+sed s/a/u/
+>> ./usr/share/holo/files/02-holoscripts/etc/plain-through-link.conf.holoscript = symlink
+/usr/bin/sort
+>> ./usr/share/holo/files/02-holoscripts/etc/plain-through-plain.conf.holoscript = regular
+#!/bin/sh
+sed 's/bar/qux/'
+>> ./usr/share/holo/files/02-holoscripts/etc/plain-with-nonzero-exitcode.conf.holoscript = regular
+#!/bin/sh
+sed s/a/x/
+exit 1
+>> ./usr/share/holo/files/02-holoscripts/etc/plain-with-stderr.conf.holoscript = regular
+#!/bin/sh
+echo 'First line of stderr output.' >&2
+sed s/a/o/
+echo 'Second line of stderr output.' >&2
+>> ./var/lib/holo/files/base/etc/link-through-link.conf = symlink
+contents
+>> ./var/lib/holo/files/base/etc/link-through-plain.conf = symlink
+contents
+>> ./var/lib/holo/files/base/etc/plain-through-link.conf = regular
+tomato
+apple
+banana
+>> ./var/lib/holo/files/base/etc/plain-through-plain.conf = regular
+foo
+bar
+baz
+>> ./var/lib/holo/files/base/etc/plain-with-nonzero-exitcode.conf = regular
+foo
+bar
+baz
+>> ./var/lib/holo/files/base/etc/plain-with-stderr.conf = regular
+foo
+bar
+baz
+>> ./var/lib/holo/files/provisioned/etc/link-through-link.conf = regular
+foo
+baz
+bar
+>> ./var/lib/holo/files/provisioned/etc/link-through-plain.conf = regular
+foo
+foo
+foo
+buz
+bur
+bur
+>> ./var/lib/holo/files/provisioned/etc/plain-through-link.conf = regular
+apple
+banana
+tomato
+>> ./var/lib/holo/files/provisioned/etc/plain-through-plain.conf = regular
+foo
+qux
+baz
+>> ./var/lib/holo/files/provisioned/etc/plain-with-stderr.conf = regular
+foo
+bor
+boz

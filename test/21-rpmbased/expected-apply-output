@@ -1,0 +1,13 @@
+
+Working on target/etc/targetfile-with-rpmnew.conf
+  store at target/var/lib/holo/files/base/etc/targetfile-with-rpmnew.conf
+  passthru target/usr/share/holo/files/01-first/etc/targetfile-with-rpmnew.conf.holoscript
+
+>> found updated target base: target/etc/targetfile-with-rpmnew.conf.rpmnew -> target/var/lib/holo/files/base/etc/targetfile-with-rpmnew.conf
+
+Working on target/etc/targetfile-with-rpmsave.conf
+  store at target/var/lib/holo/files/base/etc/targetfile-with-rpmsave.conf
+  passthru target/usr/share/holo/files/01-first/etc/targetfile-with-rpmsave.conf.holoscript
+
+>> found updated target base: target/etc/targetfile-with-rpmsave.conf (with .rpmsave) -> target/var/lib/holo/files/base/etc/targetfile-with-rpmsave.conf
+
