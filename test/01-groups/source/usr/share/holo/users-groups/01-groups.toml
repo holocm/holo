@@ -1,0 +1,10 @@
+[[group]]
+name = "new"
+system = true
+
+[[group]]
+name = "existing"
+
+[[group]]
+name = "wronggid"
+gid = 42

@@ -1,0 +1,106 @@
+>> ./etc/group = regular
+root:x:0:root
+bin:x:1:root,bin,daemon
+daemon:x:2:root,bin,daemon
+sys:x:3:root,bin
+adm:x:4:root,daemon
+tty:x:5:
+disk:x:6:root
+lp:x:7:daemon
+mem:x:8:
+kmem:x:9:
+wheel:x:10:root
+ftp:x:11:
+mail:x:12:
+uucp:x:14:
+log:x:19:root
+utmp:x:20:
+locate:x:21:
+rfkill:x:24:
+smmsp:x:25:
+proc:x:26:
+http:x:33:
+games:x:50:
+lock:x:54:
+uuidd:x:68:
+dbus:x:81:
+network:x:90:
+video:x:91:
+audio:x:92:
+optical:x:93:
+floppy:x:94:
+storage:x:95:
+scanner:x:96:
+input:x:97:
+power:x:98:
+nobody:x:99:
+users:x:100:
+systemd-journal:x:190:
+systemd-journal-gateway:x:191:
+systemd-timesync:x:192:
+systemd-network:x:193:
+systemd-bus-proxy:x:194:
+systemd-resolve:x:195:
+>> ./etc/holorc = symlink
+../../../holorc
+>> ./etc/passwd = regular
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/usr/bin/nologin
+daemon:x:2:2:daemon:/:/usr/bin/nologin
+mail:x:8:12:mail:/var/spool/mail:/usr/bin/nologin
+ftp:x:14:11:ftp:/srv/ftp:/usr/bin/nologin
+http:x:33:33:http:/srv/http:/usr/bin/nologin
+uuidd:x:68:68:uuidd:/:/usr/bin/nologin
+dbus:x:81:81:dbus:/:/usr/bin/nologin
+nobody:x:99:99:nobody:/:/usr/bin/nologin
+systemd-journal-gateway:x:191:191:systemd-journal-gateway:/:/usr/bin/nologin
+systemd-timesync:x:192:192:systemd-timesync:/:/usr/bin/nologin
+systemd-network:x:193:193:systemd-network:/:/usr/bin/nologin
+systemd-bus-proxy:x:194:194:systemd-bus-proxy:/:/usr/bin/nologin
+systemd-resolve:x:195:195:systemd-resolve:/:/usr/bin/nologin
+>> ./usr/share/holo/users-groups/01-first.toml = regular
+[[group]]
+name    = "stacked"
+gid     = 1000
+system  = false
+
+[[group]]
+nam     = "typo"
+gid     = 1005
+
+[[user]]
+nam     = "typo"
+uid     = 1005
+
+[[user]]
+name    = "stacked"
+comment = "Unstackable User"
+system  = false
+uid     = 1000
+group   = "users"
+groups  = [ "foo", "bar" ]
+home    = "/var/lib/stacked"
+shell   = "/usr/bin/zsh"
+
+[[group]]
+name    = "valid"
+gid     = 1010
+
+[[user]]
+name    = "valid"
+uid     = 1010
+>> ./usr/share/holo/users-groups/02-second.toml = regular
+[[group]]
+name    = "stacked"
+gid     = 1001
+system  = true
+
+[[user]]
+name    = "stacked"
+comment = "Stacked User"
+system  = true
+uid     = 1001
+group   = "stacked"
+groups  = [ "foo", "baz" ]
+home    = "/home/stacked"
+shell   = "/bin/bash"

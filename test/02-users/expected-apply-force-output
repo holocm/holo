@@ -1,0 +1,47 @@
+
+Working on user:minimal
+  found in target/usr/share/holo/users-groups/01-users.toml
+
+MOCK: useradd minimal
+
+Working on user:new
+  found in target/usr/share/holo/users-groups/01-users.toml
+      with UID: 1001, home: /home/new, login group: users, groups: network,video,audio, login shell: /bin/zsh, comment: New User
+
+MOCK: useradd --uid 1001 --comment 'New User' --home-dir /home/new --gid users --groups network,video,audio --shell /bin/zsh new
+
+Working on user:wronggroup
+  found in target/usr/share/holo/users-groups/01-users.toml
+      with login group: users
+
+>> fixing login group (was: nobody)
+MOCK: usermod --gid users wronggroup
+
+Working on user:wronggroups
+  found in target/usr/share/holo/users-groups/01-users.toml
+      with groups: network
+
+>> fixing groups (was: video)
+MOCK: usermod --groups network wronggroups
+
+Working on user:wronghome
+  found in target/usr/share/holo/users-groups/01-users.toml
+      with home: /home/wronghome
+
+>> fixing home directory (was: /var/lib/wronghome)
+MOCK: usermod --home /home/wronghome wronghome
+
+Working on user:wrongshell
+  found in target/usr/share/holo/users-groups/01-users.toml
+      with login shell: /bin/zsh
+
+>> fixing login shell (was: /bin/bash)
+MOCK: usermod --shell /bin/zsh wrongshell
+
+Working on user:wronguid
+  found in target/usr/share/holo/users-groups/01-users.toml
+      with UID: 1003
+
+>> fixing UID (was: 2003)
+MOCK: usermod --uid 1003 wronguid
+

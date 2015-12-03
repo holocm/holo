@@ -1,0 +1,60 @@
+diff --holo user:minimal
+deleted user
+--- user:minimal
++++ /dev/null
+@@ -1,2 +0,0
+-[[user]]
+-name = "minimal"
+diff --holo user:new
+deleted user
+--- user:new
++++ /dev/null
+@@ -1,8 +0,0
+-[[user]]
+-name = "new"
+-comment = "New User"
+-uid = 1001
+-home = "/home/new"
+-group = "users"
+-groups = ["network", "video", "audio"]
+-shell = "/bin/zsh"
+diff --holo user:wronggroup
+--- user:wronggroup
++++ user:wronggroup
+@@ -1,3 +1,3
+ [[user]]
+ name = "wronggroup"
+-group = "users"
++group = "nobody"
+diff --holo user:wronggroups
+--- user:wronggroups
++++ user:wronggroups
+@@ -1,3 +1,3
+ [[user]]
+ name = "wronggroups"
+-groups = ["network"]
++groups = ["video"]
+diff --holo user:wronghome
+--- user:wronghome
++++ user:wronghome
+@@ -1,3 +1,3
+ [[user]]
+ name = "wronghome"
+-home = "/home/wronghome"
++home = "/var/lib/wronghome"
+diff --holo user:wrongshell
+--- user:wrongshell
++++ user:wrongshell
+@@ -1,3 +1,3
+ [[user]]
+ name = "wrongshell"
+-shell = "/bin/zsh"
++shell = "/bin/bash"
+diff --holo user:wronguid
+--- user:wronguid
++++ user:wronguid
+@@ -1,3 +1,3
+ [[user]]
+ name = "wronguid"
+-uid = 1003
++uid = 2003

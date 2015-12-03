@@ -1,0 +1,32 @@
+
+user:existing
+    found in target/usr/share/holo/users-groups/01-users.toml
+        with UID: 1002, home: /home/existing, login group: users, groups: network,video,audio, login shell: /bin/zsh, comment: Existing User
+
+user:minimal
+    found in target/usr/share/holo/users-groups/01-users.toml
+
+user:new
+    found in target/usr/share/holo/users-groups/01-users.toml
+        with UID: 1001, home: /home/new, login group: users, groups: network,video,audio, login shell: /bin/zsh, comment: New User
+
+user:wronggroup
+    found in target/usr/share/holo/users-groups/01-users.toml
+        with login group: users
+
+user:wronggroups
+    found in target/usr/share/holo/users-groups/01-users.toml
+        with groups: network
+
+user:wronghome
+    found in target/usr/share/holo/users-groups/01-users.toml
+        with home: /home/wronghome
+
+user:wrongshell
+    found in target/usr/share/holo/users-groups/01-users.toml
+        with login shell: /bin/zsh
+
+user:wronguid
+    found in target/usr/share/holo/users-groups/01-users.toml
+        with UID: 1003
+

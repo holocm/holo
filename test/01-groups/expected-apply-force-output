@@ -1,0 +1,14 @@
+
+Working on group:new
+  found in target/usr/share/holo/users-groups/01-groups.toml
+      with type: system
+
+MOCK: groupadd --system new
+
+Working on group:wronggid
+  found in target/usr/share/holo/users-groups/01-groups.toml
+      with GID: 42
+
+>> fixing GID (was: 102)
+MOCK: groupmod --gid 42 wronggid
+

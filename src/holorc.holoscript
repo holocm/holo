@@ -1,0 +1,4 @@
+#!/bin/sh
+# This file is part of the holo-users-groups package.
+cat
+echo plugin users-groups

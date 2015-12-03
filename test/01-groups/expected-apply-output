@@ -1,0 +1,13 @@
+
+Working on group:new
+  found in target/usr/share/holo/users-groups/01-groups.toml
+      with type: system
+
+MOCK: groupadd --system new
+
+Working on group:wronggid
+  found in target/usr/share/holo/users-groups/01-groups.toml
+      with GID: 42
+
+!! Group has GID: 102, expected 42 (use --force to overwrite)
+

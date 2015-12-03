@@ -1,0 +1,42 @@
+
+Working on user:minimal
+  found in target/usr/share/holo/users-groups/01-users.toml
+
+MOCK: useradd minimal
+
+Working on user:new
+  found in target/usr/share/holo/users-groups/01-users.toml
+      with UID: 1001, home: /home/new, login group: users, groups: network,video,audio, login shell: /bin/zsh, comment: New User
+
+MOCK: useradd --uid 1001 --comment 'New User' --home-dir /home/new --gid users --groups network,video,audio --shell /bin/zsh new
+
+Working on user:wronggroup
+  found in target/usr/share/holo/users-groups/01-users.toml
+      with login group: users
+
+!! User has login group: nobody, expected users (use --force to overwrite)
+
+Working on user:wronggroups
+  found in target/usr/share/holo/users-groups/01-users.toml
+      with groups: network
+
+!! User has groups: video, expected network (use --force to overwrite)
+
+Working on user:wronghome
+  found in target/usr/share/holo/users-groups/01-users.toml
+      with home: /home/wronghome
+
+!! User has home directory: /var/lib/wronghome, expected /home/wronghome (use --force to overwrite)
+
+Working on user:wrongshell
+  found in target/usr/share/holo/users-groups/01-users.toml
+      with login shell: /bin/zsh
+
+!! User has login shell: /bin/bash, expected /bin/zsh (use --force to overwrite)
+
+Working on user:wronguid
+  found in target/usr/share/holo/users-groups/01-users.toml
+      with UID: 1003
+
+!! User has UID: 2003, expected 1003 (use --force to overwrite)
+

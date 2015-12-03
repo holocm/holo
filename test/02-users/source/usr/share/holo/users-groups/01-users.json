@@ -1,0 +1,12 @@
+{ "users": [
+    {
+        "name": "jsonisdeprecated",
+        "comment": "JSON is deprecated",
+        "uid": 1001,
+        "system": false,
+        "home": "/home/jsonisdeprecated",
+        "group": "users",
+        "groups": ["network","video","audio"],
+        "shell": "/bin/zsh"
+    }
+]}

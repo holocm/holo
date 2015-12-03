@@ -1,0 +1,122 @@
+>> ./etc/group = regular
+root:x:0:root
+bin:x:1:root,bin,daemon
+daemon:x:2:root,bin,daemon
+sys:x:3:root,bin
+adm:x:4:root,daemon
+tty:x:5:
+disk:x:6:root
+lp:x:7:daemon
+mem:x:8:
+kmem:x:9:
+wheel:x:10:root
+ftp:x:11:
+mail:x:12:
+uucp:x:14:
+log:x:19:root
+utmp:x:20:
+locate:x:21:
+rfkill:x:24:
+smmsp:x:25:
+proc:x:26:
+http:x:33:
+games:x:50:
+lock:x:54:
+uuidd:x:68:
+dbus:x:81:
+network:x:90:existing
+video:x:91:existing,wronggroups
+audio:x:92:existing
+optical:x:93:
+floppy:x:94:
+storage:x:95:
+scanner:x:96:
+input:x:97:
+power:x:98:
+nobody:x:99:
+users:x:100:
+systemd-journal:x:190:
+systemd-journal-gateway:x:191:
+systemd-timesync:x:192:
+systemd-network:x:193:
+systemd-bus-proxy:x:194:
+systemd-resolve:x:195:
+>> ./etc/holorc = symlink
+../../../holorc
+>> ./etc/passwd = regular
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/usr/bin/nologin
+daemon:x:2:2:daemon:/:/usr/bin/nologin
+mail:x:8:12:mail:/var/spool/mail:/usr/bin/nologin
+ftp:x:14:11:ftp:/srv/ftp:/usr/bin/nologin
+http:x:33:33:http:/srv/http:/usr/bin/nologin
+uuidd:x:68:68:uuidd:/:/usr/bin/nologin
+dbus:x:81:81:dbus:/:/usr/bin/nologin
+nobody:x:99:99:nobody:/:/usr/bin/nologin
+systemd-journal-gateway:x:191:191:systemd-journal-gateway:/:/usr/bin/nologin
+systemd-timesync:x:192:192:systemd-timesync:/:/usr/bin/nologin
+systemd-network:x:193:193:systemd-network:/:/usr/bin/nologin
+systemd-bus-proxy:x:194:194:systemd-bus-proxy:/:/usr/bin/nologin
+systemd-resolve:x:195:195:systemd-resolve:/:/usr/bin/nologin
+existing:x:1002:100:Existing User:/home/existing:/bin/zsh
+wronguid:x:2003:100::/home/wronguid:/bin/zsh
+wronghome:x:1004:100::/var/lib/wronghome:/bin/zsh
+wronggroup:x:1005:99::/home/wronggroup:/bin/zsh
+wronggroups:x:1005:100::/home/wronggroups:/bin/zsh
+wrongshell:x:1005:100::/home/wrongshell:/bin/bash
+>> ./usr/share/holo/users-groups/01-users.json = regular
+{ "users": [
+    {
+        "name": "jsonisdeprecated",
+        "comment": "JSON is deprecated",
+        "uid": 1001,
+        "system": false,
+        "home": "/home/jsonisdeprecated",
+        "group": "users",
+        "groups": ["network","video","audio"],
+        "shell": "/bin/zsh"
+    }
+]}
+>> ./usr/share/holo/users-groups/01-users.toml = regular
+[[user]]
+name    = "new"
+comment = "New User"
+uid     = 1001
+system  = false
+home    = "/home/new"
+group   = "users"
+groups  = [ "network", "video", "audio" ]
+shell   = "/bin/zsh"
+
+[[user]]
+name    = "existing"
+comment = "Existing User"
+uid     = 1002
+system  = false
+home    = "/home/existing"
+group   = "users"
+groups  = [ "network", "video", "audio" ]
+shell   = "/bin/zsh"
+
+[[user]]
+name    = "minimal"
+
+[[user]]
+name    = "wronguid"
+uid     = 1003
+
+[[user]]
+name    = "wronghome"
+home    = "/home/wronghome"
+
+[[user]]
+name    = "wronggroup"
+group   = "users"
+
+[[user]]
+name    = "wronggroups"
+groups  = ["network"]
+
+[[user]]
+name    = "wrongshell"
+shell   = "/bin/zsh"

@@ -1,0 +1,11 @@
+
+group:stacked
+    found in target/usr/share/holo/users-groups/01-first.toml
+    found in target/usr/share/holo/users-groups/02-second.toml
+        with type: system, GID: 1001
+
+user:stacked
+    found in target/usr/share/holo/users-groups/01-first.toml
+    found in target/usr/share/holo/users-groups/02-second.toml
+        with type: system, UID: 1001, home: /home/stacked, login group: stacked, groups: foo,bar,baz, login shell: /bin/bash, comment: Stacked User
+
