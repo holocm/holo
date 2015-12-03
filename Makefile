@@ -26,7 +26,7 @@ install: default src/holorc src/holo-test util/autocomplete.bash util/autocomple
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files/provisioned"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/files"
-	install -D -m 0644 src/holorc             "$(DESTDIR)/etc/holo/holorc"
+	install -D -m 0644 src/holorc             "$(DESTDIR)/etc/holorc"
 	install -D -m 0755 build/holo             "$(DESTDIR)/usr/bin/holo"
 	install -D -m 0755 build/holo-files       "$(DESTDIR)/usr/lib/holo/holo-files"
 	install -D -m 0755 src/holo-test          "$(DESTDIR)/usr/lib/holo/holo-test"
