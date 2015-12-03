@@ -1,0 +1,13 @@
+
+script:01-successful.sh
+    found at target/usr/share/holo/run-scripts/01-successful.sh
+
+script:02-failing.sh
+    found at target/usr/share/holo/run-scripts/02-failing.sh
+
+script:03-successful-nooutput.sh
+    found at target/usr/share/holo/run-scripts/03-successful-nooutput.sh
+
+script:04-failing-nooutput.sh
+    found at target/usr/share/holo/run-scripts/04-failing-nooutput.sh
+
