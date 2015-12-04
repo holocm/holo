@@ -1,0 +1,15 @@
+language: go
+sudo: false
+
+go:
+    - 1.5
+
+install:
+    - go get -u github.com/golang/lint/golint
+    - go get -u github.com/GeertJohan/fgt
+
+script:
+    - make && make check
+    # skip src/internal during stylistic checks
+    - fgt gofmt -l $(find src -name internal -prune -o -name \*.go -print)
+    - fgt find src -type d \( -name internal -prune -o -exec golint {} \; \)
