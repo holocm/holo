@@ -7,7 +7,7 @@ build/holo-users-groups: src/main.go src/*/*.go
 
 test: check # just a synonym
 check:
-	@/usr/lib/holo/holo-test holo-users-groups $(sort $(wildcard test/??-*))
+	@holo-test holo-users-groups $(sort $(wildcard test/??-*))
 
 install: build/holo-users-groups src/holorc.holoscript
 	install -D -m 0755 build/holo-users-groups "$(DESTDIR)/usr/lib/holo/holo-users-groups"
