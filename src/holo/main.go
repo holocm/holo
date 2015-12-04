@@ -38,7 +38,7 @@ func init() {
 
 //Note: This line is parsed by the Makefile to get the version string. If you
 //change the format, adjust the Makefile too.
-var version = "v1.0-beta.1"
+var version = "v1.0-beta.2"
 
 const (
 	optionApplyForce = iota
