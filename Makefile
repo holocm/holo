@@ -29,7 +29,7 @@ install: default src/holorc src/holo-test util/autocomplete.bash util/autocomple
 	install -D -m 0644 src/holorc             "$(DESTDIR)/etc/holorc"
 	install -D -m 0755 build/holo             "$(DESTDIR)/usr/bin/holo"
 	install -D -m 0755 build/holo-files       "$(DESTDIR)/usr/lib/holo/holo-files"
-	install -D -m 0755 src/holo-test          "$(DESTDIR)/usr/lib/holo/holo-test"
+	install -D -m 0755 src/holo-test          "$(DESTDIR)/usr/bin/holo-test"
 	install -D -m 0644 util/autocomplete.bash "$(DESTDIR)/usr/share/bash-completion/completions/holo"
 	install -D -m 0644 util/autocomplete.zsh  "$(DESTDIR)/usr/share/zsh/site-functions/_holo"
 	install -D -m 0644 build/man/holorc.5                "$(DESTDIR)/usr/share/man/man5/holorc.5"

@@ -2,11 +2,11 @@
 
 =head1 NAME
 
-/usr/lib/holo/holo-test - test runner for Holo plugins
+holo-test - test runner for Holo plugins
 
 =head1 SYNOPSIS
 
-    /usr/lib/holo/holo-test <object name> <directory>...
+    holo-test <object name> <directory>...
 
 =head1 DESCRIPTION
 
