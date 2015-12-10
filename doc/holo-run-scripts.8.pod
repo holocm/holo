@@ -1,0 +1,34 @@
+=encoding UTF-8
+
+=head1 NAME
+
+holo-run-scripts - Holo plugin to run custom provisioning scripts
+
+=head1 DESCRIPTION
+
+This plugin can be used to run custom provisioning scripts during C<holo apply>.
+Scripts must be intalled into the directory F</usr/share/holo/run-scripts> and
+must be executable. Instead of a script, a binary, or a symlink to a script or
+binary, can also be installed.
+
+The entity ID for a script is C<script:>, followed by the basename of the file.
+
+=head1 OPERATIONS
+
+=head2 Scan
+
+Available scripts will be reported like this:
+
+    script:example.sh
+        found at /usr/share/holo/run-scripts/example.sh
+
+=head2 Apply
+
+C<holo apply> will execute the script.
+
+=head2 Diff
+
+Holo cannot compute a meaningful diff for the effect of an arbitrary script, so
+nothing will be displayed.
+
+=cut
