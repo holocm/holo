@@ -80,52 +80,6 @@ the target base, and thus from the original target file. Furthermore, a copy of
 the provisioned target file is written to
 F</var/lib/holo/files/provisioned/$target> for use by C<holo diff $target>.
 
-=head2 Provisioning of user accounts and groups
-
-B<WARNING:> The functionality described in this section is provided by the
-B<holo-users-groups> plugin which now is shipped separately. A documentation
-update is underway.
-
-Entity definitions can be added to automatically provision user accounts and
-groups to L<passwd(5)> and L<group(5)>. Provisioning uses the standard commands
-L<useradd(8)>, L<usermod(8)>, L<groupadd(8)> and L<groupmod(8)>.
-
-Entity definitions are placed at F</usr/share/holo/users-groups/*.toml> and are
-written in TOML. The following fields are accepted for users and groups:
-
-    [[group]]
-    name    = "mygroup"            # string,  the group name
-    system  = false                # if true, gives --system to groupadd
-    gid     = 1001                 # integer, given to groupadd as --gid
-
-    [[user]]
-    name    = "myuser"             # string,  the user name
-    system  = false                # if true, gives --system to useradd
-    comment = "My Own User"        # string,  given to useradd as --comment
-    uid     = 1023                 # integer, given to useradd as --uid
-    group   = "mygroup"            # string,  given to useradd as --gid
-    groups  = [ "audio", "video" ] # strings, given to useradd as --groups
-    home    = "/var/lib/myuser"    # string,  given to useradd as --home-dir
-    shell   = "/usr/bin/zsh"       # string,  given to useradd as --shell
-
-In either case, C<name> is the only required attribute. Multiple entity
-definitions may apply to the same entity if they have the same C<name>
-attribute. This can be useful if a base hologram creates the entity and a later
-hologram requires more specific configuration for this entity. When entity
-definitions are stacked on each other, they are not allowed to contradict
-one another. (Different lists of auxiliary groups are allowed and will be
-merged.)
-
-=head2 Running custom scripts during provisioning
-
-B<WARNING:> The functionality described in this section is provided by the
-B<holo-run-scripts> plugin which now is shipped separately. A documentation
-update is underway.
-
-Executable files placed at F</usr/share/holo/run-scripts/> will be run (in
-alphabetical order) by C<holo apply> after all other entities (files, users and
-groups) have been provisioned.
-
 =head2 Dealing with manual changes
 
 When an entity (target file, user or group) provisioned by Holo is modified by
@@ -205,14 +159,6 @@ Print out Holo's version string including the release name.
 
 =back
 
-=for Comment
-################################################################################
-# NOTE: This document generates both the manpage and the website's             #
-#       man-holo.html. The following sections only appear in the manpage.      #
-################################################################################
-
-=begin :man
-
 =head1 SEE ALSO
 
 L<holo-build(8)> can optionally be used in conjunction with Holo to simplify
@@ -225,7 +171,5 @@ Stefan Majewsky
 Further documentation is available at the project homepage: http://holocm.org
 
 Please report any issues and feature requests at Github: http://github.com/holocm/holo/issues
-
-=end :man
 
 =cut
