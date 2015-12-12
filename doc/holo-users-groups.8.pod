@@ -1,0 +1,91 @@
+=encoding UTF-8
+
+=head1 NAME
+
+holo-users-groups - Holo plugin to provision user accounts and groups
+
+=head1 DESCRIPTION
+
+This plugin provisions UNIX user accounts to L<passwd(5)>, and groups to
+L<group(5)>. Provisioning uses the standard commands L<useradd(8)>,
+L<usermod(8)>, L<groupadd(8)> and L<groupmod(8)>.
+
+Entity definitions are placed at F</usr/share/holo/users-groups/*.toml> and are
+written in TOML. The following fields are accepted for users and groups:
+
+    [[group]]
+    name    = "mygroup"            # string,  the group name
+    system  = false                # if true, gives --system to groupadd
+    gid     = 1001                 # integer, given to groupadd as --gid
+
+    [[user]]
+    name    = "myuser"             # string,  the user name
+    system  = false                # if true, gives --system to useradd
+    comment = "My Own User"        # string,  given to useradd as --comment
+    uid     = 1023                 # integer, given to useradd as --uid
+    group   = "mygroup"            # string,  given to useradd as --gid
+    groups  = [ "audio", "video" ] # strings, given to useradd as --groups
+    home    = "/var/lib/myuser"    # string,  given to useradd as --home-dir
+    shell   = "/usr/bin/zsh"       # string,  given to useradd as --shell
+
+In either case, C<name> is the only required attribute. Multiple entity
+definitions may apply to the same entity if they have the same C<name>
+attribute. This can be useful if a base hologram creates the entity and a later
+hologram requires more specific configuration for this entity. When entity
+definitions are stacked on each other, they are not allowed to contradict
+one another. (Different lists of auxiliary groups are allowed and will be
+merged.)
+
+The entity IDs for users and groups are C<user:foo> and C<group:foo>,
+respectively, where C<foo> is the user name or group name.
+
+=head1 OPERATIONS
+
+=head2 Scan
+
+Defined users and groups will be reported like this:
+
+    group:mygroup
+        found in /usr/share/holo/users-groups/10-example.toml
+            with GID: 1001
+
+    user:myuser
+        found in /usr/share/holo/users-groups/10-example.toml
+        found in /usr/share/holo/users-groups/20-example.toml
+            with UID: 1023, home: /var/lib/myuser, login group: mygroup, groups: audio,video, login shell: /usr/bin/zsh, comment: My Own User
+
+=head2 Apply
+
+Create users and groups as stated in the installed definition files, if they are
+missing on the system. With C<--force>, also modify existing users and groups
+that don't conform to the installed definitions.
+
+=head2 Diff
+
+For each user or group definition found in the installed definition files,
+display a diff if the actual user or group does not match that definition. The
+diff is based on the TOML representation of the user or group as used in the
+definition file. For example:
+
+    diff --holo user:wrongshell
+    --- user:wrongshell
+    +++ user:wrongshell
+    @@ -1,3 +1,3
+     [[user]]
+     name = "wrongshell"
+    -shell = "/bin/zsh"
+    +shell = "/bin/bash"
+
+=head1 SEE ALSO
+
+L<holo(8)> provides the user interface for using this plugin.
+
+=head1 AUTHOR
+
+Stefan Majewsky
+
+Further documentation is available at the project homepage: http://holocm.org
+
+Please report any issues and feature requests at Github: http://github.com/holocm/holo-users-groups/issues
+
+=cut
