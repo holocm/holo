@@ -1,5 +1,4 @@
-default: prepare-build
-default: build/man/holo-run-scripts.8
+default: prepare-build build/man/holo-run-scripts.8
 
 prepare-build:
 	@mkdir -p build/man
@@ -15,7 +14,7 @@ test: check # just a synonym
 check:
 	@holo-test holo-run-scripts $(sort $(wildcard test/??-*))
 
-install: src/holo-run-scripts src/holorc.holoscript
+install: default src/holorc.holoscript
 	install -D -m 0755 src/holo-run-scripts         "$(DESTDIR)/usr/lib/holo/holo-run-scripts"
 	install -D -m 0755 src/holorc.holoscript        "$(DESTDIR)/usr/share/holo/files/95-holo-run-scripts/etc/holorc.holoscript"
 	install -D -m 0644 build/man/holo-run-scripts.8 "$(DESTDIR)/usr/share/man/man8/holo-run-scripts.8"
