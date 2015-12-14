@@ -118,37 +118,57 @@ plugin from core Holo):
 
     ENTITY: /etc/locale.gen
     store at: /var/lib/holo/base/etc/locale.gen
+    SOURCE: /usr/share/holo/files/00-base/etc/locale.gen
     apply: /usr/share/holo/files/00-base/etc/locale.gen
 
-The first line is always C<ENTITY:>, followed by the ID of the entity that is
-being described. When an entity is not equivalent to a file, the recommended
-format for entity IDs is C<type:identifier>, with the type in singular form. For
-example, the hypothetical C<foosql> plugin could report entities like
+Each line has the form C<key: value>. Most lines are informational content that
+is not processed further by Holo (except for pretty-printing), and can be used
+to convey any sort of useful information about the entity to the user. However,
+keys with all capital letters are reserved for special semantics. Currently, the
+following special keys are known:
+
+=over 4
+
+=item C<ENTITY>
+
+The C<ENTITY> key starts a new entity. The value after the colon is the entity
+ID as chosen by the plugin. The recommended format for entity IDs is
+C<type:identifier>, with the type in singular form. For example, the
+hypothetical C<foosql> plugin could report entities like
 C<foosql-db:production> or C<foosql-user:sarah>.
 
-The following lines contain further information in the form
-C<attribute: value>. These informational lines are not processed further by Holo
-(except for pretty-printing), and can be used to convey any sort of useful
-information about the entity to the user. In the example above, the information
-lines show the application steps that are being performed by C<holo apply>.
+Entity IDs MUST NOT look like filesystem paths, since Holo's interface uses
+entity IDs and paths to resource files in the same place.
 
-For entities that have been read from definition files, it is considered good
-practice to list the definition files with the attribute C<found in>, as does
-the core C<users-groups> plugin:
+=item C<SOURCE>
+
+The C<SOURCE> key names a resource file (below C<$HOLO_RESOURCE_DIR>) from
+which the entity in question has been read. If multiple such files exist,
+multiple C<SOURCE> lines can be printed.
+
+This link is only used internally to resolve resource file arguments into the
+entities defined by them. It is therefore considered good practice to list the
+source files a second time as informational text, with appropriate lower-case
+keys. The C<users-groups> plugin demonstrates this practice:
 
     ENTITY: group:sudo
+    SOURCE: /usr/share/holo/users-groups/00-base.toml
     found in: /usr/share/holo/users-groups/00-base.toml
     with: type: system
 
-A special line syntax is C<ACTION: verb (reason)>. This is used when applying
-the entity will do something else than provisioning it. The line shall contain a
-verb describing the action taken, and a reason for doing so. For example, the
+=item C<ACTION>
+
+Lines of the form C<ACTION: verb (reason)> are used when applying the entity
+will do something else than provisioning it. The line shall contain a verb
+describing the action taken, and a reason for doing so. For example, the
 C<files> plugin uses the action verb C<Scrubbing> to signal that a deleted
 configuration file is being cleaned up after.
 
     ENTITY: target/etc/targetfile-deleted.conf
     ACTION: Scrubbing (target was deleted)
     delete: target/var/lib/holo/files/base/etc/targetfile-deleted.conf
+
+=back
 
 The report for an entity ends at the next C<ENTITY: ID> line, or when EOF is
 encountered.

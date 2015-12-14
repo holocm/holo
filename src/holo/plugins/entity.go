@@ -39,6 +39,7 @@ type Entity struct {
 	id           string
 	actionVerb   string
 	actionReason string
+	sourceFiles  []string
 	infoLines    []InfoLine
 }
 

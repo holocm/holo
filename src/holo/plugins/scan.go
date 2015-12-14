@@ -78,6 +78,8 @@ func (p *Plugin) Scan() []*Entity {
 			//(i.e. line with idx = 0 must start an entity)
 			report.AddError("%s: expected entity ID, found attribute \"%s\"", errorIntro, line)
 			hadError = true
+		case key == "SOURCE":
+			currentEntity.sourceFiles = append(currentEntity.sourceFiles, value)
 		case key == "ACTION":
 			//parse action verb/reason
 			match = actionRx.FindStringSubmatch(value)

@@ -86,6 +86,7 @@ func (target *TargetFile) PrintReport() {
 	} else {
 		fmt.Printf("store at: %s\n", target.PathIn(common.TargetBaseDirectory()))
 		for _, entry := range target.repoEntries {
+			fmt.Printf("SOURCE: %s\n", entry.Path())
 			fmt.Printf("%s: %s\n", entry.ApplicationStrategy(), entry.Path())
 		}
 	}
