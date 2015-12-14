@@ -37,8 +37,8 @@ func init() {
 }
 
 func main() {
-	if version := os.Getenv("HOLO_API_VERSION"); version != "1" {
-		fmt.Fprintf(os.Stderr, "!! holo-users-groups plugin called with unknown HOLO_API_VERSION %s\n", version)
+	if version := os.Getenv("HOLO_API_VERSION"); version != "2" {
+		fmt.Fprintf(os.Stderr, "!! holo-files plugin called with unknown HOLO_API_VERSION %s\n", version)
 	}
 
 	//scan for entities
