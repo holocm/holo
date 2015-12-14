@@ -16,7 +16,7 @@ This interface is deliberately designed around classic files and text streams,
 so that it can easily be implemented even by shell scripts without needing to
 resort to complex parser libraries.
 
-This document describes B<version 1> of the Holo plugin interface.
+This document describes B<version 2> of the Holo plugin interface.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED",  "MAY", and "OPTIONAL" in this document are to
@@ -66,31 +66,37 @@ In test mode, plugins SHOULD NOT talk to system-level daemons or write files
 outside the C<$HOLO_ROOT_DIR>. Appropriate mock implementations SHALL be used
 instead. Modifying files below C<$HOLO_ROOT_DIR> is allowed.
 
-=head3 HOLO_CACHE_DIR
+=head3 HOLO_RESOURCE_DIR, HOLO_STATE_DIR, HOLO_CACHE_DIR
 
-When plugins want to store temporary data (such as results from an initial scan
-operation), they SHALL do so in the directory published by Holo in the
-C<$HOLO_CACHE_DIR> environment variable. Holo will create this directory when it
-starts up, and clean it up when it exits.
+Plugins SHALL locate and store their data in the directories named by the
+following environment variables:
 
-=head3 HOLO_STATE_DIR
+=over 4
 
-When plugins need to store state persistently, between runs of Holo, they SHALL
-do so in the directory C</var/lib/holo/$PLUGIN_ID/>, published by Holo in the
-C<$HOLO_STATE_DIR> environment variable. Plugins SHOULD use this variable
-instead of its definition, since C<$HOLO_STATE_DIR> already accounts for
-C<$HOLO_ROOT_DIR>. If the state directory is missing, Holo will create it before
-calling the plugin executable. However, plugins are encouraged to create the
-state directory at their installation time.
+=item HOLO_RESOURCE_DIR (default: `/usr/share/holo/$PLUGIN_ID`)
 
-=head3 HOLO_RESOURCE_DIR
+Where plugins can find their resources. Holo will refuse to operate if the
+resource directory does not exist, thus plugins SHOULD create the default
+path at installation time.
 
-Plugins SHALL find their resources (installed by configuration packages) below
-F</usr/share/holo/$PLUGIN_ID/>. This path is published by Holo in the
-C<$HOLO_RESOURCE_DIR> environment variable. Plugins SHOULD use this variable
-instead of its definition, since C<$HOLO_RESOURCE_DIR> already accounts for
-C<$HOLO_ROOT_DIR>. Holo will refuse to operate if the resource directory does
-not exist, thus plugins SHOULD create it at installation time.
+=item HOLO_STATE_DIR (default: `/var/lib/holo/$PLUGIN_ID`)
+
+Where plugins can store persistent state between runs of Holo. If the state
+directory is missing, Holo will create it before calling the plugin executable.
+However, plugins are encouraged to create the state directory at their
+installation time if they are going to need it.
+
+=item HOLO_CACHE_DIR (default: below `/tmp`)
+
+Where plugins may store temporary data, such as results from an initial scan
+operation. Holo will create this directory when it starts up, and clean it up
+when it exits.
+
+=back
+
+Future versions of Holo may start to choose these paths differently (or allow
+the user to do so), but the default values are stable and can safely be
+communicated to users in documentation.
 
 =head2 Call signatures
 
