@@ -45,6 +45,14 @@ const (
 	optionScanShort
 )
 
+//Selector represents a command-line argument that selects entities. The Used
+//field tracks whether entities match this selector (to report unrecognized
+//selectors).
+type Selector struct {
+	String string
+	Used   bool
+}
+
 func main() {
 	//a command word must be given as first argument
 	if len(os.Args) < 2 {
@@ -79,6 +87,21 @@ func main() {
 		os.Exit(255)
 	}
 
+	//parse command line
+	options := make(map[int]bool)
+	selectors := make([]*Selector, 0, len(os.Args)-2)
+
+	args := os.Args[2:]
+	for _, arg := range args {
+		//either it's a known option for this subcommand...
+		if value, ok := knownOpts[arg]; ok {
+			options[value] = true
+			continue
+		}
+		//...or it must be a selector
+		selectors = append(selectors, &Selector{String: arg, Used: false})
+	}
+
 	//ask all plugins to scan for entities
 	var entities []*plugins.Entity
 	for _, plugin := range config.Plugins {
@@ -90,29 +113,32 @@ func main() {
 		entities = append(entities, pluginEntities...)
 	}
 
-	//build a lookup hash for all known entities (for argument parsing)
-	isEntityID := make(map[string]bool, len(entities))
-	for _, entity := range entities {
-		isEntityID[entity.EntityID()] = true
+	//if there are selectors, check which entities have been selected by them
+	if len(selectors) > 0 {
+		selectedEntities := make([]*plugins.Entity, 0, len(entities))
+		for _, entity := range entities {
+			isEntitySelected := false
+			for _, selector := range selectors {
+				if entity.MatchesSelector(selector.String) {
+					isEntitySelected = true
+					selector.Used = true
+					//NOTE: don't break from the selectors loop; we want to
+					//look at every selector because this loop also verifies
+					//that selectors are valid
+				}
+			}
+			if isEntitySelected {
+				selectedEntities = append(selectedEntities, entity)
+			}
+		}
+		entities = selectedEntities
 	}
 
-	//parse command line
-	options := make(map[int]bool)
-	isEntityIDSelected := make(map[string]bool, len(entities))
+	//were there unrecognized selectors?
 	hasUnrecognizedArgs := false
-
-	args := os.Args[2:]
-	for _, arg := range args {
-		//either it's a known option for this subcommand...
-		if value, ok := knownOpts[arg]; ok {
-			options[value] = true
-			continue
-		}
-		//...or it must be an entity ID
-		if isEntityID[arg] {
-			isEntityIDSelected[arg] = true
-		} else {
-			fmt.Fprintf(os.Stderr, "Unrecognized argument: %s\n", arg)
+	for _, selector := range selectors {
+		if !selector.Used {
+			fmt.Fprintf(os.Stderr, "Unrecognized argument: %s\n", selector.String)
 			hasUnrecognizedArgs = true
 		}
 	}
@@ -120,15 +146,10 @@ func main() {
 		os.Exit(255)
 	}
 
-	//if entities have been selected, limit the entities slice to these
-	if len(isEntityIDSelected) > 0 {
-		selectedEntities := make([]*plugins.Entity, 0, len(entities))
-		for _, entity := range entities {
-			if isEntityIDSelected[entity.EntityID()] {
-				selectedEntities = append(selectedEntities, entity)
-			}
-		}
-		entities = selectedEntities
+	//build a lookup hash for all known entities (for argument parsing)
+	isEntityID := make(map[string]bool, len(entities))
+	for _, entity := range entities {
+		isEntityID[entity.EntityID()] = true
 	}
 
 	//execute command

@@ -6,11 +6,11 @@ holo - minimal configuration management
 
 =head1 SYNOPSIS
 
-holo B<apply> [I<-f|--force>] [I<entity> ...]
+holo B<apply> [I<-f|--force>] [I<selector> ...]
 
-holo B<diff> [I<entity> ...]
+holo B<diff> [I<selector> ...]
 
-holo B<scan> [I<-s|--short>] [I<entity> ...]
+holo B<scan> [I<-s|--short>] [I<selector> ...]
 
 holo B<--help|--version>
 
@@ -109,14 +109,16 @@ configuration repository.
 =head1 OPERATIONS
 
 All operations act on all entities (target files, users and groups) by default,
-but can be restricted to certain entities by adding their names to the command
-line. Target files are identified by their absolute path (e.g.
-C</etc/sddm/sddm.conf>), users and groups are identifed as C<type:name>, e.g.
-C<user:mysql> or C<group:sudo>).
+but can be restricted to certain entities by giving selectors on the command
+line.
+
+A selector can be either an entity name (such as C<file:/etc/sddm/sddm.conf>),
+or the path to the source file below F</usr/share/holo> that defines this
+entity (for instance, C</usr/share/holo/files/40-desktop/etc/sddm/sddm.conf>).
 
 =over 4
 
-=item B<apply> [I<-f|--force>] [I<entity> ...]
+=item B<apply> [I<-f|--force>] [I<selector> ...]
 
 Read the configuration repository and entity definitions and apply the selected
 (or all) targets. Also, when repository files or target files have been deleted,
@@ -130,12 +132,12 @@ done.
 By default, Holo will refuse to provision entities that have been changed by the
 user or by other programs. Apply B<--force> to overwrite such changes.
 
-=item B<diff> [I<entity> ...]
+=item B<diff> [I<selector> ...]
 
 Print a L<diff(1)> between the last provisioned version of each selected target
 file and the actual contents of that target file.
 
-=item B<scan> [I<-s|--short>] [I<entity> ...]
+=item B<scan> [I<-s|--short>] [I<selector> ...]
 
 Read the configuration repository and entity definitions, and report what
 C<holo apply> will do to apply these entities. This acts like a dry run for

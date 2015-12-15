@@ -46,6 +46,20 @@ type Entity struct {
 //EntityID returns a string that uniquely identifies the entity.
 func (e *Entity) EntityID() string { return e.id }
 
+//MatchesSelector checks whether the given string is either the entity ID or a
+//source file of this entity.
+func (e *Entity) MatchesSelector(value string) bool {
+	if e.id == value {
+		return true
+	}
+	for _, file := range e.sourceFiles {
+		if file == value {
+			return true
+		}
+	}
+	return false
+}
+
 //Report generates a Report describing this Entity.
 func (e *Entity) Report() *Report {
 	r := Report{Target: e.id, State: e.actionReason}
