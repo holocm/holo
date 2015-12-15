@@ -1,9 +1,9 @@
 
-target/etc/bar.conf
+file:target/etc/bar.conf
     store at target/var/lib/holo/files/base/etc/bar.conf
     passthru target/usr/share/holo/files/01-first/etc/bar.conf.holoscript
 
-target/etc/foo.conf
+file:target/etc/foo.conf
     store at target/var/lib/holo/files/base/etc/foo.conf
     passthru target/usr/share/holo/files/01-first/etc/foo.conf.holoscript
        apply target/usr/share/holo/files/02-second/etc/foo.conf

@@ -71,7 +71,7 @@ func (target *TargetFile) RepoEntries() RepoFiles {
 
 //EntityID returns the entity ID for this target file.
 func (target *TargetFile) EntityID() string {
-	return target.PathIn(common.TargetDirectory())
+	return "file:" + target.PathIn(common.TargetDirectory())
 }
 
 //PrintReport prints the report required by the "scan" operation for this

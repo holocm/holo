@@ -1,25 +1,25 @@
 
-target/etc/link-through-link.conf
+file:target/etc/link-through-link.conf
     store at target/var/lib/holo/files/base/etc/link-through-link.conf
     passthru target/usr/share/holo/files/02-holoscripts/etc/link-through-link.conf.holoscript
 
-target/etc/link-through-plain.conf
+file:target/etc/link-through-plain.conf
     store at target/var/lib/holo/files/base/etc/link-through-plain.conf
     passthru target/usr/share/holo/files/02-holoscripts/etc/link-through-plain.conf.holoscript
 
-target/etc/plain-through-link.conf
+file:target/etc/plain-through-link.conf
     store at target/var/lib/holo/files/base/etc/plain-through-link.conf
     passthru target/usr/share/holo/files/02-holoscripts/etc/plain-through-link.conf.holoscript
 
-target/etc/plain-through-plain.conf
+file:target/etc/plain-through-plain.conf
     store at target/var/lib/holo/files/base/etc/plain-through-plain.conf
     passthru target/usr/share/holo/files/02-holoscripts/etc/plain-through-plain.conf.holoscript
 
-target/etc/plain-with-nonzero-exitcode.conf
+file:target/etc/plain-with-nonzero-exitcode.conf
     store at target/var/lib/holo/files/base/etc/plain-with-nonzero-exitcode.conf
     passthru target/usr/share/holo/files/02-holoscripts/etc/plain-with-nonzero-exitcode.conf.holoscript
 
-target/etc/plain-with-stderr.conf
+file:target/etc/plain-with-stderr.conf
     store at target/var/lib/holo/files/base/etc/plain-with-stderr.conf
     passthru target/usr/share/holo/files/02-holoscripts/etc/plain-with-stderr.conf.holoscript
 

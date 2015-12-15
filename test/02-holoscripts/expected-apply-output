@@ -1,27 +1,27 @@
 
-Working on target/etc/link-through-link.conf
+Working on file:target/etc/link-through-link.conf
   store at target/var/lib/holo/files/base/etc/link-through-link.conf
   passthru target/usr/share/holo/files/02-holoscripts/etc/link-through-link.conf.holoscript
 
-Working on target/etc/link-through-plain.conf
+Working on file:target/etc/link-through-plain.conf
   store at target/var/lib/holo/files/base/etc/link-through-plain.conf
   passthru target/usr/share/holo/files/02-holoscripts/etc/link-through-plain.conf.holoscript
 
-Working on target/etc/plain-through-link.conf
+Working on file:target/etc/plain-through-link.conf
   store at target/var/lib/holo/files/base/etc/plain-through-link.conf
   passthru target/usr/share/holo/files/02-holoscripts/etc/plain-through-link.conf.holoscript
 
-Working on target/etc/plain-through-plain.conf
+Working on file:target/etc/plain-through-plain.conf
   store at target/var/lib/holo/files/base/etc/plain-through-plain.conf
   passthru target/usr/share/holo/files/02-holoscripts/etc/plain-through-plain.conf.holoscript
 
-Working on target/etc/plain-with-nonzero-exitcode.conf
+Working on file:target/etc/plain-with-nonzero-exitcode.conf
   store at target/var/lib/holo/files/base/etc/plain-with-nonzero-exitcode.conf
   passthru target/usr/share/holo/files/02-holoscripts/etc/plain-with-nonzero-exitcode.conf.holoscript
 
 !! execution of target/usr/share/holo/files/02-holoscripts/etc/plain-with-nonzero-exitcode.conf.holoscript failed: exit status 1
 
-Working on target/etc/plain-with-stderr.conf
+Working on file:target/etc/plain-with-stderr.conf
   store at target/var/lib/holo/files/base/etc/plain-with-stderr.conf
   passthru target/usr/share/holo/files/02-holoscripts/etc/plain-with-stderr.conf.holoscript
 

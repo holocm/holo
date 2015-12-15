@@ -1,27 +1,27 @@
 
-Working on target/etc/link-over-link.conf
+Working on file:target/etc/link-over-link.conf
   store at target/var/lib/holo/files/base/etc/link-over-link.conf
      apply target/usr/share/holo/files/01-normal/etc/link-over-link.conf
 
-Working on target/etc/link-over-plain.conf
+Working on file:target/etc/link-over-plain.conf
   store at target/var/lib/holo/files/base/etc/link-over-plain.conf
      apply target/usr/share/holo/files/01-normal/etc/link-over-plain.conf
 
-Working on target/etc/plain-over-link.conf
+Working on file:target/etc/plain-over-link.conf
   store at target/var/lib/holo/files/base/etc/plain-over-link.conf
      apply target/usr/share/holo/files/01-normal/etc/plain-over-link.conf
 
-Working on target/etc/plain-over-plain.conf
+Working on file:target/etc/plain-over-plain.conf
   store at target/var/lib/holo/files/base/etc/plain-over-plain.conf
      apply target/usr/share/holo/files/01-normal/etc/plain-over-plain.conf
 
-Working on target/etc/stock-file-is-directory.conf
+Working on file:target/etc/stock-file-is-directory.conf
   store at target/var/lib/holo/files/base/etc/stock-file-is-directory.conf
      apply target/usr/share/holo/files/02-errors/etc/stock-file-is-directory.conf
 
 !! skipping target: not a manageable file
 
-Working on target/etc/stock-file-missing.conf
+Working on file:target/etc/stock-file-missing.conf
   store at target/var/lib/holo/files/base/etc/stock-file-missing.conf
      apply target/usr/share/holo/files/02-errors/etc/stock-file-missing.conf
 
