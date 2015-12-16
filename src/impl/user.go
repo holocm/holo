@@ -61,6 +61,7 @@ func (u User) PrintReport() {
 	fmt.Printf("ENTITY: %s\n", u.EntityID())
 	for _, defFile := range u.DefinitionFiles {
 		fmt.Printf("found in: %s\n", defFile)
+		fmt.Printf("SOURCE: %s\n", defFile)
 	}
 	if attributes := u.attributes(); attributes != "" {
 		fmt.Printf("with: %s\n", attributes)

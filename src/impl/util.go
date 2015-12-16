@@ -62,10 +62,10 @@ var mock bool
 
 func init() {
 	rootDir = os.Getenv("HOLO_ROOT_DIR")
-	mock = rootDir != ""
-	if !mock {
+	if rootDir == "" {
 		rootDir = "/"
 	}
+	mock = rootDir != "/"
 }
 
 //GetPath converts a given path that is relative to the root directory, into

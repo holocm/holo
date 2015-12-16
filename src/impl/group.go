@@ -55,6 +55,7 @@ func (g Group) PrintReport() {
 	fmt.Printf("ENTITY: %s\n", g.EntityID())
 	for _, defFile := range g.DefinitionFiles {
 		fmt.Printf("found in: %s\n", defFile)
+		fmt.Printf("SOURCE: %s\n", defFile)
 	}
 	if attributes := g.attributes(); attributes != "" {
 		fmt.Printf("with: %s\n", attributes)

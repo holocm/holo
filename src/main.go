@@ -31,7 +31,7 @@ import (
 )
 
 func main() {
-	if version := os.Getenv("HOLO_API_VERSION"); version != "1" {
+	if version := os.Getenv("HOLO_API_VERSION"); version != "2" {
 		fmt.Fprintf(os.Stderr, "!! holo-users-groups plugin called with unknown HOLO_API_VERSION %s\n", version)
 	}
 
