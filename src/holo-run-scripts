@@ -17,7 +17,7 @@
 # Holo. If not, see <http://www.gnu.org/licenses/>.
 #
 
-if [ "$HOLO_API_VERSION" != 1 ]; then
+if [ "$HOLO_API_VERSION" != 2 ]; then
     echo "holo-run-scripts plugin called with unknown HOLO_API_VERSION $HOLO_API_VERSION" >&2
     exit 1
 fi
@@ -32,6 +32,7 @@ case "$1" in
             echo "ENTITY: script:$FILENAME"
             echo "ACTION: Executing"
             echo "found at: $HOLO_RESOURCE_DIR/$FILENAME"
+            echo "SOURCE: $HOLO_RESOURCE_DIR/$FILENAME"
         done
         ;;
     diff)
@@ -40,8 +41,9 @@ case "$1" in
     apply|force-apply)
         ENTITY_ID="$2"
         FILENAME="${ENTITY_ID:7}" # strip "script:" prefix
-        cd "${HOLO_ROOT_DIR:-/}"
-        exec "./usr/share/holo/run-scripts/$FILENAME"
+        SCRIPT="$(readlink -f "$HOLO_RESOURCE_DIR/$FILENAME")"
+        cd "$HOLO_ROOT_DIR"
+        exec "$SCRIPT"
         ;;
     *)
         echo "holo-run-scripts plugin called with unknown command: $@" >&2
