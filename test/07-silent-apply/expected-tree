@@ -1,0 +1,26 @@
+>> ./etc/holorc = symlink
+../../../holorc
+>> ./etc/normal.conf = regular
+aaa
+bbb
+>> ./etc/requireforce.conf = regular
+ccc
+ddd
+>> ./usr/share/holo/files/01-first/etc/normal.conf = regular
+aaa
+bbb
+>> ./usr/share/holo/files/01-first/etc/requireforce.conf = regular
+ccc
+ddd
+>> ./var/lib/holo/files/base/etc/normal.conf = regular
+a
+b
+>> ./var/lib/holo/files/base/etc/requireforce.conf = regular
+c
+d
+>> ./var/lib/holo/files/provisioned/etc/normal.conf = regular
+aaa
+bbb
+>> ./var/lib/holo/files/provisioned/etc/requireforce.conf = regular
+ccc
+ddd
