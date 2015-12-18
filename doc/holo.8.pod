@@ -22,128 +22,77 @@ configuration statically declared and defined within packages, which can be
 installed to add new configuration, or uninstalled to remove configuration from
 a system.
 
-Package management already offers 99% of the needed tools: Metapackages (usually
-called "holograms" or "holodecks" in Holo) can pull in other packages as
-dependencies, thus installing the software required for a certain task, and
-contain their own files to configure the software installed.
+Package management already offers 99% of the needed tools: Metapackages
+(usually called "holograms" or "holodecks" in Holo) can pull in other packages
+as dependencies, thus installing the software required for a certain task, and
+contain their own files to configure the software installed. Holo adds tools
+that work around shortcomings (from the configuration management perspective)
+of the package management.
 
-Holo adds facilties to work around shortcomings (from the configuration
-management perspective) of the package management.
+=head2 Plugins
 
-=head2 Provisioning of files via the configuration repository
+The C<holo> binary is only a frontend to find and run Holo B<plugins>. Each
+Holo plugin adds logic to provision a certain type of thing that package
+management cannot do by itself. Please refer to L<holorc(5)> for how to
+discover and enable plugins.
 
-The configuration repository at F</usr/share/holo/files> can be used to resolve
-file conflicts when multiple packages (holograms or system packages) work on
-the same configuration file. Each file in the repository works on a certain
-B<target>, as determined by its file name:
+Included with Holo is the L<holo-files(8)> plugin that allows holograms to
+replace or modify the default configuration files installed by application
+packages. Another well-known plugin (available separately) is
+L<holo-users-groups(8)> which provisions user accounts and groups to the
+standard L<passwd(5)> and L<group(5)> databases.
 
-    /usr/share/holo/files/20-webserver/etc/nginx/nginx.conf
-                           ^          --+------------------
-                           |            |
-                           |            +-- path to target
-                           |
-                           +-- disambiguator
+=head2 Entities, source files
 
-The disambiguator is always required, and allows multiple repository entries to
-operate on the same target (sorted alphabetically by their disambiguator). The
-pattern of putting a number at the start of the disambiguator is not required,
-but useful to control the ordering of repo files.
+Holo calls the things that it works on B<entities>. Each entity belongs to a
+certain plugin, since plugins contain all the logic for discovering and working
+on entities.
 
-Repository entries are applied on the B<target base>, the initial version of
-the target that was found at the target path during the first C<holo apply>
-run.  This target base is saved at F</var/lib/holo/files/base/$target> and will
-be updated automatically when the package management installed an updated
-version of the target base as F<$target.rpmnew>, F<$target.dpkg-dist>, etc.
-(The exact paths depend on the package manager.)
+Entities are defined in B<source files> which configuration packages install
+into the resource directory of the corresponding plugin (at
+F</usr/share/holo/$PLUGIN_ID>). Depending on how the plugin works, a single
+entity may have multiple source files, or a single source file might define
+multiple entities.
 
-Repository entries that are plain files or symlinks will just overwrite the
-target base (or all previous entries), whereas executable repository entries
-with an extra C<.holoscript> suffix can be used to modify the target base (or
-the result of a previous application step). The target contents will be piped
-through the script. This is typically used when the default configuration for an
-application shall be used, but with some minor modifications. The following
-example uses the default configuration for L<pacman(8)>, but enables the "Color"
-option:
-
-    $ cat /usr/share/holo/files/20-enable-color/etc/pacman.conf.holoscript
-    #!/bin/sh
-    sed 's/^#\s*Color$/Color/'
-
-    $ sudo holo apply /etc/pacman.conf
-
-    Working on /etc/pacman.conf
-      store at /var/lib/holo/files/base/etc/pacman.conf
-      passthru /usr/share/holo/files/20-enable-color/etc/pacman.conf.holoscript
-
-When writing the new target file, ownership and permissions will be copied from
-the target base, and thus from the original target file. Furthermore, a copy of
-the provisioned target file is written to
-F</var/lib/holo/files/provisioned/$target> for use by C<holo diff $target>.
-
-=head2 Dealing with manual changes
-
-When an entity (target file, user or group) provisioned by Holo is modified by
-the user or another program, the next C<holo apply> run will complain about this
-and refuse to overwrite the manual changes.
-
-    $ sudo rm /etc/pacman.conf
-    $ sudo usermod --uid 2003 user:test
-    $ sudo holo apply /etc/pacman.conf
-
-    Working on /etc/pacman.conf
-         apply /usr/share/holo/files/01-base/etc/pacman.conf
-
-    !! skipping target: file has been deleted by user (use --force to restore)
-
-    Working on user:test
-      found in /usr/share/holo/users-groups/01-base.toml
-          with UID: 1003
-
-    !! User has UID: 2003, expected 1003 (use --force to overwrite)
-
-The difference between the last provisioned and the actual entity can be
-inspected in detail with C<holo diff>, and as suggested in the error messages,
-C<holo apply --force> will restore the entities to the state described by the
-configuration repository.
+Each entity is identified by a name, usually of the form C<type:identifier>.
+Refer to the manpage of each plugin for the format for its entities' names.
 
 =head1 OPERATIONS
 
-All operations act on all entities (target files, users and groups) by default,
-but can be restricted to certain entities by giving selectors on the command
-line.
+All operations act on all entities by default, but can be restricted to certain
+entities by giving selectors on the command line.
 
 A selector can be either an entity name (such as C<file:/etc/sddm/sddm.conf>),
-or the path to the source file below F</usr/share/holo> that defines this
-entity (for instance, C</usr/share/holo/files/40-desktop/etc/sddm/sddm.conf>).
+or the path to a source file that defines this entity (for instance,
+C</usr/share/holo/files/40-desktop/etc/sddm/sddm.conf>).
 
 =over 4
 
+=item B<scan> [I<-s|--short>] [I<selector> ...]
+
+Prompt all plugins to scan for entities and list all known entities (or, if
+selectors are given, all entities matching these selectors).
+
 =item B<apply> [I<-f|--force>] [I<selector> ...]
 
-Read the configuration repository and entity definitions and apply the selected
-(or all) targets. Also, when repository files or target files have been deleted,
-but there still exist target bases in F</var/lib/holo/files/base>, scrub these.
-
-Scrubbing means to delete the target base if the target file has also been
-deleted, or to restore the target base when only the repository entries have
-been deleted. You can always run C<holo scan> beforehand to check what will be
-done.
+Apply the selected (or all) entities. Refer to the manpage of each plugin for
+what "applying" entails.
 
 By default, Holo will refuse to provision entities that have been changed by the
-user or by other programs. Apply B<--force> to overwrite such changes.
+user or by other programs. Apply B<--force> to overwrite such changes or perform
+otherwise dangerous activities.
+
+If you want to check what will be done, use C<holo scan> as a dry run before
+C<holo apply>.
 
 =item B<diff> [I<selector> ...]
 
 Print a L<diff(1)> between the last provisioned version of each selected target
 file and the actual contents of that target file.
 
-=item B<scan> [I<-s|--short>] [I<selector> ...]
-
-Read the configuration repository and entity definitions, and report what
-C<holo apply> will do to apply these entities. This acts like a dry run for
-C<holo apply> that usually does not require super-user privileges.
-
-With B<--short>, only lists the names of all entities.
+For entities that are not files, refer to the plugin's manpage for what the
+diff contains. When a plugin is not able to produce a meaningful textual
+representation of the entity, no output will be produced for its entities.
 
 =back
 

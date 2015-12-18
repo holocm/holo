@@ -1,3 +1,165 @@
-=head1 TODO
+=encoding UTF-8
 
-Coming soon. Until then, please refer to L<holo(8)> instead.
+=head1 NAME
+
+holo-files - Holo plugin to provision files
+
+=head1 DESCRIPTION
+
+When using Holo, configuration is usually stored in system packages, so files
+can be provisioned by just including them in a configuration package. This
+plugin extends this basic capability to allow a configuration package to
+overwrite or modify a file that has been installed by an application package.
+
+=head2 Structure of the resource directory
+
+Configuration packages that want to use this plugin must place files in the
+resource directory at F</usr/share/holo/files>. Each source file works on a
+certain B<target>, as determined by its file name:
+
+    /usr/share/holo/files/20-webserver/etc/nginx/nginx.conf
+                           ^          --+------------------
+                           |            |
+                           |            +-- path to target
+                           |
+                           +-- disambiguator
+
+The disambiguator is always required, and allows multiple source files to
+operate on the same target (sorted alphabetically by their disambiguator). The
+pattern of putting a number at the start of the disambiguator is not required,
+but useful to control the ordering of source files.
+
+Each target file that has such source files is an entity within Holo. Its entity
+is C<file:$target> where C<$target> is the absolute path to the target file.
+
+=head2 Application strategy
+
+Source files are applied on the B<target base>, the initial version of the
+target file that was found during the first C<holo apply> run. This target base
+is saved at F</var/lib/holo/files/base/$target>.
+
+Source files that are plain files or symlinks will just overwrite the target
+base (or all previous entries), whereas executable source files with an extra
+C<.holoscript> suffix can be used to modify the target base (or the result of a
+previous application step). The target contents will be piped through the
+script. This is typically used when the default configuration for an
+application shall be used, but with some minor modifications. The following
+example uses the default configuration for L<pacman(8)>, but enables the
+"Color" option:
+
+    $ cat /usr/share/holo/files/20-enable-color/etc/pacman.conf.holoscript
+    #!/bin/sh
+    sed 's/^#\s*Color$/Color/'
+
+    $ sudo holo apply file:/etc/pacman.conf
+
+    Working on file:/etc/pacman.conf
+      store at /var/lib/holo/files/base/etc/pacman.conf
+      passthru /usr/share/holo/files/20-enable-color/etc/pacman.conf.holoscript
+
+When writing the new target file, ownership and permissions will be copied from
+the target base, and thus from the original target file. Furthermore, a copy of
+the provisioned target file is written to
+F</var/lib/holo/files/provisioned/$target> for use by C<holo diff file:$target>.
+
+In normal operation, holo-files will refuse to operate on a target file that
+has been modified or deleted by the user or by another program. Apply
+C<--force> to reset the target file to its defined state.
+
+=head2 Handling package upgrades
+
+Each target file is originally installed by an application package. When that
+application package is upgraded, system package managers usually detect that
+the file has been modified, and store the new version contained in the
+application package next to the target file, in paths such as
+
+    $target.rpmnew          # for RPM    (Fedora, Mageia, openSUSE etc.)
+    $target.dpkg-dist       # for dpkg   (Debian, Ubuntu etc.)
+    $target.pacnew          # for pacman (Arch Linux etc.)
+
+When this happens, the next C<holo apply> run will detect this file and update
+its target base with this file:
+
+    $ sudo pacman -Syu
+    ...
+    installing pacman ...
+    warning: /etc/pacman.conf installed as /etc/pacman.conf.pacnew
+    ...
+    $ sudo holo apply file:/etc/pacman.conf
+
+    Working on file:/etc/pacman.conf
+      store at /var/lib/holo/files/base/etc/pacman.conf
+      passthru /usr/share/holo/files/20-enable-color/etc/pacman.conf.holoscript
+
+    >> found updated target base: /etc/pacman.conf.pacnew -> /var/lib/holo/files/base/etc/pacman.conf
+
+This means that when configuration is applied as a holoscript on top of the
+default configuration, future updates to the default configuration will
+automatically be picked up, as long as C<holo apply> is run after the system update.
+
+=head2 Handling package removal
+
+If there exist target bases below F</var/lib/holo/files> for which there are no
+corresponding source files below F</usr/share/holo/files>, these target bases
+are considered orphaned.
+
+This usually occurs because a package has been removed from the system, or
+because a different package version were installed that do not contain the
+source files in question anymore.
+
+There are two subcases to consider, If only configuration packages were
+deleted, C<holo apply> will restore the target base (as installed by the
+application package):
+
+    Scrubbing file:/etc/sourcefile-deleted.conf (all source files were deleted)
+      restore /var/lib/holo/files/base/etc/sourcefile-deleted.conf
+
+If the application package (to whom the target file belongs) has also been
+deleted, the target base will be deleted instead of restored:
+
+    Scrubbing file:/etc/targetfile-deleted.conf (target was deleted)
+       delete /var/lib/holo/files/base/etc/targetfile-deleted.conf
+
+This algorithm ensures that after any number of package installation and
+removal operations, a single C<holo apply> will converge all old and new target
+files to the desired state.
+
+=head2 Dealing manual changes
+
+C<holo apply> will refuse to work on target files that have been modified by
+the user or another program, unless C<--force> is given:
+
+    $ sudo rm /etc/pacman.conf
+    $ sudo vim /etc/ssh/sshd_config
+    ...
+    $ sudo holo apply
+
+    Working on file:/etc/pacman.conf
+      store at /var/lib/holo/files/base/etc/pacman.conf
+         apply /usr/share/holo/files/01-base/etc/pacman.conf
+
+    !! skipping target: file has been deleted by user (use --force to restore)
+
+    Working on file:/etc/ssh/sshd_config
+      store at /var/lib/holo/files/base/etc/ssh/sshd_config
+         apply /usr/share/holo/files/10-openssh/etc/ssh/sshd_config
+
+    !! skipping target: file has been modified by user (use --force to restore)
+
+The C<holo diff> command can be used to produce a diff between the last
+provisioned and the current state of the target files. C<holo apply --force>
+can be used to reset the target files to their defined state.
+
+=head1 SEE ALSO
+
+L<holo(8)> provides the user interface for using this plugin.
+
+=head1 AUTHOR
+
+Stefan Majewsky
+
+Further documentation is available at the project homepage: http://holocm.org
+
+Please report any issues and feature requests at Github: http://github.com/holocm/holo-users-groups/issues
+
+=cut

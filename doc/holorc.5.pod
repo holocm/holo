@@ -39,7 +39,7 @@ installing a holoscript, as detailed in the L<holo-plugin-interface(7)>
 specification. If plugins are installed this way, you can observe this with the
 C<holo scan> command. For example:
 
-    $ holo scan /etc/holorc
+    $ holo scan file:/etc/holorc
 
     /etc/holorc
         store at /var/lib/holo/files/base/etc/holorc
