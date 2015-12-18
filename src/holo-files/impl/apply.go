@@ -45,11 +45,15 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 	//product of a previous Apply run)
 	//option 2: the target file was deleted, but we have a target base that we
 	//can start from
-	if !common.IsManageableFile(targetPath) {
+	needForcefulReprovision := false
+	targetExists := common.IsManageableFile(targetPath)
+	if !targetExists {
 		if !common.IsManageableFile(targetBasePath) {
 			return false, errors.New("skipping target: not a manageable file")
 		}
-		if !withForce {
+		if withForce {
+			needForcefulReprovision = true
+		} else {
 			return false, errors.New("skipping target: file has been deleted by user (use --force to restore)")
 		}
 	}
@@ -89,19 +93,30 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 	//installed by the package (which can be found at targetBasePath); complain if
 	//the user made any changes to config files governed by holo (this check is
 	//overridden by the --force option)
+
+	//load the last provisioned version
 	var lastProvisionedBuffer *FileBuffer
 	lastProvisionedPath := target.PathIn(common.ProvisionedDirectory())
-	if !withForce && common.IsManageableFile(lastProvisionedPath) {
-		targetBuffer, err := NewFileBuffer(targetPath, targetPath)
-		if err != nil {
-			return false, err
-		}
+	if common.IsManageableFile(lastProvisionedPath) {
 		lastProvisionedBuffer, err = NewFileBuffer(lastProvisionedPath, targetPath)
 		if err != nil {
 			return false, err
 		}
+	}
+
+	//compare it against the target version (which must exist at this point
+	//unless we are using --force)
+	if targetExists && lastProvisionedBuffer != nil {
+		targetBuffer, err := NewFileBuffer(targetPath, targetPath)
+		if err != nil {
+			return false, err
+		}
 		if !targetBuffer.EqualTo(lastProvisionedBuffer) {
-			return false, errors.New("skipping target: file has been modified by user (use --force to overwrite)")
+			if withForce {
+				needForcefulReprovision = true
+			} else {
+				return false, errors.New("skipping target: file has been modified by user (use --force to overwrite)")
+			}
 		}
 	}
 
@@ -140,8 +155,8 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 		}
 	}
 
-	//don't do anything more if nothing has changed
-	if !withForce && lastProvisionedBuffer != nil {
+	//don't do anything more if nothing has changed and the target file has not been touched
+	if !needForcefulReprovision && lastProvisionedBuffer != nil {
 		if buffer.EqualTo(lastProvisionedBuffer) {
 			//since we did not do anything, don't report this
 			return true, nil
