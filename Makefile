@@ -13,7 +13,7 @@ build/man/%: doc/%.pod
 		$< $@
 
 test: check # just a synonym
-check:
+check: default
 	@holo-test holo-users-groups $(sort $(wildcard test/??-*))
 
 install: default src/holorc.holoscript
