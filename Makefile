@@ -11,7 +11,7 @@ build/man/%: doc/%.pod
 		$< $@
 
 test: check # just a synonym
-check:
+check: default
 	@holo-test holo-run-scripts $(sort $(wildcard test/??-*))
 
 install: default src/holorc.holoscript
