@@ -11,25 +11,13 @@ Scripts must be intalled into the directory F</usr/share/holo/run-scripts> and
 must be executable. Instead of a script, a binary, or a symlink to a script or
 binary, can also be installed. Scripts will be executed in alphabetical order.
 
-The entity ID for a script is C<script:>, followed by the basename of the file.
-
-=head1 OPERATIONS
-
-=head2 Scan
-
-Available scripts will be reported like this:
-
-    script:example.sh
-        found at /usr/share/holo/run-scripts/example.sh
-
-=head2 Apply
-
-C<holo apply> will execute the script.
+The entity name for a script is C<script:$name>, where C<$name> is the basename
+of the file.
 
 =head2 Diff
 
 Holo cannot compute a meaningful diff for the effect of an arbitrary script, so
-nothing will be displayed.
+C<holo diff script:$name> will not produce any output.
 
 =head1 SEE ALSO
 
