@@ -5,9 +5,8 @@ go:
     - 1.5
 
 before_install:
-    # TODO change this to the stable branch when there is one
     - mkdir -p build/deps
-    - git clone --branch=master https://github.com/holocm/holo.git build/deps/holo
+    - git clone --branch=stable https://github.com/holocm/holo.git build/deps/holo
     - make -C build/deps/holo build/holo
     - cp build/deps/holo/src/holo-test build/deps/holo/build/holo-test
 
