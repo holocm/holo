@@ -1,6 +1,6 @@
 default: prepare-build
 default: build/holo build/holo-files
-default: build/man/holorc.5 build/man/holo-plugin-interface.7 build/man/holo-test.7 build/man/holo.8
+default: build/man/holorc.5 build/man/holo-plugin-interface.7 build/man/holo-test.7 build/man/holo.8 build/man/holo-files.8
 
 prepare-build:
 	@mkdir -p build/man
@@ -34,6 +34,7 @@ install: default src/holorc src/holo-test util/autocomplete.bash util/autocomple
 	install -D -m 0644 util/autocomplete.zsh  "$(DESTDIR)/usr/share/zsh/site-functions/_holo"
 	install -D -m 0644 build/man/holorc.5                "$(DESTDIR)/usr/share/man/man5/holorc.5"
 	install -D -m 0644 build/man/holo.8                  "$(DESTDIR)/usr/share/man/man8/holo.8"
+	install -D -m 0644 build/man/holo-files.8            "$(DESTDIR)/usr/share/man/man8/holo-files.8"
 	install -D -m 0644 build/man/holo-test.7             "$(DESTDIR)/usr/share/man/man7/holo-test.7"
 	install -D -m 0644 build/man/holo-plugin-interface.7 "$(DESTDIR)/usr/share/man/man7/holo-plugin-interface.7"
 
