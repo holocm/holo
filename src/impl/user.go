@@ -42,7 +42,8 @@ type User struct {
 	Shell           string   //path to the user's login shell (or empty to use the default)
 	DefinitionFiles []string //paths to the files defining this entity
 
-	broken bool //whether the entity definition is invalid (default: false)
+	Orphaned bool //whether entity definition have been deleted (default: false)
+	broken   bool //whether the entity definition is invalid (default: false)
 }
 
 //isValid is used inside the scanning algorithm to filter entities with
@@ -59,12 +60,16 @@ func (u User) EntityID() string { return "user:" + u.Name }
 //PrintReport implements the Entity interface for User.
 func (u User) PrintReport() {
 	fmt.Printf("ENTITY: %s\n", u.EntityID())
-	for _, defFile := range u.DefinitionFiles {
-		fmt.Printf("found in: %s\n", defFile)
-		fmt.Printf("SOURCE: %s\n", defFile)
-	}
-	if attributes := u.attributes(); attributes != "" {
-		fmt.Printf("with: %s\n", attributes)
+	if u.Orphaned {
+		fmt.Println("ACTION: Scrubbing (all definition files have been deleted)")
+	} else {
+		for _, defFile := range u.DefinitionFiles {
+			fmt.Printf("found in: %s\n", defFile)
+			fmt.Printf("SOURCE: %s\n", defFile)
+		}
+		if attributes := u.attributes(); attributes != "" {
+			fmt.Printf("with: %s\n", attributes)
+		}
 	}
 }
 
@@ -104,6 +109,11 @@ type userDiff struct {
 //If the user does not exist yet, it is created. If it does exist, but some
 //attributes do not match, it will be updated, but only if withForce is given.
 func (u User) Apply(withForce bool) (entityHasChanged bool) {
+	//special handling for orphaned users
+	if u.Orphaned {
+		return u.applyOrphaned(withForce)
+	}
+
 	//check if we have that group already
 	userExists, actualUser, err := u.checkExists()
 	if err != nil {
@@ -164,6 +174,27 @@ func (u User) Apply(withForce bool) (entityHasChanged bool) {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		return false
+	}
+	return true
+}
+
+func (u User) applyOrphaned(withForce bool) (entityHasChanged bool) {
+	if !withForce {
+		fmt.Fprintf(os.Stderr, "!! Won't do this without --force.\n")
+		fmt.Fprintf(os.Stderr, ">> Call `holo apply --force user:%s` to delete this user.\n", u.Name)
+		fmt.Fprintf(os.Stderr, ">> Or remove the user name from %s to keep the user.\n", RegistryPath())
+		return false
+	}
+
+	//call userdel and remove user from our registry
+	err := ExecProgramOrMock("userdel", u.Name)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+		return false
+	}
+	err = RemoveProvisionedUser(u.Name)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 	}
 	return true
 }

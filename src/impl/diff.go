@@ -37,22 +37,31 @@ func (group Group) RenderDiff() ([]byte, error) {
 		return nil, err
 	}
 
+	//if the group is orphaned, and there exists no actual group, then there is no diff
+	if !groupExists && group.Orphaned {
+		return nil, nil
+	}
+
 	//to simplify the diff process, replace a non-existing group by an empty group
 	headers := generateDiffHeader("group", group.EntityID(), groupExists)
 
 	//generate body
 	var lines []string
 	if groupExists {
-		lines = []string{" [[group]]"}
+		if group.Orphaned {
+			lines = []string{"+[[group]]"}
+		} else {
+			lines = []string{" [[group]]"}
+		}
 	} else {
 		lines = []string{"-[[group]]"}
 	}
 
-	lines, err = addDiffForField(lines, groupExists, "name", group.Name, group.Name, "")
+	lines, err = addDiffForField(lines, groupExists, group.Orphaned, "name", group.Name, group.Name, "")
 	if err != nil {
 		return nil, err
 	}
-	lines, err = addDiffForField(lines, groupExists, "gid", group.GID, actualGid, 0)
+	lines, err = addDiffForField(lines, groupExists, group.Orphaned, "gid", group.GID, actualGid, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -76,6 +85,11 @@ func (user User) RenderDiff() ([]byte, error) {
 		return nil, err
 	}
 
+	//if the user is orphaned, and there exists no actual user, then there is no diff
+	if !userExists && user.Orphaned {
+		return nil, nil
+	}
+
 	//to simplify the diff process, replace a non-existing user by an empty user
 	if !userExists {
 		actualUser = &User{}
@@ -85,36 +99,40 @@ func (user User) RenderDiff() ([]byte, error) {
 	//generate body
 	var lines []string
 	if userExists {
-		lines = []string{" [[user]]"}
+		if user.Orphaned {
+			lines = []string{"+[[user]]"}
+		} else {
+			lines = []string{" [[user]]"}
+		}
 	} else {
 		lines = []string{"-[[user]]"}
 	}
 
-	lines, err = addDiffForField(lines, userExists, "name", user.Name, user.Name, "")
+	lines, err = addDiffForField(lines, userExists, user.Orphaned, "name", user.Name, user.Name, "")
 	if err != nil {
 		return nil, err
 	}
-	lines, err = addDiffForField(lines, userExists, "comment", user.Comment, actualUser.Comment, "")
+	lines, err = addDiffForField(lines, userExists, user.Orphaned, "comment", user.Comment, actualUser.Comment, "")
 	if err != nil {
 		return nil, err
 	}
-	lines, err = addDiffForField(lines, userExists, "uid", user.UID, actualUser.UID, 0)
+	lines, err = addDiffForField(lines, userExists, user.Orphaned, "uid", user.UID, actualUser.UID, 0)
 	if err != nil {
 		return nil, err
 	}
-	lines, err = addDiffForField(lines, userExists, "home", user.HomeDirectory, actualUser.HomeDirectory, "")
+	lines, err = addDiffForField(lines, userExists, user.Orphaned, "home", user.HomeDirectory, actualUser.HomeDirectory, "")
 	if err != nil {
 		return nil, err
 	}
-	lines, err = addDiffForField(lines, userExists, "group", user.Group, actualUser.Group, "")
+	lines, err = addDiffForField(lines, userExists, user.Orphaned, "group", user.Group, actualUser.Group, "")
 	if err != nil {
 		return nil, err
 	}
-	lines, err = addDiffForField(lines, userExists, "groups", user.Groups, actualUser.Groups, []string{})
+	lines, err = addDiffForField(lines, userExists, user.Orphaned, "groups", user.Groups, actualUser.Groups, []string{})
 	if err != nil {
 		return nil, err
 	}
-	lines, err = addDiffForField(lines, userExists, "shell", user.Shell, actualUser.Shell, "")
+	lines, err = addDiffForField(lines, userExists, user.Orphaned, "shell", user.Shell, actualUser.Shell, "")
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +196,16 @@ func lineCountToString(count int) string {
 //Produce a content diff for the given field, by encoding the expectedValue and
 //actualValue as TOML. No output is produced if the expectedValue matches the
 //ignoredValue, which means that the value is not set in the entity definition.
-func addDiffForField(lines []string, entityExists bool, field string, expectedValue, actualValue, ignoredValue interface{}) ([]string, error) {
+func addDiffForField(lines []string, entityExists, isEntityOrphaned bool, field string, expectedValue, actualValue, ignoredValue interface{}) ([]string, error) {
+	//early exit if entity exists, but is orphaned, i.e. we print a diff with "+" lines only
+	if isEntityOrphaned {
+		actualData, err := encodeField(field, actualValue)
+		if err != nil {
+			return lines, err
+		}
+		return append(lines, "+"+actualData), nil
+	}
+
 	//encode values into TOML
 	expectedData, err := encodeField(field, expectedValue)
 	if err != nil {

@@ -36,7 +36,8 @@ type Group struct {
 	System          bool     //whether the group is a system group (this influences the GID selection if GID = 0)
 	DefinitionFiles []string //paths to the files defining this entity
 
-	broken bool //whether the entity definition is invalid (default: false)
+	Orphaned bool //whether entity definition have been deleted (default: false)
+	broken   bool //whether the entity definition is invalid (default: false)
 }
 
 //isValid is used inside the scanning algorithm to filter entities with
@@ -53,12 +54,16 @@ func (g Group) EntityID() string { return "group:" + g.Name }
 //PrintReport implements the Entity interface for Group.
 func (g Group) PrintReport() {
 	fmt.Printf("ENTITY: %s\n", g.EntityID())
-	for _, defFile := range g.DefinitionFiles {
-		fmt.Printf("found in: %s\n", defFile)
-		fmt.Printf("SOURCE: %s\n", defFile)
-	}
-	if attributes := g.attributes(); attributes != "" {
-		fmt.Printf("with: %s\n", attributes)
+	if g.Orphaned {
+		fmt.Println("ACTION: Scrubbing (all definition files have been deleted)")
+	} else {
+		for _, defFile := range g.DefinitionFiles {
+			fmt.Printf("found in: %s\n", defFile)
+			fmt.Printf("SOURCE: %s\n", defFile)
+		}
+		if attributes := g.attributes(); attributes != "" {
+			fmt.Printf("with: %s\n", attributes)
+		}
 	}
 }
 
@@ -83,6 +88,11 @@ type groupDiff struct {
 //If the group does not exist yet, it is created. If it does exist, but some
 //attributes do not match, it will be updated, but only if withForce is given.
 func (g Group) Apply(withForce bool) (entityHasChanged bool) {
+	//special handling for orphaned groups
+	if g.Orphaned {
+		return g.applyOrphaned(withForce)
+	}
+
 	//check if we have that group already
 	groupExists, actualGid, err := g.checkExists()
 	if err != nil {
@@ -121,6 +131,27 @@ func (g Group) Apply(withForce bool) (entityHasChanged bool) {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		return false
+	}
+	return true
+}
+
+func (g Group) applyOrphaned(withForce bool) (entityHasChanged bool) {
+	if !withForce {
+		fmt.Fprintf(os.Stderr, "!! Won't do this without --force.\n")
+		fmt.Fprintf(os.Stderr, ">> Call `holo apply --force group:%s` to delete this group.\n", g.Name)
+		fmt.Fprintf(os.Stderr, ">> Or remove the group name from %s to keep the group.\n", RegistryPath())
+		return false
+	}
+
+	//call groupdel and remove group from our registry
+	err := ExecProgramOrMock("groupdel", g.Name)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+		return false
+	}
+	err = RemoveProvisionedGroup(g.Name)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 	}
 	return true
 }

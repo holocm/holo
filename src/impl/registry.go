@@ -102,3 +102,45 @@ func appendIfMissing(list []string, value string) (newList []string, changed boo
 	}
 	return append(list, value), true
 }
+
+//KnownGroupNames lists all groups that have been provisioned.
+func KnownGroupNames() []string {
+	return reg.ProvisionedGroups
+}
+
+//KnownUserNames lists all users that have been provisioned.
+func KnownUserNames() []string {
+	return reg.ProvisionedUsers
+}
+
+//RemoveProvisionedGroup records that the given provisioned group has been deleted.
+func RemoveProvisionedGroup(name string) error {
+	var changed bool
+	reg.ProvisionedGroups, changed = removeEntry(reg.ProvisionedGroups, name)
+	if changed {
+		return saveRegistry()
+	}
+	return nil
+}
+
+//RemoveProvisionedUser records that the given provisioned user has been deleted.
+func RemoveProvisionedUser(name string) error {
+	var changed bool
+	reg.ProvisionedUsers, changed = removeEntry(reg.ProvisionedUsers, name)
+	if changed {
+		return saveRegistry()
+	}
+	return nil
+}
+
+func removeEntry(list []string, value string) (newList []string, changed bool) {
+	newList, changed = make([]string, 0, len(list)), false
+	for _, element := range list {
+		if element == value {
+			changed = true
+		} else {
+			newList = append(list, value)
+		}
+	}
+	return
+}

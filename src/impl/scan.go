@@ -69,6 +69,20 @@ func Scan() ([]Group, []User) {
 		}
 	}
 
+	//find orphaned entities (invalid entities are considered "existing" here,
+	//so that we don't remove entities that are still needed just because their
+	//definition file is broken)
+	for _, name := range KnownGroupNames() {
+		if _, ok := groups[name]; !ok {
+			groups[name] = &Group{Name: name, Orphaned: true}
+		}
+	}
+	for _, name := range KnownUserNames() {
+		if _, ok := users[name]; !ok {
+			users[name] = &User{Name: name, Orphaned: true}
+		}
+	}
+
 	//flatten result into a list sorted by EntityID and filter invalid entities
 	groupsList := make([]Group, 0, len(groups))
 	for _, group := range groups {

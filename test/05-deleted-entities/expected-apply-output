@@ -1,0 +1,11 @@
+
+Scrubbing group:deleted (all definition files have been deleted)
+!! Won't do this without --force.
+>> Call `holo apply --force group:deleted` to delete this group.
+>> Or remove the group name from target/var/lib/holo/users-groups/state.toml to keep the group.
+
+Scrubbing user:deleted (all definition files have been deleted)
+!! Won't do this without --force.
+>> Call `holo apply --force user:deleted` to delete this user.
+>> Or remove the user name from target/var/lib/holo/users-groups/state.toml to keep the user.
+
