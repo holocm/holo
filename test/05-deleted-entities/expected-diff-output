@@ -1,0 +1,19 @@
+diff --holo group:deleted
+--- group:deleted
++++ group:deleted
+@@ -0,0 +1,3
++[[group]]
++name = "deleted"
++gid = 101
+diff --holo user:deleted
+--- user:deleted
++++ user:deleted
+@@ -0,0 +1,8
++[[user]]
++name = "deleted"
++comment = "deleted"
++uid = 1000
++home = "/var/lib/deleted"
++group = "deleted"
++groups = []
++shell = "/usr/bin/nologin"
