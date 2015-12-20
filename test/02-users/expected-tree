@@ -120,3 +120,5 @@ groups  = ["network"]
 [[user]]
 name    = "wrongshell"
 shell   = "/bin/zsh"
+>> ./var/lib/holo/users-groups/state.toml = regular
+ProvisionedUsers = ["minimal", "new", "wronggroup", "wronggroups", "wronghome", "wrongshell", "wronguid"]

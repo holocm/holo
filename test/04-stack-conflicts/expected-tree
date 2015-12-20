@@ -104,3 +104,6 @@ group   = "stacked"
 groups  = [ "foo", "baz" ]
 home    = "/home/stacked"
 shell   = "/bin/bash"
+>> ./var/lib/holo/users-groups/state.toml = regular
+ProvisionedUsers = ["valid"]
+ProvisionedGroups = ["valid"]

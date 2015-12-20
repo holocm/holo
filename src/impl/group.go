@@ -159,7 +159,11 @@ func (g Group) callGroupadd() error {
 	args = append(args, g.Name)
 
 	//call groupadd
-	return ExecProgramOrMock("groupadd", args...)
+	err := ExecProgramOrMock("groupadd", args...)
+	if err != nil {
+		return err
+	}
+	return AddProvisionedGroup(g.Name)
 }
 
 func (g Group) callGroupmod() error {
@@ -171,5 +175,9 @@ func (g Group) callGroupmod() error {
 	args = append(args, g.Name)
 
 	//call groupmod
-	return ExecProgramOrMock("groupmod", args...)
+	err := ExecProgramOrMock("groupmod", args...)
+	if err != nil {
+		return err
+	}
+	return AddProvisionedGroup(g.Name)
 }

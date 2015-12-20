@@ -31,3 +31,5 @@ name = "existing"
 [[group]]
 name = "wronggid"
 gid = 42
+>> ./var/lib/holo/users-groups/state.toml = regular
+ProvisionedGroups = ["new", "wronggid"]

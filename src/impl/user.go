@@ -270,7 +270,11 @@ func (u User) callUseradd() error {
 	args = append(args, u.Name)
 
 	//call useradd
-	return ExecProgramOrMock("useradd", args...)
+	err := ExecProgramOrMock("useradd", args...)
+	if err != nil {
+		return err
+	}
+	return AddProvisionedUser(u.Name)
 }
 
 func (u User) callUsermod() error {
@@ -297,5 +301,9 @@ func (u User) callUsermod() error {
 	args = append(args, u.Name)
 
 	//call usermod
-	return ExecProgramOrMock("usermod", args...)
+	err := ExecProgramOrMock("usermod", args...)
+	if err != nil {
+		return err
+	}
+	return AddProvisionedUser(u.Name)
 }
