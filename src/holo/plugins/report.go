@@ -41,21 +41,11 @@ type Report struct {
 	State     string
 	infoLines []reportLine
 	msgText   string
-	logText   string
 }
 
 //AddLine adds an information line to the given Report.
 func (r *Report) AddLine(key, value string) {
 	r.infoLines = append(r.infoLines, reportLine{key, value})
-}
-
-//ReplaceLine replaces the index-th existing report line with a new one.
-func (r *Report) ReplaceLine(index uint, key, value string) {
-	if index < uint(len(r.infoLines)) {
-		r.infoLines[index] = reportLine{key, value}
-	} else {
-		r.AddLine(key, value)
-	}
 }
 
 func (r *Report) addMessage(color, prefix, text string, args ...interface{}) {
@@ -68,19 +58,9 @@ func (r *Report) addMessage(color, prefix, text string, args ...interface{}) {
 	r.msgText += fmt.Sprintf("\x1b[%sm\x1b[1m%s\x1b[0m %s", color, prefix, text)
 }
 
-//AddWarning adds a warning message to the given Report. If args... are given,
-//fmt.Sprintf() is applied.
-func (r *Report) AddWarning(text string, args ...interface{}) { r.addMessage("33", ">>", text, args...) }
-
 //AddError adds an error message to the given Report. If args... are given,
 //fmt.Sprintf() is applied.
 func (r *Report) AddError(text string, args ...interface{}) { r.addMessage("31", "!!", text, args...) }
-
-//AddLog adds log text to the given Report. Log text is unstructured, and is
-//printed as a separate paragraph after everything else.
-func (r *Report) AddLog(text string) {
-	r.logText += text
-}
 
 var reportsWerePrinted bool
 
@@ -127,22 +107,5 @@ func (r *Report) Print() {
 	if r.msgText != "" {
 		out.Write([]byte(r.msgText))
 		out.Write([]byte{'\n'})
-	}
-
-	//print log text, if any
-	if r.logText != "" {
-		out.Write([]byte(r.logText))
-		if !strings.HasSuffix(r.logText, "\n") {
-			out.Write([]byte{'\n'})
-		}
-		out.Write([]byte{'\n'})
-	}
-}
-
-//PrintUnlessEmpty prints the full report on stdout if it has any warnings or
-//errors.
-func (r *Report) PrintUnlessEmpty() {
-	if r.msgText != "" {
-		r.Print()
 	}
 }
