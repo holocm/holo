@@ -190,9 +190,7 @@ func commandDiff(entities []*impl.Entity, options map[int]bool) {
 	for _, entity := range entities {
 		output, err := entity.RenderDiff()
 		if err != nil {
-			report := impl.Report{Action: "diff", Target: entity.EntityID()}
-			report.AddError(err.Error())
-			report.Print()
+			impl.Errorf("cannot diff %s: %s", entity.EntityID(), err.Error())
 		}
 		os.Stdout.Write(output)
 	}

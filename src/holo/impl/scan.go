@@ -44,7 +44,6 @@ func (p *Plugin) Scan() []*Entity {
 	lines := strings.Split(strings.TrimSpace(stdout), "\n")
 	lineRx := regexp.MustCompile(`^\s*([^:]+): (.+)\s*$`)
 	actionRx := regexp.MustCompile(`^([^()]+) \((.+)\)$`)
-	report := Report{Action: "scan with plugin", Target: p.ID()}
 	hadError = false
 	var currentEntity *Entity
 	var result []*Entity
@@ -55,12 +54,12 @@ func (p *Plugin) Scan() []*Entity {
 		}
 
 		//keep format strings from getting too long
-		errorIntro := fmt.Sprintf("error in scan report, line %d", idx+1)
+		errorIntro := fmt.Sprintf("error in scan report of %s, line %d", p.ID(), idx+1)
 
 		//general line format is "key: value"
 		match := lineRx.FindStringSubmatch(line)
 		if match == nil {
-			report.AddError("%s: parse error (line was \"%s\")", errorIntro, line)
+			Errorf("%s: parse error (line was \"%s\")", errorIntro, line)
 			hadError = true
 			continue
 		}
@@ -76,7 +75,7 @@ func (p *Plugin) Scan() []*Entity {
 		case currentEntity == nil:
 			//if not, we need to be inside an entity
 			//(i.e. line with idx = 0 must start an entity)
-			report.AddError("%s: expected entity ID, found attribute \"%s\"", errorIntro, line)
+			Errorf("%s: expected entity ID, found attribute \"%s\"", errorIntro, line)
 			hadError = true
 		case key == "SOURCE":
 			currentEntity.sourceFiles = append(currentEntity.sourceFiles, value)
@@ -105,7 +104,6 @@ func (p *Plugin) Scan() []*Entity {
 
 	//report errors
 	if hadError {
-		report.Print()
 		return nil
 	}
 
@@ -119,17 +117,11 @@ func (p *Plugin) Scan() []*Entity {
 }
 
 func (p *Plugin) runScanOperation() (stdout string, hadError bool) {
-	var stdoutBuffer, stderrBuffer bytes.Buffer
-	err := p.Command([]string{"scan"}, &stdoutBuffer, &stderrBuffer, nil).Run()
+	var stdoutBuffer bytes.Buffer
+	err := p.Command([]string{"scan"}, &stdoutBuffer, os.Stderr, nil).Run()
 
-	//report any errors or error output
-	if err != nil || stderrBuffer.Len() > 0 {
-		report := Report{Action: "scan with plugin", Target: p.ID()}
-		if err != nil {
-			report.AddError(err.Error())
-		}
-		report.Print()
-		fmt.Fprintf(os.Stderr, "\n%s\n\n", strings.TrimSpace(string(stderrBuffer.Bytes())))
+	if err != nil {
+		Errorf("scan with plugin %s failed: %s", p.ID(), err.Error())
 	}
 
 	return string(stdoutBuffer.Bytes()), err != nil

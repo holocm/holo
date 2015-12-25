@@ -28,6 +28,17 @@ import (
 	"strings"
 )
 
+//Errorf formats and prints an error message on stderr.
+func Errorf(text string, args ...interface{}) {
+	if len(args) > 0 {
+		text = fmt.Sprintf(text, args...)
+	}
+	if !strings.HasSuffix(text, "\n") {
+		text += "\n"
+	}
+	fmt.Fprintf(os.Stderr, "\x1b[31m\x1b[1m>>\x1b[0m %s", text)
+}
+
 type reportLine struct {
 	key   string
 	value string

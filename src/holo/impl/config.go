@@ -53,9 +53,7 @@ func ReadConfiguration() *Configuration {
 
 	contents, err := ioutil.ReadFile(path)
 	if err != nil {
-		r := Report{Action: "read", Target: path}
-		r.AddError(err.Error())
-		r.Print()
+		Errorf("cannot read %s: %s", path, err.Error())
 		return nil
 	}
 
@@ -82,30 +80,26 @@ func ReadConfiguration() *Configuration {
 			continue
 		} else {
 			//unknown line
-			r := Report{Action: "read", Target: path}
-			r.AddError("unknown command: %s", line)
-			r.Print()
+			Errorf("cannot parse %s: unknown command: %s", path, line)
 			return nil
 		}
 	}
 
 	//check existence of resource directories
-	errorReport := Report{Action: "Errors occurred during", Target: "plugin discovery"}
 	hasError := false
 	for _, plugin := range result.Plugins {
 		dir := plugin.ResourceDirectory()
 		fi, err := os.Stat(dir)
 		switch {
 		case err != nil:
-			errorReport.AddError("Cannot open %s: %s", dir, err.Error())
+			Errorf("cannot open %s: %s", dir, err.Error())
 			hasError = true
 		case !fi.IsDir():
-			errorReport.AddError("Cannot open %s: not a directory!", dir)
+			Errorf("cannot open %s: not a directory!", dir)
 			hasError = true
 		}
 	}
 	if hasError {
-		errorReport.Print()
 		return nil
 	}
 
@@ -115,13 +109,12 @@ func ReadConfiguration() *Configuration {
 		for _, dir := range dirs {
 			err := os.MkdirAll(dir, 0755)
 			if err != nil {
-				errorReport.AddError(err.Error())
+				Errorf(err.Error())
 				hasError = true
 			}
 		}
 	}
 	if hasError {
-		errorReport.Print()
 		return nil
 	}
 

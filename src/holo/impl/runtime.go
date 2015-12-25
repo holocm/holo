@@ -31,10 +31,8 @@ func init() {
 	cachePath = filepath.Join(RootDirectory(), "tmp/holo-cache")
 	err := doInit()
 	if err != nil {
-		r := Report{Action: "Errors occurred during", Target: "startup"}
-		r.AddError(err.Error())
-		r.Print()
-		panic("startup failed")
+		Errorf(err.Error())
+		os.Exit(255)
 	}
 }
 
