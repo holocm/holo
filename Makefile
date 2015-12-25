@@ -18,6 +18,7 @@ build/man/%: doc/%.pod src/holo/main.go
 
 test: check # just a synonym
 check: default
+	@go test ./src/holo/impl
 	@env HOLO_BINARY=../../build/holo bash src/holo-test holo $(sort $(wildcard test/??-*))
 
 install: default src/holorc src/holo-test util/autocomplete.bash util/autocomplete.zsh
