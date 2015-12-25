@@ -181,7 +181,7 @@ func commandScan(entities []*impl.Entity, options map[int]bool) {
 		if isShort {
 			fmt.Println(entity.EntityID())
 		} else {
-			entity.Report().Print()
+			entity.PrintReport(false)
 		}
 	}
 }

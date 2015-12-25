@@ -35,7 +35,7 @@ type ParagraphWriter struct {
 
 //Stdout is an alias of os.Stdout with the correct type, so custom functions
 //can be called.
-var Stdout = ParagraphWriter{Writer: os.Stdout}
+var Stdout = &ParagraphWriter{Writer: os.Stdout}
 
 //Write implements the io.Writer interface.
 func (w *ParagraphWriter) Write(p []byte) (n int, e error) {
@@ -61,6 +61,9 @@ func (w *ParagraphWriter) Write(p []byte) (n int, e error) {
 
 //EndParagraph inserts newlines to start the next paragraph of output.
 func (w *ParagraphWriter) EndParagraph() {
+	if !w.hadOutput {
+		return
+	}
 	for w.trailingNewlineCount < 2 {
 		w.Write([]byte{'\n'})
 	}

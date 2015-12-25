@@ -60,27 +60,37 @@ func (e *Entity) MatchesSelector(value string) bool {
 	return false
 }
 
-//Report generates a Report describing this Entity.
-func (e *Entity) Report() *Report {
-	r := Report{Target: e.id, State: e.actionReason}
-	for _, infoLine := range e.infoLines {
-		r.AddLine(infoLine.attribute, infoLine.value)
+//PrintReport prints the scan report describing this Entity.
+func (e *Entity) PrintReport(withAction bool) {
+	//print initial line with action and entity ID
+	//(note that Stdout != os.Stdout)
+	var lineFormat string
+	if e.actionVerb == "" || !withAction {
+		lineFormat = "%12s %s\n"
+		fmt.Fprintf(Stdout, "\x1b[1m%s\x1b[0m", e.id)
+	} else {
+		lineFormat = fmt.Sprintf("%%%ds %%s\n", len(e.actionVerb))
+		fmt.Fprintf(Stdout, "%s \x1b[1m%s\x1b[0m", e.actionVerb, e.id)
 	}
-	return &r
+	if e.actionReason == "" {
+		Stdout.Write([]byte{'\n'})
+	} else {
+		fmt.Fprintf(Stdout, " (%s)\n", e.actionReason)
+	}
+
+	//print info lines
+	for _, line := range e.infoLines {
+		fmt.Fprintf(Stdout, lineFormat, line.attribute, line.value)
+	}
+	Stdout.EndParagraph()
 }
 
 //Apply performs the complete application algorithm for the given Entity.
 func (e *Entity) Apply(withForce bool) {
 	err := e.doApply(withForce)
 	if err != nil {
-		fmt.Printf("\x1b[31m\x1b[1m!!\x1b[0m %s\n\n", err.Error())
+		Errorf(err.Error())
 	}
-}
-
-func (e *Entity) printApplyReport() {
-	r := e.Report()
-	r.Action = e.actionVerb
-	r.Print()
 }
 
 func (e *Entity) doApply(withForce bool) error {
@@ -94,7 +104,7 @@ func (e *Entity) doApply(withForce bool) error {
 	//writes into and that we read from
 	cmdReader, cmdWriterForPlugin, err := os.Pipe()
 	if err != nil {
-		e.printApplyReport()
+		e.PrintReport(true)
 		return err
 	}
 
@@ -106,19 +116,19 @@ func (e *Entity) doApply(withForce bool) error {
 	cmd := e.plugin.Command([]string{command, e.id}, &output, &output, cmdWriterForPlugin)
 	err = cmd.Start() //cannot use Run() since we need to read from the pipe before the plugin exits
 	if err != nil {
-		e.printApplyReport()
+		e.PrintReport(true)
 		return err
 	}
 
 	cmdWriterForPlugin.Close() //or next line will block (see Plugin.Command docs)
 	cmdBytes, err := ioutil.ReadAll(cmdReader)
 	if err != nil {
-		e.printApplyReport()
+		e.PrintReport(true)
 		return err
 	}
 	err = cmdReader.Close()
 	if err != nil {
-		e.printApplyReport()
+		e.PrintReport(true)
 		return err
 	}
 	err = cmd.Wait()
@@ -135,18 +145,13 @@ func (e *Entity) doApply(withForce bool) error {
 		}
 	}
 	if showReport {
-		e.printApplyReport()
+		e.PrintReport(true)
 	}
 
-	//if output was written, insert an empty line to preserve our own paragraph layout
+	//forward stdout
 	if output.Len() > 0 {
-		outputBytes := output.Bytes()
-		os.Stdout.Write(outputBytes)
-		if bytes.HasSuffix(outputBytes, []byte("\n")) {
-			os.Stdout.Write([]byte("\n"))
-		} else {
-			os.Stdout.Write([]byte("\n\n"))
-		}
+		Stdout.Write(output.Bytes())
+		Stdout.EndParagraph()
 	}
 
 	return err

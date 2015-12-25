@@ -88,4 +88,11 @@ func TestParagraphWriter(t *testing.T) {
 		w.Write([]byte("bbb"))
 		w.EndParagraph()
 	})
+
+	//check EndParagraph that is called before any output is printed
+	checkParagraphWriter(t, "\naaa\n\n", func(w *ParagraphWriter) {
+		w.EndParagraph()
+		w.Write([]byte("aaa"))
+		w.EndParagraph()
+	})
 }
