@@ -18,7 +18,7 @@
 *
 *******************************************************************************/
 
-package plugins
+package impl
 
 //TODO: A lot of this file is redundant and can probably be inlined or deleted.
 

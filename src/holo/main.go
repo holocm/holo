@@ -24,7 +24,7 @@ import (
 	"fmt"
 	"os"
 
-	"./plugins"
+	"./impl"
 )
 
 // #include <locale.h>
@@ -61,7 +61,7 @@ func main() {
 	}
 
 	//check that it is a known command word
-	var command func([]*plugins.Entity, map[int]bool)
+	var command func([]*impl.Entity, map[int]bool)
 	knownOpts := make(map[string]int)
 	switch os.Args[1] {
 	case "apply":
@@ -81,7 +81,7 @@ func main() {
 	}
 
 	//load configuration
-	config := plugins.ReadConfiguration()
+	config := impl.ReadConfiguration()
 	if config == nil {
 		//some fatal error occurred - it was already reported, so just exit
 		os.Exit(255)
@@ -103,7 +103,7 @@ func main() {
 	}
 
 	//ask all plugins to scan for entities
-	var entities []*plugins.Entity
+	var entities []*impl.Entity
 	for _, plugin := range config.Plugins {
 		pluginEntities := plugin.Scan()
 		if pluginEntities == nil {
@@ -115,7 +115,7 @@ func main() {
 
 	//if there are selectors, check which entities have been selected by them
 	if len(selectors) > 0 {
-		selectedEntities := make([]*plugins.Entity, 0, len(entities))
+		selectedEntities := make([]*impl.Entity, 0, len(entities))
 		for _, entity := range entities {
 			isEntitySelected := false
 			for _, selector := range selectors {
@@ -156,7 +156,7 @@ func main() {
 	command(entities, options)
 
 	//cleanup
-	plugins.CleanupRuntimeCache()
+	impl.CleanupRuntimeCache()
 }
 
 func commandHelp() {
@@ -168,14 +168,14 @@ func commandHelp() {
 	fmt.Printf("\nSee `man 8 holo` for details.\n")
 }
 
-func commandApply(entities []*plugins.Entity, options map[int]bool) {
+func commandApply(entities []*impl.Entity, options map[int]bool) {
 	withForce := options[optionApplyForce]
 	for _, entity := range entities {
 		entity.Apply(withForce)
 	}
 }
 
-func commandScan(entities []*plugins.Entity, options map[int]bool) {
+func commandScan(entities []*impl.Entity, options map[int]bool) {
 	isShort := options[optionScanShort]
 	for _, entity := range entities {
 		if isShort {
@@ -186,11 +186,11 @@ func commandScan(entities []*plugins.Entity, options map[int]bool) {
 	}
 }
 
-func commandDiff(entities []*plugins.Entity, options map[int]bool) {
+func commandDiff(entities []*impl.Entity, options map[int]bool) {
 	for _, entity := range entities {
 		output, err := entity.RenderDiff()
 		if err != nil {
-			report := plugins.Report{Action: "diff", Target: entity.EntityID()}
+			report := impl.Report{Action: "diff", Target: entity.EntityID()}
 			report.AddError(err.Error())
 			report.Print()
 		}
