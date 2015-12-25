@@ -20,10 +20,9 @@
 
 package impl
 
-//TODO: A lot of this file is redundant and can probably be inlined or deleted.
-
 import (
 	"fmt"
+	"io"
 	"os"
 	"strings"
 )
@@ -37,4 +36,48 @@ func Errorf(text string, args ...interface{}) {
 		text += "\n"
 	}
 	fmt.Fprintf(os.Stderr, "\x1b[31m\x1b[1m>>\x1b[0m %s", text)
+}
+
+//ParagraphWriter is an io.Writer that forwards to another io.Writer, but
+//ensures that input is written in paragraphs, with newlines in between.
+type ParagraphWriter struct {
+	Writer               io.Writer
+	hadOutput            bool
+	trailingNewlineCount int
+}
+
+//Stdout is an alias of os.Stdout with the correct type, so custom functions
+//can be called.
+var Stdout = &ParagraphWriter{Writer: os.Stdout}
+
+//Write implements the io.Writer interface.
+func (w *ParagraphWriter) Write(p []byte) (n int, e error) {
+	//print the initial newline before any other output
+	if !w.hadOutput {
+		w.Writer.Write([]byte{'\n'})
+		w.hadOutput = true
+	}
+
+	//count trailing newlines on the output that was seen
+	cnt := 0
+	for cnt < len(p) && p[len(p)-1-cnt] == '\n' {
+		cnt++
+	}
+	if cnt == len(p) {
+		w.trailingNewlineCount += cnt
+	} else {
+		w.trailingNewlineCount = cnt
+	}
+
+	return w.Writer.Write(p)
+}
+
+//EndParagraph inserts newlines to start the next paragraph of output.
+func (w *ParagraphWriter) EndParagraph() {
+	if !w.hadOutput {
+		return
+	}
+	for w.trailingNewlineCount < 2 {
+		w.Write([]byte{'\n'})
+	}
 }
