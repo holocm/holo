@@ -83,6 +83,7 @@ func (e *Entity) PrintReport(withAction bool) {
 		fmt.Fprintf(Stdout, lineFormat, line.attribute, line.value)
 	}
 	Stdout.EndParagraph()
+	os.Stdout.Sync()
 }
 
 //Apply performs the complete application algorithm for the given Entity.
@@ -108,27 +109,31 @@ func (e *Entity) doApply(withForce bool) error {
 		return err
 	}
 
-	//TODO: This implementation is stupid and buffers all the output before
-	//deciding what to print and how. Technically we could just patch stdout
-	//and stderr through directly, but there is a caveat: We always want the
-	//scan report in front of all output.
-	var output bytes.Buffer
-	cmd := e.plugin.Command([]string{command, e.id}, &output, &output, cmdWriterForPlugin)
+	//track whether the report was already printed
+	tracker := PrologueTracker{Printer: func() { e.PrintReport(true) }}
+
+	//execute apply operation
+	cmd := e.plugin.Command(
+		[]string{command, e.id},
+		&PrologueWriter{Tracker: &tracker, Writer: Stdout},
+		&PrologueWriter{Tracker: &tracker, Writer: Stdout}, //FIXME: should be Stderr
+		cmdWriterForPlugin,
+	)
 	err = cmd.Start() //cannot use Run() since we need to read from the pipe before the plugin exits
 	if err != nil {
-		e.PrintReport(true)
+		tracker.Exec()
 		return err
 	}
 
 	cmdWriterForPlugin.Close() //or next line will block (see Plugin.Command docs)
 	cmdBytes, err := ioutil.ReadAll(cmdReader)
 	if err != nil {
-		e.PrintReport(true)
+		tracker.Exec()
 		return err
 	}
 	err = cmdReader.Close()
 	if err != nil {
-		e.PrintReport(true)
+		tracker.Exec()
 		return err
 	}
 	err = cmd.Wait()
@@ -136,7 +141,7 @@ func (e *Entity) doApply(withForce bool) error {
 	//only print report if there was output, or if the plugin provisioned the
 	//entity (as signaled by the absence of the "not changed\n" command")
 	showReport := true
-	if output.Len() == 0 && err == nil {
+	if err == nil {
 		cmdLines := bytes.Split(cmdBytes, []byte("\n"))
 		for _, line := range cmdLines {
 			if string(line) == "not changed" {
@@ -145,14 +150,10 @@ func (e *Entity) doApply(withForce bool) error {
 		}
 	}
 	if showReport {
-		e.PrintReport(true)
+		tracker.Exec()
 	}
 
-	//forward stdout
-	if output.Len() > 0 {
-		Stdout.Write(output.Bytes())
-		Stdout.EndParagraph()
-	}
+	Stdout.EndParagraph()
 
 	return err
 }

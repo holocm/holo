@@ -46,8 +46,7 @@ type ParagraphWriter struct {
 	trailingNewlineCount int
 }
 
-//Stdout is an alias of os.Stdout with the correct type, so custom functions
-//can be called.
+//Stdout wraps os.Stdout into a ParagraphWriter.
 var Stdout = &ParagraphWriter{Writer: os.Stdout}
 
 //Write implements the io.Writer interface.
@@ -80,4 +79,44 @@ func (w *ParagraphWriter) EndParagraph() {
 	for w.trailingNewlineCount < 2 {
 		w.Write([]byte{'\n'})
 	}
+}
+
+//PrologueTracker is used in conjunction with PrologueWriter. See explanation
+//over there.
+type PrologueTracker struct {
+	Printer func()
+}
+
+//Exec prints the prologue if it has not been printed before.
+func (t *PrologueTracker) Exec() {
+	//print prologue exactly once
+	if t.Printer != nil {
+		t.Printer()
+		t.Printer = nil
+	}
+}
+
+//PrologueWriter is an io.Writer that ensures that a prologue is printed before
+//any writes to the underlying io.Writer occur. This is used by entity.Apply()
+//to print the scan report before any other output, but only if there is output.
+//
+//Since, in this usecase, both stdout and stderr need to be PrologueWriter
+//instances, the function that prints the prologue must be shared by both, and
+//it needs to be made sure that the prologue is only printed once. Thus the
+//prologue is tracked with a PrologueTracker instance.
+type PrologueWriter struct {
+	Writer  io.Writer
+	Tracker *PrologueTracker
+}
+
+//Write implements the io.Writer interface.
+func (w *PrologueWriter) Write(p []byte) (n int, e error) {
+	//skip empty writes
+	if len(p) == 0 {
+		return 0, nil
+	}
+
+	//ensure that prologue is printed
+	w.Tracker.Exec()
+	return w.Writer.Write(p)
 }

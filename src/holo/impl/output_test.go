@@ -25,15 +25,18 @@ import (
 	"testing"
 )
 
+func checkStringEqual(t *testing.T, varName, expected, actual string) {
+	if expected != actual {
+		t.Errorf("expected %s = %#v, but got %#v", varName, expected, actual)
+	}
+}
+
 func checkParagraphWriter(t *testing.T, expected string, callback func(w *ParagraphWriter)) {
 	var b bytes.Buffer
 	w := ParagraphWriter{Writer: &b}
 	callback(&w)
 
-	result := string(b.Bytes())
-	if result != expected {
-		t.Errorf("expected output %#v but got %#v", expected, result)
-	}
+	checkStringEqual(t, "output", expected, string(b.Bytes()))
 }
 
 func TestParagraphWriter(t *testing.T) {
@@ -95,4 +98,34 @@ func TestParagraphWriter(t *testing.T) {
 		w.Write([]byte("aaa"))
 		w.EndParagraph()
 	})
+}
+
+func TestPrologueTracker(t *testing.T) {
+	x := 0
+	tracker := PrologueTracker{Printer: func() { x++ }}
+
+	//check that tracker.Exec() only ever calls the callback once
+	for idx := 0; idx < 3; idx++ {
+		tracker.Exec()
+		if x != 1 {
+			Errorf("pass %d: expected 1 but got %d", idx, x)
+		}
+	}
+}
+
+func TestPrologueWriter(t *testing.T) {
+	var buf bytes.Buffer
+
+	//prologue is "PPP"
+	tracker := PrologueTracker{Printer: func() { buf.Write([]byte("PPP")) }}
+	writer := PrologueWriter{Writer: &buf, Tracker: &tracker}
+
+	//check that empty write does not produce the prologue
+	writer.Write(nil)
+	writer.Write([]byte(""))
+	checkStringEqual(t, "buffer content", "", string(buf.Bytes()))
+
+	//check that non-empty write prepends the prologue
+	writer.Write([]byte("xxx"))
+	checkStringEqual(t, "buffer content", "PPPxxx", string(buf.Bytes()))
 }
