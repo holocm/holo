@@ -71,7 +71,10 @@ C</usr/share/holo/files/40-desktop/etc/sddm/sddm.conf>).
 =item B<scan> [I<-s|--short>] [I<selector> ...]
 
 Prompt all plugins to scan for entities and list all known entities (or, if
-selectors are given, all entities matching these selectors).
+selectors are given, all entities matching these selectors) including the
+information returned from plugins about these entities.
+
+With C<--short>, only list the entity names.
 
 =item B<apply> [I<-f|--force>] [I<selector> ...]
 
