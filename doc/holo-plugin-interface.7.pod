@@ -45,6 +45,25 @@ It is RECOMMENDED that plugins install a holoscript to achieve this:
     cat
     echo plugin foosql
 
+Then add the following install/update/remove scripts to the plugin's package
+(function names may differ depending on the package format):
+
+    post_install() {
+        holo apply file:/etc/holorc
+    }
+    post_update() {
+        holo apply file:/etc/holorc
+    }
+    post_remove() {
+        mkdir /usr/share/holo/$PLUGIN_ID
+        holo apply file:/etc/holorc
+        rmdir /usr/share/holo/$PLUGIN_ID
+    }
+
+`post_remove` is slightly more complicated because the
+`/usr/share/holo/$PLUGIN_ID` directory is already gone, but Holo will refuse to
+start up if it is missing and `plugin $PLUGIN_ID` is still in the `holorc`.
+
 =head2 Runtime environment
 
 =head3 HOLO_API_VERSION
