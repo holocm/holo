@@ -30,7 +30,8 @@ pattern of putting a number at the start of the disambiguator is not required,
 but useful to control the ordering of source files.
 
 Each target file that has such source files is an entity within Holo. Its entity
-is C<file:$target> where C<$target> is the absolute path to the target file.
+name is C<file:$target> where C<$target> is the absolute path to the target
+file.
 
 =head2 Application strategy
 

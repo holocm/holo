@@ -195,7 +195,7 @@ If the plugin finds that the selected entity is already in the desired state, so
 that no changes need to made to it, it can write the message C<"not changed\n">
 to file descriptor no. 3 (which has been opened by Holo). Holo will then format
 its output accordingly (at the time of this writing, by omitting the entity from
-its output).
+the output).
 
 =head3 The C<force-apply> operation
 
@@ -227,11 +227,11 @@ exit with non-zero exit code.
 
 For entities that are not backed by a file, the plugin is allowed to make up a
 diff by choosing a useful textual representation of the entity. An example of
-this is the C<users-groups> plugin included in Holo.
+this is the C<holo-users-groups> plugin.
 
 =head1 SEE ALSO
 
-L<holo(8)>
+L<holo(8)>, L<holo-test(7)> (test runner for Holo plugins)
 
 =head1 AUTHOR
 
