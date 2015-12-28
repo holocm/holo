@@ -1,0 +1,23 @@
+>> ./etc/foo.conf = regular
+aaa
+bbb
+ccc
+ddd
+>> ./etc/holorc = symlink
+../../../holorc
+>> ./usr/share/holo/files/01-foo-bar/etc/foo.conf.holoscript = regular
+#!/bin/sh
+cat
+echo ddd
+>> ./usr/share/holo/files/01-foo/etc/foo.conf.holoscript = regular
+#!/bin/sh
+cat
+echo ccc
+>> ./var/lib/holo/files/base/etc/foo.conf = regular
+aaa
+bbb
+>> ./var/lib/holo/files/provisioned/etc/foo.conf = regular
+aaa
+bbb
+ccc
+ddd

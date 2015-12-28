@@ -60,9 +60,9 @@ Then add the following install/update/remove scripts to the plugin's package
         rmdir /usr/share/holo/$PLUGIN_ID
     }
 
-`post_remove` is slightly more complicated because the
-`/usr/share/holo/$PLUGIN_ID` directory is already gone, but Holo will refuse to
-start up if it is missing and `plugin $PLUGIN_ID` is still in the `holorc`.
+C<post_remove> is slightly more complicated because the
+C</usr/share/holo/$PLUGIN_ID> directory is already gone, but Holo will refuse to
+start up if it is missing and C<plugin $PLUGIN_ID> is still in the C<holorc>.
 
 =head2 Runtime environment
 

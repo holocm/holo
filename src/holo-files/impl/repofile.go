@@ -63,6 +63,16 @@ func (file RepoFile) TargetPath() string {
 	return filepath.Join(common.TargetDirectory(), relPath)
 }
 
+//Disambiguator returns the disambiguator, i.e. the Path() element before the
+//TargetPath() that disambiguates multiple repo entries for the same target file.
+func (file RepoFile) Disambiguator() string {
+	//make path relative to ResourceDirectory()
+	relPath, _ := filepath.Rel(common.ResourceDirectory(), file.Path())
+	//the disambiguator is the first path element in there
+	segments := strings.SplitN(relPath, fmt.Sprintf("%c", filepath.Separator), 2)
+	return segments[0]
+}
+
 //ApplicationStrategy returns the human-readable name for the strategy that
 //will be employed to apply this repo file.
 func (file RepoFile) ApplicationStrategy() string {
@@ -85,5 +95,5 @@ func (file RepoFile) DiscardsPreviousBuffer() bool {
 type RepoFiles []RepoFile
 
 func (f RepoFiles) Len() int           { return len(f) }
-func (f RepoFiles) Less(i, j int) bool { return f[i] < f[j] }
+func (f RepoFiles) Less(i, j int) bool { return f[i].Disambiguator() < f[j].Disambiguator() }
 func (f RepoFiles) Swap(i, j int)      { f[i], f[j] = f[j], f[i] }
