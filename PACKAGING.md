@@ -5,12 +5,12 @@ Holo and its plugins should be straight-forward.
 
 ## Dependencies
 
-Run-time dependencies:
+Run-time dependencies for this repo:
 
 * `git diff` is used by `holo-files` for file diffs. If you want to make this
   an optional dependency, please mark it as "strongly suggested" etc.
 
-Build-time dependencies:
+Build-time dependencies for this repo:
 
 * `go`
 * `perl` (only required if you run `make check`)
@@ -31,7 +31,8 @@ will autogenerate depedencies on these packages when appropriate.
 ### Holo includes holo-files
 
 Holo includes the `holo-files` plugin. Since `holo-build` will also generate
-dependencies on `holo-files`, the `holo` package must provide this package.
+dependencies on `holo-files`, the `holo` package must have a Provides relation
+(or whatever this is called in your package format) to `holo-files`.
 
 ### Verify Holo API version
 
@@ -44,7 +45,7 @@ Changes to the API version will be noted in the release notes. If you don't
 know which API version is current, look for `HOLO_API_VERSION` in the source
 code. For example:
 
-    $ ack HOLO_API_VERSION src
+    $ ack HOLO_API_VERSION ./src/
     src/holo/impl/plugin.go
     92:     env = append(env, "HOLO_API_VERSION=2")
 
