@@ -24,7 +24,6 @@ sudo make install
 
 ## Documentation
 
-User documentation is currently missing, but will be added soon. (There is some
-documentation in the manpage of Holo itself, though.)
+User documentation is available in [man page form](doc/holo-users-groups.8.pod).
 
 For further information, visit [holocm.org](http://holocm.org).
