@@ -1,0 +1,53 @@
+=encoding UTF-8
+
+=head1 NAME
+
+holo-ssh-keys - Holo plugin to provision C<.ssh/authorized_keys>
+
+=head1 DESCRIPTION
+
+This plugin provisions SSH keys into the C<$HOME/.ssh/authorized_keys> of a
+user. Key files are found at F</usr/share/holo/ssh-keys/$user/$ident.pub>,
+where C<$user> is the name of the user whose C<authorized_keys> will be edited.
+Each key file is an entity within Holo, with the entity name
+C<ssh-key:$user/$ident>. For example:
+
+    $ holo scan ssh-key:john-doe/login
+
+    ssh-key:john-doe/login
+        found in /usr/share/holo/ssh-keys/john-doe/login.pub
+          key is 2048 SHA256:vogJG+8rxIB80hEp8OCJLUQgtfOajXHudPp6YvDvY8W john@example.org (RSA)
+
+The last information line contains the output of C<ssh-keygen -l -f $file>.
+If the file contains multiple public keys, there will appear one such line per
+key.
+
+The format of SSH public key files is documented in L<sshd(8)> in the section
+I<authorized_keys file format>.
+
+=head2 Apply operation
+
+When a key file is applied, all keys in it will be added to
+C<.ssh/authorized_keys> (unless already present). To track which keys were
+provisioned by Holo, the comment field of the key is replaced by
+C<holo=$entity_name>.
+
+Applying a key file entity will also remove all keys from
+C<.ssh/authorized_keys> which are tagged with this entity name, but are not
+present in the source file for this entity. Keys can thus be replaced in or
+removed from the key file, and all changes will be propagated into
+C<.ssh/authorized_keys> automatically (without requiring C<--force>).
+
+=head1 SEE ALSO
+
+L<holo(8)> provides the user interface for using this plugin.
+
+=head1 AUTHOR
+
+Stefan Majewsky
+
+Further documentation is available at the project homepage: http://holocm.org
+
+Please report any issues and feature requests at Github: http://github.com/holocm/holo-ssh-keys/issues
+
+=cut
