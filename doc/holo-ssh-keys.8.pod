@@ -10,11 +10,11 @@ This plugin provisions SSH keys into the C<$HOME/.ssh/authorized_keys> of a
 user. Key files are found at F</usr/share/holo/ssh-keys/$user/$ident.pub>,
 where C<$user> is the name of the user whose C<authorized_keys> will be edited.
 Each key file is an entity within Holo, with the entity name
-C<ssh-key:$user/$ident>. For example:
+C<ssh-keyset:$user/$ident>. For example:
 
-    $ holo scan ssh-key:john-doe/login
+    $ holo scan ssh-keyset:john-doe/login
 
-    ssh-key:john-doe/login
+    ssh-keyset:john-doe/login
         found in /usr/share/holo/ssh-keys/john-doe/login.pub
           key is 2048 SHA256:vogJG+8rxIB80hEp8OCJLUQgtfOajXHudPp6YvDvY8W john@example.org (RSA)
 

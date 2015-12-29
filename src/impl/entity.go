@@ -33,7 +33,7 @@ type Entity struct {
 }
 
 var userNameRxStr = `[a-z_][a-z0-9_-]*\$?` //from man:useradd(8)
-var entityNameRx = regexp.MustCompile(`^ssh-key:(` + userNameRxStr + `)/([^/]+)$`)
+var entityNameRx = regexp.MustCompile(`^ssh-keyset:(` + userNameRxStr + `)/([^/]+)$`)
 
 //NewEntityFromName constructs a new Entity from the entity name.
 func NewEntityFromName(entityName string) (*Entity, error) {
@@ -50,5 +50,5 @@ func NewEntityFromName(entityName string) (*Entity, error) {
 
 //Name returns the entity name.
 func (e *Entity) Name() string {
-	return fmt.Sprintf("ssh-key:%s/%s", e.UserName, e.FileName)
+	return fmt.Sprintf("ssh-keyset:%s/%s", e.UserName, e.FileName)
 }
