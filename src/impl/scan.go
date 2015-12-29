@@ -85,7 +85,7 @@ func scanDirectory(path string, entityNameWasSeen *map[string]bool) []error {
 			}
 
 			//calculate fingerprints for all keys
-			fingerprints := make([]string, len(keys))
+			fingerprints := make([]string, 0, len(keys))
 			for _, key := range keys {
 				fp, err := getFingerprint(key)
 				if err != nil {
@@ -112,7 +112,8 @@ func scanDirectory(path string, entityNameWasSeen *map[string]bool) []error {
 		}
 	}
 
-	//TODO: find orphaned keys by checking existing .ssh/authorized_keys files
+	//TODO: find orphaned keys (since users are not necessarily in passwd,
+	//store in HOLO_STATE_DIR which users we provisioned keys to)
 
 	return errs
 }
