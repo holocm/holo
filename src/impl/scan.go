@@ -112,8 +112,16 @@ func scanDirectory(path string, entityNameWasSeen *map[string]bool) []error {
 		}
 	}
 
-	//TODO: find orphaned keys (since users are not necessarily in passwd,
-	//store in HOLO_STATE_DIR which users we provisioned keys to)
+	//find orphaned entities (which we once provisioned, but for which there is
+	//no source file anymore)
+	allEntities, err := ProvisionedEntities()
+	if err != nil {
+		errs = append(errs, err)
+	}
+	for _, entityName := range allEntities {
+		fmt.Println("ENTITY: %s\n", entityName)
+		fmt.Println("ACTION: Scrubbing (source file has been deleted)")
+	}
 
 	return errs
 }
