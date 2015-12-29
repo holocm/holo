@@ -87,7 +87,7 @@ func scanDirectory(path string, entityNameWasSeen *map[string]bool) []error {
 			//calculate fingerprints for all keys
 			fingerprints := make([]string, 0, len(keys))
 			for _, key := range keys {
-				fp, err := getFingerprint(key)
+				fp, err := getFingerprint(key.String())
 				if err != nil {
 					errs = append(errs, err)
 				} else {
