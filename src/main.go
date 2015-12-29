@@ -48,7 +48,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	//TODO
-	fmt.Fprintf(os.Stderr, "TODO: %s operation for %s", os.Args[1], entity.Name())
+	fmt.Fprintf(os.Stderr, "TODO: %s operation for %s", os.Args[1], entity.Name) //TODO
 	os.Exit(255)
 }
