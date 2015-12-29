@@ -22,11 +22,9 @@ package impl
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
 )
 
 //Entity represents a key file in the source directory, and the keys
@@ -82,19 +80,75 @@ func NewEntityFromKeyfilePath(path string) (*Entity, error) {
 }
 
 //Keys lists the keys in the key file for this entity.
-func (e *Entity) Keys() ([]string, error) {
-	//read file
-	contents, err := ioutil.ReadFile(e.FilePath)
+func (e *Entity) Keys() ([]*Key, error) {
+	var result []*Key
+	err := KeyFile(e.FilePath).Walk(func(key *Key) {
+		result = append(result, key)
+	})
+
+	return result, err
+}
+
+//Apply applies this entity.
+func (e *Entity) Apply() error {
+	//get User instance (to locate the authorized_keys file)
+	user, err := NewUser(e.UserName)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	//split lines, filter empty and comments
-	lines := strings.Split(string(contents), "\n")
-	result := make([]string, 0, len(lines))
-	for _, line := range lines {
-		if line != "" && line[0] != '#' {
-			result = append(result, line)
+
+	//list keys in this entity's key file, setup data structure for tracking
+	//them during the traversal of authorized_keys
+	keys, err := e.Keys()
+	if err != nil {
+		return err
+	}
+	isKnownKey := make(map[string]*Key)
+	for _, key := range keys {
+		isKnownKey[key.Identifier()] = key
+	}
+
+	//process authorized_keys file
+	keyComment := "holo=" + e.Name
+	keyCallback := func(key *Key) *Key {
+		//ignore all keys not belonging to this entity
+		if key.Comment != keyComment {
+			return key
 		}
+		//discard key if we don't know about it
+		id := key.Identifier()
+		if isKnownKey[id] == nil {
+			return nil
+		}
+		//we know about it, so check it off our list and leave it as-is
+		delete(isKnownKey, id)
+		return key
 	}
-	return result, nil
+	endCallback := func() []*Key {
+		//all the keys remaining in isKnownKey are new and we add them now
+		result := make([]*Key, 0, len(isKnownKey))
+		for _, key := range isKnownKey {
+			key.Comment = keyComment
+			result = append(result, key)
+		}
+		return result
+	}
+	changed, err := user.KeyFile().Process(keyCallback, endCallback)
+	if err != nil {
+		return err
+	}
+	err = user.CheckPermissions()
+	if err != nil {
+		return err
+	}
+
+	//record whether there are keys provisioned for this user
+	SetEntityProvisioned(e.Name, len(keys) > 0)
+
+	//report whether entity was changed
+	if !changed {
+		_, err := os.NewFile(3, "file descriptor 3").Write([]byte("not changed\n"))
+		return err
+	}
+	return nil
 }

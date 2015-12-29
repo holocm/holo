@@ -21,11 +21,16 @@
 package impl
 
 import (
-	"errors"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"regexp"
 	"strings"
 )
+
+//KeyFile provides methods for reading and writing a file containing SSH public
+//keys.
+type KeyFile string
 
 //Key represents a single public key, i.e. a non-comment line in a KeyFile.
 type Key struct {
@@ -112,4 +117,95 @@ func (k *Key) String() string {
 		}
 	}
 	return strings.Join(fields, " ")
+}
+
+//Identifier is like String(), but omits the Comment. This can be used to
+//compare keys for functional identity.
+func (k *Key) Identifier() string {
+	copyOfKey := *k
+	copyOfKey.Comment = ""
+	return copyOfKey.String()
+}
+
+//Process reads the key file, pipes every key in it through keyCallback, runs
+//the endCallback in the end to add new lines, then writes the result if it has
+//changed.
+func (f KeyFile) Process(keyCallback func(key *Key) *Key, endCallback func() (newKeys []*Key)) (changed bool, err error) {
+	//the bulk is in doProcess(), this method just generates better errors
+	changed, err = f.doProcess(keyCallback, endCallback)
+	if err != nil {
+		err = fmt.Errorf("failure occurred while processing %s: %s", string(f), err.Error())
+	}
+	return
+}
+
+//Walk is the readonly variant of Process.
+func (f KeyFile) Walk(callback func(key *Key)) error {
+	_, err := f.Process(func(key *Key) *Key {
+		callback(key)
+		return key
+	}, nil)
+	return err
+}
+
+func (f KeyFile) doProcess(keyCallback func(key *Key) *Key, endCallback func() (newKeys []*Key)) (bool, error) {
+	//read file
+	contents, err := ioutil.ReadFile(string(f))
+	if err != nil {
+		if os.IsNotExist(err) {
+			contents = nil
+		} else {
+			return false, err
+		}
+	}
+
+	//go through the lines
+	lines := strings.Split(string(contents), "\n")
+	resultLines := make([]string, 0, len(lines))
+	changed := false
+	for _, line := range lines {
+		//leave empty lines and comments as-is
+		if line == "" || line[0] == '#' {
+			resultLines = append(resultLines, line)
+			continue
+		}
+
+		//all other lines must be valid keys
+		key, err := ParseKey(line)
+		if err != nil {
+			return false, err
+		}
+
+		newKey := keyCallback(key)
+		if key == newKey {
+			//key unchanged
+			resultLines = append(resultLines, line)
+		} else {
+			//replace line with newKey
+			if newKey != nil {
+				resultLines = append(resultLines, newKey.String())
+			}
+			changed = true
+		}
+	}
+
+	//check if more keys shall be appended
+	if endCallback != nil {
+		newKeys := endCallback()
+		if len(newKeys) > 0 {
+			for _, key := range newKeys {
+				resultLines = append(resultLines, key.String())
+			}
+			changed = true
+		}
+	}
+
+	//write file if we made changes
+	if !changed {
+		return false, nil
+	}
+	newContents := strings.Join(resultLines, "\n") + "\n"
+	//the only files that we will ever write are user's authorized_keys
+	//files, so it's a good idea to go with filemode 0600 from the start
+	return true, ioutil.WriteFile(string(f), []byte(newContents), 0600)
 }

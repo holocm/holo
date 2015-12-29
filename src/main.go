@@ -48,6 +48,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Fprintf(os.Stderr, "TODO: %s operation for %s", os.Args[1], entity.Name) //TODO
-	os.Exit(255)
+	switch os.Args[1] {
+	case "apply", "force-apply":
+		err := entity.Apply()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+		}
+	case "diff":
+		//TODO for now, just always show an empty diff, i.e. do nothing
+	}
 }
