@@ -160,8 +160,14 @@ func (f KeyFile) doProcess(keyCallback func(key *Key) *Key, endCallback func() (
 		}
 	}
 
+	//split into lines, but take care not to create any bogus empty lines
+	contentsStr := strings.TrimSuffix(string(contents), "\n")
+	lines := strings.Split(contentsStr, "\n")
+	if contentsStr == "" {
+		lines = nil
+	}
+
 	//go through the lines
-	lines := strings.Split(string(contents), "\n")
 	resultLines := make([]string, 0, len(lines))
 	changed := false
 	for _, line := range lines {
