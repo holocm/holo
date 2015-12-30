@@ -25,6 +25,9 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
+	"strconv"
+	"strings"
 )
 
 //Entity represents a key file in the source directory, and the keys
@@ -153,4 +156,97 @@ func (e *Entity) Apply() error {
 		return err
 	}
 	return nil
+}
+
+//RenderDiff produces a diff for this entity.
+func (e *Entity) RenderDiff() ([]byte, error) {
+	//get User instance (to locate the authorized_keys file)
+	user, err := NewUser(e.UserName)
+	if err != nil {
+		return nil, err
+	}
+
+	//walk authorized_keys file to find all keys provisioned for this entity
+	keyComment := "holo=" + e.Name
+	isProvisionedKey := make(map[string]*Key)
+	err = user.KeyFile().Walk(func(key *Key) {
+		if key.Comment == keyComment {
+			isProvisionedKey[key.Identifier()] = key
+		}
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	//list keys in this entity's key file, setup data structure for tracking
+	//them during the traversal of authorized_keys
+	keys, err := e.Keys()
+	if err != nil {
+		return nil, err
+	}
+
+	//produce the diff body
+	var lines []string
+	hasDiff := false
+	for _, key := range keys {
+		id := key.Identifier()
+		if isProvisionedKey[id] == nil {
+			lines = append(lines, fmt.Sprintf("-%s", key.String()))
+			hasDiff = true
+		} else {
+			lines = append(lines, fmt.Sprintf(" %s", key.String()))
+			delete(isProvisionedKey, id)
+		}
+	}
+	if !hasDiff && len(isProvisionedKey) == 0 {
+		return nil, nil //empty diff
+	}
+
+	keyIDs := make([]string, 0, len(isProvisionedKey))
+	for keyID := range isProvisionedKey {
+		keyIDs = append(keyIDs, keyID)
+	}
+	sort.Strings(keyIDs)
+	for _, keyID := range keyIDs {
+		lines = append(lines, fmt.Sprintf("+%s", isProvisionedKey[keyID].String()))
+	}
+
+	//add the headers
+	headerLines := []string{
+		"diff --holo " + e.Name,
+		"--- " + e.Name,
+		fmt.Sprintf("+++ %s[holo=%s]", user.KeyFile(), e.Name),
+		generateHunkHeader(lines),
+	}
+	allLines := append(headerLines, lines...)
+	return []byte(strings.Join(allLines, "\n") + "\n"), nil
+}
+
+func generateHunkHeader(lines []string) string {
+	//count lines for "@@ -from +to" hunk header
+	fromLines, toLines := 0, 0
+	for _, line := range lines {
+		switch line[0] {
+		case ' ':
+			fromLines++
+			toLines++
+		case '-':
+			fromLines++
+		case '+':
+			toLines++
+		}
+	}
+	return fmt.Sprintf("@@ -%s +%s", lineCountToString(fromLines), lineCountToString(toLines))
+}
+
+func lineCountToString(count int) string {
+	//format line count for use in hunk header of unified diff
+	switch count {
+	case 0:
+		return "0,0"
+	case 1:
+		return "1"
+	default:
+		return "1," + strconv.Itoa(count)
+	}
 }

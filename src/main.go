@@ -55,6 +55,10 @@ func main() {
 			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		}
 	case "diff":
-		//TODO for now, just always show an empty diff, i.e. do nothing
+		output, err := entity.RenderDiff()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+		}
+		os.Stdout.Write(output)
 	}
 }
