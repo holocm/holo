@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -200,12 +201,21 @@ func (f KeyFile) doProcess(keyCallback func(key *Key) *Key, endCallback func() (
 		}
 	}
 
-	//write file if we made changes
+	//if nothing changed, we're done
 	if !changed {
 		return false, nil
 	}
+
+	//create directories along the path
+	path := string(f)
+	err = os.MkdirAll(filepath.Dir(path), 0755)
+	if err != nil {
+		return false, err
+	}
+
+	//write new authorized_keys file
 	newContents := strings.Join(resultLines, "\n") + "\n"
 	//the only files that we will ever write are user's authorized_keys
 	//files, so it's a good idea to go with filemode 0600 from the start
-	return true, ioutil.WriteFile(string(f), []byte(newContents), 0600)
+	return true, ioutil.WriteFile(path, []byte(newContents), 0600)
 }

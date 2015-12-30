@@ -2,7 +2,7 @@ default: prepare-build build/holo-ssh-keys build/man/holo-ssh-keys.8
 
 prepare-build:
 	@mkdir -p build/man
-build/holo-ssh-keys: src/main.go # src/*/*.go
+build/holo-ssh-keys: src/main.go src/*/*.go
 	go build -o $@ $<
 
 # manpages are generated using pod2man (which comes with Perl and therefore
@@ -15,6 +15,7 @@ build/man/%: doc/%.pod
 test: check # just a synonym
 check: default
 	@go test ./src/impl
+	@holo-test holo-ssh-keys $(sort $(wildcard test/??-*))
 
 install: default src/holorc.holoscript
 	install -D -m 0755 build/holo-ssh-keys       "$(DESTDIR)/usr/lib/holo/holo-ssh-keys"

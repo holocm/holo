@@ -33,6 +33,9 @@ var stateFilePath = filepath.Join(os.Getenv("HOLO_STATE_DIR"), "provisioned-enti
 func ProvisionedEntities() ([]string, error) {
 	contents, err := ioutil.ReadFile(stateFilePath)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
 		return nil, err
 	}
 	str := strings.TrimSpace(string(contents))

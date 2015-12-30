@@ -60,7 +60,7 @@ func NewEntityFromName(entityName string) (*Entity, error) {
 	if match == nil {
 		return nil, fmt.Errorf("unacceptable entity name: '%s'", entityName)
 	}
-	return makeEntity(match[0], match[1]), nil
+	return makeEntity(match[1], match[2]), nil
 }
 
 //NewEntityFromKeyfilePath constructs a new Entity from the path to the key file.
@@ -76,7 +76,7 @@ func NewEntityFromKeyfilePath(path string) (*Entity, error) {
 	if match == nil {
 		return nil, fmt.Errorf("unacceptable source file path: '%s'", path)
 	}
-	return makeEntity(match[0], match[1]), nil
+	return makeEntity(match[1], match[2]), nil
 }
 
 //Keys lists the keys in the key file for this entity.
@@ -127,9 +127,11 @@ func (e *Entity) Apply() error {
 	endCallback := func() []*Key {
 		//all the keys remaining in isKnownKey are new and we add them now
 		result := make([]*Key, 0, len(isKnownKey))
-		for _, key := range isKnownKey {
-			key.Comment = keyComment
-			result = append(result, key)
+		for _, key := range keys {
+			if _, ok := isKnownKey[key.Identifier()]; ok {
+				key.Comment = keyComment
+				result = append(result, key)
+			}
 		}
 		return result
 	}

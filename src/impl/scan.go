@@ -47,7 +47,7 @@ func Scan() []error {
 	entityNameWasSeen := make(map[string]bool)
 	for _, fi := range fis {
 		if fi.Mode().IsDir() {
-			suberrs := scanDirectory(fi.Name(), &entityNameWasSeen)
+			suberrs := scanDirectory(filepath.Join(resourceDirPath, fi.Name()), &entityNameWasSeen)
 			errs = append(errs, suberrs...)
 		}
 	}
@@ -68,7 +68,7 @@ func scanDirectory(path string, entityNameWasSeen *map[string]bool) []error {
 	//find key files in this directory
 	var errs []error
 	for _, fi := range fis {
-		if fi.Mode().IsRegular() && strings.HasSuffix(fi.Name(), ".toml") {
+		if fi.Mode().IsRegular() && strings.HasSuffix(fi.Name(), ".pub") {
 			//construct Entity object
 			entity, err := NewEntityFromKeyfilePath(filepath.Join(path, fi.Name()))
 			if err != nil {
