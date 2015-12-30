@@ -51,6 +51,20 @@ func Scan() []error {
 			errs = append(errs, suberrs...)
 		}
 	}
+
+	//find orphaned entities (which we once provisioned, but for which there is
+	//no source file anymore)
+	allEntities, err := ProvisionedEntities()
+	if err != nil {
+		errs = append(errs, err)
+	}
+	for _, entityName := range allEntities {
+		if !entityNameWasSeen[entityName] {
+			fmt.Printf("ENTITY: %s\n", entityName)
+			fmt.Println("ACTION: Scrubbing (source file has been deleted)")
+		}
+	}
+
 	return errs
 }
 
@@ -110,17 +124,6 @@ func scanDirectory(path string, entityNameWasSeen *map[string]bool) []error {
 				}
 			}
 		}
-	}
-
-	//find orphaned entities (which we once provisioned, but for which there is
-	//no source file anymore)
-	allEntities, err := ProvisionedEntities()
-	if err != nil {
-		errs = append(errs, err)
-	}
-	for _, entityName := range allEntities {
-		fmt.Println("ENTITY: %s\n", entityName)
-		fmt.Println("ACTION: Scrubbing (source file has been deleted)")
 	}
 
 	return errs

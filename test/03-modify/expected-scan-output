@@ -1,0 +1,12 @@
+
+ssh-keyset:user1/bar (source file has been deleted)
+ssh-keyset:user1/foo
+    found in target/usr/share/holo/ssh-keys/user1/foo.pub
+      key is 2048 SHA256:bb8t1lzOwTyq6dy93w7ClVFbd3iLAh82fgLLVqcJKbA user@key3 (RSA)
+      key is 2048 SHA256:lYeUIQDlaTvELtUetbv53Aeo2mWTpRsGlBAl8NnlFhc user@key4 (RSA)
+
+ssh-keyset:user2/foo
+    found in target/usr/share/holo/ssh-keys/user2/foo.pub
+      key is 2048 SHA256:INu+TuczyJpYs1IiMb6csykJDbJ778oJeXmG40WCCHI user@key1 (RSA)
+      key is 2048 SHA256:bb8t1lzOwTyq6dy93w7ClVFbd3iLAh82fgLLVqcJKbA user@key3 (RSA)
+
