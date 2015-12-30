@@ -1,0 +1,21 @@
+language: go
+sudo: false
+
+go:
+    - 1.5
+
+before_install:
+    - mkdir -p build/deps
+    - git clone --branch=stable https://github.com/holocm/holo.git build/deps/holo
+    - make -C build/deps/holo build/holo
+    - cp build/deps/holo/src/holo-test build/deps/holo/build/holo-test
+
+install:
+    - go get -u github.com/golang/lint/golint
+    - go get -u github.com/GeertJohan/fgt
+
+script:
+    - make && env PATH=$PWD/build/deps/holo/build:$PATH make check
+    # skip src/internal during stylistic checks
+    - fgt gofmt -l $(find src -name internal -prune -o -name \*.go -print)
+    - fgt find src -type d \( -name internal -prune -o -exec golint {} \; \)
