@@ -18,9 +18,8 @@ C<ssh-keyset:$user/$ident>. For example:
         found in /usr/share/holo/ssh-keys/john-doe/login.pub
           key is 2048 SHA256:vogJG+8rxIB80hEp8OCJLUQgtfOajXHudPp6YvDvY8W john@example.org (RSA)
 
-The last information line contains the output of C<ssh-keygen -l -f $file>.
-If the file contains multiple public keys, there will appear one such line per
-key.
+The last information line contains the output of C<ssh-keygen -l>. If the file
+contains multiple public keys, there will appear one such line per key.
 
 The format of SSH public key files is documented in L<sshd(8)> in the section
 I<authorized_keys file format>.
