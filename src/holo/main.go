@@ -36,9 +36,8 @@ func init() {
 	C.setlocale(lcAll, C.CString("C"))
 }
 
-//Note: This line is parsed by the Makefile to get the version string. If you
-//change the format, adjust the Makefile too.
-var version = "v1.0.1"
+//this is populated at compile-time, see Makefile
+var version string
 
 const (
 	optionApplyForce = iota
