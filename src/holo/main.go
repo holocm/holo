@@ -79,6 +79,9 @@ func main() {
 		return
 	}
 
+	//ensure that we're the only Holo instance
+	impl.AcquireLockfile()
+
 	//load configuration
 	config := impl.ReadConfiguration()
 	if config == nil {
@@ -156,6 +159,7 @@ func main() {
 
 	//cleanup
 	impl.CleanupRuntimeCache()
+	impl.ReleaseLockfile()
 }
 
 func commandHelp() {
