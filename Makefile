@@ -1,5 +1,7 @@
 default: prepare-build build/holo-users-groups build/man/holo-users-groups.8
 
+VERSION := $(shell git describe --tags --dirty)
+
 prepare-build:
 	@mkdir -p build/man
 build/holo-users-groups: src/main.go src/*/*.go
@@ -9,7 +11,7 @@ build/holo-users-groups: src/main.go src/*/*.go
 # should be readily available on almost every Unix system)
 build/man/%: doc/%.pod
 	pod2man --name="$(shell echo $* | cut -d. -f1)" --section=$(shell echo $* | cut -d. -f2) --center="Configuration Management" \
-		--release="holo-users-groups $(shell git describe --tags)" \
+		--release="holo-users-groups $(VERSION)" \
 		$< $@
 
 test: check # just a synonym
