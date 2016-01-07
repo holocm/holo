@@ -1,5 +1,7 @@
 default: prepare-build build/man/holo-run-scripts.8
 
+VERSION := $(shell git describe --tags --dirty)
+
 prepare-build:
 	@mkdir -p build/man
 
@@ -7,7 +9,7 @@ prepare-build:
 # should be readily available on almost every Unix system)
 build/man/%: doc/%.pod
 	pod2man --name="$(shell echo $* | cut -d. -f1)" --section=$(shell echo $* | cut -d. -f2) --center="Configuration Management" \
-		--release="holo-run-scripts $(shell git describe --tags)" \
+		--release="holo-run-scripts $(VERSION)" \
 		$< $@
 
 test: check # just a synonym
