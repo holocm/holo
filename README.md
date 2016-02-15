@@ -39,6 +39,7 @@ sudo make install
 User documentation is available in man page form:
 
 * [holo(8)](doc/holo.8.pod)
+* [holo-files(8)](doc/holo-files.8.pod)
 * [holorc(5)](doc/holorc.5.pod)
 * [holo-test(7)](doc/holo-test.7.pod)
 * [holo-plugin-interface(7)](doc/holo-plugin-interface.7.pod)
