@@ -27,7 +27,7 @@ import (
 	"path/filepath"
 
 	"./impl"
-	"./internal/toml"
+	"github.com/BurntSushi/toml"
 )
 
 func main() {

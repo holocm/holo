@@ -26,7 +26,7 @@ import (
 	"strconv"
 	"strings"
 
-	"../internal/toml"
+	"github.com/BurntSushi/toml"
 )
 
 //RenderDiff implements the Entity interface.

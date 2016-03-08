@@ -1,3 +1,0 @@
-[submodule "src/internal/toml"]
-	path = src/internal/toml
-	url = https://github.com/BurntSushi/toml.git
