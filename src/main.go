@@ -26,8 +26,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"./impl"
 	"../localdeps/github.com/BurntSushi/toml"
+	"./impl"
 )
 
 func main() {

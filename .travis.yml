@@ -16,6 +16,5 @@ install:
 
 script:
     - make && env PATH=$PWD/build/deps/holo/build:$PATH make check
-    # skip src/internal during stylistic checks
     - fgt gofmt -l $(find src -name \*.go)
     - fgt find src -type d -exec golint {} \;
