@@ -2,7 +2,7 @@ default: prepare-build
 default: build/holo build/holo-files
 default: build/man/holorc.5 build/man/holo-plugin-interface.7 build/man/holo-test.7 build/man/holo.8 build/man/holo-files.8
 
-VERSION := $(shell git describe --tags --dirty)
+VERSION := $(shell ./util/find_version.sh)
 
 prepare-build:
 	@mkdir -p build/man
