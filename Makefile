@@ -1,6 +1,6 @@
 default: prepare-build build/holo-users-groups build/man/holo-users-groups.8
 
-VERSION := $(shell git describe --tags --dirty)
+VERSION := $(shell ./util/find_version.sh)
 
 prepare-build:
 	@mkdir -p build/man
