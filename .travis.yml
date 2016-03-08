@@ -10,6 +10,5 @@ install:
 
 script:
     - make && make check
-    # skip src/internal during stylistic checks
-    - fgt gofmt -l $(find src -name internal -prune -o -name \*.go -print)
-    - fgt find src -type d \( -name internal -prune -o -exec golint {} \; \)
+    - fgt gofmt -l $(find src -name \*.go)
+    - fgt find src -type d -exec golint {} \;
