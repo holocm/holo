@@ -26,7 +26,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/BurntSushi/toml"
+	"../../localdeps/github.com/BurntSushi/toml"
 )
 
 //Registry lists the provisioned users and groups.

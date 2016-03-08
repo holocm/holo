@@ -1,6 +1,7 @@
 default: prepare-build build/holo-users-groups build/man/holo-users-groups.8
 
 VERSION := $(shell ./util/find_version.sh)
+GOPATH := # unset (to force people to use golangvend)
 
 prepare-build:
 	@mkdir -p build/man
