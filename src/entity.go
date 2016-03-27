@@ -18,7 +18,7 @@
 *
 *******************************************************************************/
 
-package impl
+package main
 
 //Entity provides a common interface for configuration entities, such as
 //configuration files, user accounts and user groups.

@@ -18,7 +18,7 @@
 *
 *******************************************************************************/
 
-package impl
+package main
 
 import (
 	"bytes"
@@ -26,7 +26,7 @@ import (
 	"strconv"
 	"strings"
 
-	"../../localdeps/github.com/BurntSushi/toml"
+	"../localdeps/github.com/BurntSushi/toml"
 )
 
 //RenderDiff implements the Entity interface.

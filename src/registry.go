@@ -18,7 +18,7 @@
 *
 *******************************************************************************/
 
-package impl
+package main
 
 import (
 	"fmt"
@@ -26,7 +26,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"../../localdeps/github.com/BurntSushi/toml"
+	"../localdeps/github.com/BurntSushi/toml"
 )
 
 //Registry lists the provisioned users and groups.

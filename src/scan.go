@@ -18,7 +18,7 @@
 *
 *******************************************************************************/
 
-package impl
+package main
 
 import (
 	"fmt"
@@ -28,7 +28,7 @@ import (
 	"sort"
 	"strings"
 
-	"../../localdeps/github.com/BurntSushi/toml"
+	"../localdeps/github.com/BurntSushi/toml"
 )
 
 //Scan returns a slice of all the defined entities. If an error is encountered

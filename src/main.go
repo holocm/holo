@@ -27,7 +27,6 @@ import (
 	"path/filepath"
 
 	"../localdeps/github.com/BurntSushi/toml"
-	"./impl"
 )
 
 func main() {
@@ -43,8 +42,8 @@ func main() {
 }
 
 type cache struct {
-	Groups []impl.Group
-	Users  []impl.User
+	Groups []Group
+	Users  []User
 }
 
 func pathToCacheFile() string {
@@ -53,7 +52,7 @@ func pathToCacheFile() string {
 
 func executeScanCommand() {
 	//scan for entities
-	groups, users := impl.Scan()
+	groups, users := Scan()
 	if groups == nil && users == nil {
 		//some fatal error occurred - it was already reported, so just exit
 		os.Exit(1)
@@ -97,7 +96,7 @@ func executeNonScanCommand() {
 
 	//all other actions require an entity selection
 	entityID := os.Args[2]
-	var selectedEntity impl.Entity
+	var selectedEntity Entity
 	for _, group := range cacheData.Groups {
 		if group.EntityID() == entityID {
 			selectedEntity = group
@@ -129,7 +128,7 @@ func executeNonScanCommand() {
 	}
 }
 
-func applyEntity(entity impl.Entity, withForce bool) {
+func applyEntity(entity Entity, withForce bool) {
 	entityHasChanged := entity.Apply(withForce)
 	if !entityHasChanged {
 		_, err := os.NewFile(3, "file descriptor 3").Write([]byte("not changed\n"))

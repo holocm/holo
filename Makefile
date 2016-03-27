@@ -5,8 +5,8 @@ GOPATH := # unset (to force people to use golangvend)
 
 prepare-build:
 	@mkdir -p build/man
-build/holo-users-groups: src/main.go src/*/*.go
-	go build -o $@ $<
+build/holo-users-groups: src/*.go
+	go build -o $@ ./src
 
 # manpages are generated using pod2man (which comes with Perl and therefore
 # should be readily available on almost every Unix system)
