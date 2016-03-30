@@ -15,6 +15,8 @@ plugins that you may find useful:
   accounts and groups.
 * [holo-run-scripts](https://github.com/holocm/holo-run-scripts) invokes custom
   scripts during the provisioning phase.
+* [holo-ssh-keys](https://github.com/holocm/holo-ssh-keys) provisions
+  `.ssh/authorized_keys`.
 
 <small>If you've written a new plugin, add it to this list by editing this file
 and sending a pull request.</small>
