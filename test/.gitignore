@@ -4,3 +4,7 @@ apply-output
 apply-force-output
 diff-output
 scan-output
+colored-apply-output
+colored-apply-force-output
+colored-diff-output
+colored-scan-output

@@ -65,12 +65,12 @@ run_testcase() {
     [ -f env.sh ] && source ./env.sh
 
     # run holo (the sed strips ANSI colors from the output)
-    $HOLO_BINARY scan          2>&1 | sed 's/\x1b\[[0-9;]*m//g' > scan-output
-    $HOLO_BINARY diff          2>&1 | sed 's/\x1b\[[0-9;]*m//g' > diff-output
-    $HOLO_BINARY apply         2>&1 | sed 's/\x1b\[[0-9;]*m//g' > apply-output
+    $HOLO_BINARY scan          2>&1 | tee colored-scan-output  | sed 's/\x1b\[[0-9;]*m//g' > scan-output
+    $HOLO_BINARY diff          2>&1 | tee colored-diff-output  | sed 's/\x1b\[[0-9;]*m//g' > diff-output
+    $HOLO_BINARY apply         2>&1 | tee colored-apply-output | sed 's/\x1b\[[0-9;]*m//g' > apply-output
     # if "holo apply" reports that certain operations will only be performed with --force, do so now
     grep -q -- --force apply-output && \
-    $HOLO_BINARY apply --force 2>&1 | sed 's/\x1b\[[0-9;]*m//g' > apply-force-output
+    $HOLO_BINARY apply --force 2>&1 | tee colored-apply-force-output | sed 's/\x1b\[[0-9;]*m//g' > apply-force-output
 
     # clean up the useless Git repo we created earlier to fix a Travis bug
     rm -rf -- .git
