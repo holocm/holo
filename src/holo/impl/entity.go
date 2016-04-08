@@ -121,6 +121,7 @@ func (e *Entity) doApply(withForce bool) error {
 	//only print report if there was output, or if the plugin provisioned the
 	//entity (as signaled by the absence of the "not changed\n" command")
 	showReport := true
+	showDiff := false
 	if err == nil {
 		cmdLines := strings.Split(cmdText, "\n")
 		for _, line := range cmdLines {
@@ -129,6 +130,7 @@ func (e *Entity) doApply(withForce bool) error {
 				showReport = false
 			case "requires --force to overwrite":
 				fmt.Fprintf(&writer, "\x1B[1;31m!! Entity has been modified by user (use --force to overwrite)\x1B[0m")
+				showDiff = true
 			case "requires --force to restore":
 				fmt.Fprintf(&writer, "\x1B[1;31m!! Entity has been deleted by user (use --force to restore)\x1B[0m")
 			}
@@ -136,6 +138,20 @@ func (e *Entity) doApply(withForce bool) error {
 	}
 	if showReport {
 		tracker.Exec()
+	}
+	if showDiff {
+		diff, err := e.RenderDiff()
+		if err != nil {
+			return err
+		}
+		//indent diff
+		indent := []byte("    ")
+		diff = regexp.MustCompile("(?m:^)").ReplaceAll(diff, indent)
+		diff = bytes.TrimSuffix(diff, indent)
+
+		tracker.Exec()
+		Stdout.EndParagraph()
+		Stdout.Write(diff)
 	}
 
 	Stdout.EndParagraph()

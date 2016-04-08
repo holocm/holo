@@ -11,11 +11,36 @@ Working on file:target/etc/file-modified.conf
 
 !! Entity has been modified by user (use --force to overwrite)
 
+    diff --git a/target/etc/file-modified.conf b/target/etc/file-modified.conf
+    --- a/target/etc/file-modified.conf
+    +++ b/target/etc/file-modified.conf
+    @@ -1,3 +1,3 @@
+     aaa
+    -bbb
+    +xxx
+     ccc
+
 Working on file:target/etc/file-to-symlink.conf
   store at target/var/lib/holo/files/base/etc/file-to-symlink.conf
      apply target/usr/share/holo/files/01-first/etc/file-to-symlink.conf
 
 !! Entity has been modified by user (use --force to overwrite)
+
+    diff --git a/target/etc/file-to-symlink.conf b/target/etc/file-to-symlink.conf
+    deleted file mode 100644
+    --- a/target/etc/file-to-symlink.conf
+    +++ /dev/null
+    @@ -1,3 +0,0 @@
+    -aaa
+    -bbb
+    -ccc
+    diff --git a/target/etc/file-to-symlink.conf b/target/etc/file-to-symlink.conf
+    new file mode 120000
+    --- /dev/null
+    +++ b/target/etc/file-to-symlink.conf
+    @@ -0,0 +1 @@
+    +/bin/ls
+    \ No newline at end of file
 
 Working on file:target/etc/symlink-deleted.conf
   store at target/var/lib/holo/files/base/etc/symlink-deleted.conf
@@ -29,9 +54,34 @@ Working on file:target/etc/symlink-modified.conf
 
 !! Entity has been modified by user (use --force to overwrite)
 
+    diff --git a/target/etc/symlink-modified.conf b/target/etc/symlink-modified.conf
+    --- a/target/etc/symlink-modified.conf
+    +++ b/target/etc/symlink-modified.conf
+    @@ -1 +1 @@
+    -/bin/true
+    \ No newline at end of file
+    +/bin/ls
+    \ No newline at end of file
+
 Working on file:target/etc/symlink-to-file.conf
   store at target/var/lib/holo/files/base/etc/symlink-to-file.conf
      apply target/usr/share/holo/files/01-first/etc/symlink-to-file.conf
 
 !! Entity has been modified by user (use --force to overwrite)
+
+    diff --git a/target/etc/symlink-to-file.conf b/target/etc/symlink-to-file.conf
+    deleted file mode 120000
+    --- a/target/etc/symlink-to-file.conf
+    +++ /dev/null
+    @@ -1 +0,0 @@
+    -/bin/true
+    \ No newline at end of file
+    diff --git a/target/etc/symlink-to-file.conf b/target/etc/symlink-to-file.conf
+    new file mode 100644
+    --- /dev/null
+    +++ b/target/etc/symlink-to-file.conf
+    @@ -0,0 +1,3 @@
+    +ggg
+    +hhh
+    +iii
 
