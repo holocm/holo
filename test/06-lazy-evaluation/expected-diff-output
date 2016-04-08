@@ -1,12 +1,12 @@
-diff --git a/target/etc/bar.conf b/target/etc/bar.conf
+diff --holo target/var/lib/holo/files/provisioned/etc/bar.conf target/etc/bar.conf
 new file mode 100644
 --- /dev/null
-+++ b/target/etc/bar.conf
++++ target/etc/bar.conf
 @@ -0,0 +1 @@
 +original bar
-diff --git a/target/etc/foo.conf b/target/etc/foo.conf
+diff --holo target/var/lib/holo/files/provisioned/etc/foo.conf target/etc/foo.conf
 new file mode 100644
 --- /dev/null
-+++ b/target/etc/foo.conf
++++ target/etc/foo.conf
 @@ -0,0 +1 @@
 +original

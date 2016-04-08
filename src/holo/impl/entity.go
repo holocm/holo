@@ -216,22 +216,31 @@ func renderFileDiff(fromPath, toPath string) ([]byte, error) {
 	rx := regexp.MustCompile(`(?m:^index .*$)\n`)
 	result = rx.ReplaceAll(result, nil)
 
-	//remove "/var/lib/holo/files/provisioned" from path displays to make it appear like we
-	//just diff the target path
-	if fromPathToUse == fromPath {
-		fromPathQuoted := strings.TrimPrefix(regexp.QuoteMeta(fromPath), "/")
-		toPathQuoted := strings.TrimPrefix(regexp.QuoteMeta(toPath), "/")
-		toPathTrimmed := strings.TrimPrefix(toPath, "/")
+	//fix paths in headers, especially remove the unnecessary "a/" and "b/"
+	//path prefixes
+	rx = regexp.MustCompile(`(?m:^diff --git .*$)`)
+	result = rx.ReplaceAll(result, []byte(fmt.Sprintf("diff --holo %s %s", fromPath, toPath)))
+	rx = regexp.MustCompile(`(?m:^--- a/.*$)`)
+	result = rx.ReplaceAll(result, []byte("--- "+fromPath))
+	rx = regexp.MustCompile(`(?m:^\+\+\+ b/.*$)`)
+	result = rx.ReplaceAll(result, []byte("+++ "+toPath))
 
-		rx = regexp.MustCompile(`(?m:^)diff --git a/` + fromPathQuoted)
-		result = rx.ReplaceAll(result, []byte("diff --git a/"+toPathTrimmed))
+	// //remove "/var/lib/holo/files/provisioned" from path displays to make it appear like we
+	// //just diff the target path
+	// if fromPathToUse == fromPath {
+	// 	fromPathQuoted := strings.TrimPrefix(regexp.QuoteMeta(fromPath), "/")
+	// 	toPathQuoted := strings.TrimPrefix(regexp.QuoteMeta(toPath), "/")
+	// 	toPathTrimmed := strings.TrimPrefix(toPath, "/")
 
-		rx = regexp.MustCompile(`(?m:^)diff --git a/` + toPathQuoted + ` b/` + fromPathQuoted)
-		result = rx.ReplaceAll(result, []byte("diff --git a/"+toPathTrimmed+" b/"+toPathTrimmed))
+	// 	rx = regexp.MustCompile(`(?m:^)diff --git a/` + fromPathQuoted)
+	// 	result = rx.ReplaceAll(result, []byte("diff --git a/"+toPathTrimmed))
 
-		rx = regexp.MustCompile(`(?m:^)--- a/` + fromPathQuoted)
-		result = rx.ReplaceAll(result, []byte("--- a/"+toPathTrimmed))
-	}
+	// 	rx = regexp.MustCompile(`(?m:^)diff --git a/` + toPathQuoted + ` b/` + fromPathQuoted)
+	// 	result = rx.ReplaceAll(result, []byte("diff --git a/"+toPathTrimmed+" b/"+toPathTrimmed))
+
+	// 	rx = regexp.MustCompile(`(?m:^)--- a/` + fromPathQuoted)
+	// 	result = rx.ReplaceAll(result, []byte("--- a/"+toPathTrimmed))
+	// }
 
 	return result, nil
 }

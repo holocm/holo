@@ -1,41 +1,41 @@
-diff --git a/target/etc/check-ordering.conf b/target/etc/check-ordering.conf
+diff --holo target/var/lib/holo/files/provisioned/etc/check-ordering.conf target/etc/check-ordering.conf
 new file mode 100644
 --- /dev/null
-+++ b/target/etc/check-ordering.conf
++++ target/etc/check-ordering.conf
 @@ -0,0 +1 @@
 +test
-diff --git a/target/etc/link-and-script.conf b/target/etc/link-and-script.conf
+diff --holo target/var/lib/holo/files/provisioned/etc/link-and-script.conf target/etc/link-and-script.conf
 new file mode 100644
 --- /dev/null
-+++ b/target/etc/link-and-script.conf
++++ target/etc/link-and-script.conf
 @@ -0,0 +1,2 @@
 +kkk
 +kkk
-diff --git a/target/etc/link-through-scripts.conf b/target/etc/link-through-scripts.conf
+diff --holo target/var/lib/holo/files/provisioned/etc/link-through-scripts.conf target/etc/link-through-scripts.conf
 new file mode 120000
 --- /dev/null
-+++ b/target/etc/link-through-scripts.conf
++++ target/etc/link-through-scripts.conf
 @@ -0,0 +1 @@
 +contents2
 \ No newline at end of file
-diff --git a/target/etc/plain-and-plain.conf b/target/etc/plain-and-plain.conf
+diff --holo target/var/lib/holo/files/provisioned/etc/plain-and-plain.conf target/etc/plain-and-plain.conf
 new file mode 100644
 --- /dev/null
-+++ b/target/etc/plain-and-plain.conf
++++ target/etc/plain-and-plain.conf
 @@ -0,0 +1,2 @@
 +aaa
 +aaa
-diff --git a/target/etc/plain-and-script.conf b/target/etc/plain-and-script.conf
+diff --holo target/var/lib/holo/files/provisioned/etc/plain-and-script.conf target/etc/plain-and-script.conf
 new file mode 100644
 --- /dev/null
-+++ b/target/etc/plain-and-script.conf
++++ target/etc/plain-and-script.conf
 @@ -0,0 +1,2 @@
 +ddd
 +ddd
-diff --git a/target/etc/script-and-script.conf b/target/etc/script-and-script.conf
+diff --holo target/var/lib/holo/files/provisioned/etc/script-and-script.conf target/etc/script-and-script.conf
 new file mode 100644
 --- /dev/null
-+++ b/target/etc/script-and-script.conf
++++ target/etc/script-and-script.conf
 @@ -0,0 +1,2 @@
 +ggg
 +ggg
