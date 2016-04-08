@@ -25,6 +25,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
+	"regexp"
+	"strings"
+	"syscall"
 )
 
 //InfoLine represents a line in the information section of an Entity.
@@ -164,10 +168,131 @@ func (e *Entity) doApply(withForce bool) error {
 	return err
 }
 
-//RenderDiff creates a unified diff between the current and last
-//provisioned version of this entity.
+//RenderDiff creates a unified diff of a target file and its last provisioned
+//version, similar to `diff /var/lib/holo/files/provisioned/$FILE $FILE`, but it also
+//handles symlinks and missing files gracefully. The output is always a patch
+//that can be applied to last provisioned version into the current version.
 func (e *Entity) RenderDiff() ([]byte, error) {
+	//the command channel (file descriptor 3 on the side of the plugin) can
+	//only be set up with an *os.File instance, so use a pipe that the plugin
+	//writes into and that we read from
+	cmdReader, cmdWriterForPlugin, err := os.Pipe()
+	if err != nil {
+		return nil, err
+	}
+
+	//query plugin for paths to diff
+	cmd := e.plugin.Command([]string{"diff", e.id}, os.Stdout, os.Stderr, cmdWriterForPlugin)
+	err = cmd.Start() //cannot use Run() since we need to read from the pipe before the plugin exits
+	if err != nil {
+		return nil, err
+	}
+
+	cmdWriterForPlugin.Close() //or next line will block (see Plugin.Command docs)
+	cmdBytes, err := ioutil.ReadAll(cmdReader)
+	if err != nil {
+		return nil, err
+	}
+	err = cmdReader.Close()
+	if err != nil {
+		return nil, err
+	}
+	err = cmd.Wait()
+	if err != nil {
+		return nil, err
+	}
+
+	//were paths given for diffing? if not, that's okay, not every plugin knows
+	//how to diff
+	cmdLines := bytes.Split(cmdBytes, []byte("\000"))
+	if len(cmdLines) < 2 {
+		return nil, nil
+	}
+
+	return renderFileDiff(string(cmdLines[0]), string(cmdLines[1]))
+}
+
+func renderFileDiff(fromPath, toPath string) ([]byte, error) {
+	fromPathToUse, err := checkFile(fromPath)
+	if err != nil {
+		return nil, err
+	}
+	toPathToUse, err := checkFile(toPath)
+	if err != nil {
+		return nil, err
+	}
+
+	//run git-diff to obtain the diff
 	var buffer bytes.Buffer
-	err := e.plugin.Command([]string{"diff", e.id}, &buffer, os.Stderr, nil).Run()
-	return buffer.Bytes(), err
+	cmd := exec.Command("git", "diff", "--no-index", "--", fromPathToUse, toPathToUse)
+	cmd.Stdout = &buffer
+	cmd.Stderr = os.Stderr
+
+	//error "exit code 1" is normal for different files, only exit code > 2 means trouble
+	err = cmd.Run()
+	if err != nil {
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			if status, ok := exitErr.Sys().(syscall.WaitStatus); ok {
+				if status.ExitStatus() == 1 {
+					err = nil
+				}
+			}
+		}
+	}
+	//did a relevant error occur?
+	if err != nil {
+		return nil, err
+	}
+
+	//remove "index <SHA1>..<SHA1> <mode>" lines
+	result := buffer.Bytes()
+	rx := regexp.MustCompile(`(?m:^index .*$)\n`)
+	result = rx.ReplaceAll(result, nil)
+
+	//remove "/var/lib/holo/files/provisioned" from path displays to make it appear like we
+	//just diff the target path
+	if fromPathToUse == fromPath {
+		fromPathQuoted := strings.TrimPrefix(regexp.QuoteMeta(fromPath), "/")
+		toPathQuoted := strings.TrimPrefix(regexp.QuoteMeta(toPath), "/")
+		toPathTrimmed := strings.TrimPrefix(toPath, "/")
+
+		rx = regexp.MustCompile(`(?m:^)diff --git a/` + fromPathQuoted)
+		result = rx.ReplaceAll(result, []byte("diff --git a/"+toPathTrimmed))
+
+		rx = regexp.MustCompile(`(?m:^)diff --git a/` + toPathQuoted + ` b/` + fromPathQuoted)
+		result = rx.ReplaceAll(result, []byte("diff --git a/"+toPathTrimmed+" b/"+toPathTrimmed))
+
+		rx = regexp.MustCompile(`(?m:^)--- a/` + fromPathQuoted)
+		result = rx.ReplaceAll(result, []byte("--- a/"+toPathTrimmed))
+	}
+
+	return result, nil
+}
+
+func checkFile(path string) (pathToUse string, returnError error) {
+	if path == "/dev/null" {
+		return path, nil
+	}
+
+	//check that files are either non-existent (in which case git-diff needs to
+	//be given /dev/null instead or manageable (e.g. we can't diff directories
+	//or device files)
+	info, err := os.Lstat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return "/dev/null", nil
+		}
+		return path, err
+	}
+
+	//can only diff regular files and symlinks
+	switch {
+	case info.Mode().IsRegular():
+		return path, nil //regular file is ok
+	case (info.Mode() & os.ModeType) == os.ModeSymlink:
+		return path, nil //symlink is ok
+	default:
+		return path, fmt.Errorf("file %s has wrong file type", path)
+	}
+
 }

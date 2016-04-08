@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"os"
 
+	"./common"
 	"./impl"
 )
 
@@ -76,11 +77,14 @@ func main() {
 	case "force-apply":
 		applyEntity(selectedEntity, true)
 	case "diff":
-		output, err := selectedEntity.RenderDiff()
+		output := fmt.Sprintf("%s\000%s\000",
+			selectedEntity.PathIn(common.ProvisionedDirectory()),
+			selectedEntity.PathIn(common.TargetDirectory()),
+		)
+		_, err := os.NewFile(3, "file descriptor 3").Write([]byte(output))
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		}
-		os.Stdout.Write(output)
 	}
 }
 

@@ -26,4 +26,4 @@ new file mode 100644
 @@ -0,0 +1,2 @@
 +eee
 +eee
-!! target/etc/stock-file-is-directory.conf is not a manageable file
+!! cannot diff file:target/etc/stock-file-is-directory.conf: file target/etc/stock-file-is-directory.conf has wrong file type

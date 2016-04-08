@@ -253,16 +253,23 @@ corresponding plugin will be called like this:
 
     $PLUGIN_BINARY diff $ENTITY_ID
 
-If the plugin cannot produce a meaningful diff (e.g. for the C<run-scripts>
-plugin), the plugin shall exit with zero exit code without printing any output.
-In any other event, a unified diff MUST be printed on stdout. If errors occur
-while producing the diff, they shall be reported on stderr. If the error
-results in the plugin not being able to produce meaningful output, it shall
-exit with non-zero exit code.
+If the entity does not have a meaningful diff (e.g. for the C<run-scripts>
+plugin), the plugin shall exit with zero exit code without doing anything.
+
+Otherwise, two NUL-terminated filesystem paths must be printed on file
+descriptor 3. The first file represents the state of the entity that will be
+applied (or force-applied) by the plugin, the second file represents the current
+state of the entity.
+
+The plugin is allowed to return paths that do not exist in the file system, in
+which case Holo will diff against `/dev/null` instead. `/dev/null` can also be
+given explicitly instead of a file that is missing. (The first file will be
+missing when the entity is orphaned, and the second file will be missing when
+the entity was deleted by the user or an external program.)
 
 For entities that are not backed by a file, the plugin is allowed to make up a
-diff by choosing a useful textual representation of the entity. An example of
-this is the C<holo-users-groups> plugin.
+useful textual representation of the entity, and write appropriate files to the
+C<HOLO_CACHE_DIR>. An example of this is the C<holo-users-groups> plugin.
 
 =head1 SEE ALSO
 
