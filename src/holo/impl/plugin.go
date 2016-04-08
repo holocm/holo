@@ -23,6 +23,7 @@ package impl
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -107,6 +108,37 @@ func (p *Plugin) Command(arguments []string, stdout io.Writer, stderr io.Writer,
 	cmd.Env = env
 
 	return cmd
+}
+
+//RunCommandWithFD3 extends the Command function with automatic setup and
+//reading of the file-descriptor 3, that is used by some plugin commands to
+//report structured messages to Holo.
+func (p *Plugin) RunCommandWithFD3(arguments []string, stdout, stderr io.Writer) (string, error) {
+	//the command channel (file descriptor 3 on the side of the plugin) can
+	//only be set up with an *os.File instance, so use a pipe that the plugin
+	//writes into and that we read from
+	cmdReader, cmdWriterForPlugin, err := os.Pipe()
+	if err != nil {
+		return "", err
+	}
+
+	//execute apply operation
+	cmd := p.Command(arguments, stdout, stderr, cmdWriterForPlugin)
+	err = cmd.Start() //cannot use Run() since we need to read from the pipe before the plugin exits
+	if err != nil {
+		return "", err
+	}
+
+	cmdWriterForPlugin.Close() //or next line will block (see Plugin.Command docs)
+	cmdBytes, err := ioutil.ReadAll(cmdReader)
+	if err != nil {
+		return "", err
+	}
+	err = cmdReader.Close()
+	if err != nil {
+		return "", err
+	}
+	return string(cmdBytes), cmd.Wait()
 }
 
 //For reproducibility in tests.

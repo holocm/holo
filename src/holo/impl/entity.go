@@ -23,7 +23,6 @@ package impl
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"regexp"
@@ -104,52 +103,28 @@ func (e *Entity) doApply(withForce bool) error {
 		command = "force-apply"
 	}
 
-	//the command channel (file descriptor 3 on the side of the plugin) can
-	//only be set up with an *os.File instance, so use a pipe that the plugin
-	//writes into and that we read from
-	cmdReader, cmdWriterForPlugin, err := os.Pipe()
-	if err != nil {
-		e.PrintReport(true)
-		return err
-	}
-
 	//track whether the report was already printed
 	tracker := PrologueTracker{Printer: func() { e.PrintReport(true) }}
 	writer := PrologueWriter{Tracker: &tracker, Writer: Stdout}
 
 	//execute apply operation
-	cmd := e.plugin.Command(
+	cmdText, err := e.plugin.RunCommandWithFD3(
 		[]string{command, e.id},
 		&writer,
 		&writer, //FIXME: should be using Stderr
-		cmdWriterForPlugin,
 	)
-	err = cmd.Start() //cannot use Run() since we need to read from the pipe before the plugin exits
 	if err != nil {
 		tracker.Exec()
 		return err
 	}
-
-	cmdWriterForPlugin.Close() //or next line will block (see Plugin.Command docs)
-	cmdBytes, err := ioutil.ReadAll(cmdReader)
-	if err != nil {
-		tracker.Exec()
-		return err
-	}
-	err = cmdReader.Close()
-	if err != nil {
-		tracker.Exec()
-		return err
-	}
-	err = cmd.Wait()
 
 	//only print report if there was output, or if the plugin provisioned the
 	//entity (as signaled by the absence of the "not changed\n" command")
 	showReport := true
 	if err == nil {
-		cmdLines := bytes.Split(cmdBytes, []byte("\n"))
+		cmdLines := strings.Split(cmdText, "\n")
 		for _, line := range cmdLines {
-			switch string(line) {
+			switch line {
 			case "not changed":
 				showReport = false
 			case "requires --force to overwrite":
@@ -173,43 +148,19 @@ func (e *Entity) doApply(withForce bool) error {
 //handles symlinks and missing files gracefully. The output is always a patch
 //that can be applied to last provisioned version into the current version.
 func (e *Entity) RenderDiff() ([]byte, error) {
-	//the command channel (file descriptor 3 on the side of the plugin) can
-	//only be set up with an *os.File instance, so use a pipe that the plugin
-	//writes into and that we read from
-	cmdReader, cmdWriterForPlugin, err := os.Pipe()
-	if err != nil {
-		return nil, err
-	}
-
-	//query plugin for paths to diff
-	cmd := e.plugin.Command([]string{"diff", e.id}, os.Stdout, os.Stderr, cmdWriterForPlugin)
-	err = cmd.Start() //cannot use Run() since we need to read from the pipe before the plugin exits
-	if err != nil {
-		return nil, err
-	}
-
-	cmdWriterForPlugin.Close() //or next line will block (see Plugin.Command docs)
-	cmdBytes, err := ioutil.ReadAll(cmdReader)
-	if err != nil {
-		return nil, err
-	}
-	err = cmdReader.Close()
-	if err != nil {
-		return nil, err
-	}
-	err = cmd.Wait()
+	cmdText, err := e.plugin.RunCommandWithFD3([]string{"diff", e.id}, os.Stdout, os.Stderr)
 	if err != nil {
 		return nil, err
 	}
 
 	//were paths given for diffing? if not, that's okay, not every plugin knows
 	//how to diff
-	cmdLines := bytes.Split(cmdBytes, []byte("\000"))
+	cmdLines := strings.Split(cmdText, "\000")
 	if len(cmdLines) < 2 {
 		return nil, nil
 	}
 
-	return renderFileDiff(string(cmdLines[0]), string(cmdLines[1]))
+	return renderFileDiff(cmdLines[0], cmdLines[1])
 }
 
 func renderFileDiff(fromPath, toPath string) ([]byte, error) {
