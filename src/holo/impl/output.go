@@ -35,7 +35,7 @@ func Errorf(text string, args ...interface{}) {
 	if !strings.HasSuffix(text, "\n") {
 		text += "\n"
 	}
-	fmt.Fprintf(os.Stderr, "\x1b[31m\x1b[1m!!\x1b[0m %s", text)
+	fmt.Fprintf(os.Stderr, "\x1b[1;31m!! %s\x1b[0m", text)
 }
 
 //ParagraphWriter is an io.Writer that forwards to another io.Writer, but
