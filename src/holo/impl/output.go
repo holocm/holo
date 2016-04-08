@@ -29,33 +29,45 @@ import (
 )
 
 //Errorf formats and prints an error message on stderr.
-func Errorf(text string, args ...interface{}) {
+func Errorf(writer io.Writer, text string, args ...interface{}) {
 	if len(args) > 0 {
 		text = fmt.Sprintf(text, args...)
 	}
-	if !strings.HasSuffix(text, "\n") {
-		text += "\n"
-	}
-	fmt.Fprintf(os.Stderr, "\x1b[1;31m!! %s\x1b[0m", text)
+	fmt.Fprintf(writer, "\x1b[1;31m!! %s\x1b[0m\n", strings.TrimSuffix(text, "\n"))
 }
 
-//ParagraphWriter is an io.Writer that forwards to another io.Writer, but
-//ensures that input is written in paragraphs, with newlines in between.
-type ParagraphWriter struct {
-	Writer               io.Writer
+//ParagraphTracker is used in conjunction with ParagraphWriter. See explanation
+//over there.
+type ParagraphTracker struct {
+	PrimaryWriter        io.Writer
 	hadOutput            bool
 	trailingNewlineCount int
 }
 
-//Stdout wraps os.Stdout into a ParagraphWriter.
-var Stdout = &ParagraphWriter{Writer: os.Stdout}
+//ParagraphWriter is an io.Writer that forwards to another io.Writer, but
+//ensures that input is written in paragraphs, with newlines in between.
+//
+//Since, in this usecase, both stdout and stderr need to be PrologueWriter
+//instances, the logic that prints the additional newlines must be shared by
+//both. Thus the newlines are tracked with a ParagraphTracker instance.
+type ParagraphWriter struct {
+	Writer  io.Writer
+	Tracker *ParagraphTracker
+}
 
-//Write implements the io.Writer interface.
-func (w *ParagraphWriter) Write(p []byte) (n int, e error) {
+var stdTracker = &ParagraphTracker{PrimaryWriter: os.Stdout}
+
+//Stdout wraps os.Stdout into a ParagraphWriter.
+var Stdout = &ParagraphWriter{Writer: os.Stdout, Tracker: stdTracker}
+
+//Stderr wraps os.Stderr into a ParagraphWriter.
+var Stderr = &ParagraphWriter{Writer: os.Stderr, Tracker: stdTracker}
+
+func (t *ParagraphTracker) observeOutput(p []byte) {
 	//print the initial newline before any other output
-	if !w.hadOutput {
-		w.Writer.Write([]byte{'\n'})
-		w.hadOutput = true
+	if !t.hadOutput {
+		t.PrimaryWriter.Write([]byte{'\n'})
+		t.hadOutput = true
 	}
 
 	//count trailing newlines on the output that was seen
@@ -64,20 +76,24 @@ func (w *ParagraphWriter) Write(p []byte) (n int, e error) {
 		cnt++
 	}
 	if cnt == len(p) {
-		w.trailingNewlineCount += cnt
+		t.trailingNewlineCount += cnt
 	} else {
-		w.trailingNewlineCount = cnt
+		t.trailingNewlineCount = cnt
 	}
+}
 
+//Write implements the io.Writer interface.
+func (w *ParagraphWriter) Write(p []byte) (n int, e error) {
+	w.Tracker.observeOutput(p)
 	return w.Writer.Write(p)
 }
 
 //EndParagraph inserts newlines to start the next paragraph of output.
 func (w *ParagraphWriter) EndParagraph() {
-	if !w.hadOutput {
+	if !w.Tracker.hadOutput {
 		return
 	}
-	for w.trailingNewlineCount < 2 {
+	for w.Tracker.trailingNewlineCount < 2 {
 		w.Write([]byte{'\n'})
 	}
 }

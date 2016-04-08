@@ -22,6 +22,7 @@ package impl
 
 import (
 	"bytes"
+	"os"
 	"testing"
 )
 
@@ -33,7 +34,8 @@ func checkStringEqual(t *testing.T, varName, expected, actual string) {
 
 func checkParagraphWriter(t *testing.T, expected string, callback func(w *ParagraphWriter)) {
 	var b bytes.Buffer
-	w := ParagraphWriter{Writer: &b}
+	tr := ParagraphTracker{PrimaryWriter: &b}
+	w := ParagraphWriter{Writer: &b, Tracker: &tr}
 	callback(&w)
 
 	checkStringEqual(t, "output", expected, string(b.Bytes()))
@@ -108,7 +110,7 @@ func TestPrologueTracker(t *testing.T) {
 	for idx := 0; idx < 3; idx++ {
 		tracker.Exec()
 		if x != 1 {
-			Errorf("pass %d: expected 1 but got %d", idx, x)
+			Errorf(os.Stderr, "pass %d: expected 1 but got %d", idx, x)
 		}
 	}
 }

@@ -56,7 +56,7 @@ func NewPluginWithExecutablePath(id string, executablePath string) (*Plugin, err
 
 	//load metadata with the "info" command
 	var buf bytes.Buffer
-	err := p.Command([]string{"info"}, &buf, os.Stderr, nil).Run()
+	err := p.Command([]string{"info"}, &buf, Stderr, nil).Run()
 	if err != nil {
 		return nil, err
 	}

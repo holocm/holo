@@ -53,7 +53,7 @@ func ReadConfiguration() *Configuration {
 
 	contents, err := ioutil.ReadFile(path)
 	if err != nil {
-		Errorf("cannot read %s: %s", path, err.Error())
+		Errorf(Stderr, "cannot read %s: %s", path, err.Error())
 		return nil
 	}
 
@@ -81,14 +81,14 @@ func ReadConfiguration() *Configuration {
 				plugin, err = NewPlugin(pluginID)
 			}
 			if err != nil {
-				Errorf(err.Error())
+				Errorf(Stderr, err.Error())
 				return nil
 			}
 
 			result.Plugins = append(result.Plugins, plugin)
 		} else {
 			//unknown line
-			Errorf("cannot parse %s: unknown command: %s", path, line)
+			Errorf(Stderr, "cannot parse %s: unknown command: %s", path, line)
 			return nil
 		}
 	}
@@ -100,10 +100,10 @@ func ReadConfiguration() *Configuration {
 		fi, err := os.Stat(dir)
 		switch {
 		case err != nil:
-			Errorf("cannot open %s: %s", dir, err.Error())
+			Errorf(Stderr, "cannot open %s: %s", dir, err.Error())
 			hasError = true
 		case !fi.IsDir():
-			Errorf("cannot open %s: not a directory!", dir)
+			Errorf(Stderr, "cannot open %s: not a directory!", dir)
 			hasError = true
 		}
 	}
@@ -117,7 +117,7 @@ func ReadConfiguration() *Configuration {
 		for _, dir := range dirs {
 			err := os.MkdirAll(dir, 0755)
 			if err != nil {
-				Errorf(err.Error())
+				Errorf(Stderr, err.Error())
 				hasError = true
 			}
 		}

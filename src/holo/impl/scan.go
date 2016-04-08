@@ -23,7 +23,6 @@ package impl
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"regexp"
 	"sort"
 	"strings"
@@ -59,7 +58,7 @@ func (p *Plugin) Scan() []*Entity {
 		//general line format is "key: value"
 		match := lineRx.FindStringSubmatch(line)
 		if match == nil {
-			Errorf("%s: parse error (line was \"%s\")", errorIntro, line)
+			Errorf(Stderr, "%s: parse error (line was \"%s\")", errorIntro, line)
 			hadError = true
 			continue
 		}
@@ -75,7 +74,7 @@ func (p *Plugin) Scan() []*Entity {
 		case currentEntity == nil:
 			//if not, we need to be inside an entity
 			//(i.e. line with idx = 0 must start an entity)
-			Errorf("%s: expected entity ID, found attribute \"%s\"", errorIntro, line)
+			Errorf(Stderr, "%s: expected entity ID, found attribute \"%s\"", errorIntro, line)
 			hadError = true
 		case key == "SOURCE":
 			currentEntity.sourceFiles = append(currentEntity.sourceFiles, value)
@@ -118,10 +117,10 @@ func (p *Plugin) Scan() []*Entity {
 
 func (p *Plugin) runScanOperation() (stdout string, hadError bool) {
 	var stdoutBuffer bytes.Buffer
-	err := p.Command([]string{"scan"}, &stdoutBuffer, os.Stderr, nil).Run()
+	err := p.Command([]string{"scan"}, &stdoutBuffer, Stderr, nil).Run()
 
 	if err != nil {
-		Errorf("scan with plugin %s failed: %s", p.ID(), err.Error())
+		Errorf(Stderr, "scan with plugin %s failed: %s", p.ID(), err.Error())
 	}
 
 	return string(stdoutBuffer.Bytes()), err != nil

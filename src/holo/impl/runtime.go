@@ -31,7 +31,7 @@ func init() {
 	cachePath = filepath.Join(RootDirectory(), "tmp/holo-cache")
 	err := doInit()
 	if err != nil {
-		Errorf(err.Error())
+		Errorf(Stderr, err.Error())
 		os.Exit(255)
 	}
 }

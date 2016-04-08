@@ -91,31 +91,25 @@ func (e *Entity) PrintReport(withAction bool) {
 
 //Apply performs the complete application algorithm for the given Entity.
 func (e *Entity) Apply(withForce bool) {
-	err := e.doApply(withForce)
-	if err != nil {
-		Errorf(err.Error())
-	}
+	e.doApply(withForce)
 }
 
-func (e *Entity) doApply(withForce bool) error {
+func (e *Entity) doApply(withForce bool) {
 	command := "apply"
 	if withForce {
 		command = "force-apply"
 	}
 
 	//track whether the report was already printed
-	tracker := PrologueTracker{Printer: func() { e.PrintReport(true) }}
-	writer := PrologueWriter{Tracker: &tracker, Writer: Stdout}
+	tracker := &PrologueTracker{Printer: func() { e.PrintReport(true) }}
+	stdout := &PrologueWriter{Tracker: tracker, Writer: Stdout}
+	stderr := &PrologueWriter{Tracker: tracker, Writer: Stderr}
 
 	//execute apply operation
-	cmdText, err := e.plugin.RunCommandWithFD3(
-		[]string{command, e.id},
-		&writer,
-		&writer, //FIXME: should be using Stderr
-	)
+	cmdText, err := e.plugin.RunCommandWithFD3([]string{command, e.id}, stdout, stderr)
 	if err != nil {
-		tracker.Exec()
-		return err
+		Errorf(stderr, err.Error())
+		return
 	}
 
 	//only print report if there was output, or if the plugin provisioned the
@@ -129,10 +123,10 @@ func (e *Entity) doApply(withForce bool) error {
 			case "not changed":
 				showReport = false
 			case "requires --force to overwrite":
-				fmt.Fprintf(&writer, "\x1B[1;31m!! Entity has been modified by user (use --force to overwrite)\x1B[0m")
+				Errorf(stderr, "Entity has been modified by user (use --force to overwrite)")
 				showDiff = true
 			case "requires --force to restore":
-				fmt.Fprintf(&writer, "\x1B[1;31m!! Entity has been deleted by user (use --force to restore)\x1B[0m")
+				Errorf(stderr, "Entity has been deleted by user (use --force to restore)")
 			}
 		}
 	}
@@ -142,7 +136,8 @@ func (e *Entity) doApply(withForce bool) error {
 	if showDiff {
 		diff, err := e.RenderDiff()
 		if err != nil {
-			return err
+			Errorf(stderr, err.Error())
+			return
 		}
 		//indent diff
 		indent := []byte("    ")
@@ -153,10 +148,6 @@ func (e *Entity) doApply(withForce bool) error {
 		Stdout.EndParagraph()
 		Stdout.Write(diff)
 	}
-
-	Stdout.EndParagraph()
-
-	return err
 }
 
 //RenderDiff creates a unified diff of a target file and its last provisioned
@@ -164,7 +155,7 @@ func (e *Entity) doApply(withForce bool) error {
 //handles symlinks and missing files gracefully. The output is always a patch
 //that can be applied to last provisioned version into the current version.
 func (e *Entity) RenderDiff() ([]byte, error) {
-	cmdText, err := e.plugin.RunCommandWithFD3([]string{"diff", e.id}, os.Stdout, os.Stderr)
+	cmdText, err := e.plugin.RunCommandWithFD3([]string{"diff", e.id}, Stdout, Stderr)
 	if err != nil {
 		return nil, err
 	}
@@ -193,7 +184,7 @@ func renderFileDiff(fromPath, toPath string) ([]byte, error) {
 	var buffer bytes.Buffer
 	cmd := exec.Command("git", "diff", "--no-index", "--", fromPathToUse, toPathToUse)
 	cmd.Stdout = &buffer
-	cmd.Stderr = os.Stderr
+	cmd.Stderr = Stderr
 
 	//error "exit code 1" is normal for different files, only exit code > 2 means trouble
 	err = cmd.Run()

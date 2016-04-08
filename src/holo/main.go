@@ -181,6 +181,10 @@ func commandApply(entities []*impl.Entity, options map[int]bool) {
 	withForce := options[optionApplyForce]
 	for _, entity := range entities {
 		entity.Apply(withForce)
+
+		os.Stderr.Sync()
+		impl.Stdout.EndParagraph()
+		os.Stdout.Sync()
 	}
 }
 
@@ -199,8 +203,12 @@ func commandDiff(entities []*impl.Entity, options map[int]bool) {
 	for _, entity := range entities {
 		output, err := entity.RenderDiff()
 		if err != nil {
-			impl.Errorf("cannot diff %s: %s", entity.EntityID(), err.Error())
+			impl.Errorf(impl.Stderr, "cannot diff %s: %s", entity.EntityID(), err.Error())
 		}
 		os.Stdout.Write(output)
+
+		os.Stderr.Sync()
+		impl.Stdout.EndParagraph()
+		os.Stdout.Sync()
 	}
 }
