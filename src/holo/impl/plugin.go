@@ -121,17 +121,13 @@ func (p *Plugin) StateDirectory() string {
 //Close()d after the child is Start()ed. Otherwise, reads from the read end
 //will block forever.
 func (p *Plugin) Command(arguments []string, stdout io.Writer, stderr io.Writer, msg *os.File) *exec.Cmd {
-	//start the plugin process with a shell script that colorizes messages on stderr like so:
-	//		!! foo bar			-> error (red)
-	//		>> foo bar			-> warning (yellow)
-	colorizer := `sed 's/^\(!! .*\)$/\x1B[1;31m\1\x1B[0m/;s/^\(>> .*\)$/\x1B[1;33m\1\x1B[0m/'`
-	cmd := exec.Command("bash", append(
-		[]string{"-c", fmt.Sprintf(`"$0" "$@" 2> >(%s)`, colorizer), p.executablePath},
-		arguments...,
-	)...)
+	cmd := exec.Command(p.executablePath, arguments...)
 	cmd.Stdin = nil
 	cmd.Stdout = stdout
-	cmd.Stderr = stderr
+	cmd.Stderr = &LineColorizingWriter{Writer: stderr, Rules: []LineColorizingRule{
+		LineColorizingRule{[]byte("!! "), []byte("\x1B[1;31m")},
+		LineColorizingRule{[]byte(">> "), []byte("\x1B[1;33m")},
+	}}
 	if msg != nil {
 		cmd.ExtraFiles = []*os.File{msg}
 	}

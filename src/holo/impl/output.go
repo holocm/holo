@@ -21,6 +21,7 @@
 package impl
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"os"
@@ -119,4 +120,64 @@ func (w *PrologueWriter) Write(p []byte) (n int, e error) {
 	//ensure that prologue is printed
 	w.Tracker.Exec()
 	return w.Writer.Write(p)
+}
+
+//LineColorizingRule is a rule for the LineColorizingWriter (see there).
+type LineColorizingRule struct {
+	Prefix []byte
+	Color  []byte
+}
+
+//ColorizeLine adds color to the given line according to the first of the given
+//`rules` that matches.
+func ColorizeLine(line []byte, rules []LineColorizingRule) []byte {
+	for _, rule := range rules {
+		if bytes.HasPrefix(line, rule.Prefix) {
+			return bytes.Join([][]byte{rule.Color, line, []byte("\x1b[0m")}, nil)
+		}
+	}
+	return line
+}
+
+//LineColorizingWriter is an io.Writer that adds ANSI colors to lines of text
+//written into it. It then passes the colorized lines to another writer.
+//Coloring is based on prefixes. For example, to turn all lines with a "!!"
+//prefix red, use
+//
+//    colorizer = &LineColorizingWriter {
+//        Writer: otherWriter,
+//        Rules: []LineColorizingRule {
+//            LineColorizingRule { []byte("!!"), []byte("\x1B[1;31m") },
+//        },
+//    }
+//
+type LineColorizingWriter struct {
+	Writer io.Writer
+	Rules  []LineColorizingRule
+	buffer []byte
+}
+
+//Write implements the io.Writer interface.
+func (w *LineColorizingWriter) Write(p []byte) (n int, err error) {
+	//append `p` to buffer and report everything as written
+	w.buffer = append(w.buffer, p...)
+	n = len(p)
+
+	for {
+		//check if we have a full line in the buffer
+		idx := bytes.IndexByte(w.buffer, '\n')
+		if idx == -1 {
+			return n, nil
+		}
+
+		//extract line from buffer
+		line := append(ColorizeLine(w.buffer[0:idx], w.Rules), '\n')
+		w.buffer = w.buffer[idx+1:]
+
+		//check if a colorizing rule matches
+		_, err := w.Writer.Write(line)
+		if err != nil {
+			return n, err
+		}
+	}
 }
