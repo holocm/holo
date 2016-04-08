@@ -69,15 +69,23 @@ func ReadConfiguration() *Configuration {
 		//collect plugin IDs
 		if strings.HasPrefix(line, "plugin ") {
 			pluginID := strings.TrimSpace(strings.TrimPrefix(line, "plugin"))
+
+			var (
+				plugin *Plugin
+				err    error
+			)
 			if strings.Contains(pluginID, "=") {
 				fields := strings.SplitN(pluginID, "=", 2)
-				result.Plugins = append(result.Plugins,
-					NewPluginWithExecutablePath(fields[0], fields[1]),
-				)
+				plugin, err = NewPluginWithExecutablePath(fields[0], fields[1])
 			} else {
-				result.Plugins = append(result.Plugins, NewPlugin(pluginID))
+				plugin, err = NewPlugin(pluginID)
 			}
-			continue
+			if err != nil {
+				Errorf(err.Error())
+				return nil
+			}
+
+			result.Plugins = append(result.Plugins, plugin)
 		} else {
 			//unknown line
 			Errorf("cannot parse %s: unknown command: %s", path, line)

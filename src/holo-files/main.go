@@ -38,8 +38,11 @@ func init() {
 }
 
 func main() {
-	if version := os.Getenv("HOLO_API_VERSION"); version != "3" {
-		fmt.Fprintf(os.Stderr, "!! holo-files plugin called with unknown HOLO_API_VERSION %s\n", version)
+	//the "info" action does not require any scanning
+	if os.Args[1] == "info" {
+		os.Stdout.Write([]byte("MIN_API_VERSION=3\nMAX_API_VERSION=3\n"))
+		os.Stderr.Write([]byte("Hallo\n"))
+		return
 	}
 
 	//scan for entities

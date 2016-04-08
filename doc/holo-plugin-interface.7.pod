@@ -66,16 +66,6 @@ start up if it is missing and C<plugin $PLUGIN_ID> is still in the C<holorc>.
 
 =head2 Runtime environment
 
-=head3 HOLO_API_VERSION
-
-Plugins SHOULD check the environment variable C<$HOLO_API_VERSION>, which is
-set by Holo to contain the current version number of this plugin interface. The
-value is always a single positive integer number, currently C<1>. Plugins
-SHOULD refuse to operate, and exit with an error message and non-zero exit code
-when Holo reports an unknown Holo API version.
-
-=head3 HOLO_ROOT_DIR
-
 Plugins MUST recognize the environment variable C<$HOLO_ROOT_DIR>: If this
 variable exists, plugins SHALL assume that Holo is running in test mode. The
 variable holds the path to a directory which contains a test scenario resembling
@@ -117,12 +107,43 @@ Future versions of Holo may start to choose these paths differently (or allow
 the user to do so), but the default values are stable and can safely be
 communicated to users in documentation.
 
-=head2 The C<scan> operation
+=head2 The C<info> operation
 
 The plugin binary is executed one or multiple times when Holo is run. The first
-invocation is always with the single argument C<scan>:
+invocation is always with the single argument C<info>:
 
     PLUGIN_BINARY=/usr/lib/holo/holo-$PLUGIN_ID
+    $PLUGIN_BINARY info
+
+The plugin shall then report metadata about itself on stdout, as key-value
+pairs in the form C<key=value>, with a newline after each value. The following
+keys are recognized by Holo:
+
+=over 4
+
+=item C<MIN_API_VERSION>, C<MAX_API_VERSION> (required)
+
+These two keys describe an interval of versions of this plugin interface that
+the plugin is compatible with. Versions are single, positive integers. For
+example:
+
+    MIN_API_VERSION=3
+    MAX_API_VERSION=5
+
+Both values may be identical, of course. If they're not, then Holo will attempt
+to choose a plugin interface version that works both for it and the plugin, and
+announce that version to the plugin in subsequent operations through the
+C<$HOLO_API_VERSION> environment variable. The plugin SHALL then conform to
+this version of the plugin interface.
+
+=back
+
+All other keys are ignored.
+
+=head2 The C<scan> operation
+
+After C<info> always comes another invocation with the single argument C<scan>:
+
     $PLUGIN_BINARY scan
 
 The plugin shall then scan its C<$HOLO_RESOURCE_DIR> for entities that it can

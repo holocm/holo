@@ -42,13 +42,13 @@ number as a Provides relation (or whatever this is called in your package
 format). Similarly, each plugin package should depend on the right API version.
 
 Changes to the API version will be noted in the release notes. If you don't
-know which API version is current, look for `HOLO_API_VERSION` in the source
+know which API version is current, look for `API_VERSION` in the source
 code. For example:
 
-    $ ack HOLO_API_VERSION ./src/
+    $ ack API_VERSION ./src/
     src/holo/impl/plugin.go
-    92:     env = append(env, "HOLO_API_VERSION=2")
+    101:    env = append(env, "HOLO_API_VERSION=3")
 
     src/holo-files/main.go
-    40:     if version := os.Getenv("HOLO_API_VERSION"); version != "2" {
-    41:             fmt.Fprintf(os.Stderr, "!! holo-files plugin called with unknown HOLO_API_VERSION %s\n", version)
+    43:             fmt.Fprintln(os.Stdout, "MIN_API_VERSION=3")
+    44:             fmt.Fprintln(os.Stdout, "MAX_API_VERSION=3")

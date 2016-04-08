@@ -21,32 +21,72 @@
 package impl
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
+
+//PluginAPIVersion is the version of holo-plugin-interface(7) implemented by this.
+const PluginAPIVersion = 3
 
 //Plugin describes a plugin executable adhering to the holo-plugin-interface(7).
 type Plugin struct {
 	id             string
 	executablePath string
+	metadata       map[string]string //from "info" call
 }
 
 //NewPlugin creates a new Plugin.
-func NewPlugin(id string) *Plugin {
+func NewPlugin(id string) (*Plugin, error) {
 	executablePath := filepath.Join(RootDirectory(), "usr/lib/holo/holo-"+id)
-	return &Plugin{id, executablePath}
+	return NewPluginWithExecutablePath(id, executablePath)
 }
 
 //NewPluginWithExecutablePath creates a new Plugin whose executable resides in
 //a non-standard location. (This is used exclusively for testing plugins before
 //they are installed.)
-func NewPluginWithExecutablePath(id string, executablePath string) *Plugin {
-	return &Plugin{id, executablePath}
+func NewPluginWithExecutablePath(id string, executablePath string) (*Plugin, error) {
+	p := &Plugin{id, executablePath, make(map[string]string)}
+
+	//load metadata with the "info" command
+	var buf bytes.Buffer
+	err := p.Command([]string{"info"}, &buf, os.Stderr, nil).Run()
+	if err != nil {
+		return nil, err
+	}
+	lines := strings.Split(string(buf.Bytes()), "\n")
+	for _, line := range lines {
+		//ignore esp. blank lines
+		if !strings.Contains(line, "=") {
+			continue
+		}
+		parts := strings.SplitN(line, "=", 2)
+		p.metadata[parts[0]] = parts[1]
+	}
+
+	//validate metadata
+	minVersion, err := strconv.Atoi(p.metadata["MIN_API_VERSION"])
+	if err != nil {
+		return nil, err
+	}
+	maxVersion, err := strconv.Atoi(p.metadata["MAX_API_VERSION"])
+	if err != nil {
+		return nil, err
+	}
+	if minVersion > PluginAPIVersion || maxVersion < PluginAPIVersion {
+		return nil, fmt.Errorf(
+			"plugin holo-%s is incompatible with this Holo (plugin min: %d, plugin max: %d, Holo: %d)",
+			p.id, minVersion, maxVersion, PluginAPIVersion,
+		)
+	}
+
+	return p, nil
 }
 
 //ID returns the plugin ID.
@@ -98,7 +138,7 @@ func (p *Plugin) Command(arguments []string, stdout io.Writer, stderr io.Writer,
 
 	//setup environment
 	env := os.Environ()
-	env = append(env, "HOLO_API_VERSION=3")
+	env = append(env, "HOLO_API_VERSION="+strconv.Itoa(PluginAPIVersion))
 	env = append(env, "HOLO_CACHE_DIR="+normalizePath(p.CacheDirectory()))
 	env = append(env, "HOLO_RESOURCE_DIR="+normalizePath(p.ResourceDirectory()))
 	env = append(env, "HOLO_STATE_DIR="+normalizePath(p.StateDirectory()))
