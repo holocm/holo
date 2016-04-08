@@ -111,12 +111,13 @@ func (e *Entity) doApply(withForce bool) error {
 
 	//track whether the report was already printed
 	tracker := PrologueTracker{Printer: func() { e.PrintReport(true) }}
+	writer := PrologueWriter{Tracker: &tracker, Writer: Stdout}
 
 	//execute apply operation
 	cmd := e.plugin.Command(
 		[]string{command, e.id},
-		&PrologueWriter{Tracker: &tracker, Writer: Stdout},
-		&PrologueWriter{Tracker: &tracker, Writer: Stdout}, //FIXME: should be Stderr
+		&writer,
+		&writer, //FIXME: should be using Stderr
 		cmdWriterForPlugin,
 	)
 	err = cmd.Start() //cannot use Run() since we need to read from the pipe before the plugin exits
@@ -144,8 +145,13 @@ func (e *Entity) doApply(withForce bool) error {
 	if err == nil {
 		cmdLines := bytes.Split(cmdBytes, []byte("\n"))
 		for _, line := range cmdLines {
-			if string(line) == "not changed" {
+			switch string(line) {
+			case "not changed":
 				showReport = false
+			case "requires --force to overwrite":
+				fmt.Fprintf(&writer, "\x1B[1;31m!! Entity has been modified by user (use --force to overwrite)\x1B[0m")
+			case "requires --force to restore":
+				fmt.Fprintf(&writer, "\x1B[1;31m!! Entity has been deleted by user (use --force to restore)\x1B[0m")
 			}
 		}
 	}

@@ -97,7 +97,7 @@ func (p *Plugin) Command(arguments []string, stdout io.Writer, stderr io.Writer,
 
 	//setup environment
 	env := os.Environ()
-	env = append(env, "HOLO_API_VERSION=2")
+	env = append(env, "HOLO_API_VERSION=3")
 	env = append(env, "HOLO_CACHE_DIR="+normalizePath(p.CacheDirectory()))
 	env = append(env, "HOLO_RESOURCE_DIR="+normalizePath(p.ResourceDirectory()))
 	env = append(env, "HOLO_STATE_DIR="+normalizePath(p.StateDirectory()))

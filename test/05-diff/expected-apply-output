@@ -3,35 +3,35 @@ Working on file:target/etc/file-deleted.conf
   store at target/var/lib/holo/files/base/etc/file-deleted.conf
      apply target/usr/share/holo/files/01-first/etc/file-deleted.conf
 
-!! skipping target: file has been deleted by user (use --force to restore)
+!! Entity has been deleted by user (use --force to restore)
 
 Working on file:target/etc/file-modified.conf
   store at target/var/lib/holo/files/base/etc/file-modified.conf
      apply target/usr/share/holo/files/01-first/etc/file-modified.conf
 
-!! skipping target: file has been modified by user (use --force to overwrite)
+!! Entity has been modified by user (use --force to overwrite)
 
 Working on file:target/etc/file-to-symlink.conf
   store at target/var/lib/holo/files/base/etc/file-to-symlink.conf
      apply target/usr/share/holo/files/01-first/etc/file-to-symlink.conf
 
-!! skipping target: file has been modified by user (use --force to overwrite)
+!! Entity has been modified by user (use --force to overwrite)
 
 Working on file:target/etc/symlink-deleted.conf
   store at target/var/lib/holo/files/base/etc/symlink-deleted.conf
      apply target/usr/share/holo/files/01-first/etc/symlink-deleted.conf
 
-!! skipping target: file has been deleted by user (use --force to restore)
+!! Entity has been deleted by user (use --force to restore)
 
 Working on file:target/etc/symlink-modified.conf
   store at target/var/lib/holo/files/base/etc/symlink-modified.conf
      apply target/usr/share/holo/files/01-first/etc/symlink-modified.conf
 
-!! skipping target: file has been modified by user (use --force to overwrite)
+!! Entity has been modified by user (use --force to overwrite)
 
 Working on file:target/etc/symlink-to-file.conf
   store at target/var/lib/holo/files/base/etc/symlink-to-file.conf
      apply target/usr/share/holo/files/01-first/etc/symlink-to-file.conf
 
-!! skipping target: file has been modified by user (use --force to overwrite)
+!! Entity has been modified by user (use --force to overwrite)
 

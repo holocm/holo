@@ -54,7 +54,7 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 		if withForce {
 			needForcefulReprovision = true
 		} else {
-			return false, errors.New("skipping target: file has been deleted by user (use --force to restore)")
+			return false, ErrNeedForceToRestore
 		}
 	}
 
@@ -115,7 +115,7 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 			if withForce {
 				needForcefulReprovision = true
 			} else {
-				return false, errors.New("skipping target: file has been modified by user (use --force to overwrite)")
+				return false, ErrNeedForceToOverwrite
 			}
 		}
 	}

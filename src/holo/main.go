@@ -86,6 +86,8 @@ func main() {
 	config := impl.ReadConfiguration()
 	if config == nil {
 		//some fatal error occurred - it was already reported, so just exit
+		impl.CleanupRuntimeCache()
+		impl.ReleaseLockfile()
 		os.Exit(255)
 	}
 
@@ -110,6 +112,8 @@ func main() {
 		pluginEntities := plugin.Scan()
 		if pluginEntities == nil {
 			//some fatal error occurred - it was already reported, so just exit
+			impl.CleanupRuntimeCache()
+			impl.ReleaseLockfile()
 			os.Exit(255)
 		}
 		entities = append(entities, pluginEntities...)
@@ -145,6 +149,8 @@ func main() {
 		}
 	}
 	if hasUnrecognizedArgs {
+		impl.CleanupRuntimeCache()
+		impl.ReleaseLockfile()
 		os.Exit(255)
 	}
 

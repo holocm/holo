@@ -16,7 +16,7 @@ This interface is deliberately designed around classic files and text streams,
 so that it can easily be implemented even by shell scripts without needing to
 resort to complex parser libraries.
 
-This document describes B<version 2> of the Holo plugin interface.
+This document describes B<version 3> of the Holo plugin interface.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED",  "MAY", and "OPTIONAL" in this document are to
@@ -117,9 +117,7 @@ Future versions of Holo may start to choose these paths differently (or allow
 the user to do so), but the default values are stable and can safely be
 communicated to users in documentation.
 
-=head2 Call signatures
-
-=head3 The C<scan> operation
+=head2 The C<scan> operation
 
 The plugin binary is executed one or multiple times when Holo is run. The first
 invocation is always with the single argument C<scan>:
@@ -195,7 +193,7 @@ encountered.
 If scanning for entities is expensive, plugins should cache results of their
 scanning in C<$HOLO_CACHE_DIR> (as described above).
 
-=head3 The C<apply> operation
+=head2 The C<apply> operation
 
 If the user requests that one or multiple entities be provisioned (with the
 C<holo apply> command), then for each of the selected entities, the
@@ -210,17 +208,35 @@ printed on stderr. This output will be passed on to the user directly. If an
 error occurred during provisioning, the plugin shall exit with non-zero exit
 code.
 
-If the plugin finds that the selected entity is already in the desired state, so
-that no changes need to made to it, it can write the message C<"not changed\n">
-to file descriptor no. 3 (which has been opened by Holo). Holo will then format
-its output accordingly (at the time of this writing, by omitting the entity from
-the output).
+During this operation, the plugin process's file descriptor no. 3 is opened by
+Holo, and the plugin can write the following messages into this FD to invoke
+special behavior in Holo:
 
-=head3 The C<force-apply> operation
+=over 4
+
+=item C<"not changed\n">
+
+The entity is already in the desired state, so no changes have been made. Holo
+will format its output accordingly (at the time of this writing, by omitting the
+entity from the output).
+
+=item C<"requires --force to overwrite\n">
+
+The entity was provisioned by this plugin, but has been changed by a user or
+external application since then. Holo will output an error message indicating
+that C<--force> is needed to overwrite these manual changes.
+
+=item C<"requires --force to restore\n">
+
+Same as above, but indicates that the entity was not just changed, but deleted
+by a user or external application.
+
+=back
+
+=head2 The C<force-apply> operation
 
 During the C<apply> operation, plugins shall refuse to provision entities that
 appear to have been edited or deleted by the user or an external application.
-("Refuse" means to display an error message and exit with non-zero exit code.)
 However, when the plugin is called like this:
 
     $PLUGIN_BINARY force-apply $ENTITY_ID
@@ -229,7 +245,7 @@ Then the plugin shall overwrite any external changes to the selected entity and
 bring it into the desired target state with all means possible. Otherwise, the
 C<force-apply> operation works just like C<apply>.
 
-=head3 The C<diff> operation
+=head2 The C<diff> operation
 
 If the user requests that a diff be printed for one or multiple entities (with
 the C<holo diff> command), then for each of the selected entities, the

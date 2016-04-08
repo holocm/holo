@@ -21,6 +21,7 @@
 package impl
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -92,14 +93,30 @@ func (target *TargetFile) PrintReport() {
 	}
 }
 
+//ErrNeedForceToOverwrite is used to signal a command message upwards in the
+//call chain.
+var ErrNeedForceToOverwrite = errors.New("NeedForceToOverwrite")
+
+//ErrNeedForceToRestore is used to signal a command message upwards in the call
+//chain.
+var ErrNeedForceToRestore = errors.New("NeedForceToRestore")
+
 //Apply implements the common.Entity interface.
-func (target *TargetFile) Apply(withForce bool) (skipReport bool) {
+func (target *TargetFile) Apply(withForce bool) (skipReport, needForceToOverwrite, needForceToRestore bool) {
 	var err error
+
 	if target.orphaned {
 		err = target.handleOrphanedTargetBase()
 		skipReport = false
 	} else {
 		skipReport, err = apply(target, withForce)
+	}
+
+	//special cases for errors that signal command messages
+	needForceToOverwrite = err == ErrNeedForceToOverwrite
+	needForceToRestore = err == ErrNeedForceToRestore
+	if needForceToRestore || needForceToOverwrite {
+		err = nil
 	}
 
 	if err != nil {

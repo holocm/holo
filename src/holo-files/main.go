@@ -37,7 +37,7 @@ func init() {
 }
 
 func main() {
-	if version := os.Getenv("HOLO_API_VERSION"); version != "2" {
+	if version := os.Getenv("HOLO_API_VERSION"); version != "3" {
 		fmt.Fprintf(os.Stderr, "!! holo-files plugin called with unknown HOLO_API_VERSION %s\n", version)
 	}
 
@@ -85,9 +85,24 @@ func main() {
 }
 
 func applyEntity(entity *impl.TargetFile, withForce bool) {
-	skipReport := entity.Apply(withForce)
+	skipReport, needForceToOverwrite, needForceToRestore := entity.Apply(withForce)
+
 	if skipReport {
 		_, err := os.NewFile(3, "file descriptor 3").Write([]byte("not changed\n"))
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+		}
+	}
+
+	if needForceToOverwrite {
+		_, err := os.NewFile(3, "file descriptor 3").Write([]byte("requires --force to overwrite\n"))
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+		}
+	}
+
+	if needForceToRestore {
+		_, err := os.NewFile(3, "file descriptor 3").Write([]byte("requires --force to restore\n"))
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		}
