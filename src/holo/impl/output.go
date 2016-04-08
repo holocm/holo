@@ -139,6 +139,17 @@ func ColorizeLine(line []byte, rules []LineColorizingRule) []byte {
 	return line
 }
 
+//ColorizeLines is like ColorizeLine, but acts on multiple lines.
+func ColorizeLines(lines []byte, rules []LineColorizingRule) []byte {
+	sep := []byte{'\n'}
+	in := bytes.Split(lines, sep)
+	out := make([][]byte, 0, len(in))
+	for _, line := range in {
+		out = append(out, ColorizeLine(line, rules))
+	}
+	return bytes.Join(out, sep)
+}
+
 //LineColorizingWriter is an io.Writer that adds ANSI colors to lines of text
 //written into it. It then passes the colorized lines to another writer.
 //Coloring is based on prefixes. For example, to turn all lines with a "!!"

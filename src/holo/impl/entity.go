@@ -225,24 +225,19 @@ func renderFileDiff(fromPath, toPath string) ([]byte, error) {
 	rx = regexp.MustCompile(`(?m:^\+\+\+ b/.*$)`)
 	result = rx.ReplaceAll(result, []byte("+++ "+toPath))
 
-	// //remove "/var/lib/holo/files/provisioned" from path displays to make it appear like we
-	// //just diff the target path
-	// if fromPathToUse == fromPath {
-	// 	fromPathQuoted := strings.TrimPrefix(regexp.QuoteMeta(fromPath), "/")
-	// 	toPathQuoted := strings.TrimPrefix(regexp.QuoteMeta(toPath), "/")
-	// 	toPathTrimmed := strings.TrimPrefix(toPath, "/")
+	//colorize diff
+	rules := []LineColorizingRule{
+		LineColorizingRule{[]byte("diff "), []byte("\x1B[1m")},
+		LineColorizingRule{[]byte("new "), []byte("\x1B[1m")},
+		LineColorizingRule{[]byte("deleted "), []byte("\x1B[1m")},
+		LineColorizingRule{[]byte("--- "), []byte("\x1B[1m")},
+		LineColorizingRule{[]byte("+++ "), []byte("\x1B[1m")},
+		LineColorizingRule{[]byte("@@ "), []byte("\x1B[36m")},
+		LineColorizingRule{[]byte("-"), []byte("\x1B[31m")},
+		LineColorizingRule{[]byte("+"), []byte("\x1B[32m")},
+	}
 
-	// 	rx = regexp.MustCompile(`(?m:^)diff --git a/` + fromPathQuoted)
-	// 	result = rx.ReplaceAll(result, []byte("diff --git a/"+toPathTrimmed))
-
-	// 	rx = regexp.MustCompile(`(?m:^)diff --git a/` + toPathQuoted + ` b/` + fromPathQuoted)
-	// 	result = rx.ReplaceAll(result, []byte("diff --git a/"+toPathTrimmed+" b/"+toPathTrimmed))
-
-	// 	rx = regexp.MustCompile(`(?m:^)--- a/` + fromPathQuoted)
-	// 	result = rx.ReplaceAll(result, []byte("--- a/"+toPathTrimmed))
-	// }
-
-	return result, nil
+	return ColorizeLines(result, rules), nil
 }
 
 func checkFile(path string) (pathToUse string, returnError error) {
