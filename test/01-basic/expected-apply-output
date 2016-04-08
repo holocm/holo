@@ -14,7 +14,6 @@ Running provisioning script 02-failing.sh
 This is output on stdout
 This is output on stderr
 Done with 02-failing.sh, exiting with code 1
-
 !! exit status 1
 
 Executing script:03-successful-nooutput.sh

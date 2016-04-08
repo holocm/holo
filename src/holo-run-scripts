@@ -17,12 +17,16 @@
 # Holo. If not, see <http://www.gnu.org/licenses/>.
 #
 
-if [ "$HOLO_API_VERSION" != 2 ]; then
-    echo "holo-run-scripts plugin called with unknown HOLO_API_VERSION $HOLO_API_VERSION" >&2
+if [ "$HOLO_API_VERSION" != 3 ]; then
+    echo "!! holo-run-scripts plugin called with unknown HOLO_API_VERSION $HOLO_API_VERSION" >&2
     exit 1
 fi
 
 case "$1" in
+    info)
+        echo MIN_API_VERSION=3
+        echo MAX_API_VERSION=3
+        ;;
     scan)
         # list executables in $HOLO_RESOURCE_DIR
         set -e
@@ -46,7 +50,7 @@ case "$1" in
         exec "$SCRIPT"
         ;;
     *)
-        echo "holo-run-scripts plugin called with unknown command: $@" >&2
+        echo "!! holo-run-scripts plugin called with unknown command: $@" >&2
         exit 1
         ;;
 esac
