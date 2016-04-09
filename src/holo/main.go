@@ -117,6 +117,7 @@ func main() {
 			os.Exit(255)
 		}
 		entities = append(entities, pluginEntities...)
+		impl.Stdout.EndParagraph()
 	}
 
 	//if there are selectors, check which entities have been selected by them
