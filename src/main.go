@@ -30,13 +30,16 @@ import (
 )
 
 func main() {
-	if version := os.Getenv("HOLO_API_VERSION"); version != "2" {
+	if version := os.Getenv("HOLO_API_VERSION"); version != "3" {
 		fmt.Fprintf(os.Stderr, "!! holo-users-groups plugin called with unknown HOLO_API_VERSION %s\n", version)
 	}
 
-	if os.Args[1] == "scan" {
+	switch os.Args[1] {
+	case "info":
+		os.Stdout.Write([]byte("MIN_API_VERSION=3\nMAX_API_VERSION=3\n"))
+	case "scan":
 		executeScanCommand()
-	} else {
+	default:
 		executeNonScanCommand()
 	}
 }
@@ -120,11 +123,15 @@ func executeNonScanCommand() {
 	case "force-apply":
 		applyEntity(selectedEntity, true)
 	case "diff":
-		output, err := selectedEntity.RenderDiff()
+		expectedStateFile, actualStateFile, err := selectedEntity.PrepareDiff()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		}
-		os.Stdout.Write(output)
+		out := fmt.Sprintf("%s\000%s\000", expectedStateFile, actualStateFile)
+		_, err = os.NewFile(3, "file descriptor 3").Write([]byte(out))
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+		}
 	}
 }
 

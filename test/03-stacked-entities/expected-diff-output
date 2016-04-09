@@ -1,16 +1,16 @@
-diff --holo group:stacked
-deleted group
---- group:stacked
+diff --holo target/tmp/holo-cache/users-groups/group:stacked/expected.toml target/tmp/holo-cache/users-groups/group:stacked/actual.toml
+deleted file mode 100644
+--- target/tmp/holo-cache/users-groups/group:stacked/expected.toml
 +++ /dev/null
-@@ -1,3 +0,0
+@@ -1,3 +0,0 @@
 -[[group]]
 -name = "stacked"
 -gid = 1001
-diff --holo user:stacked
-deleted user
---- user:stacked
+diff --holo target/tmp/holo-cache/users-groups/user:stacked/expected.toml target/tmp/holo-cache/users-groups/user:stacked/actual.toml
+deleted file mode 100644
+--- target/tmp/holo-cache/users-groups/user:stacked/expected.toml
 +++ /dev/null
-@@ -1,8 +0,0
+@@ -1,8 +0,0 @@
 -[[user]]
 -name = "stacked"
 -comment = "Stacked User"

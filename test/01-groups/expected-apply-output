@@ -9,5 +9,14 @@ Working on group:wronggid
   found in target/usr/share/holo/users-groups/01-groups.toml
       with GID: 42
 
-!! Group has GID: 102, expected 42 (use --force to overwrite)
+!! Entity has been modified by user (use --force to overwrite)
+
+    diff --holo target/tmp/holo-cache/users-groups/group:wronggid/expected.toml target/tmp/holo-cache/users-groups/group:wronggid/actual.toml
+    --- target/tmp/holo-cache/users-groups/group:wronggid/expected.toml
+    +++ target/tmp/holo-cache/users-groups/group:wronggid/actual.toml
+    @@ -1,3 +1,3 @@
+     [[group]]
+     name = "wronggid"
+    -gid = 42
+    +gid = 102
 

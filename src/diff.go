@@ -22,220 +22,188 @@ package main
 
 import (
 	"bytes"
-	"fmt"
-	"strconv"
+	"io"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"../localdeps/github.com/BurntSushi/toml"
 )
 
-//RenderDiff implements the Entity interface.
-func (group Group) RenderDiff() ([]byte, error) {
+func pathsForDiffOf(e Entity) (string, string, error) {
+	//make sure that the directory for these files does exist
+	dirPath := filepath.Join(os.Getenv("HOLO_CACHE_DIR"), e.EntityID())
+	err := os.Mkdir(dirPath, 0755)
+	if err != nil {
+		return "", "", err
+	}
+
+	return filepath.Join(dirPath, "expected.toml"), filepath.Join(dirPath, "actual.toml"), nil
+}
+
+func (group Group) serializeForDiff(path string) error {
+	var buf bytes.Buffer
+	buf.Write([]byte("[[group]]\n"))
+
+	err := appendField(&buf, "name", group.Name)
+	if err != nil {
+		return err
+	}
+
+	if group.GID != 0 {
+		err := appendField(&buf, "gid", group.GID)
+		if err != nil {
+			return err
+		}
+	}
+
+	return ioutil.WriteFile(path, buf.Bytes(), 0644)
+}
+
+func (user *User) serializeForDiff(path string) error {
+	var buf bytes.Buffer
+	buf.Write([]byte("[[user]]\n"))
+
+	err := appendField(&buf, "name", user.Name)
+	if err != nil {
+		return err
+	}
+
+	if user.Comment != "" {
+		err := appendField(&buf, "comment", user.Comment)
+		if err != nil {
+			return err
+		}
+	}
+
+	if user.UID != 0 {
+		err := appendField(&buf, "uid", user.UID)
+		if err != nil {
+			return err
+		}
+	}
+
+	if user.HomeDirectory != "" {
+		err := appendField(&buf, "home", user.HomeDirectory)
+		if err != nil {
+			return err
+		}
+	}
+
+	if user.Group != "" {
+		err := appendField(&buf, "group", user.Group)
+		if err != nil {
+			return err
+		}
+	}
+
+	if len(user.Groups) > 0 {
+		err := appendField(&buf, "groups", user.Groups)
+		if err != nil {
+			return err
+		}
+	}
+
+	if user.Shell != "" {
+		err := appendField(&buf, "shell", user.Shell)
+		if err != nil {
+			return err
+		}
+	}
+
+	return ioutil.WriteFile(path, buf.Bytes(), 0644)
+}
+
+//PrepareDiff implements the Entity interface.
+func (group Group) PrepareDiff() (string, string, error) {
 	//does this group exist already?
 	groupExists, actualGid, err := group.checkExists()
 	if err != nil {
-		return nil, err
+		return "", "", err
 	}
 
-	//if the group is orphaned, and there exists no actual group, then there is no diff
-	if !groupExists && group.Orphaned {
-		return nil, nil
+	//prepare paths
+	expectedPath, actualPath, err := pathsForDiffOf(group)
+	if err != nil {
+		return "", "", err
 	}
 
-	//to simplify the diff process, replace a non-existing group by an empty group
-	headers := generateDiffHeader("group", group.EntityID(), groupExists)
-
-	//generate body
-	var lines []string
+	//write actual state
 	if groupExists {
-		if group.Orphaned {
-			lines = []string{"+[[group]]"}
-		} else {
-			lines = []string{" [[group]]"}
+		g := Group{Name: group.Name, GID: actualGid}
+		err := g.serializeForDiff(actualPath)
+		if err != nil {
+			return "", "", err
 		}
-	} else {
-		lines = []string{"-[[group]]"}
 	}
 
-	lines, err = addDiffForField(lines, groupExists, group.Orphaned, "name", group.Name, group.Name, "")
-	if err != nil {
-		return nil, err
-	}
-	lines, err = addDiffForField(lines, groupExists, group.Orphaned, "gid", group.GID, actualGid, 0)
-	if err != nil {
-		return nil, err
+	//write expected state
+	if !group.Orphaned {
+		//merge actual state into definition where definition does not define anything
+		g := group
+		if g.GID == 0 {
+			g.GID = actualGid
+		}
+
+		err := g.serializeForDiff(expectedPath)
+		if err != nil {
+			return "", "", err
+		}
 	}
 
-	//is there any diff?
-	if !hasDiff(lines) {
-		return nil, nil
-	}
-
-	//count lines for "@@ -from +to" hunk header
-	hunkHeader := generateHunkHeader(lines)
-	allLines := append(append(headers, hunkHeader), lines...)
-	return []byte(strings.Join(allLines, "\n") + "\n"), nil
+	return expectedPath, actualPath, nil
 }
 
-//RenderDiff implements the Entity interface.
-func (user User) RenderDiff() ([]byte, error) {
+//PrepareDiff implements the Entity interface.
+func (user User) PrepareDiff() (string, string, error) {
 	//does this user exist already?
 	userExists, actualUser, err := user.checkExists()
 	if err != nil {
-		return nil, err
+		return "", "", err
 	}
 
-	//if the user is orphaned, and there exists no actual user, then there is no diff
-	if !userExists && user.Orphaned {
-		return nil, nil
+	//prepare paths
+	expectedPath, actualPath, err := pathsForDiffOf(user)
+	if err != nil {
+		return "", "", err
 	}
 
-	//to simplify the diff process, replace a non-existing user by an empty user
-	if !userExists {
-		actualUser = &User{}
-	}
-	headers := generateDiffHeader("user", user.EntityID(), userExists)
-
-	//generate body
-	var lines []string
+	//write actual state
 	if userExists {
-		if user.Orphaned {
-			lines = []string{"+[[user]]"}
-		} else {
-			lines = []string{" [[user]]"}
-		}
-	} else {
-		lines = []string{"-[[user]]"}
-	}
-
-	lines, err = addDiffForField(lines, userExists, user.Orphaned, "name", user.Name, user.Name, "")
-	if err != nil {
-		return nil, err
-	}
-	lines, err = addDiffForField(lines, userExists, user.Orphaned, "comment", user.Comment, actualUser.Comment, "")
-	if err != nil {
-		return nil, err
-	}
-	lines, err = addDiffForField(lines, userExists, user.Orphaned, "uid", user.UID, actualUser.UID, 0)
-	if err != nil {
-		return nil, err
-	}
-	lines, err = addDiffForField(lines, userExists, user.Orphaned, "home", user.HomeDirectory, actualUser.HomeDirectory, "")
-	if err != nil {
-		return nil, err
-	}
-	lines, err = addDiffForField(lines, userExists, user.Orphaned, "group", user.Group, actualUser.Group, "")
-	if err != nil {
-		return nil, err
-	}
-	lines, err = addDiffForField(lines, userExists, user.Orphaned, "groups", user.Groups, actualUser.Groups, []string{})
-	if err != nil {
-		return nil, err
-	}
-	lines, err = addDiffForField(lines, userExists, user.Orphaned, "shell", user.Shell, actualUser.Shell, "")
-	if err != nil {
-		return nil, err
-	}
-
-	//is there any diff?
-	if !hasDiff(lines) {
-		return nil, nil
-	}
-
-	//count lines for "@@ -from +to" hunk header
-	hunkHeader := generateHunkHeader(lines)
-	allLines := append(append(headers, hunkHeader), lines...)
-	return []byte(strings.Join(allLines, "\n") + "\n"), nil
-}
-
-func generateDiffHeader(entityType, entityID string, entityExists bool) []string {
-	//generate diff header (much of this is made up since there is no external
-	//reference for a diff format for users/groups)
-	headers := []string{
-		fmt.Sprintf("diff --holo %s", entityID),
-	}
-	if !entityExists {
-		headers = append(headers, "deleted "+entityType)
-	}
-	headers = append(headers, fmt.Sprintf("--- %s", entityID))
-	if entityExists {
-		return append(headers, fmt.Sprintf("+++ %s", entityID))
-	}
-	return append(headers, "+++ /dev/null")
-}
-
-func generateHunkHeader(lines []string) string {
-	//count lines for "@@ -from +to" hunk header
-	fromLines, toLines := 0, 0
-	for _, line := range lines {
-		switch line[0] {
-		case ' ':
-			fromLines++
-			toLines++
-		case '-':
-			fromLines++
-		case '+':
-			toLines++
-		}
-	}
-	return fmt.Sprintf("@@ -%s +%s", lineCountToString(fromLines), lineCountToString(toLines))
-}
-
-func lineCountToString(count int) string {
-	//format line count for use in hunk header of unified diff
-	switch count {
-	case 0:
-		return "0,0"
-	case 1:
-		return "1"
-	default:
-		return "1," + strconv.Itoa(count)
-	}
-}
-
-//Produce a content diff for the given field, by encoding the expectedValue and
-//actualValue as TOML. No output is produced if the expectedValue matches the
-//ignoredValue, which means that the value is not set in the entity definition.
-func addDiffForField(lines []string, entityExists, isEntityOrphaned bool, field string, expectedValue, actualValue, ignoredValue interface{}) ([]string, error) {
-	//early exit if entity exists, but is orphaned, i.e. we print a diff with "+" lines only
-	if isEntityOrphaned {
-		actualData, err := encodeField(field, actualValue)
+		err := actualUser.serializeForDiff(actualPath)
 		if err != nil {
-			return lines, err
+			return "", "", err
 		}
-		return append(lines, "+"+actualData), nil
 	}
 
-	//encode values into TOML
-	expectedData, err := encodeField(field, expectedValue)
-	if err != nil {
-		return lines, err
-	}
-	ignoredData, err := encodeField(field, ignoredValue)
-	if err != nil {
-		return lines, err
-	}
-	if expectedData == ignoredData {
-		//this field is not included in the entity definition, so don't print it in the diff
-		return lines, nil
+	//write expected state
+	if !user.Orphaned {
+		//merge actual state into definition where definition does not define anything
+		u := user
+		if userExists {
+			if u.UID == 0 {
+				u.UID = actualUser.UID
+			}
+			if u.HomeDirectory == "" {
+				u.HomeDirectory = actualUser.HomeDirectory
+			}
+			if u.Group == "" {
+				u.Group = actualUser.Group
+			}
+			//TODO: u.Groups
+			if u.Shell == "" {
+				u.Shell = actualUser.Shell
+			}
+		}
+
+		err := u.serializeForDiff(expectedPath)
+		if err != nil {
+			return "", "", err
+		}
 	}
 
-	//early exit if there is no previous entity, i.e. we print a diff with "-" lines only
-	if !entityExists {
-		return append(lines, "-"+expectedData), nil
-	}
-
-	//encode actual value into TOML
-	actualData, err := encodeField(field, actualValue)
-	if err != nil {
-		return lines, err
-	}
-
-	//if both are the same, print as context, else print as diff
-	if expectedData == actualData {
-		return append(lines, " "+expectedData), nil
-	}
-	return append(lines, "-"+expectedData, "+"+actualData), nil
+	return expectedPath, actualPath, nil
 }
 
 func encodeField(field string, value interface{}) (string, error) {
@@ -244,12 +212,11 @@ func encodeField(field string, value interface{}) (string, error) {
 	return strings.TrimSpace(buf.String()), err
 }
 
-//Check if the diff contains any differences (i.e. lines that are not context lines).
-func hasDiff(lines []string) bool {
-	for _, line := range lines {
-		if line[0] != ' ' {
-			return true
-		}
+func appendField(w io.Writer, field string, value interface{}) error {
+	str, err := encodeField(field, value)
+	if err != nil {
+		return err
 	}
-	return false
+	w.Write([]byte(str + "\n"))
+	return nil
 }

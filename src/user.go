@@ -162,8 +162,9 @@ func (u User) Apply(withForce bool) (entityHasChanged bool) {
 				}
 				return true
 			}
-			for _, diff := range differences {
-				fmt.Fprintf(os.Stderr, "!! User has %s: %s, expected %s (use --force to overwrite)\n", diff.field, diff.actual, diff.expected)
+			_, err := os.NewFile(3, "file descriptor 3").Write([]byte("requires --force to overwrite\n"))
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 			}
 		}
 		return false
@@ -265,6 +266,7 @@ func (u User) checkExists() (exists bool, currentUser *User, e error) {
 	return true, &User{
 		//NOTE: Some fields (name, system, definitionFile) are not set because
 		//they are not relevant for the algorithm.
+		Name:          fields[0],
 		Comment:       fields[4],
 		UID:           actualUID,
 		HomeDirectory: fields[5],

@@ -1,6 +1,4 @@
 
-scan with plugin users-groups
-
 !! File target/usr/share/holo/users-groups/01-first.toml is invalid:
 >> groups[1] is missing required 'name' attribute
 >> users[0] is missing required 'name' attribute

@@ -1,6 +1,4 @@
 
-scan with plugin users-groups
-
 !! File target/usr/share/holo/users-groups/01-first.toml is invalid:
 >> groups[1] is missing required 'name' attribute
 >> users[0] is missing required 'name' attribute
@@ -11,19 +9,19 @@ scan with plugin users-groups
 >> conflicting login group for user 'stacked' (existing: users, new: stacked)
 >> conflicting login shell for user 'stacked' (existing: /usr/bin/zsh, new: /bin/bash)
 
-diff --holo group:valid
-deleted group
---- group:valid
+diff --holo target/tmp/holo-cache/users-groups/group:valid/expected.toml target/tmp/holo-cache/users-groups/group:valid/actual.toml
+deleted file mode 100644
+--- target/tmp/holo-cache/users-groups/group:valid/expected.toml
 +++ /dev/null
-@@ -1,3 +0,0
+@@ -1,3 +0,0 @@
 -[[group]]
 -name = "valid"
 -gid = 1010
-diff --holo user:valid
-deleted user
---- user:valid
+diff --holo target/tmp/holo-cache/users-groups/user:valid/expected.toml target/tmp/holo-cache/users-groups/user:valid/actual.toml
+deleted file mode 100644
+--- target/tmp/holo-cache/users-groups/user:valid/expected.toml
 +++ /dev/null
-@@ -1,3 +0,0
+@@ -1,3 +0,0 @@
 -[[user]]
 -name = "valid"
 -uid = 1010

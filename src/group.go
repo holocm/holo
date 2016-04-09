@@ -119,8 +119,9 @@ func (g Group) Apply(withForce bool) (entityHasChanged bool) {
 				}
 				return true
 			}
-			for _, diff := range differences {
-				fmt.Fprintf(os.Stderr, "!! Group has %s: %s, expected %s (use --force to overwrite)\n", diff.field, diff.actual, diff.expected)
+			_, err := os.NewFile(3, "file descriptor 3").Write([]byte("requires --force to overwrite\n"))
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 			}
 		}
 		return false

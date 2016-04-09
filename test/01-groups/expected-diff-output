@@ -1,14 +1,14 @@
-diff --holo group:new
-deleted group
---- group:new
+diff --holo target/tmp/holo-cache/users-groups/group:new/expected.toml target/tmp/holo-cache/users-groups/group:new/actual.toml
+deleted file mode 100644
+--- target/tmp/holo-cache/users-groups/group:new/expected.toml
 +++ /dev/null
-@@ -1,2 +0,0
+@@ -1,2 +0,0 @@
 -[[group]]
 -name = "new"
-diff --holo group:wronggid
---- group:wronggid
-+++ group:wronggid
-@@ -1,3 +1,3
+diff --holo target/tmp/holo-cache/users-groups/group:wronggid/expected.toml target/tmp/holo-cache/users-groups/group:wronggid/actual.toml
+--- target/tmp/holo-cache/users-groups/group:wronggid/expected.toml
++++ target/tmp/holo-cache/users-groups/group:wronggid/actual.toml
+@@ -1,3 +1,3 @@
  [[group]]
  name = "wronggid"
 -gid = 42

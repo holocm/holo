@@ -14,29 +14,85 @@ Working on user:wronggroup
   found in target/usr/share/holo/users-groups/01-users.toml
       with login group: users
 
-!! User has login group: nobody, expected users (use --force to overwrite)
+!! Entity has been modified by user (use --force to overwrite)
+
+    diff --holo target/tmp/holo-cache/users-groups/user:wronggroup/expected.toml target/tmp/holo-cache/users-groups/user:wronggroup/actual.toml
+    --- target/tmp/holo-cache/users-groups/user:wronggroup/expected.toml
+    +++ target/tmp/holo-cache/users-groups/user:wronggroup/actual.toml
+    @@ -2,5 +2,5 @@
+     name = "wronggroup"
+     uid = 1005
+     home = "/home/wronggroup"
+    -group = "users"
+    +group = "nobody"
+     shell = "/bin/zsh"
 
 Working on user:wronggroups
   found in target/usr/share/holo/users-groups/01-users.toml
       with groups: network
 
-!! User has groups: video, expected network (use --force to overwrite)
+!! Entity has been modified by user (use --force to overwrite)
+
+    diff --holo target/tmp/holo-cache/users-groups/user:wronggroups/expected.toml target/tmp/holo-cache/users-groups/user:wronggroups/actual.toml
+    --- target/tmp/holo-cache/users-groups/user:wronggroups/expected.toml
+    +++ target/tmp/holo-cache/users-groups/user:wronggroups/actual.toml
+    @@ -3,5 +3,5 @@ name = "wronggroups"
+     uid = 1005
+     home = "/home/wronggroups"
+     group = "users"
+    -groups = ["network"]
+    +groups = ["video"]
+     shell = "/bin/zsh"
 
 Working on user:wronghome
   found in target/usr/share/holo/users-groups/01-users.toml
       with home: /home/wronghome
 
-!! User has home directory: /var/lib/wronghome, expected /home/wronghome (use --force to overwrite)
+!! Entity has been modified by user (use --force to overwrite)
+
+    diff --holo target/tmp/holo-cache/users-groups/user:wronghome/expected.toml target/tmp/holo-cache/users-groups/user:wronghome/actual.toml
+    --- target/tmp/holo-cache/users-groups/user:wronghome/expected.toml
+    +++ target/tmp/holo-cache/users-groups/user:wronghome/actual.toml
+    @@ -1,6 +1,6 @@
+     [[user]]
+     name = "wronghome"
+     uid = 1004
+    -home = "/home/wronghome"
+    +home = "/var/lib/wronghome"
+     group = "users"
+     shell = "/bin/zsh"
 
 Working on user:wrongshell
   found in target/usr/share/holo/users-groups/01-users.toml
       with login shell: /bin/zsh
 
-!! User has login shell: /bin/bash, expected /bin/zsh (use --force to overwrite)
+!! Entity has been modified by user (use --force to overwrite)
+
+    diff --holo target/tmp/holo-cache/users-groups/user:wrongshell/expected.toml target/tmp/holo-cache/users-groups/user:wrongshell/actual.toml
+    --- target/tmp/holo-cache/users-groups/user:wrongshell/expected.toml
+    +++ target/tmp/holo-cache/users-groups/user:wrongshell/actual.toml
+    @@ -3,4 +3,4 @@ name = "wrongshell"
+     uid = 1005
+     home = "/home/wrongshell"
+     group = "users"
+    -shell = "/bin/zsh"
+    +shell = "/bin/bash"
 
 Working on user:wronguid
   found in target/usr/share/holo/users-groups/01-users.toml
       with UID: 1003
 
-!! User has UID: 2003, expected 1003 (use --force to overwrite)
+!! Entity has been modified by user (use --force to overwrite)
+
+    diff --holo target/tmp/holo-cache/users-groups/user:wronguid/expected.toml target/tmp/holo-cache/users-groups/user:wronguid/actual.toml
+    --- target/tmp/holo-cache/users-groups/user:wronguid/expected.toml
+    +++ target/tmp/holo-cache/users-groups/user:wronguid/actual.toml
+    @@ -1,6 +1,6 @@
+     [[user]]
+     name = "wronguid"
+    -uid = 1003
+    +uid = 2003
+     home = "/home/wronguid"
+     group = "users"
+     shell = "/bin/zsh"
 
