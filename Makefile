@@ -20,6 +20,7 @@ check: default
 	@holo-test holo-users-groups $(sort $(wildcard test/??-*))
 
 install: default src/holorc.holoscript
+	install -d -m 0755 "$(DESTDIR)/usr/share/holo/users-groups"
 	install -D -m 0755 build/holo-users-groups       "$(DESTDIR)/usr/lib/holo/holo-users-groups"
 	install -D -m 0755 src/holorc.holoscript         "$(DESTDIR)/usr/share/holo/files/01-holo-users-groups/etc/holorc.holoscript"
 	install -D -m 0644 build/man/holo-users-groups.8 "$(DESTDIR)/usr/share/man/man8/holo-users-groups.8"
