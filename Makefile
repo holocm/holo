@@ -20,6 +20,7 @@ check: default
 	@holo-test holo-ssh-keys $(sort $(wildcard test/??-*))
 
 install: default src/holorc.holoscript
+	install -d -m 0755 "$(DESTDIR)/usr/share/holo/ssh-keys"
 	install -D -m 0755 build/holo-ssh-keys       "$(DESTDIR)/usr/lib/holo/holo-ssh-keys"
 	install -D -m 0755 src/holorc.holoscript     "$(DESTDIR)/usr/share/holo/files/02-holo-ssh-keys/etc/holorc.holoscript"
 	install -D -m 0644 build/man/holo-ssh-keys.8 "$(DESTDIR)/usr/share/man/man8/holo-ssh-keys.8"
