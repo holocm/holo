@@ -28,12 +28,17 @@ import (
 )
 
 func main() {
-	if version := os.Getenv("HOLO_API_VERSION"); version != "2" {
+	if version := os.Getenv("HOLO_API_VERSION"); version != "3" {
 		fmt.Fprintf(os.Stderr, "!! holo-users-groups plugin called with unknown HOLO_API_VERSION %s\n", version)
+		os.Exit(1)
 	}
 
-	//the scan operation does not require any arguments
-	if os.Args[1] == "scan" {
+	//operations that do not require any arguments
+	switch os.Args[1] {
+	case "info":
+		os.Stdout.Write([]byte("MIN_API_VERSION=3\nMAX_API_VERSION=3\n"))
+		return
+	case "scan":
 		errs := impl.Scan()
 		for _, err := range errs {
 			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
@@ -55,10 +60,14 @@ func main() {
 			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		}
 	case "diff":
-		output, err := entity.RenderDiff()
+		expectedStateFile, actualStateFile, err := entity.PrepareDiff()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		}
-		os.Stdout.Write(output)
+		out := fmt.Sprintf("%s\000%s\000", expectedStateFile, actualStateFile)
+		_, err = os.NewFile(3, "file descriptor 3").Write([]byte(out))
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+		}
 	}
 }

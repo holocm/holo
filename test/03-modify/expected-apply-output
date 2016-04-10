@@ -1,5 +1,6 @@
 
 Scrubbing ssh-keyset:user1/bar (source file has been deleted)
+
 Working on ssh-keyset:user2/foo
   found in target/usr/share/holo/ssh-keys/user2/foo.pub
     key is 2048 SHA256:INu+TuczyJpYs1IiMb6csykJDbJ778oJeXmG40WCCHI user@key1 (RSA)

@@ -1,13 +1,14 @@
-diff --holo ssh-keyset:user1/bar
---- ssh-keyset:user1/bar
-+++ target/home/user1/.ssh/authorized_keys[holo=ssh-keyset:user1/bar]
-@@ -0,0 +1,2
-+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDISlUCVUWDSuVm94/rVUL/X2g5k5kplyvxgkNRRTpBZjfdvjq6qy8VqIhczrrEoM0jK8zJ28NsLxmKkYyaoBDCf7L+QPyYD/oLguu7/3/eCSywrIfBtmZY6EXG8gypYt/KzNzp3o83wrKXCKTA6IbTgLKf3A1QfjMTNml9u6+ECdt+XjXbe8MQGultF646xKHeK3A5Zs1/tAxciia4MJyCULJf5NiVqilPQh2BaGvXZpcX7aaddT6G/eckUyWVw1XFymJgoBojEIknk9OyuWnBDuwpyDf0Nsx4siGpBCChyjuW6M9IIVGCf8jIc2lzNGKn9/1NVjvGOdGOz4Ar40xz holo=ssh-keyset:user1/bar
+diff --holo target/usr/share/holo/ssh-keys/user1/bar.pub target/tmp/holo-cache/ssh-keys/bar@user1
+new file mode 100644
+--- /dev/null
++++ target/tmp/holo-cache/ssh-keys/bar@user1
+@@ -0,0 +1,2 @@
 +ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPLEjAqLN0L6OyzXZmvWJAflKdOD4/nxvdZQXZEQtIXX/BlHKc7YRjgAnbQcxI7Zq8I6QUhuMSQpXMe4l2elAtWkzmxqFPkpSHMqgz6DaXKHlWPYAESjO3zfeZ9WWy4sW4stCIFRSDC0GkOx68TQSVbE9bm5wHZdF9nGW7ec4xpGhEKW7UC+WQE3bsgRAOWUDmTeExAI8w1+Ala3IfX/6KO7cq4QsTTscnuUub21Vxb0uRaW2HFqm8ttwecr7I/B83QBqOSUeGurdsCGv1FYHfQJzlK6adMaRiZ+McQlOiKcKfXp06nmHL95xhx8rqAWOVjB9qpfzCSAqSpJZwpPz/ holo=ssh-keyset:user1/bar
-diff --holo ssh-keyset:user2/foo
---- ssh-keyset:user2/foo
-+++ target/home/user2/.ssh/authorized_keys[holo=ssh-keyset:user2/foo]
-@@ -1,2 +1,2
++ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDISlUCVUWDSuVm94/rVUL/X2g5k5kplyvxgkNRRTpBZjfdvjq6qy8VqIhczrrEoM0jK8zJ28NsLxmKkYyaoBDCf7L+QPyYD/oLguu7/3/eCSywrIfBtmZY6EXG8gypYt/KzNzp3o83wrKXCKTA6IbTgLKf3A1QfjMTNml9u6+ECdt+XjXbe8MQGultF646xKHeK3A5Zs1/tAxciia4MJyCULJf5NiVqilPQh2BaGvXZpcX7aaddT6G/eckUyWVw1XFymJgoBojEIknk9OyuWnBDuwpyDf0Nsx4siGpBCChyjuW6M9IIVGCf8jIc2lzNGKn9/1NVjvGOdGOz4Ar40xz holo=ssh-keyset:user1/bar
+diff --holo target/usr/share/holo/ssh-keys/user2/foo.pub target/tmp/holo-cache/ssh-keys/foo@user2
+--- target/usr/share/holo/ssh-keys/user2/foo.pub
++++ target/tmp/holo-cache/ssh-keys/foo@user2
+@@ -1,2 +1,2 @@
  ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPLEjAqLN0L6OyzXZmvWJAflKdOD4/nxvdZQXZEQtIXX/BlHKc7YRjgAnbQcxI7Zq8I6QUhuMSQpXMe4l2elAtWkzmxqFPkpSHMqgz6DaXKHlWPYAESjO3zfeZ9WWy4sW4stCIFRSDC0GkOx68TQSVbE9bm5wHZdF9nGW7ec4xpGhEKW7UC+WQE3bsgRAOWUDmTeExAI8w1+Ala3IfX/6KO7cq4QsTTscnuUub21Vxb0uRaW2HFqm8ttwecr7I/B83QBqOSUeGurdsCGv1FYHfQJzlK6adMaRiZ+McQlOiKcKfXp06nmHL95xhx8rqAWOVjB9qpfzCSAqSpJZwpPz/ user@key1
 -ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDaRbfDHfXfdd/7WuRw8uthrtR4wt3UQgVKRHt58RQGkFbgrLpDhJvBFmGA1eoHZ/K6NL+aKN1g/kJKeo67+XbAigpcZ8LsQZIg2K71tSdC2kVstAsy9lfkbv7SQuzZ1zuOl6CI9k36VdtnNsViO9NWccCoTfeBV3HVlQjE+Le1GL8Dh+rdNZvFyEcrOoQjLhpmQmjTnioa9WN//UkEJP1aj6Rl8YPpOqx6aVKj/l6fiuO5AjBCxHtu2gVle2++dSc8bMdFyrj6QqA/Xmix5rYauI6UbNDronFmklZinPyaOXpTR+O314DGW3y2cYqi3uFkXTuHXCeer2Rs6RTylTWt user@key3
 +ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDISlUCVUWDSuVm94/rVUL/X2g5k5kplyvxgkNRRTpBZjfdvjq6qy8VqIhczrrEoM0jK8zJ28NsLxmKkYyaoBDCf7L+QPyYD/oLguu7/3/eCSywrIfBtmZY6EXG8gypYt/KzNzp3o83wrKXCKTA6IbTgLKf3A1QfjMTNml9u6+ECdt+XjXbe8MQGultF646xKHeK3A5Zs1/tAxciia4MJyCULJf5NiVqilPQh2BaGvXZpcX7aaddT6G/eckUyWVw1XFymJgoBojEIknk9OyuWnBDuwpyDf0Nsx4siGpBCChyjuW6M9IIVGCf8jIc2lzNGKn9/1NVjvGOdGOz4Ar40xz holo=ssh-keyset:user2/foo
