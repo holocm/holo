@@ -36,6 +36,14 @@ func Errorf(writer io.Writer, text string, args ...interface{}) {
 	fmt.Fprintf(writer, "\x1b[1;31m!! %s\x1b[0m\n", strings.TrimSuffix(text, "\n"))
 }
 
+//Warnf formats and prints an warning message on stderr.
+func Warnf(writer io.Writer, text string, args ...interface{}) {
+	if len(args) > 0 {
+		text = fmt.Sprintf(text, args...)
+	}
+	fmt.Fprintf(writer, "\x1b[1;33m>> %s\x1b[0m\n", strings.TrimSuffix(text, "\n"))
+}
+
 //ParagraphTracker is used in conjunction with ParagraphWriter. See explanation
 //over there.
 type ParagraphTracker struct {

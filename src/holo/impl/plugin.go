@@ -22,6 +22,7 @@ package impl
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -34,6 +35,9 @@ import (
 
 //PluginAPIVersion is the version of holo-plugin-interface(7) implemented by this.
 const PluginAPIVersion = 3
+
+//ErrPluginExecutableMissing indicates that a plugin's executable file is missing.
+var ErrPluginExecutableMissing = errors.New("ErrPluginExecutableMissing")
 
 //Plugin describes a plugin executable adhering to the holo-plugin-interface(7).
 type Plugin struct {
@@ -54,9 +58,19 @@ func NewPlugin(id string) (*Plugin, error) {
 func NewPluginWithExecutablePath(id string, executablePath string) (*Plugin, error) {
 	p := &Plugin{id, executablePath, make(map[string]string)}
 
+	//check if the plugin executable exists
+	_, err := os.Stat(executablePath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			Errorf(Stderr, "%s: file not found", executablePath)
+			return nil, ErrPluginExecutableMissing
+		}
+		return nil, err
+	}
+
 	//load metadata with the "info" command
 	var buf bytes.Buffer
-	err := p.Command([]string{"info"}, &buf, Stderr, nil).Run()
+	err = p.Command([]string{"info"}, &buf, Stderr, nil).Run()
 	if err != nil {
 		return nil, err
 	}

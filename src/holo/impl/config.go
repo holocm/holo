@@ -80,12 +80,22 @@ func ReadConfiguration() *Configuration {
 			} else {
 				plugin, err = NewPlugin(pluginID)
 			}
-			if err != nil {
-				Errorf(Stderr, err.Error())
-				return nil
-			}
 
-			result.Plugins = append(result.Plugins, plugin)
+			if err == nil {
+				result.Plugins = append(result.Plugins, plugin)
+			} else {
+				if err == ErrPluginExecutableMissing {
+					//this is not an error because we need a way to uninstall
+					//plugins: when the plugin's files are removed, the next
+					//"holo apply file:/etc/holorc" will remove them from the
+					//holorc, but to be able to run, Holo needs to be able to
+					//ignore the missing uninstalled plugin at this point
+					Warnf(Stderr, "Skipping plugin: %s", pluginID)
+				} else {
+					Errorf(Stderr, err.Error())
+					return nil
+				}
+			}
 		} else {
 			//unknown line
 			Errorf(Stderr, "cannot parse %s: unknown command: %s", path, line)
