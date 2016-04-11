@@ -21,6 +21,7 @@
 package impl
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -28,7 +29,18 @@ import (
 var cachePath string
 
 func init() {
-	cachePath = filepath.Join(RootDirectory(), "tmp/holo-cache")
+	rootDir := RootDirectory()
+	if rootDir == "/" {
+		//in productive mode, honor the TMPDIR variable (through os.TempDir)
+		//and include the PID to avoid collisions between parallel runs of
+		//"holo scan" (which is not protected by the /run/holo.pid lockfile)
+		cachePath = filepath.Join(os.TempDir(), fmt.Sprintf("holo-%d", os.Getpid()))
+	} else {
+		//during unit tests, we are free to choose a simple, reproducible cache
+		//location
+		cachePath = filepath.Join(rootDir, "tmp/holo")
+	}
+
 	err := doInit()
 	if err != nil {
 		Errorf(Stderr, err.Error())
@@ -52,7 +64,7 @@ func CachePath() string {
 	return cachePath
 }
 
-//CleanupRuntimeCache tries to cleanup /tmp/holo-cache.
+//CleanupRuntimeCache tries to cleanup the CachePath().
 func CleanupRuntimeCache() {
 	_ = os.RemoveAll(cachePath) //fail silently
 }
