@@ -42,6 +42,7 @@ var version string
 const (
 	optionApplyForce = iota
 	optionScanShort
+	optionScanPorcelain
 )
 
 //Selector represents a command-line argument that selects entities. The Used
@@ -72,7 +73,10 @@ func main() {
 		command = commandDiff
 	case "scan":
 		command = commandScan
-		knownOpts = map[string]int{"-s": optionScanShort, "--short": optionScanShort}
+		knownOpts = map[string]int{
+			"-s": optionScanShort, "--short": optionScanShort,
+			"-p": optionScanPorcelain, "--porcelain": optionScanPorcelain,
+		}
 	case "version", "--version":
 		fmt.Println(version)
 		return
@@ -175,9 +179,9 @@ func main() {
 func commandHelp() {
 	program := os.Args[0]
 	fmt.Printf("Usage: %s <operation> [...]\nOperations:\n", program)
-	fmt.Printf("    %s apply [-f|--force] [entity ...]\n", program)
-	fmt.Printf("    %s diff [entity ...]\n", program)
-	fmt.Printf("    %s scan [-s|--short] [entity ...]\n", program)
+	fmt.Printf("    %s apply [-f|--force] [selector ...]\n", program)
+	fmt.Printf("    %s diff [selector ...]\n", program)
+	fmt.Printf("    %s scan [-s|--short|-p|--porcelain] [selector ...]\n", program)
 	fmt.Printf("\nSee `man 8 holo` for details.\n")
 }
 
@@ -193,11 +197,15 @@ func commandApply(entities []*impl.Entity, options map[int]bool) {
 }
 
 func commandScan(entities []*impl.Entity, options map[int]bool) {
+	isPorcelain := options[optionScanPorcelain]
 	isShort := options[optionScanShort]
 	for _, entity := range entities {
-		if isShort {
+		switch {
+		case isPorcelain:
+			entity.PrintScanReport()
+		case isShort:
 			fmt.Println(entity.EntityID())
-		} else {
+		default:
 			entity.PrintReport(false)
 		}
 	}

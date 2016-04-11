@@ -89,12 +89,28 @@ func (e *Entity) PrintReport(withAction bool) {
 	os.Stdout.Sync()
 }
 
-//Apply performs the complete application algorithm for the given Entity.
-func (e *Entity) Apply(withForce bool) {
-	e.doApply(withForce)
+//PrintScanReport reproduces the original scan report for this Entity.
+func (e *Entity) PrintScanReport() {
+	fmt.Fprintf(Stdout, "ENTITY: %s\n", e.EntityID())
+	switch {
+	case e.actionReason != "":
+		fmt.Fprintf(Stdout, "ACTION: %s (%s)\n", e.actionVerb, e.actionReason)
+	case e.actionVerb != "Working on":
+		fmt.Fprintf(Stdout, "ACTION: %s\n", e.actionVerb)
+	}
+
+	for _, sourceFile := range e.sourceFiles {
+		fmt.Fprintf(Stdout, "SOURCE: %s\n", sourceFile)
+	}
+	for _, infoLine := range e.infoLines {
+		fmt.Fprintf(Stdout, "%s: %s\n", infoLine.attribute, infoLine.value)
+	}
+
+	Stdout.EndParagraph()
 }
 
-func (e *Entity) doApply(withForce bool) {
+//Apply performs the complete application algorithm for the given Entity.
+func (e *Entity) Apply(withForce bool) {
 	command := "apply"
 	if withForce {
 		command = "force-apply"

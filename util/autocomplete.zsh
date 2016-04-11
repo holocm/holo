@@ -5,17 +5,17 @@ typeset -A opt_args
 {
     local -a _commands
     _commands=(
-        'apply:Apply available configuration to some or all targets'
-        'diff:Diff some or all target files against the last provisioned version'
-        'scan:Scan for configuration targets'
+        'apply:Apply available configuration to some or all entities'
+        'diff:Diff some or all entities against the last provisioned version'
+        'scan:Scan for provisionable entities'
     )
     _describe -t commands 'holo command' _commands
     return 0
 }
 
-(( $+functions[_holo_target] )) || _holo_target()
+(( $+functions[_holo_selector] )) || _holo_selector()
 {
-    _alternative "targets:configuration targets:($(holo scan --short))"
+    _alternative "selectors:Holo selectors:($(holo scan --porcelain | sed -n '/^ENTITY:\|^SOURCE:/ { s/^ENTITY: \|^SOURCE: //; p }' | sort -u))"
     return 0
 }
 
@@ -31,15 +31,16 @@ typeset -A opt_args
             apply)
                 _arguments : \
                     {-f,--force}'[overwrite manual changes on entities]' \
-                    '*:target:_holo_target'
+                    '*:selector:_holo_selector'
                 ;;
             diff)
-                _holo_target
+                _holo_selector
                 ;;
             scan)
                 _arguments : \
-                    {-s,--short}'[print only entity names]' \
-                    '*:target:_holo_target'
+                    '(-p --porcelain -s --short)'{-p,--porcelain}'[print raw scan reports]' \
+                    '(-p --porcelain -s --short)'{-s,--short}'[print only entity names]' \
+                    '*:selector:_holo_selector'
                 ;;
         esac
     fi

@@ -10,7 +10,7 @@ holo B<apply> [I<-f|--force>] [I<selector> ...]
 
 holo B<diff> [I<selector> ...]
 
-holo B<scan> [I<-s|--short>] [I<selector> ...]
+holo B<scan> [I<-s|--short|-p|--porcelain>] [I<selector> ...]
 
 holo B<--help|--version>
 
@@ -68,13 +68,18 @@ C</usr/share/holo/files/40-desktop/etc/sddm/sddm.conf>).
 
 =over 4
 
-=item B<scan> [I<-s|--short>] [I<selector> ...]
+=item B<scan> [I<-s|--short|-p|--porcelain>] [I<selector> ...]
 
 Prompt all plugins to scan for entities and list all known entities (or, if
 selectors are given, all entities matching these selectors) including the
 information returned from plugins about these entities.
 
 With C<--short>, only list the entity names.
+
+With C<--porcelain>, show the raw scan report as received from the plugins. The
+format is documented in L<holo-plugin-interface(7)>. The format is more
+machine-readable and stable, and thus the preferred choice for parsing in
+scripts.
 
 =item B<apply> [I<-f|--force>] [I<selector> ...]
 
