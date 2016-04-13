@@ -16,9 +16,9 @@ Working on user:wronggroup
 
 !! Entity has been modified by user (use --force to overwrite)
 
-    diff --holo target/tmp/holo-cache/users-groups/user:wronggroup/expected.toml target/tmp/holo-cache/users-groups/user:wronggroup/actual.toml
-    --- target/tmp/holo-cache/users-groups/user:wronggroup/expected.toml
-    +++ target/tmp/holo-cache/users-groups/user:wronggroup/actual.toml
+    diff --holo target/tmp/holo/users-groups/user:wronggroup/expected.toml target/tmp/holo/users-groups/user:wronggroup/actual.toml
+    --- target/tmp/holo/users-groups/user:wronggroup/expected.toml
+    +++ target/tmp/holo/users-groups/user:wronggroup/actual.toml
     @@ -2,5 +2,5 @@
      name = "wronggroup"
      uid = 1005
@@ -33,9 +33,9 @@ Working on user:wronggroups
 
 !! Entity has been modified by user (use --force to overwrite)
 
-    diff --holo target/tmp/holo-cache/users-groups/user:wronggroups/expected.toml target/tmp/holo-cache/users-groups/user:wronggroups/actual.toml
-    --- target/tmp/holo-cache/users-groups/user:wronggroups/expected.toml
-    +++ target/tmp/holo-cache/users-groups/user:wronggroups/actual.toml
+    diff --holo target/tmp/holo/users-groups/user:wronggroups/expected.toml target/tmp/holo/users-groups/user:wronggroups/actual.toml
+    --- target/tmp/holo/users-groups/user:wronggroups/expected.toml
+    +++ target/tmp/holo/users-groups/user:wronggroups/actual.toml
     @@ -3,5 +3,5 @@ name = "wronggroups"
      uid = 1005
      home = "/home/wronggroups"
@@ -50,9 +50,9 @@ Working on user:wronghome
 
 !! Entity has been modified by user (use --force to overwrite)
 
-    diff --holo target/tmp/holo-cache/users-groups/user:wronghome/expected.toml target/tmp/holo-cache/users-groups/user:wronghome/actual.toml
-    --- target/tmp/holo-cache/users-groups/user:wronghome/expected.toml
-    +++ target/tmp/holo-cache/users-groups/user:wronghome/actual.toml
+    diff --holo target/tmp/holo/users-groups/user:wronghome/expected.toml target/tmp/holo/users-groups/user:wronghome/actual.toml
+    --- target/tmp/holo/users-groups/user:wronghome/expected.toml
+    +++ target/tmp/holo/users-groups/user:wronghome/actual.toml
     @@ -1,6 +1,6 @@
      [[user]]
      name = "wronghome"
@@ -68,9 +68,9 @@ Working on user:wrongshell
 
 !! Entity has been modified by user (use --force to overwrite)
 
-    diff --holo target/tmp/holo-cache/users-groups/user:wrongshell/expected.toml target/tmp/holo-cache/users-groups/user:wrongshell/actual.toml
-    --- target/tmp/holo-cache/users-groups/user:wrongshell/expected.toml
-    +++ target/tmp/holo-cache/users-groups/user:wrongshell/actual.toml
+    diff --holo target/tmp/holo/users-groups/user:wrongshell/expected.toml target/tmp/holo/users-groups/user:wrongshell/actual.toml
+    --- target/tmp/holo/users-groups/user:wrongshell/expected.toml
+    +++ target/tmp/holo/users-groups/user:wrongshell/actual.toml
     @@ -3,4 +3,4 @@ name = "wrongshell"
      uid = 1005
      home = "/home/wrongshell"
@@ -84,9 +84,9 @@ Working on user:wronguid
 
 !! Entity has been modified by user (use --force to overwrite)
 
-    diff --holo target/tmp/holo-cache/users-groups/user:wronguid/expected.toml target/tmp/holo-cache/users-groups/user:wronguid/actual.toml
-    --- target/tmp/holo-cache/users-groups/user:wronguid/expected.toml
-    +++ target/tmp/holo-cache/users-groups/user:wronguid/actual.toml
+    diff --holo target/tmp/holo/users-groups/user:wronguid/expected.toml target/tmp/holo/users-groups/user:wronguid/actual.toml
+    --- target/tmp/holo/users-groups/user:wronguid/expected.toml
+    +++ target/tmp/holo/users-groups/user:wronguid/actual.toml
     @@ -1,6 +1,6 @@
      [[user]]
      name = "wronguid"

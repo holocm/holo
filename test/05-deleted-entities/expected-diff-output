@@ -1,15 +1,15 @@
-diff --holo target/tmp/holo-cache/users-groups/group:deleted/expected.toml target/tmp/holo-cache/users-groups/group:deleted/actual.toml
+diff --holo target/tmp/holo/users-groups/group:deleted/expected.toml target/tmp/holo/users-groups/group:deleted/actual.toml
 new file mode 100644
 --- /dev/null
-+++ target/tmp/holo-cache/users-groups/group:deleted/actual.toml
++++ target/tmp/holo/users-groups/group:deleted/actual.toml
 @@ -0,0 +1,3 @@
 +[[group]]
 +name = "deleted"
 +gid = 101
-diff --holo target/tmp/holo-cache/users-groups/user:deleted/expected.toml target/tmp/holo-cache/users-groups/user:deleted/actual.toml
+diff --holo target/tmp/holo/users-groups/user:deleted/expected.toml target/tmp/holo/users-groups/user:deleted/actual.toml
 new file mode 100644
 --- /dev/null
-+++ target/tmp/holo-cache/users-groups/user:deleted/actual.toml
++++ target/tmp/holo/users-groups/user:deleted/actual.toml
 @@ -0,0 +1,7 @@
 +[[user]]
 +name = "deleted"
