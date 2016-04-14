@@ -131,7 +131,7 @@ func (group Group) PrepareDiff() (string, string, error) {
 
 	//write actual state
 	if groupExists {
-		g := Group{Name: group.Name, GID: actualGid}
+		g := Group{GroupDefinition: GroupDefinition{Name: group.Name, GID: actualGid}}
 		err := g.serializeForDiff(actualPath)
 		if err != nil {
 			return "", "", err

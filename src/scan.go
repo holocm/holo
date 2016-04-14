@@ -74,12 +74,12 @@ func Scan() ([]Group, []User) {
 	//definition file is broken)
 	for _, name := range KnownGroupNames() {
 		if _, ok := groups[name]; !ok {
-			groups[name] = &Group{Name: name, Orphaned: true}
+			groups[name] = &Group{GroupDefinition: GroupDefinition{Name: name}, Orphaned: true}
 		}
 	}
 	for _, name := range KnownUserNames() {
 		if _, ok := users[name]; !ok {
-			users[name] = &User{Name: name, Orphaned: true}
+			users[name] = &User{UserDefinition: UserDefinition{Name: name}, Orphaned: true}
 		}
 	}
 

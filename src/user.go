@@ -29,17 +29,22 @@ import (
 	"strings"
 )
 
+//UserDefinition represents a UNIX user account (as registered in /etc/passwd).
+type UserDefinition struct {
+	Name          string   //the user name (the first field in /etc/passwd)
+	Comment       string   //the full name (sometimes also called "comment"; the fifth field in /etc/passwd)
+	UID           int      //the user ID (the third field in /etc/passwd), or 0 if no specific UID is enforced
+	System        bool     //whether the group is a system group (this influences the GID selection if gid = 0)
+	HomeDirectory string   `toml:"home"` //path to the user's home directory (or empty to use the default)
+	Group         string   //the name of the user's initial login group (or empty to use the default)
+	Groups        []string //the names of supplementary groups which the user is also a member of
+	Shell         string   //path to the user's login shell (or empty to use the default)
+}
+
 //User represents a UNIX user account (as registered in /etc/passwd). It
 //implements the Entity interface and is handled accordingly.
 type User struct {
-	Name            string   //the user name (the first field in /etc/passwd)
-	Comment         string   //the full name (sometimes also called "comment"; the fifth field in /etc/passwd)
-	UID             int      //the user ID (the third field in /etc/passwd), or 0 if no specific UID is enforced
-	System          bool     //whether the group is a system group (this influences the GID selection if gid = 0)
-	HomeDirectory   string   `toml:"home"` //path to the user's home directory (or empty to use the default)
-	Group           string   //the name of the user's initial login group (or empty to use the default)
-	Groups          []string //the names of supplementary groups which the user is also a member of
-	Shell           string   //path to the user's login shell (or empty to use the default)
+	UserDefinition
 	DefinitionFiles []string //paths to the files defining this entity
 
 	Orphaned bool //whether entity definition have been deleted (default: false)
@@ -266,13 +271,15 @@ func (u User) checkExists() (exists bool, currentUser *User, e error) {
 	return true, &User{
 		//NOTE: Some fields (name, system, definitionFile) are not set because
 		//they are not relevant for the algorithm.
-		Name:          fields[0],
-		Comment:       fields[4],
-		UID:           actualUID,
-		HomeDirectory: fields[5],
-		Group:         groupName,
-		Groups:        groupNames,
-		Shell:         fields[6],
+		UserDefinition: UserDefinition{
+			Name:          fields[0],
+			Comment:       fields[4],
+			UID:           actualUID,
+			HomeDirectory: fields[5],
+			Group:         groupName,
+			Groups:        groupNames,
+			Shell:         fields[6],
+		},
 	}, nil
 }
 

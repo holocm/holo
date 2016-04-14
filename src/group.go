@@ -28,12 +28,16 @@ import (
 	"strings"
 )
 
-//Group represents a UNIX group (as registered in /etc/group). It implements
-//the Entity interface and is handled accordingly.
+//GroupDefinition represents a UNIX group (as registered in /etc/group).
+type GroupDefinition struct {
+	Name   string //the group name (the first field in /etc/group)
+	GID    int    //the GID (the third field in /etc/group), or 0 if no specific GID is enforced
+	System bool   //whether the group is a system group (this influences the GID selection if GID = 0)
+}
+
+//Group implements the Entity interface for GroupDefinitions.
 type Group struct {
-	Name            string   //the group name (the first field in /etc/group)
-	GID             int      //the GID (the third field in /etc/group), or 0 if no specific GID is enforced
-	System          bool     //whether the group is a system group (this influences the GID selection if GID = 0)
+	GroupDefinition
 	DefinitionFiles []string //paths to the files defining this entity
 
 	Orphaned bool //whether entity definition have been deleted (default: false)
