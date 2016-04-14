@@ -42,9 +42,10 @@ type UserDefinition struct {
 }
 
 //TypeName implements the EntityDefinition interface.
-func (u *UserDefinition) TypeName() string {
-	return "user"
-}
+func (u *UserDefinition) TypeName() string { return "user" }
+
+//EntityID implements the EntityDefinition interface.
+func (u *UserDefinition) EntityID() string { return "user:" + u.Name }
 
 //WithSerializableState implements the EntityDefinition interface.
 func (u *UserDefinition) WithSerializableState(callback func(EntityDefinition)) {
@@ -65,6 +66,12 @@ type User struct {
 	broken   bool //whether the entity definition is invalid (default: false)
 }
 
+//Definition implements the Entity interface.
+func (u User) Definition() EntityDefinition { return &u.UserDefinition }
+
+//IsOrphaned implements the Entity interface.
+func (u User) IsOrphaned() bool { return u.Orphaned }
+
 //isValid is used inside the scanning algorithm to filter entities with
 //broken definitions, which shall be skipped during `holo apply`.
 func (u *User) isValid() bool { return !u.broken }
@@ -72,9 +79,6 @@ func (u *User) isValid() bool { return !u.broken }
 //setInvalid is used inside the scnaning algorithm to mark entities with
 //broken definitions, which shall be skipped during `holo apply`.
 func (u *User) setInvalid() { u.broken = true }
-
-//EntityID implements the Entity interface for User.
-func (u User) EntityID() string { return "user:" + u.Name }
 
 //PrintReport implements the Entity interface for User.
 func (u User) PrintReport() {
@@ -281,6 +285,9 @@ func (u *UserDefinition) GetProvisionedState() (EntityDefinition, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	//make sure that the groups list is always sorted (esp. for reproducible test output)
+	sort.Strings(groupNames)
 
 	return &UserDefinition{
 		Name:    fields[0],

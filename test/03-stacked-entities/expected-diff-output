@@ -17,5 +17,5 @@ deleted file mode 100644
 -uid = 1001
 -home = "/home/stacked"
 -group = "stacked"
--groups = ["foo", "bar", "baz"]
+-groups = ["bar", "baz", "foo"]
 -shell = "/bin/bash"

@@ -186,106 +186,18 @@ func readDefinitionFile(definitionPath string, groups *map[string]*Group, users 
 
 //Merges `def` into `group` if possible, returns errors if merge conflicts arise.
 func mergeGroupDefinition(group *Group, existingGroup *Group) []error {
-	var errors []error
-
-	//GID can be set by `group` if `existingGroup` does not have a different value set
-	if group.GID != 0 {
-		switch {
-		case existingGroup.GID == 0:
-			existingGroup.GID = group.GID
-		case group.GID != 0 && existingGroup.GID != group.GID:
-			errors = append(errors, fmt.Errorf(
-				"conflicting GID for group '%s' (existing: %d, new: %d)",
-				existingGroup.Name, existingGroup.GID, group.GID,
-			))
-		}
+	def, errors := group.GroupDefinition.Merge(&existingGroup.GroupDefinition, MergeWhereCompatible)
+	if len(errors) == 0 {
+		existingGroup.GroupDefinition = *(def.(*GroupDefinition))
 	}
-
-	//the system flag can be set by `group` if `existingGroup` did not set it yet
-	existingGroup.System = existingGroup.System || group.System
-
 	return errors
 }
 
 //Merges `def` into `user` if possible, returns errors if merge conflicts arise.
 func mergeUserDefinition(user *User, existingUser *User) []error {
-	var errors []error
-
-	//comment is assumed to be informational only, the last definition always
-	//takes precedence
-	if user.Comment != "" {
-		existingUser.Comment = user.Comment
+	def, errors := user.UserDefinition.Merge(&existingUser.UserDefinition, MergeWhereCompatible)
+	if len(errors) == 0 {
+		existingUser.UserDefinition = *(def.(*UserDefinition))
 	}
-
-	//UID can be set by `user` if `existingUser` does not have a different value set
-	if user.UID != 0 {
-		switch {
-		case existingUser.UID == 0:
-			existingUser.UID = user.UID
-		case user.UID != 0 && existingUser.UID != user.UID:
-			errors = append(errors, fmt.Errorf(
-				"conflicting UID for user '%s' (existing: %d, new: %d)",
-				existingUser.Name, existingUser.UID, user.UID,
-			))
-		}
-	}
-
-	//the system flag can be set by `user` if `existingUser` did not set it yet
-	existingUser.System = existingUser.System || user.System
-
-	//homeDirectory may be set only once
-	if user.Home != "" {
-		switch {
-		case existingUser.Home == "":
-			existingUser.Home = user.Home
-		case user.Home != "" && existingUser.Home != user.Home:
-			errors = append(errors, fmt.Errorf(
-				"conflicting home directory for user '%s' (existing: %s, new: %s)",
-				existingUser.Name, existingUser.Home, user.Home,
-			))
-		}
-	}
-
-	//group may be set only once
-	if user.Group != "" {
-		switch {
-		case existingUser.Group == "":
-			existingUser.Group = user.Group
-		case user.Group != "" && existingUser.Group != user.Group:
-			errors = append(errors, fmt.Errorf(
-				"conflicting login group for user '%s' (existing: %s, new: %s)",
-				existingUser.Name, existingUser.Group, user.Group,
-			))
-		}
-	}
-
-	//shell may be set only once
-	if user.Shell != "" {
-		switch {
-		case existingUser.Shell == "":
-			existingUser.Shell = user.Shell
-		case user.Shell != "" && existingUser.Shell != user.Shell:
-			errors = append(errors, fmt.Errorf(
-				"conflicting login shell for user '%s' (existing: %s, new: %s)",
-				existingUser.Name, existingUser.Shell, user.Shell,
-			))
-		}
-	}
-
-	//auxiliary groups can always be added
-	for _, group := range user.Groups {
-		//append group to existingUser.Groups, but avoid duplicates
-		missing := true
-		for _, other := range existingUser.Groups {
-			if other == group {
-				missing = false
-				break
-			}
-		}
-		if missing {
-			existingUser.Groups = append(existingUser.Groups, group)
-		}
-	}
-
 	return errors
 }

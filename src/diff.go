@@ -30,17 +30,6 @@ import (
 	"../localdeps/github.com/BurntSushi/toml"
 )
 
-func pathsForDiffOf(e Entity) (string, string, error) {
-	//make sure that the directory for these files does exist
-	dirPath := filepath.Join(os.Getenv("HOLO_CACHE_DIR"), e.EntityID())
-	err := os.Mkdir(dirPath, 0755)
-	if err != nil {
-		return "", "", err
-	}
-
-	return filepath.Join(dirPath, "expected.toml"), filepath.Join(dirPath, "actual.toml"), nil
-}
-
 //SerializeDefinitionIntoFile writes the given EntityDefinition as a TOML file.
 func SerializeDefinitionIntoFile(def EntityDefinition, path string) error {
 	//write header
@@ -59,93 +48,46 @@ func SerializeDefinitionIntoFile(def EntityDefinition, path string) error {
 	return ioutil.WriteFile(path, buf.Bytes(), 0644)
 }
 
-//PrepareDiff implements the Entity interface.
-func (group Group) PrepareDiff() (string, string, error) {
-	//does this group exist already?
-	actualDef, err := group.GetProvisionedState()
+//PrepareDiffFor creates temporary files that the frontend can use to generate
+//a diff.
+func PrepareDiffFor(def EntityDefinition, isOrphaned bool) (expectedPath string, actualPath string, err error) {
+	//does this entity exist already?
+	actualDef, err := def.GetProvisionedState()
 	if err != nil {
-		return "", "", err
+		return
 	}
 
-	//prepare paths
-	expectedPath, actualPath, err := pathsForDiffOf(group)
+	//make sure that the directory for these files does exist
+	dirPath := filepath.Join(os.Getenv("HOLO_CACHE_DIR"), def.EntityID())
+	err = os.Mkdir(dirPath, 0755)
 	if err != nil {
-		return "", "", err
+		return
 	}
+
+	expectedPath = filepath.Join(dirPath, "expected.toml")
+	actualPath = filepath.Join(dirPath, "actual.toml")
 
 	//write actual state
 	if actualDef != nil {
-		err := SerializeDefinitionIntoFile(actualDef, actualPath)
+		err = SerializeDefinitionIntoFile(actualDef, actualPath)
 		if err != nil {
-			return "", "", err
+			return
 		}
 	}
 
 	//write expected state
-	if !group.Orphaned {
+	if !isOrphaned {
 		//merge actual state into definition where definition does not define anything
-		g := group
-		if g.GID == 0 && actualDef != nil {
-			g.GID = actualDef.(*GroupDefinition).GID
-		}
-
-		err := SerializeDefinitionIntoFile(&g.GroupDefinition, expectedPath)
-		if err != nil {
-			return "", "", err
-		}
-	}
-
-	return expectedPath, actualPath, nil
-}
-
-//PrepareDiff implements the Entity interface.
-func (user User) PrepareDiff() (string, string, error) {
-	//does this user exist already?
-	actualDef, err := user.GetProvisionedState()
-	if err != nil {
-		return "", "", err
-	}
-
-	//prepare paths
-	expectedPath, actualPath, err := pathsForDiffOf(user)
-	if err != nil {
-		return "", "", err
-	}
-
-	//write actual state
-	if actualDef != nil {
-		err := SerializeDefinitionIntoFile(actualDef, actualPath)
-		if err != nil {
-			return "", "", err
-		}
-	}
-
-	//write expected state
-	if !user.Orphaned {
-		//merge actual state into definition where definition does not define anything
-		u := user
+		serializable := def
 		if actualDef != nil {
-			actualUser := actualDef.(*UserDefinition)
-			if u.UID == 0 {
-				u.UID = actualUser.UID
-			}
-			if u.Home == "" {
-				u.Home = actualUser.Home
-			}
-			if u.Group == "" {
-				u.Group = actualUser.Group
-			}
-			//TODO: u.Groups
-			if u.Shell == "" {
-				u.Shell = actualUser.Shell
-			}
+			serializable, _ = def.Merge(actualDef, MergeEmptyOnly)
 		}
 
-		err := SerializeDefinitionIntoFile(&u.UserDefinition, expectedPath)
+		err = SerializeDefinitionIntoFile(serializable, expectedPath)
 		if err != nil {
-			return "", "", err
+			return
 		}
 	}
 
-	return expectedPath, actualPath, nil
+	return
 }

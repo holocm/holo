@@ -3,11 +3,11 @@
 >> groups[1] is missing required 'name' attribute
 >> users[0] is missing required 'name' attribute
 !! File target/usr/share/holo/users-groups/02-second.toml is invalid:
->> conflicting GID for group 'stacked' (existing: 1000, new: 1001)
->> conflicting UID for user 'stacked' (existing: 1000, new: 1001)
->> conflicting home directory for user 'stacked' (existing: /var/lib/stacked, new: /home/stacked)
->> conflicting login group for user 'stacked' (existing: users, new: stacked)
->> conflicting login shell for user 'stacked' (existing: /usr/bin/zsh, new: /bin/bash)
+>> conflicting GID for group:stacked (1000 vs. 1001)
+>> conflicting UID for user:stacked (1000 vs. 1001)
+>> conflicting home directory for user:stacked (/var/lib/stacked vs. /home/stacked)
+>> conflicting login group for user:stacked (users vs. stacked)
+>> conflicting login shell for user:stacked (/usr/bin/zsh vs. /bin/bash)
 
 diff --holo target/tmp/holo/users-groups/group:valid/expected.toml target/tmp/holo/users-groups/group:valid/actual.toml
 deleted file mode 100644

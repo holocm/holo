@@ -9,7 +9,7 @@ MOCK: groupadd --system --gid 1001 stacked
 Working on user:stacked
   found in target/usr/share/holo/users-groups/01-first.toml
   found in target/usr/share/holo/users-groups/02-second.toml
-      with type: system, UID: 1001, home: /home/stacked, login group: stacked, groups: foo,bar,baz, login shell: /bin/bash, comment: Stacked User
+      with type: system, UID: 1001, home: /home/stacked, login group: stacked, groups: bar,baz,foo, login shell: /bin/bash, comment: Stacked User
 
-MOCK: useradd --system --uid 1001 --comment 'Stacked User' --home-dir /home/stacked --gid stacked --groups foo,bar,baz --shell /bin/bash stacked
+MOCK: useradd --system --uid 1001 --comment 'Stacked User' --home-dir /home/stacked --gid stacked --groups bar,baz,foo --shell /bin/bash stacked
 

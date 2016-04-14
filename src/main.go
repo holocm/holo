@@ -101,13 +101,13 @@ func executeNonScanCommand() {
 	entityID := os.Args[2]
 	var selectedEntity Entity
 	for _, group := range cacheData.Groups {
-		if group.EntityID() == entityID {
+		if group.Definition().EntityID() == entityID {
 			selectedEntity = group
 			break
 		}
 	}
 	for _, user := range cacheData.Users {
-		if user.EntityID() == entityID {
+		if user.Definition().EntityID() == entityID {
 			selectedEntity = user
 			break
 		}
@@ -123,7 +123,7 @@ func executeNonScanCommand() {
 	case "force-apply":
 		applyEntity(selectedEntity, true)
 	case "diff":
-		expectedStateFile, actualStateFile, err := selectedEntity.PrepareDiff()
+		expectedStateFile, actualStateFile, err := PrepareDiffFor(selectedEntity.Definition(), selectedEntity.IsOrphaned())
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		}

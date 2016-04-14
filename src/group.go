@@ -36,9 +36,10 @@ type GroupDefinition struct {
 }
 
 //TypeName implements the EntityDefinition interface.
-func (g *GroupDefinition) TypeName() string {
-	return "group"
-}
+func (g *GroupDefinition) TypeName() string { return "group" }
+
+//EntityID implements the EntityDefinition interface.
+func (g *GroupDefinition) EntityID() string { return "group:" + g.Name }
 
 //WithSerializableState implements the EntityDefinition interface.
 func (g *GroupDefinition) WithSerializableState(callback func(EntityDefinition)) {
@@ -58,6 +59,12 @@ type Group struct {
 	broken   bool //whether the entity definition is invalid (default: false)
 }
 
+//Definition implements the Entity interface.
+func (g Group) Definition() EntityDefinition { return &g.GroupDefinition }
+
+//IsOrphaned implements the Entity interface.
+func (g Group) IsOrphaned() bool { return g.Orphaned }
+
 //isValid is used inside the scanning algorithm to filter entities with
 //broken definitions, which shall be skipped during `holo apply`.
 func (g *Group) isValid() bool { return !g.broken }
@@ -65,9 +72,6 @@ func (g *Group) isValid() bool { return !g.broken }
 //setInvalid is used inside the scnaning algorithm to mark entities with
 //broken definitions, which shall be skipped during `holo apply`.
 func (g *Group) setInvalid() { g.broken = true }
-
-//EntityID implements the Entity interface for Group.
-func (g Group) EntityID() string { return "group:" + g.Name }
 
 //PrintReport implements the Entity interface for Group.
 func (g Group) PrintReport() {
