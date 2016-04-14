@@ -42,7 +42,7 @@ func pathsForDiffOf(e Entity) (string, string, error) {
 	return filepath.Join(dirPath, "expected.toml"), filepath.Join(dirPath, "actual.toml"), nil
 }
 
-func (group Group) serializeForDiff(path string) error {
+func (group *GroupDefinition) serializeForDiff(path string) error {
 	var buf bytes.Buffer
 	buf.Write([]byte("[[group]]\n"))
 
@@ -61,7 +61,7 @@ func (group Group) serializeForDiff(path string) error {
 	return ioutil.WriteFile(path, buf.Bytes(), 0644)
 }
 
-func (user *User) serializeForDiff(path string) error {
+func (user *UserDefinition) serializeForDiff(path string) error {
 	var buf bytes.Buffer
 	buf.Write([]byte("[[user]]\n"))
 
@@ -118,7 +118,7 @@ func (user *User) serializeForDiff(path string) error {
 //PrepareDiff implements the Entity interface.
 func (group Group) PrepareDiff() (string, string, error) {
 	//does this group exist already?
-	groupExists, actualGid, err := group.checkExists()
+	actualGroup, err := group.checkExists()
 	if err != nil {
 		return "", "", err
 	}
@@ -130,9 +130,8 @@ func (group Group) PrepareDiff() (string, string, error) {
 	}
 
 	//write actual state
-	if groupExists {
-		g := Group{GroupDefinition: GroupDefinition{Name: group.Name, GID: actualGid}}
-		err := g.serializeForDiff(actualPath)
+	if actualGroup != nil {
+		err := actualGroup.serializeForDiff(actualPath)
 		if err != nil {
 			return "", "", err
 		}
@@ -142,8 +141,8 @@ func (group Group) PrepareDiff() (string, string, error) {
 	if !group.Orphaned {
 		//merge actual state into definition where definition does not define anything
 		g := group
-		if g.GID == 0 {
-			g.GID = actualGid
+		if g.GID == 0 && actualGroup != nil {
+			g.GID = actualGroup.GID
 		}
 
 		err := g.serializeForDiff(expectedPath)
@@ -158,7 +157,7 @@ func (group Group) PrepareDiff() (string, string, error) {
 //PrepareDiff implements the Entity interface.
 func (user User) PrepareDiff() (string, string, error) {
 	//does this user exist already?
-	userExists, actualUser, err := user.checkExists()
+	actualUser, err := user.checkExists()
 	if err != nil {
 		return "", "", err
 	}
@@ -170,7 +169,7 @@ func (user User) PrepareDiff() (string, string, error) {
 	}
 
 	//write actual state
-	if userExists {
+	if actualUser != nil {
 		err := actualUser.serializeForDiff(actualPath)
 		if err != nil {
 			return "", "", err
@@ -181,7 +180,7 @@ func (user User) PrepareDiff() (string, string, error) {
 	if !user.Orphaned {
 		//merge actual state into definition where definition does not define anything
 		u := user
-		if userExists {
+		if actualUser != nil {
 			if u.UID == 0 {
 				u.UID = actualUser.UID
 			}

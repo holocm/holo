@@ -120,14 +120,14 @@ func (u User) Apply(withForce bool) (entityHasChanged bool) {
 	}
 
 	//check if we have that group already
-	userExists, actualUser, err := u.checkExists()
+	actualUser, err := u.checkExists()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! Cannot read user database: %s\n", err.Error())
 		return false
 	}
 
 	//check if the actual properties diverge from our definition
-	if userExists {
+	if actualUser != nil {
 		differences := []userDiff{}
 		if u.Comment != "" && u.Comment != actualUser.Comment {
 			differences = append(differences, userDiff{"comment", actualUser.Comment, u.Comment})
@@ -205,30 +205,30 @@ func (u User) applyOrphaned(withForce bool) (entityHasChanged bool) {
 	return true
 }
 
-//checkExists checks if the user exists in /etc/passwd. If it does, its actual
-//properties will be returned in the second return argument.
-func (u User) checkExists() (exists bool, currentUser *User, e error) {
+//checkExists reads the current state of this user from /etc/passwd. If it does
+//not exist, nil is returned.
+func (u User) checkExists() (*UserDefinition, error) {
 	passwdFile := GetPath("etc/passwd")
 	groupFile := GetPath("etc/group")
 
 	//fetch entry from /etc/passwd
 	fields, err := Getent(passwdFile, func(fields []string) bool { return fields[0] == u.Name })
 	if err != nil {
-		return false, nil, err
+		return nil, err
 	}
 	//is there such a user?
 	if fields == nil {
-		return false, nil, nil
+		return nil, nil
 	}
 	//is the passwd entry intact?
 	if len(fields) < 4 {
-		return true, nil, errors.New("invalid entry in /etc/passwd (not enough fields)")
+		return nil, errors.New("invalid entry in /etc/passwd (not enough fields)")
 	}
 
 	//read fields in passwd entry
 	actualUID, err := strconv.Atoi(fields[2])
 	if err != nil {
-		return true, nil, err
+		return nil, err
 	}
 
 	//fetch entry for login group from /etc/group (to resolve actualGID into a
@@ -241,15 +241,15 @@ func (u User) checkExists() (exists bool, currentUser *User, e error) {
 		return fields[2] == actualGIDString
 	})
 	if err != nil {
-		return true, nil, err
+		return nil, err
 	}
 	if groupFields == nil {
-		return true, nil, errors.New("invalid entry in /etc/passwd (login group does not exist)")
+		return nil, errors.New("invalid entry in /etc/passwd (login group does not exist)")
 	}
 	groupName := groupFields[0]
 
 	//check /etc/group for the supplementary group memberships of this user
-	groupNames := []string{}
+	var groupNames []string
 	_, err = Getent(groupFile, func(fields []string) bool {
 		if len(fields) <= 3 {
 			return false
@@ -265,21 +265,17 @@ func (u User) checkExists() (exists bool, currentUser *User, e error) {
 		return false
 	})
 	if err != nil {
-		return true, nil, err
+		return nil, err
 	}
 
-	return true, &User{
-		//NOTE: Some fields (name, system, definitionFile) are not set because
-		//they are not relevant for the algorithm.
-		UserDefinition: UserDefinition{
-			Name:    fields[0],
-			Comment: fields[4],
-			UID:     actualUID,
-			Home:    fields[5],
-			Group:   groupName,
-			Groups:  groupNames,
-			Shell:   fields[6],
-		},
+	return &UserDefinition{
+		Name:    fields[0],
+		Comment: fields[4],
+		UID:     actualUID,
+		Home:    fields[5],
+		Group:   groupName,
+		Groups:  groupNames,
+		Shell:   fields[6],
 	}, nil
 }
 

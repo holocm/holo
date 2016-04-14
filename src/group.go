@@ -98,17 +98,17 @@ func (g Group) Apply(withForce bool) (entityHasChanged bool) {
 	}
 
 	//check if we have that group already
-	groupExists, actualGid, err := g.checkExists()
+	actualGroup, err := g.checkExists()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! Cannot read group database: %s\n", err.Error())
 		return false
 	}
 
 	//check if the actual properties diverge from our definition
-	if groupExists {
+	if actualGroup != nil {
 		differences := []groupDiff{}
-		if g.GID > 0 && g.GID != actualGid {
-			differences = append(differences, groupDiff{"GID", strconv.Itoa(actualGid), strconv.Itoa(g.GID)})
+		if g.GID > 0 && g.GID != actualGroup.GID {
+			differences = append(differences, groupDiff{"GID", strconv.Itoa(actualGroup.GID), strconv.Itoa(g.GID)})
 		}
 
 		if len(differences) != 0 {
@@ -161,26 +161,31 @@ func (g Group) applyOrphaned(withForce bool) (entityHasChanged bool) {
 	return true
 }
 
-func (g Group) checkExists() (exists bool, gid int, e error) {
+//checkExists reads the current state of this group from /etc/group. If it does
+//not exist, nil is returned.
+func (g Group) checkExists() (*GroupDefinition, error) {
 	groupFile := GetPath("etc/group")
 
 	//fetch entry from /etc/group
 	fields, err := Getent(groupFile, func(fields []string) bool { return fields[0] == g.Name })
 	if err != nil {
-		return false, 0, err
+		return nil, err
 	}
 	//is there such a group?
 	if fields == nil {
-		return false, 0, nil
+		return nil, nil
 	}
 	//is the group entry intact?
 	if len(fields) < 4 {
-		return true, 0, errors.New("invalid entry in /etc/group (not enough fields)")
+		return nil, errors.New("invalid entry in /etc/group (not enough fields)")
 	}
 
 	//read fields in entry
-	actualGid, err := strconv.Atoi(fields[2])
-	return true, actualGid, err
+	gid, err := strconv.Atoi(fields[2])
+	return &GroupDefinition{
+		Name: fields[0],
+		GID:  gid,
+	}, err
 }
 
 func (g Group) callGroupadd() error {
