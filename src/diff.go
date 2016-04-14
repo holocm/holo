@@ -84,8 +84,8 @@ func (user *User) serializeForDiff(path string) error {
 		}
 	}
 
-	if user.HomeDirectory != "" {
-		err := appendField(&buf, "home", user.HomeDirectory)
+	if user.Home != "" {
+		err := appendField(&buf, "home", user.Home)
 		if err != nil {
 			return err
 		}
@@ -185,8 +185,8 @@ func (user User) PrepareDiff() (string, string, error) {
 			if u.UID == 0 {
 				u.UID = actualUser.UID
 			}
-			if u.HomeDirectory == "" {
-				u.HomeDirectory = actualUser.HomeDirectory
+			if u.Home == "" {
+				u.Home = actualUser.Home
 			}
 			if u.Group == "" {
 				u.Group = actualUser.Group

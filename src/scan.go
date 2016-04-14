@@ -234,14 +234,14 @@ func mergeUserDefinition(user *User, existingUser *User) []error {
 	existingUser.System = existingUser.System || user.System
 
 	//homeDirectory may be set only once
-	if user.HomeDirectory != "" {
+	if user.Home != "" {
 		switch {
-		case existingUser.HomeDirectory == "":
-			existingUser.HomeDirectory = user.HomeDirectory
-		case user.HomeDirectory != "" && existingUser.HomeDirectory != user.HomeDirectory:
+		case existingUser.Home == "":
+			existingUser.Home = user.Home
+		case user.Home != "" && existingUser.Home != user.Home:
 			errors = append(errors, fmt.Errorf(
 				"conflicting home directory for user '%s' (existing: %s, new: %s)",
-				existingUser.Name, existingUser.HomeDirectory, user.HomeDirectory,
+				existingUser.Name, existingUser.Home, user.Home,
 			))
 		}
 	}

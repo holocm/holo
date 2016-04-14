@@ -31,14 +31,14 @@ import (
 
 //UserDefinition represents a UNIX user account (as registered in /etc/passwd).
 type UserDefinition struct {
-	Name          string   //the user name (the first field in /etc/passwd)
-	Comment       string   //the full name (sometimes also called "comment"; the fifth field in /etc/passwd)
-	UID           int      //the user ID (the third field in /etc/passwd), or 0 if no specific UID is enforced
-	System        bool     //whether the group is a system group (this influences the GID selection if gid = 0)
-	HomeDirectory string   `toml:"home"` //path to the user's home directory (or empty to use the default)
-	Group         string   //the name of the user's initial login group (or empty to use the default)
-	Groups        []string //the names of supplementary groups which the user is also a member of
-	Shell         string   //path to the user's login shell (or empty to use the default)
+	Name    string   //the user name (the first field in /etc/passwd)
+	Comment string   //the full name (sometimes also called "comment"; the fifth field in /etc/passwd)
+	UID     int      //the user ID (the third field in /etc/passwd), or 0 if no specific UID is enforced
+	System  bool     //whether the group is a system group (this influences the GID selection if gid = 0)
+	Home    string   //path to the user's home directory (or empty to use the default)
+	Group   string   //the name of the user's initial login group (or empty to use the default)
+	Groups  []string //the names of supplementary groups which the user is also a member of
+	Shell   string   //path to the user's login shell (or empty to use the default)
 }
 
 //User represents a UNIX user account (as registered in /etc/passwd). It
@@ -86,8 +86,8 @@ func (u User) attributes() string {
 	if u.UID > 0 {
 		attrs = append(attrs, fmt.Sprintf("UID: %d", u.UID))
 	}
-	if u.HomeDirectory != "" {
-		attrs = append(attrs, "home: "+u.HomeDirectory)
+	if u.Home != "" {
+		attrs = append(attrs, "home: "+u.Home)
 	}
 	if u.Group != "" {
 		attrs = append(attrs, "login group: "+u.Group)
@@ -135,8 +135,8 @@ func (u User) Apply(withForce bool) (entityHasChanged bool) {
 		if u.UID > 0 && u.UID != actualUser.UID {
 			differences = append(differences, userDiff{"UID", strconv.Itoa(actualUser.UID), strconv.Itoa(u.UID)})
 		}
-		if u.HomeDirectory != "" && u.HomeDirectory != actualUser.HomeDirectory {
-			differences = append(differences, userDiff{"home directory", actualUser.HomeDirectory, u.HomeDirectory})
+		if u.Home != "" && u.Home != actualUser.Home {
+			differences = append(differences, userDiff{"home directory", actualUser.Home, u.Home})
 		}
 		if u.Shell != "" && u.Shell != actualUser.Shell {
 			differences = append(differences, userDiff{"login shell", actualUser.Shell, u.Shell})
@@ -272,13 +272,13 @@ func (u User) checkExists() (exists bool, currentUser *User, e error) {
 		//NOTE: Some fields (name, system, definitionFile) are not set because
 		//they are not relevant for the algorithm.
 		UserDefinition: UserDefinition{
-			Name:          fields[0],
-			Comment:       fields[4],
-			UID:           actualUID,
-			HomeDirectory: fields[5],
-			Group:         groupName,
-			Groups:        groupNames,
-			Shell:         fields[6],
+			Name:    fields[0],
+			Comment: fields[4],
+			UID:     actualUID,
+			Home:    fields[5],
+			Group:   groupName,
+			Groups:  groupNames,
+			Shell:   fields[6],
 		},
 	}, nil
 }
@@ -295,8 +295,8 @@ func (u User) callUseradd() error {
 	if u.Comment != "" {
 		args = append(args, "--comment", u.Comment)
 	}
-	if u.HomeDirectory != "" {
-		args = append(args, "--home-dir", u.HomeDirectory)
+	if u.Home != "" {
+		args = append(args, "--home-dir", u.Home)
 	}
 	if u.Group != "" {
 		args = append(args, "--gid", u.Group)
@@ -326,8 +326,8 @@ func (u User) callUsermod() error {
 	if u.Comment != "" {
 		args = append(args, "--comment", u.Comment)
 	}
-	if u.HomeDirectory != "" {
-		args = append(args, "--home", u.HomeDirectory)
+	if u.Home != "" {
+		args = append(args, "--home", u.Home)
 	}
 	if u.Group != "" {
 		args = append(args, "--gid", u.Group)
