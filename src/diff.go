@@ -43,35 +43,17 @@ func pathsForDiffOf(e Entity) (string, string, error) {
 
 //SerializeDefinitionIntoFile writes the given EntityDefinition as a TOML file.
 func SerializeDefinitionIntoFile(def EntityDefinition, path string) error {
-	//reset "system" flag (which we don't want to serialize)
-	var isSystem bool
-	switch def := def.(type) {
-	case *GroupDefinition:
-		isSystem = def.System
-		def.System = false
-	case *UserDefinition:
-		isSystem = def.System
-		def.System = false
-	default:
-		panic("unreachable")
-	}
-
-	//serialize attributes
+	//write header
 	var buf bytes.Buffer
 	fmt.Fprintf(&buf, "[[%s]]\n", def.TypeName())
-	err := toml.NewEncoder(&buf).Encode(def)
+
+	//write attributes
+	var err error
+	def.WithSerializableState(func(def EntityDefinition) {
+		err = toml.NewEncoder(&buf).Encode(def)
+	})
 	if err != nil {
 		return err
-	}
-
-	//restore "system" flag
-	switch def := def.(type) {
-	case *GroupDefinition:
-		def.System = isSystem
-	case *UserDefinition:
-		def.System = isSystem
-	default:
-		panic("unreachable")
 	}
 
 	return ioutil.WriteFile(path, buf.Bytes(), 0644)

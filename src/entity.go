@@ -32,6 +32,9 @@ type EntityDefinition interface {
 	//concrete type as the callee. If no entity with the same ID exists in
 	//there, nil is returned.
 	GetProvisionedState() (EntityDefinition, error)
+	//WithSerializableState brings the definition into a safely serializable
+	//state, executes the callback, and then restores the original state.
+	WithSerializableState(callback func(EntityDefinition))
 }
 
 //Entity provides a common interface for configuration entities, such as

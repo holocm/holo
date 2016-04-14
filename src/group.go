@@ -40,6 +40,15 @@ func (g *GroupDefinition) TypeName() string {
 	return "group"
 }
 
+//WithSerializableState implements the EntityDefinition interface.
+func (g *GroupDefinition) WithSerializableState(callback func(EntityDefinition)) {
+	//we don't want to serialize the `system` attribute in diffs etc.
+	system := g.System
+	g.System = false
+	callback(g)
+	g.System = system
+}
+
 //Group implements the Entity interface for GroupDefinitions.
 type Group struct {
 	GroupDefinition

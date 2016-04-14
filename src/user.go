@@ -46,6 +46,15 @@ func (u *UserDefinition) TypeName() string {
 	return "user"
 }
 
+//WithSerializableState implements the EntityDefinition interface.
+func (u *UserDefinition) WithSerializableState(callback func(EntityDefinition)) {
+	//we don't want to serialize the `system` attribute in diffs etc.
+	system := u.System
+	u.System = false
+	callback(u)
+	u.System = system
+}
+
 //User represents a UNIX user account (as registered in /etc/passwd). It
 //implements the Entity interface and is handled accordingly.
 type User struct {
