@@ -38,11 +38,3 @@ type Entity interface {
 	//a diff.
 	PrepareDiff() (expectedState string, actualState string, e error)
 }
-
-//Entities holds a slice of Entity instances, and implements some methods to
-//satisfy the sort.Interface interface.
-type Entities []Entity
-
-func (e Entities) Len() int           { return len(e) }
-func (e Entities) Less(i, j int) bool { return e[i].EntityID() < e[j].EntityID() }
-func (e Entities) Swap(i, j int)      { e[i], e[j] = e[j], e[i] }
