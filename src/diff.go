@@ -22,11 +22,10 @@ package main
 
 import (
 	"bytes"
-	"io"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"../localdeps/github.com/BurntSushi/toml"
 )
@@ -42,74 +41,37 @@ func pathsForDiffOf(e Entity) (string, string, error) {
 	return filepath.Join(dirPath, "expected.toml"), filepath.Join(dirPath, "actual.toml"), nil
 }
 
-func (group *GroupDefinition) serializeForDiff(path string) error {
-	var buf bytes.Buffer
-	buf.Write([]byte("[[group]]\n"))
+//SerializeDefinitionIntoFile writes the given EntityDefinition as a TOML file.
+func SerializeDefinitionIntoFile(def EntityDefinition, path string) error {
+	//reset "system" flag (which we don't want to serialize)
+	var isSystem bool
+	switch def := def.(type) {
+	case *GroupDefinition:
+		isSystem = def.System
+		def.System = false
+	case *UserDefinition:
+		isSystem = def.System
+		def.System = false
+	default:
+		panic("unreachable")
+	}
 
-	err := appendField(&buf, "name", group.Name)
+	//serialize attributes
+	var buf bytes.Buffer
+	fmt.Fprintf(&buf, "[[%s]]\n", def.TypeName())
+	err := toml.NewEncoder(&buf).Encode(def)
 	if err != nil {
 		return err
 	}
 
-	if group.GID != 0 {
-		err := appendField(&buf, "gid", group.GID)
-		if err != nil {
-			return err
-		}
-	}
-
-	return ioutil.WriteFile(path, buf.Bytes(), 0644)
-}
-
-func (user *UserDefinition) serializeForDiff(path string) error {
-	var buf bytes.Buffer
-	buf.Write([]byte("[[user]]\n"))
-
-	err := appendField(&buf, "name", user.Name)
-	if err != nil {
-		return err
-	}
-
-	if user.Comment != "" {
-		err := appendField(&buf, "comment", user.Comment)
-		if err != nil {
-			return err
-		}
-	}
-
-	if user.UID != 0 {
-		err := appendField(&buf, "uid", user.UID)
-		if err != nil {
-			return err
-		}
-	}
-
-	if user.Home != "" {
-		err := appendField(&buf, "home", user.Home)
-		if err != nil {
-			return err
-		}
-	}
-
-	if user.Group != "" {
-		err := appendField(&buf, "group", user.Group)
-		if err != nil {
-			return err
-		}
-	}
-
-	if len(user.Groups) > 0 {
-		err := appendField(&buf, "groups", user.Groups)
-		if err != nil {
-			return err
-		}
-	}
-
-	if user.Shell != "" {
-		err := appendField(&buf, "shell", user.Shell)
-		if err != nil {
-			return err
-		}
+	//restore "system" flag
+	switch def := def.(type) {
+	case *GroupDefinition:
+		def.System = isSystem
+	case *UserDefinition:
+		def.System = isSystem
+	default:
+		panic("unreachable")
 	}
 
 	return ioutil.WriteFile(path, buf.Bytes(), 0644)
@@ -131,7 +93,7 @@ func (group Group) PrepareDiff() (string, string, error) {
 
 	//write actual state
 	if actualDef != nil {
-		err := actualDef.(*GroupDefinition).serializeForDiff(actualPath)
+		err := SerializeDefinitionIntoFile(actualDef, actualPath)
 		if err != nil {
 			return "", "", err
 		}
@@ -145,7 +107,7 @@ func (group Group) PrepareDiff() (string, string, error) {
 			g.GID = actualDef.(*GroupDefinition).GID
 		}
 
-		err := g.serializeForDiff(expectedPath)
+		err := SerializeDefinitionIntoFile(&g.GroupDefinition, expectedPath)
 		if err != nil {
 			return "", "", err
 		}
@@ -170,8 +132,7 @@ func (user User) PrepareDiff() (string, string, error) {
 
 	//write actual state
 	if actualDef != nil {
-		actualUser := actualDef.(*UserDefinition)
-		err := actualUser.serializeForDiff(actualPath)
+		err := SerializeDefinitionIntoFile(actualDef, actualPath)
 		if err != nil {
 			return "", "", err
 		}
@@ -198,26 +159,11 @@ func (user User) PrepareDiff() (string, string, error) {
 			}
 		}
 
-		err := u.serializeForDiff(expectedPath)
+		err := SerializeDefinitionIntoFile(&u.UserDefinition, expectedPath)
 		if err != nil {
 			return "", "", err
 		}
 	}
 
 	return expectedPath, actualPath, nil
-}
-
-func encodeField(field string, value interface{}) (string, error) {
-	var buf bytes.Buffer
-	err := toml.NewEncoder(&buf).Encode(map[string]interface{}{field: value})
-	return strings.TrimSpace(buf.String()), err
-}
-
-func appendField(w io.Writer, field string, value interface{}) error {
-	str, err := encodeField(field, value)
-	if err != nil {
-		return err
-	}
-	w.Write([]byte(str + "\n"))
-	return nil
 }

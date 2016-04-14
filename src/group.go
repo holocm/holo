@@ -30,9 +30,14 @@ import (
 
 //GroupDefinition represents a UNIX group (as registered in /etc/group).
 type GroupDefinition struct {
-	Name   string //the group name (the first field in /etc/group)
-	GID    int    //the GID (the third field in /etc/group), or 0 if no specific GID is enforced
-	System bool   //whether the group is a system group (this influences the GID selection if GID = 0)
+	Name   string `toml:"name"`             //the group name (the first field in /etc/group)
+	GID    int    `toml:"gid,omitzero"`     //the GID (the third field in /etc/group), or 0 if no specific GID is enforced
+	System bool   `toml:"system,omitempty"` //whether the group is a system group (this influences the GID selection if GID = 0)
+}
+
+//TypeName implements the EntityDefinition interface.
+func (g *GroupDefinition) TypeName() string {
+	return "group"
 }
 
 //Group implements the Entity interface for GroupDefinitions.
