@@ -120,14 +120,15 @@ func (u User) Apply(withForce bool) (entityHasChanged bool) {
 	}
 
 	//check if we have that group already
-	actualUser, err := u.checkExists()
+	actualDef, err := u.GetProvisionedState()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! Cannot read user database: %s\n", err.Error())
 		return false
 	}
 
 	//check if the actual properties diverge from our definition
-	if actualUser != nil {
+	if actualDef != nil {
+		actualUser := actualDef.(*UserDefinition)
 		differences := []userDiff{}
 		if u.Comment != "" && u.Comment != actualUser.Comment {
 			differences = append(differences, userDiff{"comment", actualUser.Comment, u.Comment})
@@ -205,9 +206,8 @@ func (u User) applyOrphaned(withForce bool) (entityHasChanged bool) {
 	return true
 }
 
-//checkExists reads the current state of this user from /etc/passwd. If it does
-//not exist, nil is returned.
-func (u User) checkExists() (*UserDefinition, error) {
+//GetProvisionedState implements the EntityDefinition interface.
+func (u *UserDefinition) GetProvisionedState() (EntityDefinition, error) {
 	passwdFile := GetPath("etc/passwd")
 	groupFile := GetPath("etc/group")
 

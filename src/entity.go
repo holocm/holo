@@ -20,6 +20,17 @@
 
 package main
 
+//EntityDefinition contains data from a definition file that describes an entity
+//(a user account or group). Definitions can also be obtained by scanning the
+//user/group databases.
+type EntityDefinition interface {
+	//GetProvisionedState reads the current state of this entity from the
+	//system database (/etc/passwd or /etc/group). The return value has the same
+	//concrete type as the callee. If no entity with the same ID exists in
+	//there, nil is returned.
+	GetProvisionedState() (EntityDefinition, error)
+}
+
 //Entity provides a common interface for configuration entities, such as
 //configuration files, user accounts and user groups.
 type Entity interface {

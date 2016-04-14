@@ -118,7 +118,7 @@ func (user *UserDefinition) serializeForDiff(path string) error {
 //PrepareDiff implements the Entity interface.
 func (group Group) PrepareDiff() (string, string, error) {
 	//does this group exist already?
-	actualGroup, err := group.checkExists()
+	actualDef, err := group.GetProvisionedState()
 	if err != nil {
 		return "", "", err
 	}
@@ -130,8 +130,8 @@ func (group Group) PrepareDiff() (string, string, error) {
 	}
 
 	//write actual state
-	if actualGroup != nil {
-		err := actualGroup.serializeForDiff(actualPath)
+	if actualDef != nil {
+		err := actualDef.(*GroupDefinition).serializeForDiff(actualPath)
 		if err != nil {
 			return "", "", err
 		}
@@ -141,8 +141,8 @@ func (group Group) PrepareDiff() (string, string, error) {
 	if !group.Orphaned {
 		//merge actual state into definition where definition does not define anything
 		g := group
-		if g.GID == 0 && actualGroup != nil {
-			g.GID = actualGroup.GID
+		if g.GID == 0 && actualDef != nil {
+			g.GID = actualDef.(*GroupDefinition).GID
 		}
 
 		err := g.serializeForDiff(expectedPath)
@@ -157,7 +157,7 @@ func (group Group) PrepareDiff() (string, string, error) {
 //PrepareDiff implements the Entity interface.
 func (user User) PrepareDiff() (string, string, error) {
 	//does this user exist already?
-	actualUser, err := user.checkExists()
+	actualDef, err := user.GetProvisionedState()
 	if err != nil {
 		return "", "", err
 	}
@@ -169,7 +169,8 @@ func (user User) PrepareDiff() (string, string, error) {
 	}
 
 	//write actual state
-	if actualUser != nil {
+	if actualDef != nil {
+		actualUser := actualDef.(*UserDefinition)
 		err := actualUser.serializeForDiff(actualPath)
 		if err != nil {
 			return "", "", err
@@ -180,7 +181,8 @@ func (user User) PrepareDiff() (string, string, error) {
 	if !user.Orphaned {
 		//merge actual state into definition where definition does not define anything
 		u := user
-		if actualUser != nil {
+		if actualDef != nil {
+			actualUser := actualDef.(*UserDefinition)
 			if u.UID == 0 {
 				u.UID = actualUser.UID
 			}
