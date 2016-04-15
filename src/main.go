@@ -30,12 +30,12 @@ import (
 func main() {
 	if version := os.Getenv("HOLO_API_VERSION"); version != "3" {
 		fmt.Fprintf(os.Stderr, "!! holo-users-groups plugin called with unknown HOLO_API_VERSION %s\n", version)
+		os.Exit(1)
 	}
 
-	gob.Register(GroupDefinition{})
-	gob.Register(UserDefinition{})
-	gob.Register(Group{})
-	gob.Register(User{})
+	gob.Register(&GroupDefinition{})
+	gob.Register(&UserDefinition{})
+	gob.Register(Entity{})
 
 	switch os.Args[1] {
 	case "info":
@@ -89,7 +89,7 @@ func executeNonScanCommand() {
 		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		os.Exit(1)
 	}
-	var entities []Entity
+	var entities []*Entity
 	err = gob.NewDecoder(file).Decode(&entities)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
@@ -103,9 +103,9 @@ func executeNonScanCommand() {
 
 	//all other actions require an entity selection
 	entityID := os.Args[2]
-	var selectedEntity Entity
+	var selectedEntity *Entity
 	for _, entity := range entities {
-		if entity.Definition().EntityID() == entityID {
+		if entity.Definition.EntityID() == entityID {
 			selectedEntity = entity
 			break
 		}
@@ -121,7 +121,7 @@ func executeNonScanCommand() {
 	case "force-apply":
 		applyEntity(selectedEntity, true)
 	case "diff":
-		expectedStateFile, actualStateFile, err := PrepareDiffFor(selectedEntity.Definition(), selectedEntity.IsOrphaned())
+		expectedStateFile, actualStateFile, err := PrepareDiffFor(selectedEntity.Definition, selectedEntity.IsOrphaned())
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		}
@@ -133,7 +133,7 @@ func executeNonScanCommand() {
 	}
 }
 
-func applyEntity(entity Entity, withForce bool) {
+func applyEntity(entity *Entity, withForce bool) {
 	entityHasChanged := entity.Apply(withForce)
 	if !entityHasChanged {
 		_, err := os.NewFile(3, "file descriptor 3").Write([]byte("not changed\n"))

@@ -33,7 +33,7 @@ import (
 
 //Scan returns a slice of all the defined entities. If an error is encountered
 //during the scan, it will be reported on stderr, and nil is returned.
-func Scan() []Entity {
+func Scan() []*Entity {
 	//open resource directory
 	dirPath := os.Getenv("HOLO_RESOURCE_DIR")
 	dir, err := os.Open(dirPath)
@@ -57,10 +57,9 @@ func Scan() []Entity {
 	sort.Strings(paths)
 
 	//parse entity definitions
-	groups := make(map[string]*Group)
-	users := make(map[string]*User)
+	entities := make(map[string]*Entity)
 	for _, definitionPath := range paths {
-		err := readDefinitionFile(definitionPath, &groups, &users)
+		err := readDefinitionFile(definitionPath, &entities)
 		if len(err) > 0 {
 			fmt.Fprintf(os.Stderr, "!! File %s is invalid:\n", definitionPath)
 			for _, suberr := range err {
@@ -73,26 +72,23 @@ func Scan() []Entity {
 	//so that we don't remove entities that are still needed just because their
 	//definition file is broken)
 	for _, name := range KnownGroupNames() {
-		if _, ok := groups[name]; !ok {
-			groups[name] = &Group{GroupDefinition: GroupDefinition{Name: name}, Orphaned: true}
+		def := &GroupDefinition{Name: name}
+		if _, ok := entities[def.EntityID()]; !ok {
+			entities[def.EntityID()] = &Entity{Definition: def}
 		}
 	}
 	for _, name := range KnownUserNames() {
-		if _, ok := users[name]; !ok {
-			users[name] = &User{UserDefinition: UserDefinition{Name: name}, Orphaned: true}
+		def := &UserDefinition{Name: name}
+		if _, ok := entities[def.EntityID()]; !ok {
+			entities[def.EntityID()] = &Entity{Definition: def}
 		}
 	}
 
 	//flatten result into a list sorted by EntityID and filter invalid entities
-	result := make([]Entity, 0, len(groups)+len(users))
-	for _, group := range groups {
-		if group.isValid() {
-			result = append(result, *group)
-		}
-	}
-	for _, user := range users {
-		if user.isValid() {
-			result = append(result, *user)
+	result := make([]*Entity, 0, len(entities))
+	for _, entity := range entities {
+		if !entity.IsBroken {
+			result = append(result, entity)
 		}
 	}
 	sort.Sort(entitiesByName(result))
@@ -100,19 +96,19 @@ func Scan() []Entity {
 	return result
 }
 
-type entitiesByName []Entity
+type entitiesByName []*Entity
 
 func (e entitiesByName) Len() int      { return len(e) }
 func (e entitiesByName) Swap(i, j int) { e[i], e[j] = e[j], e[i] }
 func (e entitiesByName) Less(i, j int) bool {
-	return e[i].Definition().EntityID() < e[j].Definition().EntityID()
+	return e[i].Definition.EntityID() < e[j].Definition.EntityID()
 }
 
-func readDefinitionFile(definitionPath string, groups *map[string]*Group, users *map[string]*User) []error {
+func readDefinitionFile(definitionPath string, entities *map[string]*Entity) []error {
 	//unmarshal contents of definitionPath into this struct
 	var contents struct {
-		Group []Group
-		User  []User
+		Group []*GroupDefinition
+		User  []*UserDefinition
 	}
 	blob, err := ioutil.ReadFile(definitionPath)
 	if err != nil {
@@ -126,71 +122,44 @@ func readDefinitionFile(definitionPath string, groups *map[string]*Group, users 
 	//when checking the entity definitions, report all errors at once
 	var errors []error
 
-	//convert the definitions read into entities, or extend existing entities if
-	//the definition is stacked on an earlier one (BUT: we only allow changes
-	//that are compatible with the original definition; for example, users may
-	//be extended with additional groups, but its UID may not be changed)
+	//collect the definitions in this file
+	defs := make([]EntityDefinition, 0, len(contents.Group)+len(contents.User))
 	for idx, group := range contents.Group {
 		if group.Name == "" {
 			errors = append(errors, fmt.Errorf("groups[%d] is missing required 'name' attribute", idx))
-			continue
-		}
-		existingGroup, exists := (*groups)[group.Name]
-		if exists {
-			//stacked definition for this group - extend existing Group entity
-			groupErrors := mergeGroupDefinition(&group, existingGroup)
-			if len(groupErrors) > 0 {
-				errors = append(errors, groupErrors...)
-				existingGroup.setInvalid()
-			}
 		} else {
-			//first definition for this group - create new Group entity
-			copyOfGroup := group
-			(*groups)[group.Name] = &copyOfGroup
-			existingGroup = &copyOfGroup
+			defs = append(defs, group)
 		}
-		existingGroup.DefinitionFiles = append(existingGroup.DefinitionFiles, definitionPath)
 	}
-
 	for idx, user := range contents.User {
 		if user.Name == "" {
 			errors = append(errors, fmt.Errorf("users[%d] is missing required 'name' attribute", idx))
 			continue
+		} else {
+			defs = append(defs, user)
 		}
-		existingUser, exists := (*users)[user.Name]
+	}
+
+	//merge definitions into existing entities where appropriate
+	for _, def := range defs {
+		id := def.EntityID()
+		entity, exists := (*entities)[id]
 		if exists {
-			//stacked definition for this user - extend existing User entity
-			userErrors := mergeUserDefinition(&user, existingUser)
-			if len(userErrors) > 0 {
-				errors = append(errors, userErrors...)
-				existingUser.setInvalid()
+			//stacked definition for this entity -> merge into existing entity
+			mergedDef, mergeErrors := def.Merge(entity.Definition, MergeWhereCompatible)
+			if len(mergeErrors) == 0 {
+				entity.Definition = mergedDef
+			} else {
+				errors = append(errors, mergeErrors...)
+				entity.IsBroken = true
 			}
 		} else {
-			//first definition for this user - create new User entity
-			copyOfUser := user
-			(*users)[user.Name] = &copyOfUser
-			existingUser = &copyOfUser
+			//first definition for this entity -> wrap into an Entity
+			entity = &Entity{Definition: def}
+			(*entities)[id] = entity
 		}
-		existingUser.DefinitionFiles = append(existingUser.DefinitionFiles, definitionPath)
+		entity.DefinitionFiles = append(entity.DefinitionFiles, definitionPath)
 	}
 
-	return errors
-}
-
-//Merges `def` into `group` if possible, returns errors if merge conflicts arise.
-func mergeGroupDefinition(group *Group, existingGroup *Group) []error {
-	def, errors := group.GroupDefinition.Merge(&existingGroup.GroupDefinition, MergeWhereCompatible)
-	if len(errors) == 0 {
-		existingGroup.GroupDefinition = *(def.(*GroupDefinition))
-	}
-	return errors
-}
-
-//Merges `def` into `user` if possible, returns errors if merge conflicts arise.
-func mergeUserDefinition(user *User, existingUser *User) []error {
-	def, errors := user.UserDefinition.Merge(&existingUser.UserDefinition, MergeWhereCompatible)
-	if len(errors) == 0 {
-		existingUser.UserDefinition = *(def.(*UserDefinition))
-	}
 	return errors
 }
