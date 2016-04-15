@@ -21,31 +21,18 @@
 package main
 
 import (
-	"bytes"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-
-	"../localdeps/github.com/BurntSushi/toml"
 )
 
 //SerializeDefinitionIntoFile writes the given EntityDefinition as a TOML file.
 func SerializeDefinitionIntoFile(def EntityDefinition, path string) error {
-	//write header
-	var buf bytes.Buffer
-	fmt.Fprintf(&buf, "[[%s]]\n", def.TypeName())
-
-	//write attributes
-	var err error
-	def.WithSerializableState(func(def EntityDefinition) {
-		err = toml.NewEncoder(&buf).Encode(def)
-	})
+	bytes, err := SerializeDefinition(def)
 	if err != nil {
 		return err
 	}
-
-	return ioutil.WriteFile(path, buf.Bytes(), 0644)
+	return ioutil.WriteFile(path, bytes, 0644)
 }
 
 //PrepareDiffFor creates temporary files that the frontend can use to generate

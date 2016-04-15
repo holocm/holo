@@ -158,18 +158,19 @@ func (g Group) Apply(withForce bool) (entityHasChanged bool) {
 
 	//check if the actual properties diverge from our definition
 	if actualDef != nil {
-		actualGroup := actualDef.(*GroupDefinition)
-		differences := []groupDiff{}
-		if g.GID > 0 && g.GID != actualGroup.GID {
-			differences = append(differences, groupDiff{"GID", strconv.Itoa(actualGroup.GID), strconv.Itoa(g.GID)})
+		actualStr, err := SerializeDefinition(actualDef)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+		}
+		expectedDef, _ := g.GroupDefinition.Merge(actualDef, MergeEmptyOnly)
+		expectedStr, err := SerializeDefinition(expectedDef)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		}
 
-		if len(differences) != 0 {
+		if string(actualStr) != string(expectedStr) {
 			if withForce {
-				for _, diff := range differences {
-					fmt.Printf(">> fixing %s (was: %s)\n", diff.field, diff.actual)
-				}
-				err := g.GroupDefinition.Apply(actualGroup)
+				err := g.GroupDefinition.Apply(actualDef)
 				if err != nil {
 					fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 					return false

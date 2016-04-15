@@ -200,40 +200,19 @@ func (u User) Apply(withForce bool) (entityHasChanged bool) {
 
 	//check if the actual properties diverge from our definition
 	if actualDef != nil {
-		actualUser := actualDef.(*UserDefinition)
-		differences := []userDiff{}
-		if u.Comment != "" && u.Comment != actualUser.Comment {
-			differences = append(differences, userDiff{"comment", actualUser.Comment, u.Comment})
+		actualStr, err := SerializeDefinition(actualDef)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		}
-		if u.UID > 0 && u.UID != actualUser.UID {
-			differences = append(differences, userDiff{"UID", strconv.Itoa(actualUser.UID), strconv.Itoa(u.UID)})
-		}
-		if u.Home != "" && u.Home != actualUser.Home {
-			differences = append(differences, userDiff{"home directory", actualUser.Home, u.Home})
-		}
-		if u.Shell != "" && u.Shell != actualUser.Shell {
-			differences = append(differences, userDiff{"login shell", actualUser.Shell, u.Shell})
-		}
-		if u.Group != "" && u.Group != actualUser.Group {
-			differences = append(differences, userDiff{"login group", actualUser.Group, u.Group})
-		}
-		//to detect changes in u.Groups <-> actualUser.Groups, we sort and join both slices
-		expectedGroupsSlice := append([]string(nil), u.Groups...) //take a copy of the slice
-		sort.Strings(expectedGroupsSlice)
-		expectedGroups := strings.Join(expectedGroupsSlice, ", ")
-		actualGroupsSlice := append([]string(nil), actualUser.Groups...)
-		sort.Strings(actualGroupsSlice)
-		actualGroups := strings.Join(actualGroupsSlice, ", ")
-		if expectedGroups != actualGroups {
-			differences = append(differences, userDiff{"groups", actualGroups, expectedGroups})
+		expectedDef, _ := u.UserDefinition.Merge(actualDef, MergeEmptyOnly)
+		expectedStr, err := SerializeDefinition(expectedDef)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		}
 
-		if len(differences) != 0 {
+		if string(actualStr) != string(expectedStr) {
 			if withForce {
-				for _, diff := range differences {
-					fmt.Printf(">> fixing %s (was: %s)\n", diff.field, diff.actual)
-				}
-				err := u.UserDefinition.Apply(actualUser)
+				err := u.UserDefinition.Apply(actualDef)
 				if err != nil {
 					fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 					return false

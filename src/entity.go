@@ -20,6 +20,13 @@
 
 package main
 
+import (
+	"bytes"
+	"fmt"
+
+	"../localdeps/github.com/BurntSushi/toml"
+)
+
 const (
 	//MergeWhereCompatible can be used as second argument for EntityDefinition.Merge.
 	MergeWhereCompatible = false
@@ -61,6 +68,20 @@ type EntityDefinition interface {
 	Apply(provisioned EntityDefinition) error
 	//Cleanup removes the entity from the system.
 	Cleanup() error
+}
+
+//SerializeDefinition returns a TOML representation of this EntityDefinition.
+func SerializeDefinition(def EntityDefinition) ([]byte, error) {
+	//write header
+	var buf bytes.Buffer
+	fmt.Fprintf(&buf, "[[%s]]\n", def.TypeName())
+
+	//write attributes
+	var err error
+	def.WithSerializableState(func(def EntityDefinition) {
+		err = toml.NewEncoder(&buf).Encode(def)
+	})
+	return buf.Bytes(), err
 }
 
 //Entity provides a common interface for configuration entities, such as
