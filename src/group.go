@@ -62,6 +62,30 @@ func (g *GroupDefinition) WithSerializableState(callback func(EntityDefinition))
 	g.System = system
 }
 
+//Apply implements the EntityDefinition interface.
+func (g *GroupDefinition) Apply(provisioned EntityDefinition) error {
+	//assemble arguments
+	var args []string
+	if provisioned == nil && g.System {
+		args = append(args, "--system")
+	}
+	if g.GID > 0 {
+		args = append(args, "--gid", strconv.Itoa(g.GID))
+	}
+	args = append(args, g.Name)
+
+	//call groupadd/groupmod
+	command := "groupmod"
+	if provisioned == nil {
+		command = "groupadd"
+	}
+	err := ExecProgramOrMock(command, args...)
+	if err != nil {
+		return err
+	}
+	return AddProvisionedGroup(g.Name)
+}
+
 //Group implements the Entity interface for GroupDefinitions.
 type Group struct {
 	GroupDefinition
@@ -136,7 +160,7 @@ func (g Group) Apply(withForce bool) (entityHasChanged bool) {
 				for _, diff := range differences {
 					fmt.Printf(">> fixing %s (was: %s)\n", diff.field, diff.actual)
 				}
-				err := g.callGroupmod()
+				err := g.GroupDefinition.Apply(actualGroup)
 				if err != nil {
 					fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 					return false
@@ -152,7 +176,7 @@ func (g Group) Apply(withForce bool) (entityHasChanged bool) {
 	}
 
 	//create the group if it does not exist
-	err = g.callGroupadd()
+	err = g.GroupDefinition.Apply(nil)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		return false
@@ -205,39 +229,4 @@ func (g *GroupDefinition) GetProvisionedState() (EntityDefinition, error) {
 		Name: fields[0],
 		GID:  gid,
 	}, err
-}
-
-func (g Group) callGroupadd() error {
-	//assemble arguments for groupadd call
-	args := []string{}
-	if g.System {
-		args = append(args, "--system")
-	}
-	if g.GID > 0 {
-		args = append(args, "--gid", strconv.Itoa(g.GID))
-	}
-	args = append(args, g.Name)
-
-	//call groupadd
-	err := ExecProgramOrMock("groupadd", args...)
-	if err != nil {
-		return err
-	}
-	return AddProvisionedGroup(g.Name)
-}
-
-func (g Group) callGroupmod() error {
-	//assemble arguments for groupmod call
-	args := []string{}
-	if g.GID > 0 {
-		args = append(args, "--gid", strconv.Itoa(g.GID))
-	}
-	args = append(args, g.Name)
-
-	//call groupmod
-	err := ExecProgramOrMock("groupmod", args...)
-	if err != nil {
-		return err
-	}
-	return AddProvisionedGroup(g.Name)
 }

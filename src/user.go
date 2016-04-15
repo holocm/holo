@@ -83,6 +83,50 @@ func (u *UserDefinition) WithSerializableState(callback func(EntityDefinition)) 
 	u.System = system
 }
 
+//Apply implements the EntityDefinition interface.
+func (u *UserDefinition) Apply(provisioned EntityDefinition) error {
+	//assemble arguments
+	var args []string
+	if provisioned == nil && u.System {
+		args = append(args, "--system")
+	}
+	if u.UID > 0 {
+		args = append(args, "--uid", strconv.Itoa(u.UID))
+	}
+	if u.Comment != "" {
+		args = append(args, "--comment", u.Comment)
+	}
+	if u.Home != "" {
+		//yay for consistency
+		if provisioned == nil {
+			args = append(args, "--home-dir", u.Home)
+		} else {
+			args = append(args, "--home", u.Home)
+		}
+	}
+	if u.Group != "" {
+		args = append(args, "--gid", u.Group)
+	}
+	if len(u.Groups) > 0 {
+		args = append(args, "--groups", strings.Join(u.Groups, ","))
+	}
+	if u.Shell != "" {
+		args = append(args, "--shell", u.Shell)
+	}
+	args = append(args, u.Name)
+
+	//call useradd/usermod
+	command := "usermod"
+	if provisioned == nil {
+		command = "useradd"
+	}
+	err := ExecProgramOrMock(command, args...)
+	if err != nil {
+		return err
+	}
+	return AddProvisionedUser(u.Name)
+}
+
 //User represents a UNIX user account (as registered in /etc/passwd). It
 //implements the Entity interface and is handled accordingly.
 type User struct {
@@ -180,7 +224,7 @@ func (u User) Apply(withForce bool) (entityHasChanged bool) {
 				for _, diff := range differences {
 					fmt.Printf(">> fixing %s (was: %s)\n", diff.field, diff.actual)
 				}
-				err := u.callUsermod()
+				err := u.UserDefinition.Apply(actualUser)
 				if err != nil {
 					fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 					return false
@@ -196,7 +240,7 @@ func (u User) Apply(withForce bool) (entityHasChanged bool) {
 	}
 
 	//create the user if it does not exist
-	err = u.callUseradd()
+	err = u.UserDefinition.Apply(nil)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		return false
@@ -299,69 +343,4 @@ func (u *UserDefinition) GetProvisionedState() (EntityDefinition, error) {
 		Groups:  groupNames,
 		Shell:   fields[6],
 	}, nil
-}
-
-func (u User) callUseradd() error {
-	//assemble arguments for useradd call
-	args := []string{}
-	if u.System {
-		args = append(args, "--system")
-	}
-	if u.UID > 0 {
-		args = append(args, "--uid", strconv.Itoa(u.UID))
-	}
-	if u.Comment != "" {
-		args = append(args, "--comment", u.Comment)
-	}
-	if u.Home != "" {
-		args = append(args, "--home-dir", u.Home)
-	}
-	if u.Group != "" {
-		args = append(args, "--gid", u.Group)
-	}
-	if len(u.Groups) > 0 {
-		args = append(args, "--groups", strings.Join(u.Groups, ","))
-	}
-	if u.Shell != "" {
-		args = append(args, "--shell", u.Shell)
-	}
-	args = append(args, u.Name)
-
-	//call useradd
-	err := ExecProgramOrMock("useradd", args...)
-	if err != nil {
-		return err
-	}
-	return AddProvisionedUser(u.Name)
-}
-
-func (u User) callUsermod() error {
-	//assemble arguments for usermod call
-	args := []string{}
-	if u.UID > 0 {
-		args = append(args, "--uid", strconv.Itoa(u.UID))
-	}
-	if u.Comment != "" {
-		args = append(args, "--comment", u.Comment)
-	}
-	if u.Home != "" {
-		args = append(args, "--home", u.Home)
-	}
-	if u.Group != "" {
-		args = append(args, "--gid", u.Group)
-	}
-	if len(u.Groups) > 0 {
-		args = append(args, "--groups", strings.Join(u.Groups, ","))
-	}
-	if u.Shell != "" {
-		args = append(args, "--shell", u.Shell)
-	}
-	args = append(args, u.Name)
-
-	//call usermod
-	err := ExecProgramOrMock("usermod", args...)
-	if err != nil {
-		return err
-	}
-	return AddProvisionedUser(u.Name)
 }
