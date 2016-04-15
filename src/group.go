@@ -21,10 +21,8 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -60,39 +58,6 @@ func (g *GroupDefinition) WithSerializableState(callback func(EntityDefinition))
 	g.System = false
 	callback(g)
 	g.System = system
-}
-
-//Apply implements the EntityDefinition interface.
-func (g *GroupDefinition) Apply(provisioned EntityDefinition) error {
-	//assemble arguments
-	var args []string
-	if provisioned == nil && g.System {
-		args = append(args, "--system")
-	}
-	if g.GID > 0 {
-		args = append(args, "--gid", strconv.Itoa(g.GID))
-	}
-	args = append(args, g.Name)
-
-	//call groupadd/groupmod
-	command := "groupmod"
-	if provisioned == nil {
-		command = "groupadd"
-	}
-	err := ExecProgramOrMock(command, args...)
-	if err != nil {
-		return err
-	}
-	return AddProvisionedGroup(g.Name)
-}
-
-//Cleanup implements the EntityDefinition interface.
-func (g *GroupDefinition) Cleanup() error {
-	err := ExecProgramOrMock("groupdel", g.Name)
-	if err != nil {
-		return err
-	}
-	return RemoveProvisionedGroup(g.Name)
 }
 
 //Group implements the Entity interface for GroupDefinitions.
@@ -209,30 +174,4 @@ func (g Group) applyOrphaned(withForce bool) (entityHasChanged bool) {
 		return false
 	}
 	return true
-}
-
-//GetProvisionedState implements the EntityDefinition interface.
-func (g *GroupDefinition) GetProvisionedState() (EntityDefinition, error) {
-	groupFile := GetPath("etc/group")
-
-	//fetch entry from /etc/group
-	fields, err := Getent(groupFile, func(fields []string) bool { return fields[0] == g.Name })
-	if err != nil {
-		return nil, err
-	}
-	//is there such a group?
-	if fields == nil {
-		return nil, nil
-	}
-	//is the group entry intact?
-	if len(fields) < 4 {
-		return nil, errors.New("invalid entry in /etc/group (not enough fields)")
-	}
-
-	//read fields in entry
-	gid, err := strconv.Atoi(fields[2])
-	return &GroupDefinition{
-		Name: fields[0],
-		GID:  gid,
-	}, err
 }

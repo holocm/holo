@@ -21,11 +21,8 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
-	"sort"
-	"strconv"
 	"strings"
 )
 
@@ -81,59 +78,6 @@ func (u *UserDefinition) WithSerializableState(callback func(EntityDefinition)) 
 	u.System = false
 	callback(u)
 	u.System = system
-}
-
-//Apply implements the EntityDefinition interface.
-func (u *UserDefinition) Apply(provisioned EntityDefinition) error {
-	//assemble arguments
-	var args []string
-	if provisioned == nil && u.System {
-		args = append(args, "--system")
-	}
-	if u.UID > 0 {
-		args = append(args, "--uid", strconv.Itoa(u.UID))
-	}
-	if u.Comment != "" {
-		args = append(args, "--comment", u.Comment)
-	}
-	if u.Home != "" {
-		//yay for consistency
-		if provisioned == nil {
-			args = append(args, "--home-dir", u.Home)
-		} else {
-			args = append(args, "--home", u.Home)
-		}
-	}
-	if u.Group != "" {
-		args = append(args, "--gid", u.Group)
-	}
-	if len(u.Groups) > 0 {
-		args = append(args, "--groups", strings.Join(u.Groups, ","))
-	}
-	if u.Shell != "" {
-		args = append(args, "--shell", u.Shell)
-	}
-	args = append(args, u.Name)
-
-	//call useradd/usermod
-	command := "usermod"
-	if provisioned == nil {
-		command = "useradd"
-	}
-	err := ExecProgramOrMock(command, args...)
-	if err != nil {
-		return err
-	}
-	return AddProvisionedUser(u.Name)
-}
-
-//Cleanup implements the EntityDefinition interface.
-func (u *UserDefinition) Cleanup() error {
-	err := ExecProgramOrMock("userdel", u.Name)
-	if err != nil {
-		return err
-	}
-	return RemoveProvisionedUser(u.Name)
 }
 
 //User represents a UNIX user account (as registered in /etc/passwd). It
@@ -251,80 +195,4 @@ func (u User) applyOrphaned(withForce bool) (entityHasChanged bool) {
 		return false
 	}
 	return true
-}
-
-//GetProvisionedState implements the EntityDefinition interface.
-func (u *UserDefinition) GetProvisionedState() (EntityDefinition, error) {
-	passwdFile := GetPath("etc/passwd")
-	groupFile := GetPath("etc/group")
-
-	//fetch entry from /etc/passwd
-	fields, err := Getent(passwdFile, func(fields []string) bool { return fields[0] == u.Name })
-	if err != nil {
-		return nil, err
-	}
-	//is there such a user?
-	if fields == nil {
-		return nil, nil
-	}
-	//is the passwd entry intact?
-	if len(fields) < 4 {
-		return nil, errors.New("invalid entry in /etc/passwd (not enough fields)")
-	}
-
-	//read fields in passwd entry
-	actualUID, err := strconv.Atoi(fields[2])
-	if err != nil {
-		return nil, err
-	}
-
-	//fetch entry for login group from /etc/group (to resolve actualGID into a
-	//group name)
-	actualGIDString := fields[3]
-	groupFields, err := Getent(groupFile, func(fields []string) bool {
-		if len(fields) <= 2 {
-			return false
-		}
-		return fields[2] == actualGIDString
-	})
-	if err != nil {
-		return nil, err
-	}
-	if groupFields == nil {
-		return nil, errors.New("invalid entry in /etc/passwd (login group does not exist)")
-	}
-	groupName := groupFields[0]
-
-	//check /etc/group for the supplementary group memberships of this user
-	var groupNames []string
-	_, err = Getent(groupFile, func(fields []string) bool {
-		if len(fields) <= 3 {
-			return false
-		}
-		//collect groups that contain this user
-		users := strings.Split(fields[3], ",")
-		for _, user := range users {
-			if user == u.Name {
-				groupNames = append(groupNames, fields[0])
-			}
-		}
-		//keep going
-		return false
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	//make sure that the groups list is always sorted (esp. for reproducible test output)
-	sort.Strings(groupNames)
-
-	return &UserDefinition{
-		Name:    fields[0],
-		Comment: fields[4],
-		UID:     actualUID,
-		Home:    fields[5],
-		Group:   groupName,
-		Groups:  groupNames,
-		Shell:   fields[6],
-	}, nil
 }
