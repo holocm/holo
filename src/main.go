@@ -1,6 +1,6 @@
 /*******************************************************************************
 *
-* Copyright 2015 Stefan Majewsky <majewsky@gmx.net>
+* Copyright 2015-2016 Stefan Majewsky <majewsky@gmx.net>
 *
 * This file is part of Holo.
 *
@@ -117,24 +117,14 @@ func executeNonScanCommand() {
 
 	switch os.Args[1] {
 	case "apply":
-		applyEntity(selectedEntity, false)
+		err = selectedEntity.Apply(false)
 	case "force-apply":
-		applyEntity(selectedEntity, true)
+		err = selectedEntity.Apply(true)
 	case "diff":
-		expectedStateFile, actualStateFile, err := PrepareDiffFor(selectedEntity.Definition, selectedEntity.IsOrphaned())
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-		}
-		out := fmt.Sprintf("%s\000%s\000", expectedStateFile, actualStateFile)
-		_, err = os.NewFile(3, "file descriptor 3").Write([]byte(out))
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-		}
+		err = PrepareDiffFor(selectedEntity.Definition, selectedEntity.IsOrphaned())
+	default:
+		err = fmt.Errorf("unknown command '%s'", os.Args[1])
 	}
-}
-
-func applyEntity(entity *Entity, withForce bool) {
-	err := entity.Apply(withForce)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 	}

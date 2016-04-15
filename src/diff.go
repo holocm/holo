@@ -1,6 +1,6 @@
 /*******************************************************************************
 *
-* Copyright 2015 Stefan Majewsky <majewsky@gmx.net>
+* Copyright 2015-2016 Stefan Majewsky <majewsky@gmx.net>
 *
 * This file is part of Holo.
 *
@@ -37,28 +37,28 @@ func SerializeDefinitionIntoFile(def EntityDefinition, path string) error {
 
 //PrepareDiffFor creates temporary files that the frontend can use to generate
 //a diff.
-func PrepareDiffFor(def EntityDefinition, isOrphaned bool) (expectedPath string, actualPath string, err error) {
+func PrepareDiffFor(def EntityDefinition, isOrphaned bool) error {
 	//does this entity exist already?
 	actualDef, err := def.GetProvisionedState()
 	if err != nil {
-		return
+		return err
 	}
 
 	//make sure that the directory for these files does exist
 	dirPath := filepath.Join(os.Getenv("HOLO_CACHE_DIR"), def.EntityID())
 	err = os.Mkdir(dirPath, 0755)
 	if err != nil {
-		return
+		return err
 	}
 
-	expectedPath = filepath.Join(dirPath, "expected.toml")
-	actualPath = filepath.Join(dirPath, "actual.toml")
+	expectedPath := filepath.Join(dirPath, "expected.toml")
+	actualPath := filepath.Join(dirPath, "actual.toml")
 
 	//write actual state
 	if actualDef != nil {
 		err = SerializeDefinitionIntoFile(actualDef, actualPath)
 		if err != nil {
-			return
+			return err
 		}
 	}
 
@@ -72,9 +72,10 @@ func PrepareDiffFor(def EntityDefinition, isOrphaned bool) (expectedPath string,
 
 		err = SerializeDefinitionIntoFile(serializable, expectedPath)
 		if err != nil {
-			return
+			return err
 		}
 	}
 
-	return
+	PrintCommandMessage("%s\000%s\000", expectedPath, actualPath)
+	return nil
 }
