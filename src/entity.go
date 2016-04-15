@@ -59,6 +59,8 @@ type EntityDefinition interface {
 	//provisioned state. If the entity is not provisioned yet, it will be nil.
 	//If not nil, the argument's concrete type must match the callee.
 	Apply(provisioned EntityDefinition) error
+	//Cleanup removes the entity from the system.
+	Cleanup() error
 }
 
 //Entity provides a common interface for configuration entities, such as

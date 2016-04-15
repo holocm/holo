@@ -127,6 +127,15 @@ func (u *UserDefinition) Apply(provisioned EntityDefinition) error {
 	return AddProvisionedUser(u.Name)
 }
 
+//Cleanup implements the EntityDefinition interface.
+func (u *UserDefinition) Cleanup() error {
+	err := ExecProgramOrMock("userdel", u.Name)
+	if err != nil {
+		return err
+	}
+	return RemoveProvisionedUser(u.Name)
+}
+
 //User represents a UNIX user account (as registered in /etc/passwd). It
 //implements the Entity interface and is handled accordingly.
 type User struct {
@@ -257,14 +266,10 @@ func (u User) applyOrphaned(withForce bool) (entityHasChanged bool) {
 	}
 
 	//call userdel and remove user from our registry
-	err := ExecProgramOrMock("userdel", u.Name)
+	err := u.UserDefinition.Cleanup()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		return false
-	}
-	err = RemoveProvisionedUser(u.Name)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 	}
 	return true
 }

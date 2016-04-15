@@ -86,6 +86,15 @@ func (g *GroupDefinition) Apply(provisioned EntityDefinition) error {
 	return AddProvisionedGroup(g.Name)
 }
 
+//Cleanup implements the EntityDefinition interface.
+func (g *GroupDefinition) Cleanup() error {
+	err := ExecProgramOrMock("groupdel", g.Name)
+	if err != nil {
+		return err
+	}
+	return RemoveProvisionedGroup(g.Name)
+}
+
 //Group implements the Entity interface for GroupDefinitions.
 type Group struct {
 	GroupDefinition
@@ -193,14 +202,10 @@ func (g Group) applyOrphaned(withForce bool) (entityHasChanged bool) {
 	}
 
 	//call groupdel and remove group from our registry
-	err := ExecProgramOrMock("groupdel", g.Name)
+	err := g.GroupDefinition.Cleanup()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		return false
-	}
-	err = RemoveProvisionedGroup(g.Name)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 	}
 	return true
 }
