@@ -37,13 +37,18 @@ func main() {
 	gob.Register(&UserDefinition{})
 	gob.Register(Entity{})
 
+	var err error
 	switch os.Args[1] {
 	case "info":
 		os.Stdout.Write([]byte("MIN_API_VERSION=3\nMAX_API_VERSION=3\n"))
 	case "scan":
-		executeScanCommand()
+		err = executeScanCommand()
 	default:
-		executeNonScanCommand()
+		err = executeNonScanCommand()
+	}
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+		os.Exit(1)
 	}
 }
 
@@ -51,7 +56,7 @@ func pathToCacheFile() string {
 	return filepath.Join(os.Getenv("HOLO_CACHE_DIR"), "entities.toml")
 }
 
-func executeScanCommand() {
+func executeScanCommand() error {
 	//scan for entities
 	entities := Scan()
 	if entities == nil {
@@ -67,38 +72,29 @@ func executeScanCommand() {
 	//store scan result in cache
 	file, err := os.Create(pathToCacheFile())
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-		os.Exit(1)
+		return err
 	}
 	err = gob.NewEncoder(file).Encode(entities)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-		os.Exit(1)
+		return err
 	}
-	err = file.Close()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-		os.Exit(1)
-	}
+	return file.Close()
 }
 
-func executeNonScanCommand() {
+func executeNonScanCommand() error {
 	//retrieve entities from cache
 	file, err := os.Open(pathToCacheFile())
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-		os.Exit(1)
+		return err
 	}
 	var entities []*Entity
 	err = gob.NewDecoder(file).Decode(&entities)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-		os.Exit(1)
+		return err
 	}
 	err = file.Close()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-		os.Exit(1)
+		return err
 	}
 
 	//all other actions require an entity selection
@@ -111,21 +107,17 @@ func executeNonScanCommand() {
 		}
 	}
 	if selectedEntity == nil {
-		fmt.Fprintf(os.Stderr, "!! unknown entity ID \"%s\"\n", entityID)
-		os.Exit(1)
+		return fmt.Errorf("unknown entity ID \"%s\"\n", entityID)
 	}
 
 	switch os.Args[1] {
 	case "apply":
-		err = selectedEntity.Apply(false)
+		return selectedEntity.Apply(false)
 	case "force-apply":
-		err = selectedEntity.Apply(true)
+		return selectedEntity.Apply(true)
 	case "diff":
-		err = PrepareDiffFor(selectedEntity.Definition, selectedEntity.IsOrphaned())
+		return PrepareDiffFor(selectedEntity.Definition, selectedEntity.IsOrphaned())
 	default:
-		err = fmt.Errorf("unknown command '%s'", os.Args[1])
-	}
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+		return fmt.Errorf("unknown command '%s'", os.Args[1])
 	}
 }

@@ -105,3 +105,14 @@ func (e *Entity) Apply(withForce bool) error {
 	PrintCommandMessage("requires --force to overwrite\n")
 	return nil
 }
+
+//PrintCommandMessage formats and prints a message on file descriptor 3.
+func PrintCommandMessage(msg string, arguments ...interface{}) {
+	if len(arguments) > 0 {
+		msg = fmt.Sprintf(msg, arguments...)
+	}
+	_, err := os.NewFile(3, "file descriptor 3").Write([]byte(msg))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+	}
+}
