@@ -33,18 +33,18 @@ import (
 
 //Scan returns a slice of all the defined entities. If an error is encountered
 //during the scan, it will be reported on stderr, and nil is returned.
-func Scan() ([]Group, []User) {
+func Scan() []Entity {
 	//open resource directory
 	dirPath := os.Getenv("HOLO_RESOURCE_DIR")
 	dir, err := os.Open(dirPath)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
-		return nil, nil
+		return nil
 	}
 	fis, err := dir.Readdir(-1)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
-		return nil, nil
+		return nil
 	}
 
 	//find entity definitions
@@ -84,36 +84,29 @@ func Scan() ([]Group, []User) {
 	}
 
 	//flatten result into a list sorted by EntityID and filter invalid entities
-	groupsList := make([]Group, 0, len(groups))
+	result := make([]Entity, 0, len(groups)+len(users))
 	for _, group := range groups {
 		if group.isValid() {
-			groupsList = append(groupsList, *group)
+			result = append(result, *group)
 		}
 	}
-	sort.Sort(groupsByName(groupsList))
-
-	usersList := make([]User, 0, len(users))
 	for _, user := range users {
 		if user.isValid() {
-			usersList = append(usersList, *user)
+			result = append(result, *user)
 		}
 	}
-	sort.Sort(usersByName(usersList))
+	sort.Sort(entitiesByName(result))
 
-	return groupsList, usersList
+	return result
 }
 
-type usersByName []User
+type entitiesByName []Entity
 
-func (u usersByName) Len() int           { return len(u) }
-func (u usersByName) Less(i, j int) bool { return u[i].Name < u[j].Name }
-func (u usersByName) Swap(i, j int)      { u[i], u[j] = u[j], u[i] }
-
-type groupsByName []Group
-
-func (g groupsByName) Len() int           { return len(g) }
-func (g groupsByName) Less(i, j int) bool { return g[i].Name < g[j].Name }
-func (g groupsByName) Swap(i, j int)      { g[i], g[j] = g[j], g[i] }
+func (e entitiesByName) Len() int      { return len(e) }
+func (e entitiesByName) Swap(i, j int) { e[i], e[j] = e[j], e[i] }
+func (e entitiesByName) Less(i, j int) bool {
+	return e[i].Definition().EntityID() < e[j].Definition().EntityID()
+}
 
 func readDefinitionFile(definitionPath string, groups *map[string]*Group, users *map[string]*User) []error {
 	//unmarshal contents of definitionPath into this struct

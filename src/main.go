@@ -21,18 +21,21 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
-
-	"../localdeps/github.com/BurntSushi/toml"
 )
 
 func main() {
 	if version := os.Getenv("HOLO_API_VERSION"); version != "3" {
 		fmt.Fprintf(os.Stderr, "!! holo-users-groups plugin called with unknown HOLO_API_VERSION %s\n", version)
 	}
+
+	gob.Register(GroupDefinition{})
+	gob.Register(UserDefinition{})
+	gob.Register(Group{})
+	gob.Register(User{})
 
 	switch os.Args[1] {
 	case "info":
@@ -44,29 +47,21 @@ func main() {
 	}
 }
 
-type cache struct {
-	Groups []Group
-	Users  []User
-}
-
 func pathToCacheFile() string {
 	return filepath.Join(os.Getenv("HOLO_CACHE_DIR"), "entities.toml")
 }
 
 func executeScanCommand() {
 	//scan for entities
-	groups, users := Scan()
-	if groups == nil && users == nil {
+	entities := Scan()
+	if entities == nil {
 		//some fatal error occurred - it was already reported, so just exit
 		os.Exit(1)
 	}
 
 	//print reports
-	for _, group := range groups {
-		group.PrintReport()
-	}
-	for _, user := range users {
-		user.PrintReport()
+	for _, entity := range entities {
+		entity.PrintReport()
 	}
 
 	//store scan result in cache
@@ -75,23 +70,32 @@ func executeScanCommand() {
 		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		os.Exit(1)
 	}
-	err = toml.NewEncoder(file).Encode(&cache{groups, users})
+	err = gob.NewEncoder(file).Encode(entities)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		os.Exit(1)
 	}
-	file.Close()
+	err = file.Close()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+		os.Exit(1)
+	}
 }
 
 func executeNonScanCommand() {
 	//retrieve entities from cache
-	blob, err := ioutil.ReadFile(pathToCacheFile())
+	file, err := os.Open(pathToCacheFile())
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		os.Exit(1)
 	}
-	var cacheData cache
-	_, err = toml.Decode(string(blob), &cacheData)
+	var entities []Entity
+	err = gob.NewDecoder(file).Decode(&entities)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+		os.Exit(1)
+	}
+	err = file.Close()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		os.Exit(1)
@@ -100,15 +104,9 @@ func executeNonScanCommand() {
 	//all other actions require an entity selection
 	entityID := os.Args[2]
 	var selectedEntity Entity
-	for _, group := range cacheData.Groups {
-		if group.Definition().EntityID() == entityID {
-			selectedEntity = group
-			break
-		}
-	}
-	for _, user := range cacheData.Users {
-		if user.Definition().EntityID() == entityID {
-			selectedEntity = user
+	for _, entity := range entities {
+		if entity.Definition().EntityID() == entityID {
+			selectedEntity = entity
 			break
 		}
 	}
