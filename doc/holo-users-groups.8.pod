@@ -52,12 +52,13 @@ display a diff if the actual user or group does not match that definition. The
 diff is based on the TOML representation of the user or group as used in the
 definition file. For example:
 
-    diff --holo user:wrongshell
-    --- user:wrongshell
-    +++ user:wrongshell
-    @@ -1,3 +1,3
-     [[user]]
-     name = "wrongshell"
+    diff --holo target/tmp/holo/users-groups/user:wrongshell/expected.toml target/tmp/holo/users-groups/user:wrongshell/actual.toml
+    --- target/tmp/holo/users-groups/user:wrongshell/expected.toml
+    +++ target/tmp/holo/users-groups/user:wrongshell/actual.toml
+    @@ -3,4 +3,4 @@ name = "wrongshell"
+     uid = 1005
+     home = "/home/wrongshell"
+     group = "users"
     -shell = "/bin/zsh"
     +shell = "/bin/bash"
 
