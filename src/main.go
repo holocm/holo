@@ -134,11 +134,8 @@ func executeNonScanCommand() {
 }
 
 func applyEntity(entity *Entity, withForce bool) {
-	entityHasChanged := entity.Apply(withForce)
-	if !entityHasChanged {
-		_, err := os.NewFile(3, "file descriptor 3").Write([]byte("not changed\n"))
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-		}
+	err := entity.Apply(withForce)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 	}
 }

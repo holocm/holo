@@ -56,77 +56,52 @@ func (e *Entity) PrintReport() {
 //Apply performs the complete application algorithm for the given Entity.
 //If the entity does not exist yet, it is created. If it does exist, but some
 //attributes do not match, it will be updated, but only if withForce is given.
-func (e *Entity) Apply(withForce bool) (entityHasChanged bool) {
+func (e *Entity) Apply(withForce bool) error {
+	def := e.Definition
+
 	//special handling for orphaned entities
 	if e.IsOrphaned() {
-		return e.applyOrphaned(withForce)
+		if !withForce {
+			typeName := def.TypeName()
+			entityID := def.EntityID()
+			fmt.Fprintf(os.Stderr, "!! Won't do this without --force.\n")
+			fmt.Fprintf(os.Stderr, ">> Call `holo apply --force %s` to delete this %s.\n", entityID, typeName)
+			fmt.Fprintf(os.Stderr, ">> Or remove the %s name from %s to keep the %s.\n", typeName, RegistryPath(), typeName)
+			return nil
+		}
+
+		return def.Cleanup()
 	}
 
 	//check if this entity exists already
-	def := e.Definition
 	actualDef, err := def.GetProvisionedState()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "!! Cannot read %s database: %s\n", def.TypeName(), err.Error())
-		return false
+		return fmt.Errorf("Cannot read %s database: %s\n", def.TypeName(), err.Error())
+	}
+
+	//create entity if it does not exist yet
+	if actualDef == nil {
+		return def.Apply(nil)
 	}
 
 	//check if the actual properties diverge from our definition
-	if actualDef != nil {
-		actualStr, err := SerializeDefinition(actualDef)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-			return false
-		}
-		expectedDef, _ := def.Merge(actualDef, MergeEmptyOnly)
-		expectedStr, err := SerializeDefinition(expectedDef)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-			return false
-		}
-
-		if string(actualStr) != string(expectedStr) {
-			if withForce {
-				err := def.Apply(actualDef)
-				if err != nil {
-					fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-					return false
-				}
-				return true
-			}
-			_, err := os.NewFile(3, "file descriptor 3").Write([]byte("requires --force to overwrite\n"))
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-			}
-		}
-		return false
-	}
-
-	//create the entity if it does not exist
-	err = def.Apply(nil)
+	actualStr, err := SerializeDefinition(actualDef)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-		return false
+		return err
 	}
-	return true
-}
-
-func (e *Entity) applyOrphaned(withForce bool) (entityHasChanged bool) {
-	def := e.Definition
-
-	if !withForce {
-		typeName := def.TypeName()
-		entityID := def.EntityID()
-		fmt.Fprintf(os.Stderr, "!! Won't do this without --force.\n")
-		fmt.Fprintf(os.Stderr, ">> Call `holo apply --force %s` to delete this %s.\n", entityID, typeName)
-		fmt.Fprintf(os.Stderr, ">> Or remove the %s name from %s to keep the %s.\n", typeName, RegistryPath(), typeName)
-		return false
-	}
-
-	//call groupdel and remove group from our registry
-	err := def.Cleanup()
+	expectedDef, _ := def.Merge(actualDef, MergeEmptyOnly)
+	expectedStr, err := SerializeDefinition(expectedDef)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-		return false
+		return err
 	}
-	return true
+
+	if string(actualStr) == string(expectedStr) {
+		PrintCommandMessage("not changed\n")
+		return nil
+	}
+	if withForce {
+		return def.Apply(actualDef)
+	}
+	PrintCommandMessage("requires --force to overwrite\n")
+	return nil
 }
