@@ -47,6 +47,33 @@ func (u *UserDefinition) TypeName() string { return "user" }
 //EntityID implements the EntityDefinition interface.
 func (u *UserDefinition) EntityID() string { return "user:" + u.Name }
 
+//Attributes implements the EntityDefinition interface.
+func (u *UserDefinition) Attributes() string {
+	var attrs []string
+	if u.System {
+		attrs = append(attrs, "type: system")
+	}
+	if u.UID > 0 {
+		attrs = append(attrs, fmt.Sprintf("UID: %d", u.UID))
+	}
+	if u.Home != "" {
+		attrs = append(attrs, "home: "+u.Home)
+	}
+	if u.Group != "" {
+		attrs = append(attrs, "login group: "+u.Group)
+	}
+	if len(u.Groups) > 0 {
+		attrs = append(attrs, "groups: "+strings.Join(u.Groups, ","))
+	}
+	if u.Shell != "" {
+		attrs = append(attrs, "login shell: "+u.Shell)
+	}
+	if u.Comment != "" {
+		attrs = append(attrs, "comment: "+u.Comment)
+	}
+	return strings.Join(attrs, ", ")
+}
+
 //WithSerializableState implements the EntityDefinition interface.
 func (u *UserDefinition) WithSerializableState(callback func(EntityDefinition)) {
 	//we don't want to serialize the `system` attribute in diffs etc.
@@ -90,36 +117,10 @@ func (u User) PrintReport() {
 			fmt.Printf("found in: %s\n", defFile)
 			fmt.Printf("SOURCE: %s\n", defFile)
 		}
-		if attributes := u.attributes(); attributes != "" {
+		if attributes := u.Attributes(); attributes != "" {
 			fmt.Printf("with: %s\n", attributes)
 		}
 	}
-}
-
-func (u User) attributes() string {
-	attrs := []string{}
-	if u.System {
-		attrs = append(attrs, "type: system")
-	}
-	if u.UID > 0 {
-		attrs = append(attrs, fmt.Sprintf("UID: %d", u.UID))
-	}
-	if u.Home != "" {
-		attrs = append(attrs, "home: "+u.Home)
-	}
-	if u.Group != "" {
-		attrs = append(attrs, "login group: "+u.Group)
-	}
-	if len(u.Groups) > 0 {
-		attrs = append(attrs, "groups: "+strings.Join(u.Groups, ","))
-	}
-	if u.Shell != "" {
-		attrs = append(attrs, "login shell: "+u.Shell)
-	}
-	if u.Comment != "" {
-		attrs = append(attrs, "comment: "+u.Comment)
-	}
-	return strings.Join(attrs, ", ")
 }
 
 type userDiff struct {

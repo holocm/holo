@@ -41,6 +41,18 @@ func (g *GroupDefinition) TypeName() string { return "group" }
 //EntityID implements the EntityDefinition interface.
 func (g *GroupDefinition) EntityID() string { return "group:" + g.Name }
 
+//Attributes implements the EntityDefinition interface.
+func (g *GroupDefinition) Attributes() string {
+	var attrs []string
+	if g.System {
+		attrs = append(attrs, "type: system")
+	}
+	if g.GID > 0 {
+		attrs = append(attrs, fmt.Sprintf("GID: %d", g.GID))
+	}
+	return strings.Join(attrs, ", ")
+}
+
 //WithSerializableState implements the EntityDefinition interface.
 func (g *GroupDefinition) WithSerializableState(callback func(EntityDefinition)) {
 	//we don't want to serialize the `system` attribute in diffs etc.
@@ -83,21 +95,10 @@ func (g Group) PrintReport() {
 			fmt.Printf("found in: %s\n", defFile)
 			fmt.Printf("SOURCE: %s\n", defFile)
 		}
-		if attributes := g.attributes(); attributes != "" {
+		if attributes := g.Attributes(); attributes != "" {
 			fmt.Printf("with: %s\n", attributes)
 		}
 	}
-}
-
-func (g Group) attributes() string {
-	attrs := []string{}
-	if g.System {
-		attrs = append(attrs, "type: system")
-	}
-	if g.GID > 0 {
-		attrs = append(attrs, fmt.Sprintf("GID: %d", g.GID))
-	}
-	return strings.Join(attrs, ", ")
 }
 
 type groupDiff struct {

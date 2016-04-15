@@ -36,6 +36,8 @@ type EntityDefinition interface {
 	TypeName() string
 	//EntityID returns exactly that, e.g. "user:john".
 	EntityID() string
+	//Attributes returns a human-readable stringification of this definition.
+	Attributes() string
 	//GetProvisionedState reads the current state of this entity from the
 	//system database (/etc/passwd or /etc/group). The return value has the same
 	//concrete type as the callee. If no entity with the same ID exists in
