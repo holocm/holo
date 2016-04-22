@@ -58,7 +58,10 @@ func pathToCacheFile() string {
 
 func executeScanCommand() error {
 	//scan for entities
-	entities := Scan()
+	entities, errors := Scan()
+	for _, err := range errors {
+		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+	}
 	if entities == nil {
 		//some fatal error occurred - it was already reported, so just exit
 		os.Exit(1)

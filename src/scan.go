@@ -31,20 +31,17 @@ import (
 	"../localdeps/github.com/BurntSushi/toml"
 )
 
-//Scan returns a slice of all the defined entities. If an error is encountered
-//during the scan, it will be reported on stderr, and nil is returned.
-func Scan() []*Entity {
+//Scan returns a slice of all the defined entities.
+func Scan() ([]*Entity, []error) {
 	//open resource directory
 	dirPath := os.Getenv("HOLO_RESOURCE_DIR")
 	dir, err := os.Open(dirPath)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
-		return nil
+		return nil, []error{err}
 	}
 	fis, err := dir.Readdir(-1)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
-		return nil
+		return nil, []error{err}
 	}
 
 	//find entity definitions
@@ -58,13 +55,11 @@ func Scan() []*Entity {
 
 	//parse entity definitions
 	entities := make(map[string]*Entity)
+	var errors []error
 	for _, definitionPath := range paths {
 		err := readDefinitionFile(definitionPath, &entities)
-		if len(err) > 0 {
-			fmt.Fprintf(os.Stderr, "!! File %s is invalid:\n", definitionPath)
-			for _, suberr := range err {
-				fmt.Fprintf(os.Stderr, ">> %s\n", suberr.Error())
-			}
+		if err != nil {
+			errors = append(errors, err)
 		}
 	}
 
@@ -93,7 +88,7 @@ func Scan() []*Entity {
 	}
 	sort.Sort(entitiesByName(result))
 
-	return result
+	return result, errors
 }
 
 type entitiesByName []*Entity
@@ -104,7 +99,23 @@ func (e entitiesByName) Less(i, j int) bool {
 	return e[i].Definition.EntityID() < e[j].Definition.EntityID()
 }
 
-func readDefinitionFile(definitionPath string, entities *map[string]*Entity) []error {
+//FileInvalidError contains the set of errors that were encountered
+//while parsing a file.
+type FileInvalidError struct {
+	path   string
+	errors []error
+}
+
+//Error implements the error interface.
+func (e *FileInvalidError) Error() string {
+	str := fmt.Sprintf("File %s is invalid:", e.path)
+	for _, suberr := range e.errors {
+		str += fmt.Sprintf("\n>> %s", suberr.Error())
+	}
+	return str
+}
+
+func readDefinitionFile(definitionPath string, entities *map[string]*Entity) error {
 	//unmarshal contents of definitionPath into this struct
 	var contents struct {
 		Group []*GroupDefinition
@@ -112,11 +123,11 @@ func readDefinitionFile(definitionPath string, entities *map[string]*Entity) []e
 	}
 	blob, err := ioutil.ReadFile(definitionPath)
 	if err != nil {
-		return []error{err}
+		return &FileInvalidError{definitionPath, []error{err}}
 	}
 	_, err = toml.Decode(string(blob), &contents)
 	if err != nil {
-		return []error{err}
+		return &FileInvalidError{definitionPath, []error{err}}
 	}
 
 	//when checking the entity definitions, report all errors at once
@@ -161,5 +172,8 @@ func readDefinitionFile(definitionPath string, entities *map[string]*Entity) []e
 		entity.DefinitionFiles = append(entity.DefinitionFiles, definitionPath)
 	}
 
-	return errors
+	if len(errors) > 0 {
+		return &FileInvalidError{definitionPath, errors}
+	}
+	return nil
 }
