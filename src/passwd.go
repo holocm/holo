@@ -81,7 +81,7 @@ func (g *GroupDefinition) GetProvisionedState() (EntityDefinition, error) {
 	}
 	//is there such a group?
 	if fields == nil {
-		return nil, nil
+		return &GroupDefinition{Name: g.Name}, nil
 	}
 	//is the group entry intact?
 	if len(fields) < 4 {
@@ -105,7 +105,7 @@ func (u *UserDefinition) GetProvisionedState() (EntityDefinition, error) {
 	}
 	//is there such a user?
 	if fields == nil {
-		return nil, nil
+		return &UserDefinition{Name: u.Name}, nil
 	}
 	//is the passwd entry intact?
 	if len(fields) < 4 {

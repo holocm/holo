@@ -55,7 +55,7 @@ func PrepareDiffFor(def EntityDefinition, isOrphaned bool) error {
 	actualPath := filepath.Join(dirPath, "actual.toml")
 
 	//write actual state
-	if actualDef != nil {
+	if actualDef.IsProvisioned() {
 		err = SerializeDefinitionIntoFile(actualDef, actualPath)
 		if err != nil {
 			return err
@@ -65,10 +65,7 @@ func PrepareDiffFor(def EntityDefinition, isOrphaned bool) error {
 	//write expected state
 	if !isOrphaned {
 		//merge actual state into definition where definition does not define anything
-		serializable := def
-		if actualDef != nil {
-			serializable, _ = def.Merge(actualDef, MergeEmptyOnly)
-		}
+		serializable, _ := def.Merge(actualDef, MergeEmptyOnly)
 
 		err = SerializeDefinitionIntoFile(serializable, expectedPath)
 		if err != nil {

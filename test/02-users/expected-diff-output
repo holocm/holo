@@ -16,7 +16,7 @@ deleted file mode 100644
 -uid = 1001
 -home = "/home/new"
 -group = "users"
--groups = ["network", "video", "audio"]
+-groups = ["audio", "network", "video"]
 -shell = "/bin/zsh"
 diff --holo target/tmp/holo/users-groups/user:wronggroup/expected.toml target/tmp/holo/users-groups/user:wronggroup/actual.toml
 --- target/tmp/holo/users-groups/user:wronggroup/expected.toml

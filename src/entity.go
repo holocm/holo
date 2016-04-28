@@ -80,7 +80,7 @@ func (e *Entity) Apply(withForce bool) error {
 	}
 
 	//create entity if it does not exist yet
-	if actualDef == nil {
+	if !actualDef.IsProvisioned() {
 		return def.Apply(nil)
 	}
 

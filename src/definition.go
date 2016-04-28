@@ -49,8 +49,13 @@ type EntityDefinition interface {
 	//GetProvisionedState reads the current state of this entity from the
 	//system database (/etc/passwd or /etc/group). The return value has the same
 	//concrete type as the callee. If no entity with the same ID exists in
-	//there, nil is returned.
+	//there, a non-nil instance will be returned for which IsProvisioned()
+	//yields false.
 	GetProvisionedState() (EntityDefinition, error)
+	//IsProvisioned must be called on an instance returned from
+	//GetProvisionedState(), and will indicate whether this entity is present
+	//in the system database (/etc/passwd or /etc/group).
+	IsProvisioned() bool
 	//WithSerializableState brings the definition into a safely serializable
 	//state, executes the callback, and then restores the original state.
 	WithSerializableState(callback func(EntityDefinition))
@@ -115,6 +120,12 @@ func (g *GroupDefinition) EntityID() string { return "group:" + g.Name }
 
 //EntityID implements the EntityDefinition interface.
 func (u *UserDefinition) EntityID() string { return "user:" + u.Name }
+
+//IsProvisioned implements the EntityDefinition interface.
+func (g *GroupDefinition) IsProvisioned() bool { return g.GID > 0 }
+
+//IsProvisioned implements the EntityDefinition interface.
+func (u *UserDefinition) IsProvisioned() bool { return u.UID > 0 }
 
 //Attributes implements the EntityDefinition interface.
 func (g *GroupDefinition) Attributes() string {
