@@ -1,6 +1,6 @@
 /*******************************************************************************
 *
-* Copyright 2015 Stefan Majewsky <majewsky@gmx.net>
+* Copyright 2016 Stefan Majewsky <majewsky@gmx.net>
 *
 * This file is part of Holo.
 *
@@ -25,122 +25,79 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"../localdeps/github.com/BurntSushi/toml"
 )
 
-//Registry lists the provisioned users and groups.
-type Registry struct {
-	ProvisionedUsers  []string
-	ProvisionedGroups []string
-}
-
-var reg Registry
-var regPath = filepath.Join(os.Getenv("HOLO_STATE_DIR"), "state.toml")
+var preImageDir string
 
 func init() {
-	//load registry file (ignore file-not-found since that means that `holo
-	//apply` runs for the first time)
-	blob, err := ioutil.ReadFile(regPath)
-	if err != nil && !os.IsNotExist(err) {
-		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-		os.Exit(1)
-	}
-	_, err = toml.Decode(string(blob), &reg)
+	preImageDir = filepath.Join(os.Getenv("HOLO_STATE_DIR"), "pre-images")
+	err := os.MkdirAll(preImageDir, 0755)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		os.Exit(1)
 	}
 }
 
-func saveRegistry() error {
-	regPathNew := regPath + ".new"
-	file, err := os.Create(regPathNew)
+func preImagePathFor(def EntityDefinition) string {
+	return filepath.Join(preImageDir, def.EntityID()+".toml")
+}
+
+//ProvisionedEntityIDs returns a list of all entities for which pre-images exist.
+func ProvisionedEntityIDs() ([]string, error) {
+	//open pre-image directory
+	dir, err := os.Open(preImageDir)
+	if err != nil {
+		return nil, err
+	}
+	fis, err := dir.Readdir(-1)
+	if err != nil {
+		return nil, err
+	}
+
+	//find pre-images
+	var ids []string
+	for _, fi := range fis {
+		if fi.Mode().IsRegular() && strings.HasSuffix(fi.Name(), ".toml") {
+			ids = append(ids, strings.TrimSuffix(fi.Name(), ".toml"))
+		}
+	}
+	return ids, nil
+}
+
+//LoadPreImageFor retrieves the pre-image for this entity, which was previously
+//written by SavePreImage.
+func LoadPreImageFor(def EntityDefinition) (EntityDefinition, error) {
+	blob, err := ioutil.ReadFile(preImagePathFor(def))
+	if err != nil {
+		return nil, err
+	}
+
+	//prepare an empty instance to decode the file into
+	var result EntityDefinition
+	switch def.(type) {
+	case *GroupDefinition:
+		result = &GroupDefinition{}
+	case *UserDefinition:
+		result = &UserDefinition{}
+	}
+	_, err = toml.Decode(string(blob), result)
+	return result, err
+}
+
+//SavePreImage writes a pre-image, i.e. the output of GetProvisionedState()
+//before the first apply operation, to /var/lib/holo/users-groups/pre-images.
+func SavePreImage(def EntityDefinition) error {
+	file, err := os.Create(preImagePathFor(def))
 	if err != nil {
 		return err
 	}
-	err = toml.NewEncoder(file).Encode(&reg)
-	if err != nil {
-		return err
-	}
-
-	//move the new registry file over the old one atomically, to avoid
-	//corruption of the registry file in case of unforeseen errors
-	return os.Rename(regPathNew, regPath)
+	return toml.NewEncoder(file).Encode(def)
 }
 
-//RegistryPath returns the path to the registry, for use in information messages.
-func RegistryPath() string {
-	return regPath
-}
-
-//AddProvisionedGroup records that the given group has been provisioned.
-func AddProvisionedGroup(name string) error {
-	var changed bool
-	reg.ProvisionedGroups, changed = appendIfMissing(reg.ProvisionedGroups, name)
-	if changed {
-		return saveRegistry()
-	}
-	return nil
-}
-
-//AddProvisionedUser records that the given user has been provisioned.
-func AddProvisionedUser(name string) error {
-	var changed bool
-	reg.ProvisionedUsers, changed = appendIfMissing(reg.ProvisionedUsers, name)
-	if changed {
-		return saveRegistry()
-	}
-	return nil
-}
-
-func appendIfMissing(list []string, value string) (newList []string, changed bool) {
-	for _, element := range list {
-		if element == value {
-			return list, false
-		}
-	}
-	return append(list, value), true
-}
-
-//KnownGroupNames lists all groups that have been provisioned.
-func KnownGroupNames() []string {
-	return reg.ProvisionedGroups
-}
-
-//KnownUserNames lists all users that have been provisioned.
-func KnownUserNames() []string {
-	return reg.ProvisionedUsers
-}
-
-//RemoveProvisionedGroup records that the given provisioned group has been deleted.
-func RemoveProvisionedGroup(name string) error {
-	var changed bool
-	reg.ProvisionedGroups, changed = removeEntry(reg.ProvisionedGroups, name)
-	if changed {
-		return saveRegistry()
-	}
-	return nil
-}
-
-//RemoveProvisionedUser records that the given provisioned user has been deleted.
-func RemoveProvisionedUser(name string) error {
-	var changed bool
-	reg.ProvisionedUsers, changed = removeEntry(reg.ProvisionedUsers, name)
-	if changed {
-		return saveRegistry()
-	}
-	return nil
-}
-
-func removeEntry(list []string, value string) (newList []string, changed bool) {
-	newList, changed = make([]string, 0, len(list)), false
-	for _, element := range list {
-		if element == value {
-			changed = true
-		} else {
-			newList = append(list, value)
-		}
-	}
-	return
+//DeletePreImageFor deletes the pre-image for this entity.
+func DeletePreImageFor(def EntityDefinition) error {
+	return os.Remove(preImagePathFor(def))
 }

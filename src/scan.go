@@ -66,14 +66,18 @@ func Scan() ([]*Entity, []error) {
 	//find orphaned entities (invalid entities are considered "existing" here,
 	//so that we don't remove entities that are still needed just because their
 	//definition file is broken)
-	for _, name := range KnownGroupNames() {
-		def := &GroupDefinition{Name: name}
-		if _, ok := entities[def.EntityID()]; !ok {
-			entities[def.EntityID()] = &Entity{Definition: def}
-		}
+	ids, err := ProvisionedEntityIDs()
+	if err != nil {
+		return nil, []error{err}
 	}
-	for _, name := range KnownUserNames() {
-		def := &UserDefinition{Name: name}
+	for _, id := range ids {
+		var def EntityDefinition
+		switch {
+		case strings.HasPrefix(id, "group:"):
+			def = &GroupDefinition{Name: strings.TrimPrefix(id, "group:")}
+		case strings.HasPrefix(id, "user:"):
+			def = &UserDefinition{Name: strings.TrimPrefix(id, "user:")}
+		}
 		if _, ok := entities[def.EntityID()]; !ok {
 			entities[def.EntityID()] = &Entity{Definition: def}
 		}

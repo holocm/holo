@@ -59,51 +59,72 @@ func (e *Entity) PrintReport() {
 func (e *Entity) Apply(withForce bool) error {
 	def := e.Definition
 
-	//special handling for orphaned entities
-	if e.IsOrphaned() {
-		if !withForce {
-			typeName := def.TypeName()
-			entityID := def.EntityID()
-			fmt.Fprintf(os.Stderr, "!! Won't do this without --force.\n")
-			fmt.Fprintf(os.Stderr, ">> Call `holo apply --force %s` to delete this %s.\n", entityID, typeName)
-			fmt.Fprintf(os.Stderr, ">> Or remove the %s name from %s to keep the %s.\n", typeName, RegistryPath(), typeName)
-			return nil
-		}
-
-		return def.Cleanup()
-	}
-
 	//check if this entity exists already
 	actualDef, err := def.GetProvisionedState()
 	if err != nil {
 		return fmt.Errorf("Cannot read %s database: %s\n", def.TypeName(), err.Error())
 	}
 
-	//create entity if it does not exist yet
-	if !actualDef.IsProvisioned() {
-		return def.Apply(nil)
+	//special handling for orphaned entities
+	if e.IsOrphaned() {
+		preImage, err := LoadPreImageFor(e.Definition)
+		if err != nil {
+			return err
+		}
+
+		if preImage.IsProvisioned() {
+			err = preImage.Apply(actualDef)
+		} else {
+			err = def.Cleanup()
+		}
+		if err != nil {
+			return err
+		}
+
+		return DeletePreImageFor(def)
 	}
 
-	//check if the actual properties diverge from our definition
+	//load pre-image
+	preImage, err := LoadPreImageFor(e.Definition)
+	if err != nil {
+		if os.IsNotExist(err) {
+			//write pre-image on first `apply`
+			err = SavePreImage(actualDef)
+			if err != nil {
+				return err
+			}
+			preImage = actualDef
+		} else {
+			return err
+		}
+	}
+
+	//check for manual changes
+	desiredState, _ := e.Definition.Merge(preImage, MergeWhereCompatible)
+	desiredStr, err := SerializeDefinition(desiredState)
+	if err != nil {
+		return err
+	}
+	compatibleState, _ := actualDef.Merge(e.Definition, MergeEmptyOnly)
+	compatibleStr, err := SerializeDefinition(compatibleState)
+	if err != nil {
+		return err
+	}
+	if string(desiredStr) != string(compatibleStr) {
+		PrintCommandMessage("requires --force to overwrite\n")
+		return nil
+	}
+
+	//check if changes are necessary
 	actualStr, err := SerializeDefinition(actualDef)
 	if err != nil {
 		return err
 	}
-	expectedDef, _ := def.Merge(actualDef, MergeEmptyOnly)
-	expectedStr, err := SerializeDefinition(expectedDef)
-	if err != nil {
-		return err
-	}
-
-	if string(actualStr) == string(expectedStr) {
+	if string(desiredStr) == string(actualStr) {
 		PrintCommandMessage("not changed\n")
 		return nil
 	}
-	if withForce {
-		return def.Apply(actualDef)
-	}
-	PrintCommandMessage("requires --force to overwrite\n")
-	return nil
+	return desiredState.Apply(actualDef)
 }
 
 //PrintCommandMessage formats and prints a message on file descriptor 3.

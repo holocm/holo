@@ -30,6 +30,11 @@ import (
 
 //Apply implements the EntityDefinition interface.
 func (g *GroupDefinition) Apply(provisioned EntityDefinition) error {
+	//normalize input
+	if provisioned != nil && !provisioned.IsProvisioned() {
+		provisioned = nil
+	}
+
 	//assemble arguments
 	var args []string
 	if provisioned == nil && g.System {
@@ -45,24 +50,21 @@ func (g *GroupDefinition) Apply(provisioned EntityDefinition) error {
 	if provisioned == nil {
 		command = "groupadd"
 	}
-	err := ExecProgramOrMock(command, args...)
-	if err != nil {
-		return err
-	}
-	return AddProvisionedGroup(g.Name)
+	return ExecProgramOrMock(command, args...)
 }
 
 //Cleanup implements the EntityDefinition interface.
 func (g *GroupDefinition) Cleanup() error {
-	err := ExecProgramOrMock("groupdel", g.Name)
-	if err != nil {
-		return err
-	}
-	return RemoveProvisionedGroup(g.Name)
+	return ExecProgramOrMock("groupdel", g.Name)
 }
 
 //Apply implements the EntityDefinition interface.
 func (u *UserDefinition) Apply(provisioned EntityDefinition) error {
+	//normalize input
+	if provisioned != nil && !provisioned.IsProvisioned() {
+		provisioned = nil
+	}
+
 	//assemble arguments
 	var args []string
 	if provisioned == nil && u.System {
@@ -98,20 +100,12 @@ func (u *UserDefinition) Apply(provisioned EntityDefinition) error {
 	if provisioned == nil {
 		command = "useradd"
 	}
-	err := ExecProgramOrMock(command, args...)
-	if err != nil {
-		return err
-	}
-	return AddProvisionedUser(u.Name)
+	return ExecProgramOrMock(command, args...)
 }
 
 //Cleanup implements the EntityDefinition interface.
 func (u *UserDefinition) Cleanup() error {
-	err := ExecProgramOrMock("userdel", u.Name)
-	if err != nil {
-		return err
-	}
-	return RemoveProvisionedUser(u.Name)
+	return ExecProgramOrMock("userdel", u.Name)
 }
 
 //ExecProgramOrMock is a wrapper around exec.Command().Run() that, if run in a

@@ -131,3 +131,12 @@ func (u *UserDefinition) Merge(other EntityDefinition, emptyOnly bool) (EntityDe
 
 	return &result, e
 }
+
+func appendIfMissing(list []string, value string) (newList []string, changed bool) {
+	for _, element := range list {
+		if element == value {
+			return list, false
+		}
+	}
+	return append(list, value), true
+}
