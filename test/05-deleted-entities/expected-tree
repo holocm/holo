@@ -34,14 +34,15 @@ scanner:x:96:
 input:x:97:
 power:x:98:
 nobody:x:99:
-users:x:100:
+users:x:100:restored
 systemd-journal:x:190:
 systemd-journal-gateway:x:191:
 systemd-timesync:x:192:
 systemd-network:x:193:
 systemd-bus-proxy:x:194:
 systemd-resolve:x:195:
-deleted:x:101:
+deleted:x:101:restored
+restored:x:112:
 >> ./etc/holorc = symlink
 ../../../holorc
 >> ./etc/passwd = regular
@@ -60,6 +61,4 @@ systemd-network:x:193:193:systemd-network:/:/usr/bin/nologin
 systemd-bus-proxy:x:194:194:systemd-bus-proxy:/:/usr/bin/nologin
 systemd-resolve:x:195:195:systemd-resolve:/:/usr/bin/nologin
 deleted:x:1000:101:deleted:/var/lib/deleted:/usr/bin/nologin
->> ./var/lib/holo/users-groups/state.toml = regular
-ProvisionedUsers = []
-ProvisionedGroups = []
+restored:x:1011:101:This user will be restored.:/var/lib/restored:/bin/bash

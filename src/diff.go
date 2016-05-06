@@ -62,11 +62,18 @@ func PrepareDiffFor(def EntityDefinition, isOrphaned bool) error {
 		}
 	}
 
-	//write expected state
-	if !isOrphaned {
-		//merge actual state into definition where definition does not define anything
-		serializable, _ := def.Merge(actualDef, MergeEmptyOnly)
-
+	//write desired state
+	preImage, err := LoadPreImageFor(def)
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	serializable := def
+	if preImage != nil {
+		serializable, _ = serializable.Merge(preImage, MergeWhereCompatible)
+	}
+	//merge actual state into definition where definition does not define anything
+	serializable, _ = serializable.Merge(actualDef, MergeEmptyOnly)
+	if serializable.IsProvisioned() {
 		err = SerializeDefinitionIntoFile(serializable, expectedPath)
 		if err != nil {
 			return err

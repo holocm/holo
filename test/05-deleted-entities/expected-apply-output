@@ -1,13 +1,17 @@
 
 Scrubbing group:deleted (all definition files have been deleted)
 
-!! Won't do this without --force.
->> Call `holo apply --force group:deleted` to delete this group.
->> Or remove the group name from target/var/lib/holo/users-groups/state.toml to keep the group.
+MOCK: groupdel deleted
+
+Scrubbing group:restored (all definition files have been deleted)
+
+MOCK: groupmod --gid 102 restored
 
 Scrubbing user:deleted (all definition files have been deleted)
 
-!! Won't do this without --force.
->> Call `holo apply --force user:deleted` to delete this user.
->> Or remove the user name from target/var/lib/holo/users-groups/state.toml to keep the user.
+MOCK: userdel deleted
+
+Scrubbing user:restored (all definition files have been deleted)
+
+MOCK: usermod --uid 1001 --comment 'Restored User' --home /home/restored --gid restored --groups users --shell /usr/bin/nologin restored
 

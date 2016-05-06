@@ -1,0 +1,7 @@
+name = "restored"
+comment = "Restored User"
+uid = 1001
+home = "/home/restored"
+group = "restored"
+groups = ["users"]
+shell = "/usr/bin/nologin"

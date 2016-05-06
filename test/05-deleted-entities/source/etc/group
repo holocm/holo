@@ -33,11 +33,12 @@ scanner:x:96:
 input:x:97:
 power:x:98:
 nobody:x:99:
-users:x:100:
+users:x:100:restored
 systemd-journal:x:190:
 systemd-journal-gateway:x:191:
 systemd-timesync:x:192:
 systemd-network:x:193:
 systemd-bus-proxy:x:194:
 systemd-resolve:x:195:
-deleted:x:101:
+deleted:x:101:restored
+restored:x:112:
