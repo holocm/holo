@@ -33,7 +33,7 @@ import (
 var preImageDir string
 
 func init() {
-	preImageDir = filepath.Join(os.Getenv("HOLO_STATE_DIR"), "pre-images")
+	preImageDir = filepath.Join(os.Getenv("HOLO_STATE_DIR"), "base")
 	err := os.MkdirAll(preImageDir, 0755)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
@@ -88,7 +88,7 @@ func LoadPreImageFor(def EntityDefinition) (EntityDefinition, error) {
 }
 
 //SavePreImage writes a pre-image, i.e. the output of GetProvisionedState()
-//before the first apply operation, to /var/lib/holo/users-groups/pre-images.
+//before the first apply operation, to /var/lib/holo/users-groups/base.
 func SavePreImage(def EntityDefinition) error {
 	file, err := os.Create(preImagePathFor(def))
 	if err != nil {

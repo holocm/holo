@@ -31,11 +31,11 @@ name = "existing"
 [[group]]
 name = "wronggid"
 gid = 42
->> ./var/lib/holo/users-groups/pre-images/group:existing.toml = regular
+>> ./var/lib/holo/users-groups/base/group:existing.toml = regular
 name = "existing"
 gid = 101
->> ./var/lib/holo/users-groups/pre-images/group:new.toml = regular
+>> ./var/lib/holo/users-groups/base/group:new.toml = regular
 name = "new"
->> ./var/lib/holo/users-groups/pre-images/group:wronggid.toml = regular
+>> ./var/lib/holo/users-groups/base/group:wronggid.toml = regular
 name = "wronggid"
 gid = 102
