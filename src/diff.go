@@ -38,21 +38,34 @@ func SerializeDefinitionIntoFile(def EntityDefinition, path string) error {
 //PrepareDiffFor creates temporary files that the frontend can use to generate
 //a diff.
 func PrepareDiffFor(def EntityDefinition, isOrphaned bool) error {
+	//make sure that the directory for these files does exist
+	dirPath := filepath.Join(os.Getenv("HOLO_CACHE_DIR"), def.EntityID())
+	err := os.Mkdir(dirPath, 0755)
+	if err != nil {
+		return err
+	}
+
+	provisionedPath := filepath.Join(dirPath, "provisioned.toml")
+	actualPath := filepath.Join(dirPath, "actual.toml")
+
+	//get provisioned state of entity
+	provisionedState, err := ProvisionedImageDir.LoadImageFor(def)
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	if provisionedState != nil {
+		//TODO: skip serialization and return path to ProvisionedImageDir directly?
+		err = SerializeDefinitionIntoFile(provisionedState, actualPath)
+		if err != nil {
+			return err
+		}
+	}
+
 	//does this entity exist already?
 	actualDef, err := def.GetProvisionedState()
 	if err != nil {
 		return err
 	}
-
-	//make sure that the directory for these files does exist
-	dirPath := filepath.Join(os.Getenv("HOLO_CACHE_DIR"), def.EntityID())
-	err = os.Mkdir(dirPath, 0755)
-	if err != nil {
-		return err
-	}
-
-	expectedPath := filepath.Join(dirPath, "expected.toml")
-	actualPath := filepath.Join(dirPath, "actual.toml")
 
 	//write actual state
 	if actualDef.IsProvisioned() {
@@ -62,24 +75,6 @@ func PrepareDiffFor(def EntityDefinition, isOrphaned bool) error {
 		}
 	}
 
-	//write desired state
-	preImage, err := LoadPreImageFor(def)
-	if err != nil && !os.IsNotExist(err) {
-		return err
-	}
-	serializable := def
-	if preImage != nil {
-		serializable, _ = serializable.Merge(preImage, MergeWhereCompatible)
-	}
-	//merge actual state into definition where definition does not define anything
-	serializable, _ = serializable.Merge(actualDef, MergeEmptyOnly)
-	if serializable.IsProvisioned() {
-		err = SerializeDefinitionIntoFile(serializable, expectedPath)
-		if err != nil {
-			return err
-		}
-	}
-
-	PrintCommandMessage("%s\000%s\000", expectedPath, actualPath)
+	PrintCommandMessage("%s\000%s\000", provisionedPath, actualPath)
 	return nil
 }

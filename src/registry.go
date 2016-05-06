@@ -30,25 +30,37 @@ import (
 	"../localdeps/github.com/BurntSushi/toml"
 )
 
-var preImageDir string
+//ImageDir is a path to a directory containing serialized entity definitions.
+type ImageDir string
+
+//PreImageDir is usually /var/lib/holo/users-groups/base.
+var PreImageDir ImageDir
+
+//ProvisionedImageDir is usually /var/lib/holo/users-groups/provisioned.
+var ProvisionedImageDir ImageDir
 
 func init() {
-	preImageDir = filepath.Join(os.Getenv("HOLO_STATE_DIR"), "base")
-	err := os.MkdirAll(preImageDir, 0755)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-		os.Exit(1)
+	stateDir := os.Getenv("HOLO_STATE_DIR")
+	PreImageDir = ImageDir(filepath.Join(stateDir, "base"))
+	ProvisionedImageDir = ImageDir(filepath.Join(stateDir, "provisioned"))
+
+	for _, dir := range []string{string(PreImageDir), string(ProvisionedImageDir)} {
+		err := os.MkdirAll(dir, 0755)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+			os.Exit(1)
+		}
 	}
 }
 
-func preImagePathFor(def EntityDefinition) string {
-	return filepath.Join(preImageDir, def.EntityID()+".toml")
+func (dir ImageDir) imagePathFor(def EntityDefinition) string {
+	return filepath.Join(string(dir), def.EntityID()+".toml")
 }
 
 //ProvisionedEntityIDs returns a list of all entities for which pre-images exist.
 func ProvisionedEntityIDs() ([]string, error) {
 	//open pre-image directory
-	dir, err := os.Open(preImageDir)
+	dir, err := os.Open(string(PreImageDir))
 	if err != nil {
 		return nil, err
 	}
@@ -67,10 +79,10 @@ func ProvisionedEntityIDs() ([]string, error) {
 	return ids, nil
 }
 
-//LoadPreImageFor retrieves the pre-image for this entity, which was previously
-//written by SavePreImage.
-func LoadPreImageFor(def EntityDefinition) (EntityDefinition, error) {
-	blob, err := ioutil.ReadFile(preImagePathFor(def))
+//LoadImageFor retrieves a stored image for this entity, which was previously
+//written by SaveImage.
+func (dir ImageDir) LoadImageFor(def EntityDefinition) (EntityDefinition, error) {
+	blob, err := ioutil.ReadFile(dir.imagePathFor(def))
 	if err != nil {
 		return nil, err
 	}
@@ -87,17 +99,21 @@ func LoadPreImageFor(def EntityDefinition) (EntityDefinition, error) {
 	return result, err
 }
 
-//SavePreImage writes a pre-image, i.e. the output of GetProvisionedState()
-//before the first apply operation, to /var/lib/holo/users-groups/base.
-func SavePreImage(def EntityDefinition) error {
-	file, err := os.Create(preImagePathFor(def))
+//SaveImage writes an image for this entity to the specified image directory.
+func (dir ImageDir) SaveImage(def EntityDefinition) error {
+	file, err := os.Create(dir.imagePathFor(def))
 	if err != nil {
 		return err
 	}
 	return toml.NewEncoder(file).Encode(def)
 }
 
-//DeletePreImageFor deletes the pre-image for this entity.
-func DeletePreImageFor(def EntityDefinition) error {
-	return os.Remove(preImagePathFor(def))
+//DeleteImageFor deletes the pre-image for this entity.
+func DeleteImageFor(def EntityDefinition, dir ImageDir) error {
+	err := os.Remove(dir.imagePathFor(def))
+	//ignore does-not-exist error
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	return nil
 }

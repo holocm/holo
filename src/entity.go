@@ -67,11 +67,12 @@ func (e *Entity) Apply(withForce bool) error {
 
 	//special handling for orphaned entities
 	if e.IsOrphaned() {
-		preImage, err := LoadPreImageFor(e.Definition)
+		preImage, err := PreImageDir.LoadImageFor(e.Definition)
 		if err != nil {
 			return err
 		}
 
+		//remove entity or reset to state of pre-image
 		if preImage.IsProvisioned() {
 			err = preImage.Apply(actualDef)
 		} else {
@@ -81,15 +82,20 @@ func (e *Entity) Apply(withForce bool) error {
 			return err
 		}
 
-		return DeletePreImageFor(def)
+		//remove all traces from our image directories
+		err = DeleteImageFor(def, ProvisionedImageDir)
+		if err != nil {
+			return err
+		}
+		return DeleteImageFor(def, PreImageDir)
 	}
 
 	//load pre-image
-	preImage, err := LoadPreImageFor(e.Definition)
+	preImage, err := PreImageDir.LoadImageFor(e.Definition)
 	if err != nil {
 		if os.IsNotExist(err) {
 			//write pre-image on first `apply`
-			err = SavePreImage(actualDef)
+			err = PreImageDir.SaveImage(actualDef)
 			if err != nil {
 				return err
 			}
@@ -99,9 +105,19 @@ func (e *Entity) Apply(withForce bool) error {
 		}
 	}
 
+	//load last provisioned state (if not existing, use pre-image)
+	provisionedImage, err := ProvisionedImageDir.LoadImageFor(e.Definition)
+	if err != nil {
+		if os.IsNotExist(err) {
+			provisionedImage = preImage
+		} else {
+			return err
+		}
+	}
+
 	//check for manual changes
 	desiredState, _ := e.Definition.Merge(preImage, MergeWhereCompatible)
-	_, conflicts := actualDef.Merge(e.Definition, MergeEmptyOnly)
+	_, conflicts := provisionedImage.Merge(e.Definition, MergeEmptyOnly)
 	if len(conflicts) > 0 && !withForce {
 		PrintCommandMessage("requires --force to overwrite\n")
 		return nil
@@ -122,7 +138,13 @@ func (e *Entity) Apply(withForce bool) error {
 			return nil
 		}
 	}
-	return desiredState.Apply(actualDef)
+
+	//apply changes, record new provisioned state
+	err = desiredState.Apply(actualDef)
+	if err != nil {
+		return err
+	}
+	return ProvisionedImageDir.SaveImage(desiredState)
 }
 
 //PrintCommandMessage formats and prints a message on file descriptor 3.
