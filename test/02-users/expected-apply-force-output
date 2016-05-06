@@ -8,7 +8,7 @@ Working on user:new
   found in target/usr/share/holo/users-groups/01-users.toml
       with UID: 1001, home: /home/new, login group: users, groups: network,video,audio, login shell: /bin/zsh, comment: New User
 
-MOCK: useradd --uid 1001 --comment 'New User' --home-dir /home/new --gid users --groups network,video,audio --shell /bin/zsh new
+MOCK: useradd --uid 1001 --comment 'New User' --home-dir /home/new --gid users --groups audio,network,video --shell /bin/zsh new
 
 Working on user:wronggroup
   found in target/usr/share/holo/users-groups/01-users.toml
@@ -20,7 +20,7 @@ Working on user:wronggroups
   found in target/usr/share/holo/users-groups/01-users.toml
       with groups: network
 
-MOCK: usermod --groups network wronggroups
+MOCK: usermod --groups network,video wronggroups
 
 Working on user:wronghome
   found in target/usr/share/holo/users-groups/01-users.toml

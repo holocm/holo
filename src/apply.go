@@ -24,31 +24,31 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"sort"
 	"strconv"
 	"strings"
 )
 
 //Apply implements the EntityDefinition interface.
-func (g *GroupDefinition) Apply(provisioned EntityDefinition) error {
-	//normalize input
-	if provisioned != nil && !provisioned.IsProvisioned() {
-		provisioned = nil
-	}
+func (g *GroupDefinition) Apply(theProvisioned EntityDefinition) error {
+	//fix type on argument
+	provisioned := theProvisioned.(*GroupDefinition)
+	isProvisioned := provisioned.IsProvisioned()
 
 	//assemble arguments
 	var args []string
-	if provisioned == nil && g.System {
+	if !isProvisioned && g.System {
 		args = append(args, "--system")
 	}
-	if g.GID > 0 {
+	if g.GID > 0 && g.GID != provisioned.GID {
 		args = append(args, "--gid", strconv.Itoa(g.GID))
 	}
 	args = append(args, g.Name)
 
 	//call groupadd/groupmod
-	command := "groupmod"
-	if provisioned == nil {
-		command = "groupadd"
+	command := "groupadd"
+	if isProvisioned {
+		command = "groupmod"
 	}
 	return ExecProgramOrMock(command, args...)
 }
@@ -59,48 +59,52 @@ func (g *GroupDefinition) Cleanup() error {
 }
 
 //Apply implements the EntityDefinition interface.
-func (u *UserDefinition) Apply(provisioned EntityDefinition) error {
-	//normalize input
-	if provisioned != nil && !provisioned.IsProvisioned() {
-		provisioned = nil
-	}
+func (u *UserDefinition) Apply(theProvisioned EntityDefinition) error {
+	//fix type on argument
+	provisioned := theProvisioned.(*UserDefinition)
+	isProvisioned := provisioned.IsProvisioned()
 
 	//assemble arguments
 	var args []string
-	if provisioned == nil && u.System {
+	if !isProvisioned && u.System {
 		args = append(args, "--system")
 	}
-	if u.UID > 0 {
+	if u.UID > 0 && u.UID != provisioned.UID {
 		args = append(args, "--uid", strconv.Itoa(u.UID))
 	}
-	if u.Comment != "" {
+	if u.Comment != "" && u.Comment != provisioned.Comment {
 		args = append(args, "--comment", u.Comment)
 	}
-	if u.Home != "" {
+	if u.Home != "" && u.Home != provisioned.Home {
 		//yay for consistency
-		if provisioned == nil {
-			args = append(args, "--home-dir", u.Home)
-		} else {
+		if isProvisioned {
 			args = append(args, "--home", u.Home)
+		} else {
+			args = append(args, "--home-dir", u.Home)
 		}
 	}
-	if u.Group != "" {
+	if u.Group != "" && u.Group != provisioned.Group {
 		args = append(args, "--gid", u.Group)
 	}
-	if len(u.Groups) > 0 {
+	if len(u.Groups) > 0 && groupsToString(u.Groups) != groupsToString(provisioned.Groups) {
 		args = append(args, "--groups", strings.Join(u.Groups, ","))
 	}
-	if u.Shell != "" {
+	if u.Shell != "" && u.Shell != provisioned.Shell {
 		args = append(args, "--shell", u.Shell)
 	}
 	args = append(args, u.Name)
 
 	//call useradd/usermod
-	command := "usermod"
-	if provisioned == nil {
-		command = "useradd"
+	command := "useradd"
+	if isProvisioned {
+		command = "usermod"
 	}
 	return ExecProgramOrMock(command, args...)
+}
+
+func groupsToString(groups []string) string {
+	sort.Strings(groups)
+	return strings.Join(groups, ",")
 }
 
 //Cleanup implements the EntityDefinition interface.

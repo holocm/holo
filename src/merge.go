@@ -120,7 +120,9 @@ func (u *UserDefinition) Merge(other EntityDefinition, emptyOnly bool) (EntityDe
 				e = append(e, &MergeError{"auxiliary groups", u.EntityID(), resultGroups, calleeGroups})
 			}
 		}
-		result.Groups = u.Groups
+		if len(u.Groups) > 0 {
+			result.Groups = u.Groups
+		}
 	} else {
 		for _, group := range u.Groups {
 			result.Groups, _ = appendIfMissing(result.Groups, group)

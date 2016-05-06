@@ -101,16 +101,8 @@ func (e *Entity) Apply(withForce bool) error {
 
 	//check for manual changes
 	desiredState, _ := e.Definition.Merge(preImage, MergeWhereCompatible)
-	desiredStr, err := SerializeDefinition(desiredState)
-	if err != nil {
-		return err
-	}
-	compatibleState, _ := actualDef.Merge(e.Definition, MergeEmptyOnly)
-	compatibleStr, err := SerializeDefinition(compatibleState)
-	if err != nil {
-		return err
-	}
-	if string(desiredStr) != string(compatibleStr) && !withForce {
+	_, conflicts := actualDef.Merge(e.Definition, MergeEmptyOnly)
+	if len(conflicts) > 0 && !withForce {
 		PrintCommandMessage("requires --force to overwrite\n")
 		return nil
 	}
@@ -118,6 +110,10 @@ func (e *Entity) Apply(withForce bool) error {
 	//check if changes are necessary
 	if actualDef.IsProvisioned() {
 		actualStr, err := SerializeDefinition(actualDef)
+		if err != nil {
+			return err
+		}
+		desiredStr, err := SerializeDefinition(desiredState)
 		if err != nil {
 			return err
 		}
