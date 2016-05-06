@@ -110,19 +110,21 @@ func (e *Entity) Apply(withForce bool) error {
 	if err != nil {
 		return err
 	}
-	if string(desiredStr) != string(compatibleStr) {
+	if string(desiredStr) != string(compatibleStr) && !withForce {
 		PrintCommandMessage("requires --force to overwrite\n")
 		return nil
 	}
 
 	//check if changes are necessary
-	actualStr, err := SerializeDefinition(actualDef)
-	if err != nil {
-		return err
-	}
-	if string(desiredStr) == string(actualStr) {
-		PrintCommandMessage("not changed\n")
-		return nil
+	if actualDef.IsProvisioned() {
+		actualStr, err := SerializeDefinition(actualDef)
+		if err != nil {
+			return err
+		}
+		if string(desiredStr) == string(actualStr) {
+			PrintCommandMessage("not changed\n")
+			return nil
+		}
 	}
 	return desiredState.Apply(actualDef)
 }
