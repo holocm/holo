@@ -106,23 +106,40 @@ func (e *Entity) Apply(withForce bool) error {
 		}
 	}
 
-	//load last provisioned state (if not existing, use pre-image)
+	//load last provisioned state (if not existing, use pre-image; and in this
+	//case, conflicts worthy of "--force" are detected by comparing that to the
+	//definition)
+	var conflictCheckImage EntityDefinition
 	provisionedImage, err := ProvisionedImageDir.LoadImageFor(e.Definition)
-	if err != nil {
+	if err == nil {
+		conflictCheckImage = provisionedImage
+	} else {
 		if os.IsNotExist(err) {
-			provisionedImage = preImage
+			provisionedImage = nil
+			conflictCheckImage = e.Definition
 		} else {
 			return err
 		}
 	}
 
-	//check for manual changes
-	desiredState, _ := e.Definition.Merge(preImage, MergeWhereCompatible)
-	_, conflicts := provisionedImage.Merge(e.Definition, MergeEmptyOnly)
-	if len(conflicts) > 0 && !withForce {
-		PrintCommandMessage("requires --force to overwrite\n")
-		return nil
+	//check if --force is required: either
+	//
+	//1. the entity has been provisioned and since been altered (i.e. compare
+	//   actual state and provisioned state)
+	//2. the entity has *not* been provisioned yet and the definition conflicts
+	//   with the current state (i.e. the pre-image)
+	if !withForce {
+		_, conflicts := actualDef.Merge(conflictCheckImage, MergeEmptyOnly)
+		if len(conflicts) > 0 {
+			PrintCommandMessage("requires --force to overwrite\n")
+			return nil
+		}
 	}
+
+	//desired state is obtained by merging the definition with the pre-image
+	desiredState, _ := e.Definition.Merge(preImage, MergeWhereCompatible)
+	//but if neither defines a numeric ID, use the current one
+	desiredState, _ = desiredState.Merge(actualDef, MergeNumericIDOnly)
 
 	//check if changes are necessary
 	doNotApply := false

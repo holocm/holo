@@ -42,7 +42,7 @@ func (e MergeError) Error() string {
 }
 
 //Merge implements the EntityDefinition interface.
-func (g *GroupDefinition) Merge(other EntityDefinition, emptyOnly bool) (EntityDefinition, []error) {
+func (g *GroupDefinition) Merge(other EntityDefinition, method MergeMethod) (EntityDefinition, []error) {
 	//start by cloning `other`
 	if other.EntityID() != g.EntityID() {
 		panic("tried to merge entities with different IDs")
@@ -58,6 +58,14 @@ func (g *GroupDefinition) Merge(other EntityDefinition, emptyOnly bool) (EntityD
 		result.GID = g.GID
 	}
 
+	//with MergeNumericIDOnly, only the GID may be merged
+	if method == MergeNumericIDOnly {
+		//we need all the other attributes from `u`, so it's easier to just take another copy
+		theResult := *g
+		theResult.GID = result.GID
+		return &theResult, e
+	}
+
 	//the system flag can be set by any side without causing a merge conflict
 	result.System = result.System || g.System
 
@@ -65,7 +73,7 @@ func (g *GroupDefinition) Merge(other EntityDefinition, emptyOnly bool) (EntityD
 }
 
 //Merge implements the EntityDefinition interface.
-func (u *UserDefinition) Merge(other EntityDefinition, emptyOnly bool) (EntityDefinition, []error) {
+func (u *UserDefinition) Merge(other EntityDefinition, method MergeMethod) (EntityDefinition, []error) {
 	//start by cloning `other`
 	if other.EntityID() != u.EntityID() {
 		panic("tried to merge entities with different IDs")
@@ -80,6 +88,15 @@ func (u *UserDefinition) Merge(other EntityDefinition, emptyOnly bool) (EntityDe
 		}
 		result.UID = u.UID
 	}
+
+	//with MergeNumericIDOnly, only the UID may be merged
+	if method == MergeNumericIDOnly {
+		//we need all the other attributes from `u`, so it's easier to just take another copy
+		theResult := *u
+		theResult.UID = result.UID
+		return &theResult, e
+	}
+
 	if u.Home != "" {
 		if result.Home != "" && result.Home != u.Home {
 			e = append(e, &MergeError{"home directory", u.EntityID(), result.Home, u.Home})
@@ -107,10 +124,9 @@ func (u *UserDefinition) Merge(other EntityDefinition, emptyOnly bool) (EntityDe
 	//the system flag can be set by any side without causing a merge conflict
 	result.System = result.System || u.System
 
-	//auxiliary groups can always be added (except when the `emptyOnly`
-	//argument is set, in which case the groups list is taken as an opaque
-	//block)
-	if emptyOnly {
+	//auxiliary groups can always be added, but only under the
+	//MergeWhereCompatible method
+	if method == MergeEmptyOnly {
 		if len(result.Groups) > 0 && len(u.Groups) > 0 {
 			sort.Strings(result.Groups)
 			sort.Strings(u.Groups)

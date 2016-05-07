@@ -29,11 +29,12 @@ import (
 	"../localdeps/github.com/BurntSushi/toml"
 )
 
+type MergeMethod uint
+
 const (
-	//MergeWhereCompatible can be used as second argument for EntityDefinition.Merge.
-	MergeWhereCompatible = false
-	//MergeEmptyOnly can be used as second argument for EntityDefinition.Merge.
-	MergeEmptyOnly = true
+	MergeWhereCompatible MergeMethod = iota
+	MergeEmptyOnly
+	MergeNumericIDOnly
 )
 
 //EntityDefinition contains data from a definition file that describes an entity
@@ -67,8 +68,9 @@ type EntityDefinition interface {
 	//takes precedence, and an error is returned in the second argument.
 	//If merge conflicts are not a problem, the error argument may be ignored.
 	//
-	//If `emptyOnly` is true, only empty arguments may be merged.
-	Merge(other EntityDefinition, emptyOnly bool) (EntityDefinition, []error)
+	//The merge `method` tells which attributes may be merged. Possible values
+	//are MergeWhereCompatible, MergeEmptyOnly and MergeNumericIDOnly.
+	Merge(other EntityDefinition, method MergeMethod) (EntityDefinition, []error)
 	//Apply provisions this entity. The argument indicates the currently
 	//provisioned state. The argument's concrete type must match the callee.
 	Apply(provisioned EntityDefinition) error
