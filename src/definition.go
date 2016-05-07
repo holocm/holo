@@ -29,11 +29,17 @@ import (
 	"../localdeps/github.com/BurntSushi/toml"
 )
 
+//MergeMethod is the second argument for EntityDefinition.Merge().
 type MergeMethod uint
 
 const (
+	//MergeWhereCompatible merges as much as possible.
 	MergeWhereCompatible MergeMethod = iota
+	//MergeEmptyOnly merges only those attributes where one side has an empty
+	//value.
 	MergeEmptyOnly
+	//MergeNumericIDOnly is like MergeEmptyOnly, but merges only the numeric ID
+	//attribute, using the left side for all other attributes.
 	MergeNumericIDOnly
 )
 
