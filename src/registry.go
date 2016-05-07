@@ -53,7 +53,9 @@ func init() {
 	}
 }
 
-func (dir ImageDir) imagePathFor(def EntityDefinition) string {
+//ImagePathFor returns the path where an image of the given entity definition
+//will be stored in this directory.
+func (dir ImageDir) ImagePathFor(def EntityDefinition) string {
 	return filepath.Join(string(dir), def.EntityID()+".toml")
 }
 
@@ -82,10 +84,14 @@ func ProvisionedEntityIDs() ([]string, error) {
 //LoadImageFor retrieves a stored image for this entity, which was previously
 //written by SaveImage.
 func (dir ImageDir) LoadImageFor(def EntityDefinition) (EntityDefinition, error) {
-	blob, err := ioutil.ReadFile(dir.imagePathFor(def))
+	blob, err := ioutil.ReadFile(dir.ImagePathFor(def))
 	if err != nil {
 		return nil, err
 	}
+
+	//strip type header
+	header := fmt.Sprintf("[[%s]]\n", def.TypeName())
+	blobStr := strings.TrimPrefix(string(blob), header)
 
 	//prepare an empty instance to decode the file into
 	var result EntityDefinition
@@ -95,22 +101,18 @@ func (dir ImageDir) LoadImageFor(def EntityDefinition) (EntityDefinition, error)
 	case *UserDefinition:
 		result = &UserDefinition{}
 	}
-	_, err = toml.Decode(string(blob), result)
+	_, err = toml.Decode(blobStr, result)
 	return result, err
 }
 
 //SaveImage writes an image for this entity to the specified image directory.
 func (dir ImageDir) SaveImage(def EntityDefinition) error {
-	file, err := os.Create(dir.imagePathFor(def))
-	if err != nil {
-		return err
-	}
-	return toml.NewEncoder(file).Encode(def)
+	return SerializeDefinitionIntoFile(def, dir.ImagePathFor(def))
 }
 
 //DeleteImageFor deletes the pre-image for this entity.
 func DeleteImageFor(def EntityDefinition, dir ImageDir) error {
-	err := os.Remove(dir.imagePathFor(def))
+	err := os.Remove(dir.ImagePathFor(def))
 	//ignore does-not-exist error
 	if err != nil && !os.IsNotExist(err) {
 		return err

@@ -23,6 +23,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"strings"
 
 	"../localdeps/github.com/BurntSushi/toml"
@@ -88,6 +89,15 @@ func SerializeDefinition(def EntityDefinition) ([]byte, error) {
 		err = toml.NewEncoder(&buf).Encode(def)
 	})
 	return buf.Bytes(), err
+}
+
+//SerializeDefinitionIntoFile writes the given EntityDefinition as a TOML file.
+func SerializeDefinitionIntoFile(def EntityDefinition, path string) error {
+	bytes, err := SerializeDefinition(def)
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(path, bytes, 0644)
 }
 
 //GroupDefinition represents a UNIX group (as registered in /etc/group).

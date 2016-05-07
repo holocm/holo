@@ -11,8 +11,8 @@ Working on group:wronggid
 
 !! Entity has been modified by user (use --force to overwrite)
 
-    diff --holo target/tmp/holo/users-groups/group:wronggid/expected.toml target/tmp/holo/users-groups/group:wronggid/actual.toml
-    --- target/tmp/holo/users-groups/group:wronggid/expected.toml
+    diff --holo target/tmp/holo/users-groups/group:wronggid/desired.toml target/tmp/holo/users-groups/group:wronggid/actual.toml
+    --- target/tmp/holo/users-groups/group:wronggid/desired.toml
     +++ target/tmp/holo/users-groups/group:wronggid/actual.toml
     @@ -1,3 +1,3 @@
      [[group]]

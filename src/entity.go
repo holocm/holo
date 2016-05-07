@@ -23,6 +23,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 //Entity contains attributes and logic that are shared between entity types.
@@ -124,6 +125,7 @@ func (e *Entity) Apply(withForce bool) error {
 	}
 
 	//check if changes are necessary
+	doNotApply := false
 	if actualDef.IsProvisioned() {
 		actualStr, err := SerializeDefinition(actualDef)
 		if err != nil {
@@ -135,16 +137,60 @@ func (e *Entity) Apply(withForce bool) error {
 		}
 		if string(desiredStr) == string(actualStr) {
 			PrintCommandMessage("not changed\n")
-			return nil
+			doNotApply = true
 		}
 	}
 
 	//apply changes, record new provisioned state
-	err = desiredState.Apply(actualDef)
+	if !doNotApply {
+		err = desiredState.Apply(actualDef)
+		if err != nil {
+			return err
+		}
+	}
+	return ProvisionedImageDir.SaveImage(desiredState)
+}
+
+//PrepareDiff creates temporary files that the frontend can use to generate a diff.
+func (e *Entity) PrepareDiff() error {
+	//prepare directory to write files into
+	tempDir := filepath.Join(os.Getenv("HOLO_CACHE_DIR"), e.Definition.EntityID())
+	err := os.MkdirAll(tempDir, 0700)
 	if err != nil {
 		return err
 	}
-	return ProvisionedImageDir.SaveImage(desiredState)
+
+	//write actual state into a file for diff
+	actualPath := filepath.Join(tempDir, "actual.toml")
+	actualState, err := e.Definition.GetProvisionedState()
+	if err != nil {
+		return err
+	}
+	if actualState.IsProvisioned() {
+		err = SerializeDefinitionIntoFile(actualState, actualPath)
+		if err != nil {
+			return err
+		}
+	}
+
+	//use provisioned state if available
+	provisionedPath := ProvisionedImageDir.ImagePathFor(e.Definition)
+	_, err = os.Stat(provisionedPath)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			return err
+		}
+		//has not been provisioned yet - use desired state instead
+		desiredState, _ := e.Definition.Merge(actualState, MergeWhereCompatible)
+		provisionedPath = filepath.Join(tempDir, "desired.toml")
+		err = SerializeDefinitionIntoFile(desiredState, provisionedPath)
+		if err != nil {
+			return err
+		}
+	}
+
+	PrintCommandMessage("%s\000%s\000", provisionedPath, actualPath)
+	return nil
 }
 
 //PrintCommandMessage formats and prints a message on file descriptor 3.

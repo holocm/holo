@@ -119,7 +119,7 @@ func executeNonScanCommand() error {
 	case "force-apply":
 		return selectedEntity.Apply(true)
 	case "diff":
-		return PrepareDiffFor(selectedEntity.Definition, selectedEntity.IsOrphaned())
+		return selectedEntity.PrepareDiff()
 	default:
 		return fmt.Errorf("unknown command '%s'", os.Args[1])
 	}

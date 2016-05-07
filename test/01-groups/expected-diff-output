@@ -1,12 +1,12 @@
-diff --holo target/tmp/holo/users-groups/group:new/expected.toml target/tmp/holo/users-groups/group:new/actual.toml
+diff --holo target/tmp/holo/users-groups/group:new/desired.toml target/tmp/holo/users-groups/group:new/actual.toml
 deleted file mode 100644
---- target/tmp/holo/users-groups/group:new/expected.toml
+--- target/tmp/holo/users-groups/group:new/desired.toml
 +++ /dev/null
 @@ -1,2 +0,0 @@
 -[[group]]
 -name = "new"
-diff --holo target/tmp/holo/users-groups/group:wronggid/expected.toml target/tmp/holo/users-groups/group:wronggid/actual.toml
---- target/tmp/holo/users-groups/group:wronggid/expected.toml
+diff --holo target/tmp/holo/users-groups/group:wronggid/desired.toml target/tmp/holo/users-groups/group:wronggid/actual.toml
+--- target/tmp/holo/users-groups/group:wronggid/desired.toml
 +++ target/tmp/holo/users-groups/group:wronggid/actual.toml
 @@ -1,3 +1,3 @@
  [[group]]
