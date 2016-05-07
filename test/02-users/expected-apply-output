@@ -16,8 +16,8 @@ Working on user:wronggroup
 
 !! Entity has been modified by user (use --force to overwrite)
 
-    diff --holo target/tmp/holo/users-groups/user:wronggroup/expected.toml target/tmp/holo/users-groups/user:wronggroup/actual.toml
-    --- target/tmp/holo/users-groups/user:wronggroup/expected.toml
+    diff --holo target/tmp/holo/users-groups/user:wronggroup/desired.toml target/tmp/holo/users-groups/user:wronggroup/actual.toml
+    --- target/tmp/holo/users-groups/user:wronggroup/desired.toml
     +++ target/tmp/holo/users-groups/user:wronggroup/actual.toml
     @@ -2,5 +2,5 @@
      name = "wronggroup"
@@ -33,14 +33,14 @@ Working on user:wronggroups
 
 !! Entity has been modified by user (use --force to overwrite)
 
-    diff --holo target/tmp/holo/users-groups/user:wronggroups/expected.toml target/tmp/holo/users-groups/user:wronggroups/actual.toml
-    --- target/tmp/holo/users-groups/user:wronggroups/expected.toml
+    diff --holo target/tmp/holo/users-groups/user:wronggroups/desired.toml target/tmp/holo/users-groups/user:wronggroups/actual.toml
+    --- target/tmp/holo/users-groups/user:wronggroups/desired.toml
     +++ target/tmp/holo/users-groups/user:wronggroups/actual.toml
     @@ -3,5 +3,5 @@ name = "wronggroups"
      uid = 1005
      home = "/home/wronggroups"
      group = "users"
-    -groups = ["network"]
+    -groups = ["network", "video"]
     +groups = ["video"]
      shell = "/bin/zsh"
 
@@ -50,8 +50,8 @@ Working on user:wronghome
 
 !! Entity has been modified by user (use --force to overwrite)
 
-    diff --holo target/tmp/holo/users-groups/user:wronghome/expected.toml target/tmp/holo/users-groups/user:wronghome/actual.toml
-    --- target/tmp/holo/users-groups/user:wronghome/expected.toml
+    diff --holo target/tmp/holo/users-groups/user:wronghome/desired.toml target/tmp/holo/users-groups/user:wronghome/actual.toml
+    --- target/tmp/holo/users-groups/user:wronghome/desired.toml
     +++ target/tmp/holo/users-groups/user:wronghome/actual.toml
     @@ -1,6 +1,6 @@
      [[user]]
@@ -68,8 +68,8 @@ Working on user:wrongshell
 
 !! Entity has been modified by user (use --force to overwrite)
 
-    diff --holo target/tmp/holo/users-groups/user:wrongshell/expected.toml target/tmp/holo/users-groups/user:wrongshell/actual.toml
-    --- target/tmp/holo/users-groups/user:wrongshell/expected.toml
+    diff --holo target/tmp/holo/users-groups/user:wrongshell/desired.toml target/tmp/holo/users-groups/user:wrongshell/actual.toml
+    --- target/tmp/holo/users-groups/user:wrongshell/desired.toml
     +++ target/tmp/holo/users-groups/user:wrongshell/actual.toml
     @@ -3,4 +3,4 @@ name = "wrongshell"
      uid = 1005
@@ -84,8 +84,8 @@ Working on user:wronguid
 
 !! Entity has been modified by user (use --force to overwrite)
 
-    diff --holo target/tmp/holo/users-groups/user:wronguid/expected.toml target/tmp/holo/users-groups/user:wronguid/actual.toml
-    --- target/tmp/holo/users-groups/user:wronguid/expected.toml
+    diff --holo target/tmp/holo/users-groups/user:wronguid/desired.toml target/tmp/holo/users-groups/user:wronguid/actual.toml
+    --- target/tmp/holo/users-groups/user:wronguid/desired.toml
     +++ target/tmp/holo/users-groups/user:wronguid/actual.toml
     @@ -1,6 +1,6 @@
      [[user]]

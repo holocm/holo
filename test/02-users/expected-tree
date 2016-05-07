@@ -121,6 +121,7 @@ groups  = ["network"]
 name    = "wrongshell"
 shell   = "/bin/zsh"
 >> ./var/lib/holo/users-groups/base/user:existing.toml = regular
+[[user]]
 name = "existing"
 comment = "Existing User"
 uid = 1002
@@ -129,16 +130,20 @@ group = "users"
 groups = ["audio", "network", "video"]
 shell = "/bin/zsh"
 >> ./var/lib/holo/users-groups/base/user:minimal.toml = regular
+[[user]]
 name = "minimal"
 >> ./var/lib/holo/users-groups/base/user:new.toml = regular
+[[user]]
 name = "new"
 >> ./var/lib/holo/users-groups/base/user:wronggroup.toml = regular
+[[user]]
 name = "wronggroup"
 uid = 1005
 home = "/home/wronggroup"
 group = "nobody"
 shell = "/bin/zsh"
 >> ./var/lib/holo/users-groups/base/user:wronggroups.toml = regular
+[[user]]
 name = "wronggroups"
 uid = 1005
 home = "/home/wronggroups"
@@ -146,20 +151,80 @@ group = "users"
 groups = ["video"]
 shell = "/bin/zsh"
 >> ./var/lib/holo/users-groups/base/user:wronghome.toml = regular
+[[user]]
 name = "wronghome"
 uid = 1004
 home = "/var/lib/wronghome"
 group = "users"
 shell = "/bin/zsh"
 >> ./var/lib/holo/users-groups/base/user:wrongshell.toml = regular
+[[user]]
 name = "wrongshell"
 uid = 1005
 home = "/home/wrongshell"
 group = "users"
 shell = "/bin/bash"
 >> ./var/lib/holo/users-groups/base/user:wronguid.toml = regular
+[[user]]
 name = "wronguid"
 uid = 2003
+home = "/home/wronguid"
+group = "users"
+shell = "/bin/zsh"
+>> ./var/lib/holo/users-groups/provisioned/user:existing.toml = regular
+[[user]]
+name = "existing"
+comment = "Existing User"
+uid = 1002
+home = "/home/existing"
+group = "users"
+groups = ["audio", "network", "video"]
+shell = "/bin/zsh"
+>> ./var/lib/holo/users-groups/provisioned/user:minimal.toml = regular
+[[user]]
+name = "minimal"
+>> ./var/lib/holo/users-groups/provisioned/user:new.toml = regular
+[[user]]
+name = "new"
+comment = "New User"
+uid = 1001
+home = "/home/new"
+group = "users"
+groups = ["audio", "network", "video"]
+shell = "/bin/zsh"
+>> ./var/lib/holo/users-groups/provisioned/user:wronggroup.toml = regular
+[[user]]
+name = "wronggroup"
+uid = 1005
+home = "/home/wronggroup"
+group = "users"
+shell = "/bin/zsh"
+>> ./var/lib/holo/users-groups/provisioned/user:wronggroups.toml = regular
+[[user]]
+name = "wronggroups"
+uid = 1005
+home = "/home/wronggroups"
+group = "users"
+groups = ["network", "video"]
+shell = "/bin/zsh"
+>> ./var/lib/holo/users-groups/provisioned/user:wronghome.toml = regular
+[[user]]
+name = "wronghome"
+uid = 1004
+home = "/home/wronghome"
+group = "users"
+shell = "/bin/zsh"
+>> ./var/lib/holo/users-groups/provisioned/user:wrongshell.toml = regular
+[[user]]
+name = "wrongshell"
+uid = 1005
+home = "/home/wrongshell"
+group = "users"
+shell = "/bin/zsh"
+>> ./var/lib/holo/users-groups/provisioned/user:wronguid.toml = regular
+[[user]]
+name = "wronguid"
+uid = 1003
 home = "/home/wronguid"
 group = "users"
 shell = "/bin/zsh"
