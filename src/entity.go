@@ -61,21 +61,21 @@ func (e *Entity) Apply(withForce bool) error {
 	def := e.Definition
 
 	//check if this entity exists already
-	actualDef, err := def.GetProvisionedState()
+	actualState, err := def.GetProvisionedState()
 	if err != nil {
 		return fmt.Errorf("Cannot read %s database: %s\n", def.TypeName(), err.Error())
 	}
 
 	//special handling for orphaned entities
 	if e.IsOrphaned() {
-		preImage, err := PreImageDir.LoadImageFor(e.Definition)
+		baseImage, err := BaseImageDir.LoadImageFor(e.Definition)
 		if err != nil {
 			return err
 		}
 
 		//remove entity or reset to state of pre-image
-		if preImage.IsProvisioned() {
-			err = preImage.Apply(actualDef)
+		if baseImage.IsProvisioned() {
+			err = baseImage.Apply(actualState)
 		} else {
 			err = def.Cleanup()
 		}
@@ -88,19 +88,19 @@ func (e *Entity) Apply(withForce bool) error {
 		if err != nil {
 			return err
 		}
-		return DeleteImageFor(def, PreImageDir)
+		return DeleteImageFor(def, BaseImageDir)
 	}
 
 	//load pre-image
-	preImage, err := PreImageDir.LoadImageFor(e.Definition)
+	baseImage, err := BaseImageDir.LoadImageFor(e.Definition)
 	if err != nil {
 		if os.IsNotExist(err) {
 			//write pre-image on first `apply`
-			err = PreImageDir.SaveImage(actualDef)
+			err = BaseImageDir.SaveImage(actualState)
 			if err != nil {
 				return err
 			}
-			preImage = actualDef
+			baseImage = actualState
 		} else {
 			return err
 		}
@@ -110,12 +110,12 @@ func (e *Entity) Apply(withForce bool) error {
 	//case, conflicts worthy of "--force" are detected by comparing that to the
 	//definition)
 	var conflictCheckImage EntityDefinition
-	provisionedImage, err := ProvisionedImageDir.LoadImageFor(e.Definition)
+	provisionedState, err := ProvisionedImageDir.LoadImageFor(e.Definition)
 	if err == nil {
-		conflictCheckImage = provisionedImage
+		conflictCheckImage = provisionedState
 	} else {
 		if os.IsNotExist(err) {
-			provisionedImage = nil
+			provisionedState = nil
 			conflictCheckImage = e.Definition
 		} else {
 			return err
@@ -129,7 +129,7 @@ func (e *Entity) Apply(withForce bool) error {
 	//2. the entity has *not* been provisioned yet and the definition conflicts
 	//   with the current state (i.e. the pre-image)
 	if !withForce {
-		_, conflicts := actualDef.Merge(conflictCheckImage, MergeEmptyOnly)
+		_, conflicts := actualState.Merge(conflictCheckImage, MergeEmptyOnly)
 		if len(conflicts) > 0 {
 			PrintCommandMessage("requires --force to overwrite\n")
 			return nil
@@ -137,14 +137,14 @@ func (e *Entity) Apply(withForce bool) error {
 	}
 
 	//desired state is obtained by merging the definition with the pre-image
-	desiredState, _ := e.Definition.Merge(preImage, MergeWhereCompatible)
+	desiredState, _ := e.Definition.Merge(baseImage, MergeWhereCompatible)
 	//but if neither defines a numeric ID, use the current one
-	desiredState, _ = desiredState.Merge(actualDef, MergeNumericIDOnly)
+	desiredState, _ = desiredState.Merge(actualState, MergeNumericIDOnly)
 
 	//check if changes are necessary
 	doNotApply := false
-	if actualDef.IsProvisioned() {
-		actualStr, err := SerializeDefinition(actualDef)
+	if actualState.IsProvisioned() {
+		actualStr, err := SerializeDefinition(actualState)
 		if err != nil {
 			return err
 		}
@@ -160,7 +160,7 @@ func (e *Entity) Apply(withForce bool) error {
 
 	//apply changes
 	if !doNotApply {
-		err = desiredState.Apply(actualDef)
+		err = desiredState.Apply(actualState)
 		if err != nil {
 			return err
 		}
@@ -168,11 +168,11 @@ func (e *Entity) Apply(withForce bool) error {
 	}
 
 	//record new actual state as provisioned state
-	actualDef, err = def.GetProvisionedState()
+	actualState, err = def.GetProvisionedState()
 	if err != nil {
 		return fmt.Errorf("Cannot read %s database: %s\n", def.TypeName(), err.Error())
 	}
-	return ProvisionedImageDir.SaveImage(actualDef)
+	return ProvisionedImageDir.SaveImage(actualState)
 }
 
 //PrepareDiff creates temporary files that the frontend can use to generate a diff.

@@ -33,18 +33,18 @@ import (
 //ImageDir is a path to a directory containing serialized entity definitions.
 type ImageDir string
 
-//PreImageDir is usually /var/lib/holo/users-groups/base.
-var PreImageDir ImageDir
+//BaseImageDir is usually /var/lib/holo/users-groups/base.
+var BaseImageDir ImageDir
 
 //ProvisionedImageDir is usually /var/lib/holo/users-groups/provisioned.
 var ProvisionedImageDir ImageDir
 
 func init() {
 	stateDir := os.Getenv("HOLO_STATE_DIR")
-	PreImageDir = ImageDir(filepath.Join(stateDir, "base"))
+	BaseImageDir = ImageDir(filepath.Join(stateDir, "base"))
 	ProvisionedImageDir = ImageDir(filepath.Join(stateDir, "provisioned"))
 
-	for _, dir := range []string{string(PreImageDir), string(ProvisionedImageDir)} {
+	for _, dir := range []string{string(BaseImageDir), string(ProvisionedImageDir)} {
 		err := os.MkdirAll(dir, 0755)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
@@ -62,7 +62,7 @@ func (dir ImageDir) ImagePathFor(def EntityDefinition) string {
 //ProvisionedEntityIDs returns a list of all entities for which pre-images exist.
 func ProvisionedEntityIDs() ([]string, error) {
 	//open pre-image directory
-	dir, err := os.Open(string(PreImageDir))
+	dir, err := os.Open(string(BaseImageDir))
 	if err != nil {
 		return nil, err
 	}
