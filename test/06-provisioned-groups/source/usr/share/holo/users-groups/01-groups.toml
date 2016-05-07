@@ -1,0 +1,6 @@
+[[group]]
+name = "existing"
+
+[[group]]
+name = "wronggid"
+gid = 42

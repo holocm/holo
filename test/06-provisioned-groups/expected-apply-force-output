@@ -1,0 +1,7 @@
+
+Working on group:wronggid
+  found in target/usr/share/holo/users-groups/01-groups.toml
+      with GID: 42
+
+MOCK: groupmod --gid 42 wronggid
+

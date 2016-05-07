@@ -1,0 +1,39 @@
+>> ./etc/group = regular
+root:x:0:root
+bin:x:1:root,bin,daemon
+daemon:x:2:root,bin,daemon
+sys:x:3:root,bin
+adm:x:4:root,daemon
+tty:x:5:
+disk:x:6:root
+lp:x:7:daemon
+mem:x:8:
+kmem:x:9:
+wheel:x:10:root
+existing:x:101:
+wronggid:x:102:
+>> ./etc/holorc = symlink
+../../../holorc
+>> ./usr/share/holo/users-groups/01-groups.toml = regular
+[[group]]
+name = "existing"
+
+[[group]]
+name = "wronggid"
+gid = 42
+>> ./var/lib/holo/users-groups/base/group:existing.toml = regular
+[[group]]
+name = "existing"
+gid = 101
+>> ./var/lib/holo/users-groups/base/group:wronggid.toml = regular
+[[group]]
+name = "wronggid"
+gid = 102
+>> ./var/lib/holo/users-groups/provisioned/group:existing.toml = regular
+[[group]]
+name = "existing"
+gid = 101
+>> ./var/lib/holo/users-groups/provisioned/group:wronggid.toml = regular
+[[group]]
+name = "wronggid"
+gid = 42
