@@ -24,11 +24,9 @@ gid = 42
 >> ./var/lib/holo/users-groups/base/group:existing.toml = regular
 [[group]]
 name = "existing"
-gid = 101
 >> ./var/lib/holo/users-groups/base/group:wronggid.toml = regular
 [[group]]
 name = "wronggid"
-gid = 102
 >> ./var/lib/holo/users-groups/provisioned/group:existing.toml = regular
 [[group]]
 name = "existing"

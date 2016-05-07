@@ -33,6 +33,7 @@ import (
 var (
 	etcPasswdPath string
 	etcGroupPath  string
+	appliedStates map[string]EntityDefinition //= nil unless during tests
 )
 
 func init() {
@@ -42,6 +43,29 @@ func init() {
 	}
 	etcPasswdPath = filepath.Join(rootDir, "etc/passwd")
 	etcGroupPath = filepath.Join(rootDir, "etc/group")
+	if rootDir != "/" {
+		appliedStates = make(map[string]EntityDefinition)
+	}
+}
+
+//StoreAppliedState is a no-op during normal operation. During unit tests, it
+//records Apply()ed definitions, so that the next GetProvisionedState() of the
+//same entity will present a consistent result.
+func StoreAppliedState(def EntityDefinition) {
+	if appliedStates != nil {
+		appliedStates[def.EntityID()] = def
+		//mark applied states with a fake numeric ID
+		switch def := def.(type) {
+		case *GroupDefinition:
+			if def.GID == 0 {
+				def.GID = 999
+			}
+		case *UserDefinition:
+			if def.UID == 0 {
+				def.UID = 999
+			}
+		}
+	}
 }
 
 //Getent reads entries from a UNIX user/group database (e.g. /etc/passwd
@@ -74,6 +98,13 @@ func Getent(databaseFile string, predicate func([]string) bool) ([]string, error
 
 //GetProvisionedState implements the EntityDefinition interface.
 func (g *GroupDefinition) GetProvisionedState() (EntityDefinition, error) {
+	//special case for test runs
+	if appliedStates != nil {
+		if def, ok := appliedStates[g.EntityID()]; ok {
+			return def, nil
+		}
+	}
+
 	//fetch entry from /etc/group
 	fields, err := Getent(etcGroupPath, func(fields []string) bool { return fields[0] == g.Name })
 	if err != nil {
@@ -98,6 +129,13 @@ func (g *GroupDefinition) GetProvisionedState() (EntityDefinition, error) {
 
 //GetProvisionedState implements the EntityDefinition interface.
 func (u *UserDefinition) GetProvisionedState() (EntityDefinition, error) {
+	//special case for test runs
+	if appliedStates != nil {
+		if def, ok := appliedStates[u.EntityID()]; ok {
+			return def, nil
+		}
+	}
+
 	//fetch entry from /etc/passwd
 	fields, err := Getent(etcPasswdPath, func(fields []string) bool { return fields[0] == u.Name })
 	if err != nil {

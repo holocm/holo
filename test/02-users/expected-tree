@@ -183,6 +183,7 @@ shell = "/bin/zsh"
 >> ./var/lib/holo/users-groups/provisioned/user:minimal.toml = regular
 [[user]]
 name = "minimal"
+uid = 999
 >> ./var/lib/holo/users-groups/provisioned/user:new.toml = regular
 [[user]]
 name = "new"

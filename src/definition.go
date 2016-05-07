@@ -70,8 +70,7 @@ type EntityDefinition interface {
 	//If `emptyOnly` is true, only empty arguments may be merged.
 	Merge(other EntityDefinition, emptyOnly bool) (EntityDefinition, []error)
 	//Apply provisions this entity. The argument indicates the currently
-	//provisioned state. If the entity is not provisioned yet, it will be nil.
-	//If not nil, the argument's concrete type must match the callee.
+	//provisioned state. The argument's concrete type must match the callee.
 	Apply(provisioned EntityDefinition) error
 	//Cleanup removes the entity from the system.
 	Cleanup() error

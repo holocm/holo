@@ -141,14 +141,21 @@ func (e *Entity) Apply(withForce bool) error {
 		}
 	}
 
-	//apply changes, record new provisioned state
+	//apply changes
 	if !doNotApply {
 		err = desiredState.Apply(actualDef)
 		if err != nil {
 			return err
 		}
+		StoreAppliedState(desiredState)
 	}
-	return ProvisionedImageDir.SaveImage(desiredState)
+
+	//record new actual state as provisioned state
+	actualDef, err = def.GetProvisionedState()
+	if err != nil {
+		return fmt.Errorf("Cannot read %s database: %s\n", def.TypeName(), err.Error())
+	}
+	return ProvisionedImageDir.SaveImage(actualDef)
 }
 
 //PrepareDiff creates temporary files that the frontend can use to generate a diff.

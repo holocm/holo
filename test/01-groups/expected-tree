@@ -49,6 +49,7 @@ gid = 101
 >> ./var/lib/holo/users-groups/provisioned/group:new.toml = regular
 [[group]]
 name = "new"
+gid = 999
 >> ./var/lib/holo/users-groups/provisioned/group:wronggid.toml = regular
 [[group]]
 name = "wronggid"
