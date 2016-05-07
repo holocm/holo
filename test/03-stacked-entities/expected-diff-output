@@ -1,14 +1,14 @@
-diff --holo target/tmp/holo/users-groups/group:stacked/expected.toml target/tmp/holo/users-groups/group:stacked/actual.toml
+diff --holo target/tmp/holo/users-groups/group:stacked/desired.toml target/tmp/holo/users-groups/group:stacked/actual.toml
 deleted file mode 100644
---- target/tmp/holo/users-groups/group:stacked/expected.toml
+--- target/tmp/holo/users-groups/group:stacked/desired.toml
 +++ /dev/null
 @@ -1,3 +0,0 @@
 -[[group]]
 -name = "stacked"
 -gid = 1001
-diff --holo target/tmp/holo/users-groups/user:stacked/expected.toml target/tmp/holo/users-groups/user:stacked/actual.toml
+diff --holo target/tmp/holo/users-groups/user:stacked/desired.toml target/tmp/holo/users-groups/user:stacked/actual.toml
 deleted file mode 100644
---- target/tmp/holo/users-groups/user:stacked/expected.toml
+--- target/tmp/holo/users-groups/user:stacked/desired.toml
 +++ /dev/null
 @@ -1,8 +0,0 @@
 -[[user]]

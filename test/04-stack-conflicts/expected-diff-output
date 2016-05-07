@@ -9,17 +9,17 @@
 >> conflicting login group for user:stacked (users vs. stacked)
 >> conflicting login shell for user:stacked (/usr/bin/zsh vs. /bin/bash)
 
-diff --holo target/tmp/holo/users-groups/group:valid/expected.toml target/tmp/holo/users-groups/group:valid/actual.toml
+diff --holo target/tmp/holo/users-groups/group:valid/desired.toml target/tmp/holo/users-groups/group:valid/actual.toml
 deleted file mode 100644
---- target/tmp/holo/users-groups/group:valid/expected.toml
+--- target/tmp/holo/users-groups/group:valid/desired.toml
 +++ /dev/null
 @@ -1,3 +0,0 @@
 -[[group]]
 -name = "valid"
 -gid = 1010
-diff --holo target/tmp/holo/users-groups/user:valid/expected.toml target/tmp/holo/users-groups/user:valid/actual.toml
+diff --holo target/tmp/holo/users-groups/user:valid/desired.toml target/tmp/holo/users-groups/user:valid/actual.toml
 deleted file mode 100644
---- target/tmp/holo/users-groups/user:valid/expected.toml
+--- target/tmp/holo/users-groups/user:valid/desired.toml
 +++ /dev/null
 @@ -1,3 +0,0 @@
 -[[user]]

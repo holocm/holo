@@ -105,6 +105,16 @@ groups  = [ "foo", "baz" ]
 home    = "/home/stacked"
 shell   = "/bin/bash"
 >> ./var/lib/holo/users-groups/base/group:valid.toml = regular
+[[group]]
 name = "valid"
 >> ./var/lib/holo/users-groups/base/user:valid.toml = regular
+[[user]]
 name = "valid"
+>> ./var/lib/holo/users-groups/provisioned/group:valid.toml = regular
+[[group]]
+name = "valid"
+gid = 1010
+>> ./var/lib/holo/users-groups/provisioned/user:valid.toml = regular
+[[user]]
+name = "valid"
+uid = 1010

@@ -81,6 +81,21 @@ groups  = [ "foo", "baz" ]
 home    = "/home/stacked"
 shell   = "/bin/bash"
 >> ./var/lib/holo/users-groups/base/group:stacked.toml = regular
+[[group]]
 name = "stacked"
 >> ./var/lib/holo/users-groups/base/user:stacked.toml = regular
+[[user]]
 name = "stacked"
+>> ./var/lib/holo/users-groups/provisioned/group:stacked.toml = regular
+[[group]]
+name = "stacked"
+gid = 1001
+>> ./var/lib/holo/users-groups/provisioned/user:stacked.toml = regular
+[[user]]
+name = "stacked"
+comment = "Stacked User"
+uid = 1001
+home = "/home/stacked"
+group = "stacked"
+groups = ["bar", "baz", "foo"]
+shell = "/bin/bash"
