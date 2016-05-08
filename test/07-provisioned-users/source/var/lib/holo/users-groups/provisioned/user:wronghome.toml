@@ -1,0 +1,6 @@
+[[user]]
+name = "wronghome"
+uid = 1004
+home = "/home/wronghome"
+group = "users"
+shell = "/bin/zsh"

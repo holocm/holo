@@ -1,0 +1,31 @@
+
+Working on user:wronggroup
+  found in target/usr/share/holo/users-groups/01-users.toml
+      with home: /home/wronggroup, login group: users, login shell: /bin/zsh
+
+MOCK: usermod --gid users wronggroup
+
+Working on user:wronggroups
+  found in target/usr/share/holo/users-groups/01-users.toml
+      with home: /home/wronggroups, login group: users, groups: network, login shell: /bin/zsh
+
+MOCK: usermod --groups network wronggroups
+
+Working on user:wronghome
+  found in target/usr/share/holo/users-groups/01-users.toml
+      with home: /home/wronghome, login group: users, login shell: /bin/zsh
+
+MOCK: usermod --home /home/wronghome wronghome
+
+Working on user:wrongshell
+  found in target/usr/share/holo/users-groups/01-users.toml
+      with home: /home/wrongshell, login group: users, login shell: /bin/zsh
+
+MOCK: usermod --shell /bin/zsh wrongshell
+
+Working on user:wronguid
+  found in target/usr/share/holo/users-groups/01-users.toml
+      with UID: 1003, home: /home/wronguid, login group: users, login shell: /bin/zsh
+
+MOCK: usermod --uid 1003 wronguid
+
