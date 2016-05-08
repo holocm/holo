@@ -73,7 +73,7 @@ func (e *Entity) Apply(withForce bool) error {
 			return err
 		}
 
-		//remove entity or reset to state of pre-image
+		//remove entity or reset to state of base image
 		if baseImage.IsProvisioned() {
 			err = baseImage.Apply(actualState)
 		} else {
@@ -91,11 +91,11 @@ func (e *Entity) Apply(withForce bool) error {
 		return DeleteImageFor(def, BaseImageDir)
 	}
 
-	//load pre-image
+	//load base image
 	baseImage, err := BaseImageDir.LoadImageFor(e.Definition)
 	if err != nil {
 		if os.IsNotExist(err) {
-			//write pre-image on first `apply`
+			//write base image on first `apply`
 			err = BaseImageDir.SaveImage(actualState)
 			if err != nil {
 				return err
@@ -106,7 +106,7 @@ func (e *Entity) Apply(withForce bool) error {
 		}
 	}
 
-	//load last provisioned state (if not existing, use pre-image; and in this
+	//load last provisioned state (if not existing, use base image; and in this
 	//case, conflicts worthy of "--force" are detected by comparing that to the
 	//definition)
 	conflictCheckImage := e.Definition
@@ -126,7 +126,7 @@ func (e *Entity) Apply(withForce bool) error {
 	//1. the entity has been provisioned and since been altered (i.e. compare
 	//   actual state and provisioned state)
 	//2. the entity has *not* been provisioned yet and the definition conflicts
-	//   with the current state (i.e. the pre-image)
+	//   with the current state (i.e. the base image)
 	if !withForce {
 		_, conflicts := actualState.Merge(conflictCheckImage, MergeEmptyOnly)
 		if len(conflicts) > 0 {
@@ -135,7 +135,7 @@ func (e *Entity) Apply(withForce bool) error {
 		}
 	}
 
-	//desired state is obtained by merging the definition with the pre-image
+	//desired state is obtained by merging the definition with the base image
 	desiredState, _ := e.Definition.Merge(baseImage, MergeWhereCompatible)
 	//but if neither defines a numeric ID, use the current one
 	desiredState, _ = desiredState.Merge(actualState, MergeNumericIDOnly)

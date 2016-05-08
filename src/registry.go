@@ -59,9 +59,9 @@ func (dir ImageDir) ImagePathFor(def EntityDefinition) string {
 	return filepath.Join(string(dir), def.EntityID()+".toml")
 }
 
-//ProvisionedEntityIDs returns a list of all entities for which pre-images exist.
+//ProvisionedEntityIDs returns a list of all entities for which base images exist.
 func ProvisionedEntityIDs() ([]string, error) {
-	//open pre-image directory
+	//open base image directory
 	dir, err := os.Open(string(BaseImageDir))
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func ProvisionedEntityIDs() ([]string, error) {
 		return nil, err
 	}
 
-	//find pre-images
+	//find base images
 	var ids []string
 	for _, fi := range fis {
 		if fi.Mode().IsRegular() && strings.HasSuffix(fi.Name(), ".toml") {
@@ -110,7 +110,7 @@ func (dir ImageDir) SaveImage(def EntityDefinition) error {
 	return SerializeDefinitionIntoFile(def, dir.ImagePathFor(def))
 }
 
-//DeleteImageFor deletes the pre-image for this entity.
+//DeleteImageFor deletes the image for this entity from this image directory.
 func DeleteImageFor(def EntityDefinition, dir ImageDir) error {
 	err := os.Remove(dir.ImagePathFor(def))
 	//ignore does-not-exist error
