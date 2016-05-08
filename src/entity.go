@@ -109,14 +109,13 @@ func (e *Entity) Apply(withForce bool) error {
 	//load last provisioned state (if not existing, use pre-image; and in this
 	//case, conflicts worthy of "--force" are detected by comparing that to the
 	//definition)
-	var conflictCheckImage EntityDefinition
+	conflictCheckImage := e.Definition
 	provisionedState, err := ProvisionedImageDir.LoadImageFor(e.Definition)
 	if err == nil {
-		conflictCheckImage = provisionedState
+		conflictCheckImage, _ = conflictCheckImage.Merge(provisionedState, MergeEmptyOnly)
 	} else {
 		if os.IsNotExist(err) {
 			provisionedState = nil
-			conflictCheckImage = e.Definition
 		} else {
 			return err
 		}
@@ -197,23 +196,25 @@ func (e *Entity) PrepareDiff() error {
 		}
 	}
 
-	//use provisioned state if available
-	provisionedPath := ProvisionedImageDir.ImagePathFor(e.Definition)
-	_, err = os.Stat(provisionedPath)
-	if err != nil {
-		if !os.IsNotExist(err) {
-			return err
-		}
-		//has not been provisioned yet - use desired state instead
-		desiredState, _ := e.Definition.Merge(actualState, MergeWhereCompatible)
-		provisionedPath = filepath.Join(tempDir, "desired.toml")
-		err = SerializeDefinitionIntoFile(desiredState, provisionedPath)
-		if err != nil {
-			return err
-		}
+	//get provisioned state
+	baseState, err := ProvisionedImageDir.LoadImageFor(e.Definition)
+	if err != nil && !os.IsNotExist(err) {
+		return err
 	}
 
-	PrintCommandMessage("%s\000%s\000", provisionedPath, actualPath)
+	//desired state = definition + provisioned state; but if provisioned state
+	//is missing, use actual state as base instead
+	if baseState == nil {
+		baseState = actualState
+	}
+	desiredState, _ := e.Definition.Merge(baseState, MergeWhereCompatible)
+	desiredPath := filepath.Join(tempDir, "desired.toml")
+	err = SerializeDefinitionIntoFile(desiredState, desiredPath)
+	if err != nil {
+		return err
+	}
+
+	PrintCommandMessage("%s\000%s\000", desiredPath, actualPath)
 	return nil
 }
 

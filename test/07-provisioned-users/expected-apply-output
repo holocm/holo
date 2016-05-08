@@ -5,8 +5,8 @@ Working on user:wronggroup
 
 !! Entity has been modified by user (use --force to overwrite)
 
-    diff --holo target/var/lib/holo/users-groups/provisioned/user:wronggroup.toml target/tmp/holo/users-groups/user:wronggroup/actual.toml
-    --- target/var/lib/holo/users-groups/provisioned/user:wronggroup.toml
+    diff --holo target/tmp/holo/users-groups/user:wronggroup/desired.toml target/tmp/holo/users-groups/user:wronggroup/actual.toml
+    --- target/tmp/holo/users-groups/user:wronggroup/desired.toml
     +++ target/tmp/holo/users-groups/user:wronggroup/actual.toml
     @@ -2,5 +2,5 @@
      name = "wronggroup"
@@ -22,8 +22,8 @@ Working on user:wronggroups
 
 !! Entity has been modified by user (use --force to overwrite)
 
-    diff --holo target/var/lib/holo/users-groups/provisioned/user:wronggroups.toml target/tmp/holo/users-groups/user:wronggroups/actual.toml
-    --- target/var/lib/holo/users-groups/provisioned/user:wronggroups.toml
+    diff --holo target/tmp/holo/users-groups/user:wronggroups/desired.toml target/tmp/holo/users-groups/user:wronggroups/actual.toml
+    --- target/tmp/holo/users-groups/user:wronggroups/desired.toml
     +++ target/tmp/holo/users-groups/user:wronggroups/actual.toml
     @@ -3,5 +3,5 @@ name = "wronggroups"
      uid = 1005
@@ -39,8 +39,8 @@ Working on user:wronghome
 
 !! Entity has been modified by user (use --force to overwrite)
 
-    diff --holo target/var/lib/holo/users-groups/provisioned/user:wronghome.toml target/tmp/holo/users-groups/user:wronghome/actual.toml
-    --- target/var/lib/holo/users-groups/provisioned/user:wronghome.toml
+    diff --holo target/tmp/holo/users-groups/user:wronghome/desired.toml target/tmp/holo/users-groups/user:wronghome/actual.toml
+    --- target/tmp/holo/users-groups/user:wronghome/desired.toml
     +++ target/tmp/holo/users-groups/user:wronghome/actual.toml
     @@ -1,6 +1,6 @@
      [[user]]
@@ -57,8 +57,8 @@ Working on user:wrongshell
 
 !! Entity has been modified by user (use --force to overwrite)
 
-    diff --holo target/var/lib/holo/users-groups/provisioned/user:wrongshell.toml target/tmp/holo/users-groups/user:wrongshell/actual.toml
-    --- target/var/lib/holo/users-groups/provisioned/user:wrongshell.toml
+    diff --holo target/tmp/holo/users-groups/user:wrongshell/desired.toml target/tmp/holo/users-groups/user:wrongshell/actual.toml
+    --- target/tmp/holo/users-groups/user:wrongshell/desired.toml
     +++ target/tmp/holo/users-groups/user:wrongshell/actual.toml
     @@ -3,4 +3,4 @@ name = "wrongshell"
      uid = 1005
@@ -73,8 +73,8 @@ Working on user:wronguid
 
 !! Entity has been modified by user (use --force to overwrite)
 
-    diff --holo target/var/lib/holo/users-groups/provisioned/user:wronguid.toml target/tmp/holo/users-groups/user:wronguid/actual.toml
-    --- target/var/lib/holo/users-groups/provisioned/user:wronguid.toml
+    diff --holo target/tmp/holo/users-groups/user:wronguid/desired.toml target/tmp/holo/users-groups/user:wronguid/actual.toml
+    --- target/tmp/holo/users-groups/user:wronguid/desired.toml
     +++ target/tmp/holo/users-groups/user:wronguid/actual.toml
     @@ -1,6 +1,6 @@
      [[user]]

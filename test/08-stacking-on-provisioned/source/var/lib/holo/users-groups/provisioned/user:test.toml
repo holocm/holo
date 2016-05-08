@@ -1,0 +1,6 @@
+[[user]]
+name = "test"
+uid = 1001
+home = "/home/test"
+group = "users"
+shell = "/bin/bash"
