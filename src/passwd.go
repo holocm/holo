@@ -51,9 +51,10 @@ func init() {
 //StoreAppliedState is a no-op during normal operation. During unit tests, it
 //records Apply()ed definitions, so that the next GetProvisionedState() of the
 //same entity will present a consistent result.
-func StoreAppliedState(def EntityDefinition) {
+//
+//The `previous` argument contains the actual state before the apply operation.
+func StoreAppliedState(def EntityDefinition, previous EntityDefinition) {
 	if appliedStates != nil {
-		appliedStates[def.EntityID()] = def
 		//mark applied states with a fake numeric ID
 		switch def := def.(type) {
 		case *GroupDefinition:
@@ -65,6 +66,12 @@ func StoreAppliedState(def EntityDefinition) {
 				def.UID = 999
 			}
 		}
+
+		//merge attributes from previous actual state that were not specified
+		//in the newly applied state
+		def, _ = def.Merge(previous, MergeEmptyOnly)
+
+		appliedStates[def.EntityID()] = def
 	}
 }
 

@@ -163,7 +163,7 @@ func (e *Entity) Apply(withForce bool) error {
 		if err != nil {
 			return err
 		}
-		StoreAppliedState(desiredState)
+		StoreAppliedState(desiredState, actualState)
 	}
 
 	//record new actual state as provisioned state
