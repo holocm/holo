@@ -1,2 +1,2 @@
 ProvisionedGroups = ["created"]
-ProvisionedUsers = ["modified"]
+ProvisionedUsers = ["modified", "unchanged"]

@@ -25,6 +25,7 @@ uuidd:x:68:68:uuidd:/:/usr/bin/nologin
 dbus:x:81:81:dbus:/:/usr/bin/nologin
 nobody:x:99:99:nobody:/:/usr/bin/nologin
 modified:x:1001:100::/home/modified:/bin/zsh
+unchanged:x:1002:100::/home/unchanged:/bin/bash
 >> ./usr/share/holo/users-groups/01-test.toml = regular
 [[group]]
 name = "created"
@@ -32,6 +33,9 @@ name = "created"
 [[user]]
 name = "modified"
 shell = "/bin/zsh"
+
+[[user]]
+name = "unchanged"
 >> ./var/lib/holo/users-groups/base/group:created.toml = regular
 [[group]]
 name = "created"
@@ -42,6 +46,9 @@ uid   = 1001
 group = "users"
 home  = "/home/modified"
 shell = "/bin/bash"
+>> ./var/lib/holo/users-groups/base/user:unchanged.toml = regular
+[[user]]
+name = "unchanged"
 >> ./var/lib/holo/users-groups/provisioned/group:created.toml = regular
 [[group]]
 name = "created"
@@ -53,3 +60,10 @@ uid = 1001
 home = "/home/modified"
 group = "users"
 shell = "/bin/zsh"
+>> ./var/lib/holo/users-groups/provisioned/user:unchanged.toml = regular
+[[user]]
+name = "unchanged"
+uid = 1002
+home = "/home/unchanged"
+group = "users"
+shell = "/bin/bash"
