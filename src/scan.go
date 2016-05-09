@@ -33,6 +33,12 @@ import (
 
 //Scan returns a slice of all the defined entities.
 func Scan() ([]*Entity, []error) {
+	//call into migration code
+	err := migrateOldRegistry()
+	if err != nil {
+		return nil, []error{err}
+	}
+
 	//open resource directory
 	dirPath := os.Getenv("HOLO_RESOURCE_DIR")
 	dir, err := os.Open(dirPath)
@@ -180,4 +186,65 @@ func readDefinitionFile(definitionPath string, entities *map[string]*Entity) err
 		return &FileInvalidError{definitionPath, errors}
 	}
 	return nil
+}
+
+//Migration path for the old registry at `/var/lib/holo/users-groups/state.toml`.
+func migrateOldRegistry() error {
+	//read state.toml (if it exists)
+	statePath := filepath.Join(os.Getenv("HOLO_STATE_DIR"), "state.toml")
+	blob, err := ioutil.ReadFile(statePath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			//file is gone already, no upgrade necessary
+			return nil
+		}
+		return err
+	}
+
+	//parse state.toml
+	var state struct {
+		ProvisionedGroups []string
+		ProvisionedUsers  []string
+	}
+	_, err = toml.Decode(string(blob), &state)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(os.Stderr, ">> Migrating %s...\n", statePath)
+	fmt.Fprintf(os.Stderr, "!! This might require manual intervention! Please find instructions at:\n")
+	fmt.Fprintf(os.Stderr, "!!   <https://github.com/holocm/holo-users-groups/wiki/Migrating-to-v2.0>\n")
+
+	//migrate each provisioned entity
+	for _, groupName := range state.ProvisionedGroups {
+		err = migrateEntity(&GroupDefinition{Name: groupName})
+		if err != nil {
+			return err
+		}
+	}
+	for _, userName := range state.ProvisionedUsers {
+		err = migrateEntity(&UserDefinition{Name: userName})
+		if err != nil {
+			return err
+		}
+	}
+
+	//all went well - drop state.toml
+	fmt.Fprintf(os.Stderr, ">> All entities migrated. Removing %s...\n", statePath)
+	return os.Remove(statePath)
+}
+
+func migrateEntity(emptyBaseImage EntityDefinition) error {
+	//don't steam-roll over existing base images
+	baseImage, err := BaseImageDir.LoadImageFor(emptyBaseImage)
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	if baseImage != nil {
+		fmt.Fprintf(os.Stderr, ">> Skipping %s (found existing base image)\n", emptyBaseImage.EntityID())
+		return nil
+	}
+
+	//write the empty base image
+	fmt.Fprintf(os.Stderr, ">> Writing empty base image for %s\n", emptyBaseImage.EntityID())
+	return BaseImageDir.SaveImage(emptyBaseImage)
 }

@@ -1,0 +1,15 @@
+
+>> Migrating target/var/lib/holo/users-groups/state.toml...
+!! This might require manual intervention! Please find instructions at:
+!!   <https://github.com/holocm/holo-users-groups/wiki/Migrating-to-v2.0>
+>> Writing empty base image for group:created
+>> Skipping user:modified (found existing base image)
+>> All entities migrated. Removing target/var/lib/holo/users-groups/state.toml...
+
+group:created
+    found in target/usr/share/holo/users-groups/01-test.toml
+
+user:modified
+    found in target/usr/share/holo/users-groups/01-test.toml
+        with login shell: /bin/zsh
+
