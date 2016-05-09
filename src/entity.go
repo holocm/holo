@@ -137,8 +137,9 @@ func (e *Entity) Apply(withForce bool) error {
 
 	//desired state is obtained by merging the definition with the base image
 	desiredState, _ := e.Definition.Merge(baseImage, MergeWhereCompatible)
-	//but if neither defines a numeric ID, use the current one
-	desiredState, _ = desiredState.Merge(actualState, MergeNumericIDOnly)
+	//but make sure that we don't see a difference just because the definition
+	//does not define a particular attribute
+	desiredState, _ = desiredState.Merge(actualState, MergeEmptyOnly)
 
 	//check if changes are necessary
 	doNotApply := false
