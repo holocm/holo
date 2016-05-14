@@ -1,0 +1,6 @@
+diff --holo target/var/lib/holo/files/provisioned/etc/foo.conf target/etc/foo.conf
+new file mode 100644
+--- /dev/null
++++ target/etc/foo.conf
+@@ -0,0 +1 @@
++aaa

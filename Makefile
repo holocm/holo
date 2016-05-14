@@ -23,13 +23,14 @@ check: default
 	@go test ./src/holo/impl
 	@env HOLO_BINARY=../../build/holo bash src/holo-test holo $(sort $(wildcard test/??-*))
 
-install: default src/holorc src/holo-test util/autocomplete.bash util/autocomplete.zsh
+install: default conf/holorc conf/holorc.holo-files src/holo-test util/autocomplete.bash util/autocomplete.zsh
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files"
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files/base"
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files/provisioned"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/files"
-	install -D -m 0644 src/holorc             "$(DESTDIR)/etc/holorc"
+	install -D -m 0644 conf/holorc            "$(DESTDIR)/etc/holorc"
+	install -D -m 0644 conf/holorc.holo-files "$(DESTDIR)/etc/holorc.d/10-files"
 	install -D -m 0755 build/holo             "$(DESTDIR)/usr/bin/holo"
 	install -D -m 0755 build/holo-files       "$(DESTDIR)/usr/lib/holo/holo-files"
 	install -D -m 0755 src/holo-test          "$(DESTDIR)/usr/bin/holo-test"

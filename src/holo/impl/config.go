@@ -21,9 +21,11 @@
 package impl
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
@@ -47,18 +49,62 @@ type Configuration struct {
 	Plugins []*Plugin
 }
 
+//List config snippets in /etc/holorc.d.
+func listConfigSnippets() ([]string, error) {
+	dirPath := filepath.Join(RootDirectory(), "etc/holorc.d")
+	dir, err := os.Open(dirPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			//non-existence of the directory is acceptable
+			return nil, nil
+		}
+		return nil, err
+	}
+	fis, err := dir.Readdir(-1)
+	if err != nil {
+		return nil, err
+	}
+	var paths []string
+	for _, fi := range fis {
+		if !fi.Mode().IsDir() {
+			paths = append(paths, filepath.Join(dirPath, fi.Name()))
+		}
+	}
+	sort.Strings(paths)
+	return paths, nil
+}
+
+//The part of ReadConfiguration that reads all the holorc files.
+func readConfigLines() ([]string, error) {
+	//enumerate snippets
+	paths, err := listConfigSnippets()
+	if err != nil {
+		return nil, err
+	}
+	//holorc is read at the very end, after all snippets
+	paths = append(paths, filepath.Join(RootDirectory(), "etc/holorc"))
+
+	//read snippets in order
+	var lines []string
+	for _, path := range paths {
+		contents, err := ioutil.ReadFile(path)
+		if err != nil {
+			return nil, fmt.Errorf("cannot read %s: %s", path, err.Error())
+		}
+		lines = append(lines, strings.SplitN(strings.TrimSpace(string(contents)), "\n", -1)...)
+	}
+	return lines, nil
+}
+
 //ReadConfiguration reads the configuration file /etc/holorc.
 func ReadConfiguration() *Configuration {
-	path := filepath.Join(RootDirectory(), "etc/holorc")
-
-	contents, err := ioutil.ReadFile(path)
+	lines, err := readConfigLines()
 	if err != nil {
-		Errorf(Stderr, "cannot read %s: %s", path, err.Error())
+		Errorf(Stderr, err.Error())
 		return nil
 	}
 
 	var result Configuration
-	lines := strings.SplitN(strings.TrimSpace(string(contents)), "\n", -1)
 	for _, line := range lines {
 		//ignore comments and empty lines
 		line = strings.TrimSpace(line)
@@ -98,7 +144,7 @@ func ReadConfiguration() *Configuration {
 			}
 		} else {
 			//unknown line
-			Errorf(Stderr, "cannot parse %s: unknown command: %s", path, line)
+			Errorf(Stderr, "cannot parse configuration: unknown command: %s", line)
 			return nil
 		}
 	}

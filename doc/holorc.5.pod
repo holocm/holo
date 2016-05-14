@@ -2,7 +2,13 @@
 
 =head1 NAME
 
-holorc - configuration file for L<holo(8)>
+holorc, holorc.d - configuration file for L<holo(8)>
+
+=head1 SYNOPSIS
+
+    /etc/holorc
+
+    /etc/holorc.d/*
 
 =head1 DESCRIPTION
 
@@ -32,19 +38,18 @@ The plugin stores its state at F</var/lib/holo/$PLUGIN_ID/>.
 
 =back
 
+The holorc file can also be provided as snippets in F</etc/holorc.d/*>.
+Snippets will be parsed in alphabetical order, before the actual F</etc/holorc>
+is parsed.
+
 =head1 BEST PRACTICES
 
 Plugins are encouraged to add themselves to F</etc/holorc> at install time by
-installing a holoscript, as detailed in the L<holo-plugin-interface(7)>
-specification. If plugins are installed this way, you can observe this with the
-C<holo scan> command. For example:
+installing a holorc snippet. For example:
 
-    $ holo scan file:/etc/holorc
-
-    /etc/holorc
-        store at /var/lib/holo/files/base/etc/holorc
-        passthru /usr/share/holo/files/00-holo-users-groups/etc/holorc.holoscript
-        passthru /usr/share/holo/files/95-holo-run-scripts/etc/holorc.holoscript
+    $ cat /etc/holorc.d/20-users-groups
+    # This file is part of the holo-users-groups package.
+    plugin users-groups
 
 =head1 SEE ALSO
 

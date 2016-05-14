@@ -37,32 +37,15 @@ F</etc/holorc> (see L<holorc(5)>) by adding the line:
 
     plugin $PLUGIN_ID
 
-It is RECOMMENDED that plugins install a holoscript to achieve this:
+It is RECOMMENDED that plugins install a L<holorc(5)> snippet to achieve this:
 
-    $ cat /usr/share/holo/files/50-holo-foosql/etc/holorc.holoscript
-    #!/bin/sh
+    $ cat /etc/holorc.d/50-foosql
     # This file is part of the holo-foosql package.
-    cat
-    echo plugin foosql
+    plugin foosql
 
-Then add the following install/update/remove scripts to the plugin's package
-(function names may differ depending on the package format):
-
-    post_install() {
-        holo apply file:/etc/holorc
-    }
-    post_update() {
-        holo apply file:/etc/holorc
-    }
-    post_remove() {
-        mkdir /usr/share/holo/$PLUGIN_ID
-        holo apply file:/etc/holorc
-        rmdir /usr/share/holo/$PLUGIN_ID
-    }
-
-C<post_remove> is slightly more complicated because the
-C</usr/share/holo/$PLUGIN_ID> directory is already gone, but Holo will refuse to
-start up if it is missing and C<plugin $PLUGIN_ID> is still in the C<holorc>.
+Old versions of Holo (prior to 1.2) required that the F</etc/holorc> be
+modified via L<holo-files(8)> through the use of post-install/upgrade/remove
+scripts. This is no longer required if holorc snippets are used.
 
 =head2 Runtime environment
 

@@ -1,0 +1,2 @@
+# See man:holorc(5) for documentation.
+# Files below /etc/holorc.d behave like prepended to this file.

@@ -1,0 +1,5 @@
+
+Working on file:target/etc/foo.conf
+  store at target/var/lib/holo/files/base/etc/foo.conf
+     apply target/usr/share/holo/files/01-first/etc/foo.conf
+

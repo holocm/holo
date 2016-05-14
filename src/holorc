@@ -1,6 +1,0 @@
-# See man:holorc(5) for documentation.
-
-# holo-files comes with holo itself
-plugin files
-
-# add further plugins below this line
