@@ -1,4 +1,2 @@
-#!/bin/sh
 # This file is part of the holo-ssh-keys package.
-cat
-echo plugin ssh-keys
+plugin ssh-keys
