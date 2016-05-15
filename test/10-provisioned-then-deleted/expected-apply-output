@@ -1,0 +1,12 @@
+
+Working on group:test
+  found in target/usr/share/holo/users-groups/01-test.toml
+
+!! Entity has been deleted by user (use --force to restore)
+
+Working on user:test
+  found in target/usr/share/holo/users-groups/01-test.toml
+      with login group: users
+
+!! Entity has been deleted by user (use --force to restore)
+
