@@ -2,7 +2,7 @@
 Working on user:minimal
   found in target/usr/share/holo/users-groups/01-users.toml
 
-MOCK: useradd minimal
+MOCK: useradd --uid 999 minimal
 
 Working on user:new
   found in target/usr/share/holo/users-groups/01-users.toml

@@ -121,13 +121,17 @@ func (e *Entity) Apply(withForce bool) error {
 		}
 	}
 
-	//check if --force is required: either
-	//
-	//1. the entity has been provisioned and since been altered (i.e. compare
-	//   actual state and provisioned state)
-	//2. the entity has *not* been provisioned yet and the definition conflicts
-	//   with the current state (i.e. the base image)
+	//check if --force is required: either...
 	if !withForce {
+		//1. the entity has been provisioned and since been deleted
+		if provisionedState != nil && provisionedState.IsProvisioned() && !actualState.IsProvisioned() {
+			PrintCommandMessage("requires --force to restore\n")
+			return nil
+		}
+		//2. the entity has been provisioned and since been altered (i.e. compare
+		//   actual state and provisioned state)
+		//3. the entity has *not* been provisioned yet and the definition conflicts
+		//   with the current state (i.e. the base image)
 		_, conflicts := actualState.Merge(conflictCheckImage, MergeEmptyOnly)
 		if len(conflicts) > 0 {
 			PrintCommandMessage("requires --force to overwrite\n")
@@ -140,6 +144,11 @@ func (e *Entity) Apply(withForce bool) error {
 	//but make sure that we don't see a difference just because the definition
 	//does not define a particular attribute
 	desiredState, _ = desiredState.Merge(actualState, MergeEmptyOnly)
+	//but if no one knows what to do, re-use the provisioned state (this is
+	//important when restoring an entity that was deleted by someone else)
+	if provisionedState != nil {
+		desiredState, _ = desiredState.Merge(provisionedState, MergeEmptyOnly)
+	}
 
 	//check if changes are necessary
 	doNotApply := false

@@ -44,6 +44,6 @@ gid = 101
 [[user]]
 name = "test"
 uid = 1000
-group = "users"
 home = "/home/test"
+group = "users"
 shell = "/bin/bash"
