@@ -16,7 +16,6 @@ is needed as a runtime dependency. (Check `which useradd` to see if you have
 this installed already.) Once you're all set, the build is done with
 
 ```
-git submodule update --init --recursive     # if you cloned the Git repo
 make
 make check
 sudo make install
