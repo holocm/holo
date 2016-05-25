@@ -5,7 +5,7 @@
 Run-time dependencies for this repo:
 
 * `openssh`
-* `HOLO_API_VERSION=3`, satifsied by `holo>=1.1` (see [holo/PACKAGING.md](https://github.com/holocm/holo/blob/master/PACKAGING.md) for details)
+* `holo (>=1.2, <2.0)`
 
 Build-time dependencies for this repo:
 
@@ -14,18 +14,6 @@ Build-time dependencies for this repo:
 
 ## Install/update/remove scripts
 
-To register the plugin with Holo, include the following install/update/remove scripts, as described in [holo-plugin-interface(7)](https://github.com/holocm/holo/blob/master/doc/holo-plugin-interface.7.pod):
-
-```bash
-post_install() {
-    holo apply file:/etc/holorc
-}
-post_update() {
-    holo apply file:/etc/holorc
-}
-post_remove() {
-    mkdir /usr/share/holo/ssh-keys
-    holo apply file:/etc/holorc
-    rmdir /usr/share/holo/ssh-keys
-}
-```
+Older versions of holo-ssh-keys required that the `/etc/holorc` be modified
+with Holo through the use of install/update/remove scripts in the package. This
+is not necessary anymore.
