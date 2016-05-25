@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Upgrade
+Type = File
+Target = *
+
+[Action]
+Description = Checking for .pacnew files that can be resolved by Holo...
+When = PostTransaction
+Depends = holo
+Exec = /usr/lib/holo/alpm-hook-resolve-pacnew
+NeedsTargets
