@@ -1,2 +1,2 @@
 # This file is part of the holo-run-scripts package.
-echo plugin run-scripts
+plugin run-scripts
