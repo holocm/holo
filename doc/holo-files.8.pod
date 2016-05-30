@@ -50,9 +50,7 @@ example uses the default configuration for L<pacman(8)>, but enables the
 
     $ cat /usr/share/holo/files/20-enable-color/etc/pacman.conf.holoscript
     #!/bin/sh
-    # the pipe is needed when using multiple sed commands
-    sed 's/^#\s*Color$/Color/' |
-    sed 's/^#\s*TotalDownload$/TotalDownload/'
+    sed 's/^#\s*Color$/Color/; s/^#\s*TotalDownload$/TotalDownload/'
 
     $ sudo holo apply file:/etc/pacman.conf
 
