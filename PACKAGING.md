@@ -7,8 +7,8 @@ Holo and its plugins should be straight-forward.
 
 Run-time dependencies for this repo:
 
-* `git diff` is used by `holo-files` for file diffs. If you want to make this
-  an optional dependency, please mark it as "strongly suggested" etc.
+* `git diff` is used for file diffs. This was "strongly suggested" before, but
+  is now strictly required.
 
 Build-time dependencies for this repo:
 
