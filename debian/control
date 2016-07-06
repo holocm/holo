@@ -1,0 +1,16 @@
+Source: holo
+Section: admin
+Priority: optional
+Maintainer: Stefan Majewsky <holo-packaging@posteo.de>
+Build-Depends: debhelper (>=9), golang-go, perl
+Standards-Version: 3.9.8
+Homepage: http://www.holocm.org
+Vcs-Git: git://github.com/holocm/holo.git
+Vcs-Browser: https://github.com/holocm/holo
+
+Package: holo
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, git
+Description: Minimalistic configuration management
+ Holo builds on the system package manager and adds a minimal set of additional
+ features to manage a system's configuration.

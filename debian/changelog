@@ -1,0 +1,5 @@
+holo (1.2.1-1) UNRELEASED; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Stefan Majewsky <holo-packaging@posteo.de>  Wed, 06 Jul 2016 20:00:00 +0200
