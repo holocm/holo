@@ -4,12 +4,15 @@ default: build/man/holorc.5 build/man/holo-plugin-interface.7 build/man/holo-tes
 
 VERSION := $(shell ./util/find_version.sh)
 
+GO_BUILDFLAGS := -buildmode=pie
+GO_LDFLAGS    := -s -w
+
 prepare-build:
 	@mkdir -p build/man
 build/holo: src/holo/main.go src/holo/*/*.go
-	go build --ldflags "-s -w -X main.version=$(VERSION)" -o $@ $<
+	go build $(GO_BUILDFLAGS) --ldflags "$(GO_LDFLAGS) -X main.version=$(VERSION)" -o $@ $<
 build/holo-files: src/holo-files/main.go src/holo-files/*/*.go
-	go build --ldflags "-s -w" -o $@ $<
+	go build $(GO_BUILDFLAGS) --ldflags "$(GO_LDFLAGS)" -o $@ $<
 
 # manpages are generated using pod2man (which comes with Perl and therefore
 # should be readily available on almost every Unix system)
