@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # When run in the repository root directory, prints the application version.
 #

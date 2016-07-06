@@ -43,4 +43,9 @@ install: default conf/holorc conf/holorc.holo-files src/holo-test util/autocompl
 	install -D -m 0644 build/man/holo-plugin-interface.7 "$(DESTDIR)/usr/share/man/man7/holo-plugin-interface.7"
 	env DESTDIR=$(DESTDIR) ./src/distribution-integration/install.sh
 
-.PHONY: prepare-build test check install
+clean:
+	rm -fr -- build/holo build/holo-files build/man test/*/{target,tree} test/*/{colored-,}{apply,apply-force,diff,scan}-output
+	rm -fr -- build/holo build/holo-files build/man
+	rm -fr -- test/*/target test/*/tree test/*/[acds]*-output
+
+.PHONY: prepare-build test check install clean
