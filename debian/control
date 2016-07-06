@@ -11,6 +11,15 @@ Vcs-Browser: https://github.com/holocm/holo
 Package: holo
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, git
+Provides: holo-files
 Description: Minimalistic configuration management
  Holo builds on the system package manager and adds a minimal set of additional
  features to manage a system's configuration.
+ .
+ When using Holo, configuration is distributed as Debian packages, and Holo
+ aids the package manager in all the tasks that the package manager does not do
+ by itself: resolving file conflicts between packages, creating users and
+ groups, distributing SSH keys etc.
+ .
+ These actions are performed by Holo plugins. The holo-files plugin is included
+ with this package, other plugins are available separately.
