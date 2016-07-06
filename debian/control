@@ -5,7 +5,7 @@ Maintainer: Stefan Majewsky <holo-packaging@posteo.de>
 Build-Depends: debhelper (>=9), golang-go, perl
 Standards-Version: 3.9.8
 Homepage: http://www.holocm.org
-Vcs-Git: git://github.com/holocm/holo.git
+Vcs-Git: https://github.com/holocm/holo.git
 Vcs-Browser: https://github.com/holocm/holo
 
 Package: holo
