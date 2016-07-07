@@ -2,11 +2,10 @@
 
 # `make test` fails when run under fakeroot (due to bugs in git-diff),
 # so run the test during the build phase which happens outside of fakeroot
-build:
-	@make GO_BUILDFLAGS=-buildmode=pie
-	@make test
-test:
-	@true
+override_dh_auto_build:
+	dh_auto_build -- GO_BUILDFLAGS=-buildmode=pie
+	dh_auto_test
+override_dh_auto_test:
 
 %:
 	dh $@
