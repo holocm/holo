@@ -12,6 +12,6 @@ Build-time dependencies for this repo:
 
 ## Install/update/remove scripts
 
-Older versions of holo-users-groups required that the `/etc/holorc` be modified
+Older versions of holo-run-scripts required that the `/etc/holorc` be modified
 with Holo through the use of install/update/remove scripts in the package. This
 is not necessary anymore.
