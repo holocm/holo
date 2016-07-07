@@ -4,7 +4,7 @@ default: build/man/holorc.5 build/man/holo-plugin-interface.7 build/man/holo-tes
 
 VERSION := $(shell ./util/find_version.sh)
 
-GO_BUILDFLAGS := -buildmode=pie
+GO_BUILDFLAGS :=
 GO_LDFLAGS    := -s -w
 
 prepare-build:

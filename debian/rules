@@ -3,7 +3,7 @@
 # `make test` fails when run under fakeroot (due to bugs in git-diff),
 # so run the test during the build phase which happens outside of fakeroot
 build:
-	@make
+	@make GO_BUILDFLAGS=-buildmode=pie
 	@make test
 test:
 	@true
