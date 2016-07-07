@@ -1,4 +1,5 @@
-#!/bin/bash
+# bash completion for holo(8)
+
 _holo_valid_selectors() {
     holo scan --porcelain | sed -n '/^ENTITY:\|^SOURCE:/ { s/^ENTITY: \|^SOURCE: //; p }' | sort -u
 }
