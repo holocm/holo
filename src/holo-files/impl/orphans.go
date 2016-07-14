@@ -41,6 +41,11 @@ func (target *TargetFile) scanOrphanedTargetBase() (theTargetPath, strategy, ass
 
 //handleOrphanedTargetBase cleans up an orphaned target base.
 func (target *TargetFile) handleOrphanedTargetBase() error {
+	//TODO: This function bails out when any os.Remove() goes wrong, but it
+	//should instead keep going and report all errors. (This is more important
+	//here than in the usual apply logic, because once the target base is gone,
+	//this entity will vanish from our view.)
+
 	targetPath, strategy, _ := target.scanOrphanedTargetBase()
 	targetBasePath := target.PathIn(common.TargetBaseDirectory())
 
@@ -58,8 +63,24 @@ func (target *TargetFile) handleOrphanedTargetBase() error {
 			}
 		}
 	case "restore":
-		//target is still there - restore the target base
-		err := common.CopyFile(targetBasePath, targetPath)
+		//target is still there - restore the target base, *but* before that,
+		//check if there is an updated target base
+		updatedTBPath, reportedTBPath, err := platform.Implementation().FindUpdatedTargetBase(targetPath)
+		if err != nil {
+			return err
+		}
+		if updatedTBPath != "" {
+			fmt.Printf(">> found updated target base: %s -> %s", reportedTBPath, targetBasePath)
+			//use this target base instead of the one in the TargetBaseDirectory
+			err = os.Remove(targetBasePath)
+			if err != nil {
+				return err
+			}
+			targetBasePath = updatedTBPath
+		}
+
+		//now really restore the target base
+		err = common.CopyFile(targetBasePath, targetPath)
 		if err != nil {
 			return err
 		}
