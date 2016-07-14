@@ -1,5 +1,13 @@
 >> ./etc/holorc = symlink
 ../../../holorc
+>> ./etc/repofile-deleted-with-dpkg-dist.conf = regular
+ggg
+hhh
+jjj
+>> ./etc/repofile-deleted-with-dpkg-old.conf = regular
+ggg
+hhh
+jjj
 >> ./etc/targetfile-with-dpkg-dist.conf = regular
 d
 e

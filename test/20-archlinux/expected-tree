@@ -1,5 +1,9 @@
 >> ./etc/holorc = symlink
 ../../../holorc
+>> ./etc/repofile-deleted-with-pacnew.conf = regular
+ggg
+hhh
+jjj
 >> ./etc/targetfile-with-pacnew.conf = regular
 d
 e

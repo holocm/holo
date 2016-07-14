@@ -1,5 +1,13 @@
 >> ./etc/holorc = symlink
 ../../../holorc
+>> ./etc/repofile-deleted-with-rpmnew.conf = regular
+ggg
+hhh
+jjj
+>> ./etc/repofile-deleted-with-rpmsave.conf = regular
+ggg
+hhh
+jjj
 >> ./etc/targetfile-with-rpmnew.conf = regular
 d
 e

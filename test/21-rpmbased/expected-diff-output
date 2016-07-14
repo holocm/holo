@@ -1,3 +1,11 @@
+diff --holo target/var/lib/holo/files/provisioned/etc/repofile-deleted-with-rpmsave.conf target/etc/repofile-deleted-with-rpmsave.conf
+--- target/var/lib/holo/files/provisioned/etc/repofile-deleted-with-rpmsave.conf
++++ target/etc/repofile-deleted-with-rpmsave.conf
+@@ -1,3 +1,3 @@
+ ggg
+ hhh
+-iii
++jjj
 diff --holo target/var/lib/holo/files/provisioned/etc/targetfile-with-rpmsave.conf target/etc/targetfile-with-rpmsave.conf
 --- target/var/lib/holo/files/provisioned/etc/targetfile-with-rpmsave.conf
 +++ target/etc/targetfile-with-rpmsave.conf
