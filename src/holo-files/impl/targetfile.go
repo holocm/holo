@@ -103,24 +103,29 @@ var ErrNeedForceToRestore = errors.New("NeedForceToRestore")
 
 //Apply implements the common.Entity interface.
 func (target *TargetFile) Apply(withForce bool) (skipReport, needForceToOverwrite, needForceToRestore bool) {
-	var err error
-
 	if target.orphaned {
-		err = target.handleOrphanedTargetBase()
+		errs := target.handleOrphanedTargetBase()
 		skipReport = false
+		needForceToOverwrite = false
+		needForceToRestore = false
+
+		for _, err := range errs {
+			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+		}
 	} else {
+		var err error
 		skipReport, err = apply(target, withForce)
-	}
 
-	//special cases for errors that signal command messages
-	needForceToOverwrite = err == ErrNeedForceToOverwrite
-	needForceToRestore = err == ErrNeedForceToRestore
-	if needForceToRestore || needForceToOverwrite {
-		err = nil
-	}
+		//special cases for errors that signal command messages
+		needForceToOverwrite = err == ErrNeedForceToOverwrite
+		needForceToRestore = err == ErrNeedForceToRestore
+		if needForceToRestore || needForceToOverwrite {
+			err = nil
+		}
 
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+		}
 	}
 	return
 }

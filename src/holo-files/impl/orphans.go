@@ -40,14 +40,16 @@ func (target *TargetFile) scanOrphanedTargetBase() (theTargetPath, strategy, ass
 }
 
 //handleOrphanedTargetBase cleans up an orphaned target base.
-func (target *TargetFile) handleOrphanedTargetBase() error {
-	//TODO: This function bails out when any os.Remove() goes wrong, but it
-	//should instead keep going and report all errors. (This is more important
-	//here than in the usual apply logic, because once the target base is gone,
-	//this entity will vanish from our view.)
-
+func (target *TargetFile) handleOrphanedTargetBase() []error {
 	targetPath, strategy, _ := target.scanOrphanedTargetBase()
 	targetBasePath := target.PathIn(common.TargetBaseDirectory())
+
+	var errs []error
+	appendError := func(err error) {
+		if err != nil {
+			errs = append(errs, err)
+		}
+	}
 
 	switch strategy {
 	case "delete":
@@ -57,46 +59,32 @@ func (target *TargetFile) handleOrphanedTargetBase() error {
 		cleanupTargets := platform.Implementation().AdditionalCleanupTargets(targetPath)
 		for _, otherFile := range cleanupTargets {
 			fmt.Printf(">> also deleting %s\n", otherFile)
-			err := os.Remove(otherFile)
-			if err != nil {
-				return err
-			}
+			appendError(os.Remove(otherFile))
 		}
 	case "restore":
 		//target is still there - restore the target base, *but* before that,
 		//check if there is an updated target base
 		updatedTBPath, reportedTBPath, err := platform.Implementation().FindUpdatedTargetBase(targetPath)
-		if err != nil {
-			return err
-		}
+		appendError(err)
 		if updatedTBPath != "" {
 			fmt.Printf(">> found updated target base: %s -> %s", reportedTBPath, targetPath)
 			//use this target base instead of the one in the TargetBaseDirectory
-			err = os.Remove(targetBasePath)
-			if err != nil {
-				return err
-			}
+			appendError(os.Remove(targetBasePath))
 			targetBasePath = updatedTBPath
 		}
 
 		//now really restore the target base
-		err = common.CopyFile(targetBasePath, targetPath)
-		if err != nil {
-			return err
-		}
+		appendError(common.CopyFile(targetBasePath, targetPath))
 	}
 
 	//target is not managed by Holo anymore, so delete the provisioned target and the target base
 	lastProvisionedPath := target.PathIn(common.ProvisionedDirectory())
 	err := os.Remove(lastProvisionedPath)
 	if err != nil && !os.IsNotExist(err) {
-		return err
+		appendError(err)
 	}
-	err = os.Remove(targetBasePath)
-	if err != nil {
-		return err
-	}
+	appendError(os.Remove(targetBasePath))
 
 	//TODO: cleanup empty directories below TargetBaseDirectory() and ProvisionedDirectory()
-	return nil
+	return errs
 }
