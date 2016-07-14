@@ -2,12 +2,12 @@
 Scrubbing file:target/etc/repofile-deleted-with-dpkg-dist.conf (all repository files were deleted)
   restore target/var/lib/holo/files/base/etc/repofile-deleted-with-dpkg-dist.conf
 
->> found updated target base: target/etc/targetfile-with-dpkg-dist.conf.dpkg-dist -> target/etc/targetfile-with-dpkg-dist.conf
+>> found updated target base: target/etc/repofile-deleted-with-dpkg-dist.conf.dpkg-dist -> target/etc/repofile-deleted-with-dpkg-dist.conf
 
 Scrubbing file:target/etc/repofile-deleted-with-dpkg-old.conf (all repository files were deleted)
   restore target/var/lib/holo/files/base/etc/repofile-deleted-with-dpkg-old.conf
 
->> removed target/etc/targetfile-with-dpkg-old.conf.dpkg-old
+>> removed target/etc/repofile-deleted-with-dpkg-old.conf.dpkg-old
 
 Working on file:target/etc/targetfile-with-dpkg-dist.conf
   store at target/var/lib/holo/files/base/etc/targetfile-with-dpkg-dist.conf

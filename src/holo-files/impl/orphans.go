@@ -70,7 +70,7 @@ func (target *TargetFile) handleOrphanedTargetBase() error {
 			return err
 		}
 		if updatedTBPath != "" {
-			fmt.Printf(">> found updated target base: %s -> %s", reportedTBPath, targetBasePath)
+			fmt.Printf(">> found updated target base: %s -> %s", reportedTBPath, targetPath)
 			//use this target base instead of the one in the TargetBaseDirectory
 			err = os.Remove(targetBasePath)
 			if err != nil {
