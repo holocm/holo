@@ -46,11 +46,11 @@ previous application step). The target contents will be piped through the
 script. This is typically used when the default configuration for an
 application shall be used, but with some minor modifications. The following
 example uses the default configuration for L<pacman(8)>, but enables the
-"Color" option:
+"Color" and "TotalDownload" option:
 
     $ cat /usr/share/holo/files/20-enable-color/etc/pacman.conf.holoscript
     #!/bin/sh
-    sed 's/^#\s*Color$/Color/'
+    sed 's/^#\s*Color$/Color/; s/^#\s*TotalDownload$/TotalDownload/'
 
     $ sudo holo apply file:/etc/pacman.conf
 
