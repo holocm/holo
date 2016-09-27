@@ -1,12 +1,13 @@
 default: prepare-build build/holo-users-groups build/man/holo-users-groups.8
 
 VERSION := $(shell ./util/find_version.sh)
-GOPATH := # unset (to force people to use golangvend)
+# force people to use golangvend
+GOPATH := $(shell pwd)/.gopath
 
 prepare-build:
 	@mkdir -p build/man
 build/holo-users-groups: src/*.go
-	go build --ldflags "-s -w" -o $@ ./src
+	go build --ldflags "-s -w" -o $@ github.com/holocm/holo-users-groups/src
 
 # manpages are generated using pod2man (which comes with Perl and therefore
 # should be readily available on almost every Unix system)
