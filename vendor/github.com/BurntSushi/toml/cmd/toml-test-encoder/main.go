@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"time"
 
-	"../../../../../../localdeps/github.com/BurntSushi/toml"
+	"github.com/BurntSushi/toml"
 )
 
 func init() {

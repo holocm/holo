@@ -26,7 +26,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"../localdeps/github.com/BurntSushi/toml"
+	"github.com/BurntSushi/toml"
 )
 
 //MergeMethod is the second argument for EntityDefinition.Merge().

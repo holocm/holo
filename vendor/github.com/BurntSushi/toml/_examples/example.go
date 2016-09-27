@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"../../../../../localdeps/github.com/BurntSushi/toml"
+	"github.com/BurntSushi/toml"
 )
 
 type tomlConfig struct {

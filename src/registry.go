@@ -27,7 +27,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"../localdeps/github.com/BurntSushi/toml"
+	"github.com/BurntSushi/toml"
 )
 
 //ImageDir is a path to a directory containing serialized entity definitions.

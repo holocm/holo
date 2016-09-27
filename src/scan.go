@@ -28,7 +28,7 @@ import (
 	"sort"
 	"strings"
 
-	"../localdeps/github.com/BurntSushi/toml"
+	"github.com/BurntSushi/toml"
 )
 
 //Scan returns a slice of all the defined entities.

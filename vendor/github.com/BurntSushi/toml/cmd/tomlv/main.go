@@ -10,7 +10,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"../../../../../../localdeps/github.com/BurntSushi/toml"
+	"github.com/BurntSushi/toml"
 )
 
 var (
