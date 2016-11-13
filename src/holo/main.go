@@ -54,12 +54,10 @@ func main() {
 	//check that it is a known command word
 	var command func([]*impl.Entity, map[int]bool)
 	knownOpts := make(map[string]int)
-	requiresLockFile := false
 	switch os.Args[1] {
 	case "apply":
 		command = commandApply
 		knownOpts = map[string]int{"-f": optionApplyForce, "--force": optionApplyForce}
-		requiresLockFile = true
 	case "diff":
 		command = commandDiff
 	case "scan":
@@ -150,18 +148,9 @@ func main() {
 			isEntityID[entity.EntityID()] = true
 		}
 
-		//ensure that we're the only Holo instance
-		if requiresLockFile {
-			impl.AcquireLockfile()
-		}
-
 		//execute command
 		command(entities, options)
 
-		//cleanup
-		if requiresLockFile {
-			impl.ReleaseLockfile()
-		}
 	}) //end of WithCacheDirectory
 }
 
@@ -175,6 +164,7 @@ func commandHelp() {
 }
 
 func commandApply(entities []*impl.Entity, options map[int]bool) {
+	impl.AcquireLockfile()
 	withForce := options[optionApplyForce]
 	for _, entity := range entities {
 		entity.Apply(withForce)
@@ -183,6 +173,7 @@ func commandApply(entities []*impl.Entity, options map[int]bool) {
 		impl.Stdout.EndParagraph()
 		os.Stdout.Sync()
 	}
+	impl.ReleaseLockfile()
 }
 
 func commandScan(entities []*impl.Entity, options map[int]bool) {
