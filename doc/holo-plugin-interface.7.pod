@@ -25,12 +25,13 @@ be interpreted as described in L<RFC 2119|https://tools.ietf.org/html/rfc2119>.
 =head2 Plugin discovery
 
 Each plugin MUST have an ID following the format C<[a-z0-9][a-z0-9-]*>. When
-choosing the plugin ID, redundant verbs like C<manage> or C<provision> SHOULD be
-avoided. For example, an appropriate plugin ID for the aforementioned FooSQL
-plugin would be C<foosql>. The things provisioned MAY be referenced in plural
-form if disambiguation is required. For example, if FooSQL is configured by
-multiple plugins, appropriate plugin IDs could include C<foosql-databases> and
-C<foosql-users>.
+choosing the plugin ID, redundant verbs like C<manage> or C<provision> SHOULD
+be avoided. A good plugin ID is just the name of the software being configured
+by the plugin. For example, an appropriate plugin ID for the aforementioned
+FooSQL plugin would be C<foosql>. The things provisioned MAY be referenced in
+plural form if disambiguation is required. For example, if FooSQL is configured
+by multiple plugins, appropriate plugin IDs could include C<foosql-databases>
+and C<foosql-users>.
 
 Plugins are not discovered automatically. They MUST be referenced in
 F</etc/holorc> (see L<holorc(5)>) by adding the line:
