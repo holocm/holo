@@ -110,7 +110,7 @@ func executeNonScanCommand() error {
 		}
 	}
 	if selectedEntity == nil {
-		return fmt.Errorf("unknown entity ID \"%s\"\n", entityID)
+		return fmt.Errorf("unknown entity ID \"%s\"", entityID)
 	}
 
 	switch os.Args[1] {

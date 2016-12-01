@@ -63,7 +63,7 @@ func (e *Entity) Apply(withForce bool) error {
 	//check if this entity exists already
 	actualState, err := def.GetProvisionedState()
 	if err != nil {
-		return fmt.Errorf("Cannot read %s database: %s\n", def.TypeName(), err.Error())
+		return fmt.Errorf("cannot read %s database: %s", def.TypeName(), err.Error())
 	}
 
 	//special handling for orphaned entities
@@ -179,7 +179,7 @@ func (e *Entity) Apply(withForce bool) error {
 	//record new actual state as provisioned state
 	actualState, err = def.GetProvisionedState()
 	if err != nil {
-		return fmt.Errorf("Cannot read %s database: %s\n", def.TypeName(), err.Error())
+		return fmt.Errorf("cannot read %s database: %s", def.TypeName(), err.Error())
 	}
 	return ProvisionedImageDir.SaveImage(actualState)
 }
