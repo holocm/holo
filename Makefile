@@ -2,9 +2,7 @@ default: prepare-build build/holo-users-groups build/man/holo-users-groups.8
 
 VERSION := $(shell ./util/find_version.sh)
 # force people to use golangvend
-GOPATH := $(shell pwd)/.gopath
-# compatibility with Go 1.5
-GOCC := env GO15VENDOREXPERIMENT=1 go
+GOCC := env GOPATH=$(CURDIR)/.gopath go
 
 prepare-build:
 	@mkdir -p build/man
