@@ -89,7 +89,10 @@ when it exits.
 
 Future versions of Holo may start to choose these paths differently (or allow
 the user to do so), but the default values are stable and can safely be
-communicated to users in documentation.
+communicated to users in documentation. Because these paths can be chosen by
+Holo, plugins SHALL always use the paths in the environment variables rather
+than trying to compute them by themselves. The paths are always given as
+absolute paths, and are located below C<$HOLO_ROOT_DIR> during test cases.
 
 =head2 The C<info> operation
 
