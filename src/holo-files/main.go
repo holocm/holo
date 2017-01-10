@@ -28,15 +28,6 @@ import (
 	"./impl"
 )
 
-// #include <locale.h>
-import "C"
-
-func init() {
-	//Holo requires a neutral locale, esp. for deterministic sorting of file paths
-	lcAll := C.int(0)
-	C.setlocale(lcAll, C.CString("C"))
-}
-
 func main() {
 	//the "info" action does not require any scanning
 	if os.Args[1] == "info" {
