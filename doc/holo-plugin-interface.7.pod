@@ -141,7 +141,7 @@ At the end of scanning, the plugin shall provide on stdout a report for each of
 the entities found, in the following form (this example being from the C<files>
 plugin from core Holo):
 
-    ENTITY: /etc/locale.gen
+    ENTITY: file:/etc/locale.gen
     store at: /var/lib/holo/base/etc/locale.gen
     SOURCE: /usr/share/holo/files/00-base/etc/locale.gen
     apply: /usr/share/holo/files/00-base/etc/locale.gen
@@ -189,7 +189,7 @@ describing the action taken, and a reason for doing so. For example, the
 C<files> plugin uses the action verb C<Scrubbing> to signal that a deleted
 configuration file is being cleaned up after.
 
-    ENTITY: target/etc/targetfile-deleted.conf
+    ENTITY: file:target/etc/targetfile-deleted.conf
     ACTION: Scrubbing (target was deleted)
     delete: target/var/lib/holo/files/base/etc/targetfile-deleted.conf
 
