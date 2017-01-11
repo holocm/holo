@@ -6,23 +6,27 @@ default: $(addprefix build/,$(bins))
 default: $(addprefix build/man/,$(mans))
 .PHONY: default
 
-VERSION := $(shell ./util/find_version.sh)
-
 GO            := GOPATH=$(CURDIR)/.go-workspace GOBIN=$(CURDIR)/build go
 GO_BUILDFLAGS :=
-GO_LDFLAGS    := -s -w -X main.version=$(VERSION)
+GO_LDFLAGS    := -s -w
 
 prepare-build:
 	@mkdir -p build/man
 
-$(addprefix %/,$(bins)): FORCE
+.version: FORCE
+	./util/find_version.sh | util/write-ifchanged $@
+
+cmd/holo/version.go: .version
+	printf 'package main\n\nfunc init() {\n\tversion = "%s"\n}\n' "$$(cat $<)" > $@
+
+$(addprefix %/,$(bins)): FORCE cmd/holo/version.go
 	$(GO) install $(GO_BUILDFLAGS) --ldflags '$(GO_LDFLAGS)' $(addprefix github.com/holocm/holo/cmd/,$(bins))
 
 # manpages are generated using pod2man (which comes with Perl and therefore
 # should be readily available on almost every Unix system)
-build/man/%: doc/%.pod
+build/man/%: doc/%.pod .version
 	pod2man --name="$(shell echo $* | cut -d. -f1)" --section=$(shell echo $* | cut -d. -f2) \
-		--center="Configuration Management" --release="Holo $(VERSION)" \
+		--center="Configuration Management" --release="Holo $$(cat .version)" \
 		$< $@
 
 test: check # just a synonym
@@ -54,6 +58,7 @@ install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomp
 
 clean: clean-tests
 	rm -fr -- build/holo build/holo-files build/man .go-workspace/pkg
+	rm -f -- .version cmd/holo/version.go
 clean-tests:
 	rm -fr -- test/*/{target,tree,{colored-,}{apply,apply-force,diff,scan}-output}
 
