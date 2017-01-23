@@ -10,6 +10,8 @@ default: $(addprefix build/man/,$(mans))
 GO            := GOPATH=$(CURDIR)/.go-workspace GOBIN=$(CURDIR)/build go
 GO_BUILDFLAGS :=
 GO_LDFLAGS    := -s -w
+GO_TESTFLAGS  := -covermode=count
+GO_DEPS       := $(GO) list -f '{{.ImportPath}}{{"\n"}}{{join .Deps "\n"}}'
 
 prepare-build:
 	@mkdir -p build/man
@@ -22,6 +24,8 @@ cmd/holo/version.go: .version
 
 $(addprefix %/,$(bins)): FORCE cmd/holo/version.go
 	$(GO) install $(GO_BUILDFLAGS) --ldflags '$(GO_LDFLAGS)' $(addprefix $(pkg)/cmd/,$(bins))
+build/%.test: build/% cmd/%/main_test.go
+	$(GO) test -c -o $@ $(GO_TESTFLAGS) -coverpkg $$($(GO_DEPS) $(pkg)/cmd/$*|grep ^$(pkg)|tr '\n' ,|sed 's/,$$//') $(pkg)/cmd/$*
 
 # manpages are generated using pod2man (which comes with Perl and therefore
 # should be readily available on almost every Unix system)
@@ -31,10 +35,10 @@ build/man/%: doc/%.pod .version
 		$< $@
 
 test: check # just a synonym
-check: default clean-tests
+check: default clean-tests $(foreach b,$(bins),build/$b.test)
 	@if s="$$(gofmt -l cmd 2>/dev/null)"                        && test -n "$$s"; then printf ' => %s\n%s\n' gofmt  "$$s"; false; fi
 	@if s="$$(find cmd -type d -exec golint {} \; 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
-	@$(GO) test $(pkg)/cmd/holo/internal
+	@$(GO) test $(GO_TESTFLAGS) $(pkg)/cmd/holo/internal
 	@env HOLO_BINARY=../../build/holo bash util/holo-test holo $(sort $(wildcard test/??-*))
 
 install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomplete.bash util/autocomplete.zsh
