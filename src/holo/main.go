@@ -164,7 +164,10 @@ func commandHelp() {
 }
 
 func commandApply(entities []*impl.Entity, options map[int]bool) {
+	//ensure that we're the only Holo instance
 	impl.AcquireLockfile()
+	defer impl.ReleaseLockfile()
+
 	withForce := options[optionApplyForce]
 	for _, entity := range entities {
 		entity.Apply(withForce)
@@ -173,7 +176,6 @@ func commandApply(entities []*impl.Entity, options map[int]bool) {
 		impl.Stdout.EndParagraph()
 		os.Stdout.Sync()
 	}
-	impl.ReleaseLockfile()
 }
 
 func commandScan(entities []*impl.Entity, options map[int]bool) {
