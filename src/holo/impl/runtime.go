@@ -28,7 +28,10 @@ import (
 
 var cachePath string
 
-func init() {
+//WithCacheDirectory executes the worker function after having set up a cache
+//directory, and ensures that the cache directory is cleaned up afterwards.
+func WithCacheDirectory(worker func()) {
+	//choose
 	rootDir := RootDirectory()
 	if rootDir == "/" {
 		//in productive mode, honor the TMPDIR variable (through os.TempDir)
@@ -41,30 +44,30 @@ func init() {
 		cachePath = filepath.Join(rootDir, "tmp/holo")
 	}
 
-	err := doInit()
+	//if the cache directory exists from a previous run, remove it recursively
+	err := os.RemoveAll(cachePath)
+	if err == nil {
+		//create the cache directory
+		err = os.MkdirAll(cachePath, 0700)
+	}
 	if err != nil {
 		Errorf(Stderr, err.Error())
 		os.Exit(255)
 	}
-}
 
-func doInit() error {
-	//if the cache directory exists from a previous run, remove it recursively
-	err := os.RemoveAll(cachePath)
-	if err != nil {
-		return err
-	}
+	//ensure that the cache is removed even if worker() panics
+	defer func() {
+		_ = os.RemoveAll(cachePath) //failure to cleanup is non-fatal
+		cachePath = ""
+	}()
 
-	//create the cache directory
-	return os.MkdirAll(cachePath, 0700)
+	worker()
 }
 
 //CachePath returns the path below which plugin cache directories can be allocated.
 func CachePath() string {
+	if cachePath == "" {
+		panic("Tried to use cachePath outside WithCacheDirectory() call!")
+	}
 	return cachePath
-}
-
-//CleanupRuntimeCache tries to cleanup the CachePath().
-func CleanupRuntimeCache() {
-	_ = os.RemoveAll(cachePath) //fail silently
 }

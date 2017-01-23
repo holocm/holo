@@ -76,95 +76,93 @@ func main() {
 		return
 	}
 
-	//load configuration
-	config := impl.ReadConfiguration()
-	if config == nil {
-		//some fatal error occurred - it was already reported, so just exit
-		impl.CleanupRuntimeCache()
-		os.Exit(255)
-	}
-
-	//parse command line
-	options := make(map[int]bool)
-	selectors := make([]*Selector, 0, len(os.Args)-2)
-
-	args := os.Args[2:]
-	for _, arg := range args {
-		//either it's a known option for this subcommand...
-		if value, ok := knownOpts[arg]; ok {
-			options[value] = true
-			continue
-		}
-		//...or it must be a selector
-		selectors = append(selectors, &Selector{String: arg, Used: false})
-	}
-
-	//ask all plugins to scan for entities
-	var entities []*impl.Entity
-	for _, plugin := range config.Plugins {
-		pluginEntities := plugin.Scan()
-		if pluginEntities == nil {
+	impl.WithCacheDirectory(func() {
+		//load configuration
+		config := impl.ReadConfiguration()
+		if config == nil {
 			//some fatal error occurred - it was already reported, so just exit
-			impl.CleanupRuntimeCache()
 			os.Exit(255)
 		}
-		entities = append(entities, pluginEntities...)
-		impl.Stdout.EndParagraph()
-	}
 
-	//if there are selectors, check which entities have been selected by them
-	if len(selectors) > 0 {
-		selectedEntities := make([]*impl.Entity, 0, len(entities))
-		for _, entity := range entities {
-			isEntitySelected := false
-			for _, selector := range selectors {
-				if entity.MatchesSelector(selector.String) {
-					isEntitySelected = true
-					selector.Used = true
-					//NOTE: don't break from the selectors loop; we want to
-					//look at every selector because this loop also verifies
-					//that selectors are valid
+		//parse command line
+		options := make(map[int]bool)
+		selectors := make([]*Selector, 0, len(os.Args)-2)
+
+		args := os.Args[2:]
+		for _, arg := range args {
+			//either it's a known option for this subcommand...
+			if value, ok := knownOpts[arg]; ok {
+				options[value] = true
+				continue
+			}
+			//...or it must be a selector
+			selectors = append(selectors, &Selector{String: arg, Used: false})
+		}
+
+		//ask all plugins to scan for entities
+		var entities []*impl.Entity
+		for _, plugin := range config.Plugins {
+			pluginEntities := plugin.Scan()
+			if pluginEntities == nil {
+				//some fatal error occurred - it was already reported, so just exit
+				os.Exit(255)
+			}
+			entities = append(entities, pluginEntities...)
+			impl.Stdout.EndParagraph()
+		}
+
+		//if there are selectors, check which entities have been selected by them
+		if len(selectors) > 0 {
+			selectedEntities := make([]*impl.Entity, 0, len(entities))
+			for _, entity := range entities {
+				isEntitySelected := false
+				for _, selector := range selectors {
+					if entity.MatchesSelector(selector.String) {
+						isEntitySelected = true
+						selector.Used = true
+						//NOTE: don't break from the selectors loop; we want to
+						//look at every selector because this loop also verifies
+						//that selectors are valid
+					}
+				}
+				if isEntitySelected {
+					selectedEntities = append(selectedEntities, entity)
 				}
 			}
-			if isEntitySelected {
-				selectedEntities = append(selectedEntities, entity)
+			entities = selectedEntities
+		}
+
+		//were there unrecognized selectors?
+		hasUnrecognizedArgs := false
+		for _, selector := range selectors {
+			if !selector.Used {
+				fmt.Fprintf(os.Stderr, "Unrecognized argument: %s\n", selector.String)
+				hasUnrecognizedArgs = true
 			}
 		}
-		entities = selectedEntities
-	}
-
-	//were there unrecognized selectors?
-	hasUnrecognizedArgs := false
-	for _, selector := range selectors {
-		if !selector.Used {
-			fmt.Fprintf(os.Stderr, "Unrecognized argument: %s\n", selector.String)
-			hasUnrecognizedArgs = true
+		if hasUnrecognizedArgs {
+			os.Exit(255)
 		}
-	}
-	if hasUnrecognizedArgs {
-		impl.CleanupRuntimeCache()
-		os.Exit(255)
-	}
 
-	//build a lookup hash for all known entities (for argument parsing)
-	isEntityID := make(map[string]bool, len(entities))
-	for _, entity := range entities {
-		isEntityID[entity.EntityID()] = true
-	}
+		//build a lookup hash for all known entities (for argument parsing)
+		isEntityID := make(map[string]bool, len(entities))
+		for _, entity := range entities {
+			isEntityID[entity.EntityID()] = true
+		}
 
-	//ensure that we're the only Holo instance
-	if requiresLockFile {
-		impl.AcquireLockfile()
-	}
+		//ensure that we're the only Holo instance
+		if requiresLockFile {
+			impl.AcquireLockfile()
+		}
 
-	//execute command
-	command(entities, options)
+		//execute command
+		command(entities, options)
 
-	//cleanup
-	if requiresLockFile {
-		impl.ReleaseLockfile()
-	}
-	impl.CleanupRuntimeCache()
+		//cleanup
+		if requiresLockFile {
+			impl.ReleaseLockfile()
+		}
+	}) //end of WithCacheDirectory
 }
 
 func commandHelp() {
