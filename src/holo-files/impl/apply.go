@@ -149,7 +149,7 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 		repoEntries = repoEntries[firstStep:]
 	}
 	for _, repoFile := range repoEntries {
-		buffer, err = GetApplyImpl(repoFile)(buffer)
+		buffer, err = repoFile.ApplyTo(buffer)
 		if err != nil {
 			return false, err
 		}

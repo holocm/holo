@@ -21,7 +21,10 @@
 package impl
 
 import (
+	"bytes"
 	"fmt"
+	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -88,6 +91,36 @@ func (file RepoFile) ApplicationStrategy() string {
 //application steps can be skipped completely.
 func (file RepoFile) DiscardsPreviousBuffer() bool {
 	return file.ApplicationStrategy() == "apply"
+}
+
+//ApplyTo applies this RepoFile to a file buffer, as part of the `holo apply`
+//algorithm. Regular repofiles will replace the file buffer, while a holoscript
+//will be executed on the file buffer to obtain the new buffer.
+func (file RepoFile) ApplyTo(buffer *FileBuffer) (*FileBuffer, error) {
+	if file.ApplicationStrategy() == "apply" {
+		return NewFileBuffer(file.Path(), buffer.BasePath)
+	}
+
+	//application of a holoscript requires file contents
+	buffer, err := buffer.ResolveSymlink()
+	if err != nil {
+		return nil, err
+	}
+
+	//run command, fetch result file into buffer (not into the targetPath
+	//directly, in order not to corrupt the file there if the script run fails)
+	var stdout bytes.Buffer
+	cmd := exec.Command(file.Path())
+	cmd.Stdin = bytes.NewBuffer(buffer.Contents)
+	cmd.Stdout = &stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		return nil, fmt.Errorf("execution of %s failed: %s", file.Path(), err.Error())
+	}
+
+	//result is the stdout of the script
+	return NewFileBufferFromContents(stdout.Bytes(), buffer.BasePath), nil
 }
 
 //RepoFiles holds a slice of RepoFile instances, and implements some methods
