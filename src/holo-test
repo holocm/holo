@@ -23,7 +23,7 @@ ORIGINAL_CWD="$PWD"
 # by default, use installed Holo binary
 : ${HOLO_BINARY:=holo}
 
-run_testcase() {
+run_testcase() (
     local TEST_NAME=$1
     echo ">> Running test case $TEST_NAME..."
 
@@ -98,7 +98,7 @@ run_testcase() {
     done
 
     return $EXIT_CODE
-}
+)
 
 TESTED_THING="$1"
 if [ "$TESTED_THING" = "" ]; then
