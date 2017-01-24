@@ -120,39 +120,10 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 		}
 	}
 
-	//check if we can skip any application steps (firstStep = -1 means: start
-	//with loading the target base and apply all steps, firstStep >= 0 means:
-	//start at that application step with an empty buffer)
-	firstStep := -1
-	repoEntries := target.RepoEntries()
-	for idx, repoFile := range repoEntries {
-		if repoFile.DiscardsPreviousBuffer() {
-			firstStep = idx
-		}
-	}
-
-	//load the target base into a buffer as the start for the application
-	//algorithm, unless it will be discarded by an application step
-	var buffer *FileBuffer
-	if firstStep == -1 {
-		buffer, err = NewFileBuffer(targetBasePath, targetPath)
-		if err != nil {
-			return false, err
-		}
-	} else {
-		buffer = NewFileBufferFromContents([]byte(nil), targetPath)
-	}
-
-	//apply all the applicable repo files in order (starting from the first one
-	//that matters)
-	if firstStep > 0 {
-		repoEntries = repoEntries[firstStep:]
-	}
-	for _, repoFile := range repoEntries {
-		buffer, err = repoFile.ApplyTo(buffer)
-		if err != nil {
-			return false, err
-		}
+	//render desired state of target file
+	buffer, err := target.Render()
+	if err != nil {
+		return false, err
 	}
 
 	//don't do anything more if nothing has changed and the target file has not been touched
@@ -193,4 +164,49 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 	//move $target.holonew -> $target atomically (to ensure that there is
 	//always a valid file at $target)
 	return false, os.Rename(newTargetPath, targetPath)
+}
+
+//Render applies all the repo files for this TargetFile onto the target base.
+func (t *TargetFile) Render() (*FileBuffer, error) {
+	//check if we can skip any application steps (firstStep = -1 means: start
+	//with loading the target base and apply all steps, firstStep >= 0 means:
+	//start at that application step with an empty buffer)
+	firstStep := -1
+	repoEntries := t.RepoEntries()
+	for idx, repoFile := range repoEntries {
+		if repoFile.DiscardsPreviousBuffer() {
+			firstStep = idx
+		}
+	}
+
+	//load the target base into a buffer as the start for the application
+	//algorithm, unless it will be discarded by an application step
+	targetBasePath := t.PathIn(common.TargetBaseDirectory())
+	targetPath := t.PathIn(common.TargetDirectory())
+	var (
+		buffer *FileBuffer
+		err    error
+	)
+	if firstStep == -1 {
+		buffer, err = NewFileBuffer(targetBasePath, targetPath)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		buffer = NewFileBufferFromContents([]byte(nil), targetPath)
+	}
+
+	//apply all the applicable repo files in order (starting from the first one
+	//that matters)
+	if firstStep > 0 {
+		repoEntries = repoEntries[firstStep:]
+	}
+	for _, repoFile := range repoEntries {
+		buffer, err = repoFile.ApplyTo(buffer)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return buffer, nil
 }
