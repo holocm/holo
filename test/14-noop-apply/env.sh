@@ -1,0 +1,1 @@
+export HOLO_CURRENT_DISTRIBUTION=arch

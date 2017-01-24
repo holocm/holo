@@ -1,0 +1,8 @@
+
+Working on file:target/etc/foo.conf
+  store at target/var/lib/holo/files/base/etc/foo.conf
+  passthru target/usr/share/holo/files/01-first/etc/foo.conf.holoscript
+
+>> found updated target base: target/etc/foo.conf.pacnew -> target/var/lib/holo/files/base/etc/foo.conf
+
+exit status 0
