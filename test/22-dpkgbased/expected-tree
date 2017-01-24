@@ -1,5 +1,7 @@
 >> ./etc/holorc = symlink
 ../../../holorc
+>> ./etc/os-release = regular
+ID=debian
 >> ./etc/repofile-deleted-with-dpkg-dist.conf = regular
 ggg
 hhh

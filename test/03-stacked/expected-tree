@@ -17,6 +17,8 @@ nnn
 mmm
 mmm
 ooo
+>> ./etc/os-release = regular
+ID=unittest
 >> ./etc/plain-and-plain.conf = regular
 ccc
 ccc

@@ -1,5 +1,7 @@
 >> ./etc/holorc = symlink
 ../../../holorc
+>> ./etc/os-release = regular
+ID=arch
 >> ./etc/repofile-deleted-with-pacnew.conf = regular
 ggg
 hhh

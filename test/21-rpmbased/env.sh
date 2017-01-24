@@ -1,1 +1,0 @@
-export HOLO_CURRENT_DISTRIBUTION=fedora

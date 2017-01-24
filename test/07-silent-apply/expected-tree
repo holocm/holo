@@ -3,6 +3,8 @@
 >> ./etc/normal.conf = regular
 aaa
 bbb
+>> ./etc/os-release = regular
+ID=unittest
 >> ./etc/requireforce.conf = regular
 ccc
 ddd

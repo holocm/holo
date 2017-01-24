@@ -3,6 +3,8 @@ ccc
 ddd
 >> ./etc/holorc = regular
 plugin files=../../build/holo-files
+>> ./etc/os-release = regular
+ID=arch
 >> ./run = dir
 >> ./tmp = dir
 >> ./usr/share/holo/files/01-first/etc/foo.conf.holoscript = regular

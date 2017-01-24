@@ -4,6 +4,8 @@
 ddd
 >> ./etc/link-over-plain.conf = symlink
 ccc
+>> ./etc/os-release = regular
+ID=unittest
 >> ./etc/plain-over-link.conf = regular
 bbb
 bbb

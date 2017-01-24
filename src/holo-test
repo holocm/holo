@@ -68,9 +68,8 @@ run_testcase() (
 
     # setup environment for holo run
     export HOLO_ROOT_DIR="./target/"
-    export HOLO_CURRENT_DISTRIBUTION=unittest
     export TMPDIR="./target/tmp"
-    # the test may define a custom environment, mostly for $HOLO_CURRENT_DISTRIBUTION
+    # the test may define a custom environment or setup
     [ -f env.sh ] && source ./env.sh
 
     # run holo (the sed strips ANSI colors from the output)

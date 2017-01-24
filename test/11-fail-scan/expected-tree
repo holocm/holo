@@ -1,5 +1,7 @@
 >> ./etc/holorc = regular
 plugin files=source/usr/lib/holo/holo-files
+>> ./etc/os-release = regular
+ID=unittest
 >> ./run = dir
 >> ./tmp = dir
 >> ./usr/lib/holo/holo-files = regular

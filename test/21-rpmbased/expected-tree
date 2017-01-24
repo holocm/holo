@@ -1,5 +1,7 @@
 >> ./etc/holorc = symlink
 ../../../holorc
+>> ./etc/os-release = regular
+ID=fedora
 >> ./etc/repofile-deleted-with-rpmnew.conf = regular
 ggg
 hhh

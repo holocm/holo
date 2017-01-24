@@ -5,6 +5,8 @@ ccc
 ddd
 >> ./etc/holorc = symlink
 ../../../holorc
+>> ./etc/os-release = regular
+ID=unittest
 >> ./run = dir
 >> ./tmp = dir
 >> ./usr/share/holo/files/01-foo-bar/etc/foo.conf.holoscript = regular

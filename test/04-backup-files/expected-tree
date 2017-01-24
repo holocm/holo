@@ -1,5 +1,7 @@
 >> ./etc/holorc = symlink
 ../../../holorc
+>> ./etc/os-release = regular
+ID=unittest
 >> ./etc/repofile-deleted.conf = regular
 eee
 eee

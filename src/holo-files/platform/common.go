@@ -26,9 +26,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"regexp"
 	"sort"
 	"strings"
+
+	"../common"
 )
 
 //Impl provides integration points with a distribution's toolchain.
@@ -72,7 +75,6 @@ func init() {
 	case isDist["fedora"], isDist["suse"]:
 		impl = rpmImpl{}
 	case isDist["unittest"]:
-		//set via HOLO_CURRENT_DISTRIBUTION=unittest only
 		impl = genericImpl{}
 	default:
 		ReportUnsupportedDistribution(isDist)
@@ -83,20 +85,16 @@ func init() {
 //GetCurrentDistribution returns a set of distribution IDs, drawing on the ID=
 //and ID_LIKE= fields of os-release(5).
 func GetCurrentDistribution() map[string]bool {
-	//check if a unit test override is active
-	if value := os.Getenv("HOLO_CURRENT_DISTRIBUTION"); value != "" {
-		return map[string]bool{value: true}
-	}
-
 	//read /etc/os-release, fall back to /usr/lib/os-release if not available
-	bytes, err := ioutil.ReadFile("/etc/os-release")
+	bytes, err := ioutil.ReadFile(filepath.Join(common.TargetDirectory(), "etc/os-release"))
 	if err != nil {
 		if os.IsNotExist(err) {
-			bytes, err = ioutil.ReadFile("/usr/lib/os-release")
+			bytes, err = ioutil.ReadFile(filepath.Join(common.TargetDirectory(), "usr/lib/os-release"))
 		}
 	}
 	if err != nil {
-		panic("Cannot read os-release: " + err.Error())
+		fmt.Fprintf(os.Stderr, "!! Cannot read os-release(5): %v\n", err)
+		return nil
 	}
 
 	//parse os-release syntax (a harshly limited subset of shell script)

@@ -16,6 +16,8 @@ bbb
 ccc
 >> ./etc/holorc = symlink
 ../../../holorc
+>> ./etc/os-release = regular
+ID=unittest
 >> ./etc/symlink-deleted.conf = symlink
 /bin/true
 >> ./etc/symlink-modified.conf = symlink

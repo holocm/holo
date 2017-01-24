@@ -4,6 +4,8 @@ original bar
 modified file
 >> ./etc/holorc = symlink
 ../../../holorc
+>> ./etc/os-release = regular
+ID=unittest
 >> ./run = dir
 >> ./tmp = dir
 >> ./usr/share/holo/files/01-first/etc/bar.conf.holoscript = regular

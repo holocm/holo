@@ -18,6 +18,8 @@ foo
 buz
 bur
 bur
+>> ./etc/os-release = regular
+ID=unittest
 >> ./etc/plain-through-link.conf = regular
 apple
 banana
