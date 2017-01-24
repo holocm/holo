@@ -1,0 +1,8 @@
+>> ./etc/holorc = symlink
+../../../holorc
+>> ./run/holo.pid = regular
+0
+>> ./tmp = dir
+>> ./usr/share/holo/files = dir
+>> ./var/lib/holo/files/base = dir
+>> ./var/lib/holo/files/provisioned = dir

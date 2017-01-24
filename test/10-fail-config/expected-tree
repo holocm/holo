@@ -1,0 +1,6 @@
+>> ./etc/holorc = regular
+invalid line
+>> ./run = dir
+>> ./tmp = dir
+>> ./var/lib/holo/files/base = dir
+>> ./var/lib/holo/files/provisioned = dir

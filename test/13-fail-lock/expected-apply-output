@@ -1,0 +1,5 @@
+
+!! Cannot create lock file target/run/holo.pid: open target/run/holo.pid: file exists
+This usually means that another instance of Holo is currently running.
+If not, you can try to delete the lock file manually.
+exit status 255
