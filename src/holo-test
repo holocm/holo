@@ -39,9 +39,9 @@ run_testcase() {
     # setup chroot for holo run
     rm -rf -- target/
     cp -R source/ target/
-    mkdir -p target/usr/share/holo/files
-    mkdir -p target/usr/share/holo/run-scripts
-    mkdir -p target/usr/share/holo/users-groups
+    grep -o 'plugin [^=]\+' target/etc/holorc target/etc/holorc.d/* 2>/dev/null | while read _ PLUGIN; do
+        mkdir -p target/usr/share/holo/"$PLUGIN"
+    done
     mkdir -p target/var/lib/holo/files/base
     mkdir -p target/var/lib/holo/files/provisioned
 
@@ -78,7 +78,9 @@ run_testcase() {
     # dump the contents of the target directory into a single file for better diff'ing
     # (NOTE: I concede that this is slightly messy.)
     cd "$TESTCASE_DIR/target/"
-    find \( -type f -printf '>> %p = regular\n' -exec cat {} \; \) -o \( -type l -printf '>> %p = symlink\n' -exec readlink {} \; \) \
+    find \( -type f -printf '>> %p = regular\n' -exec cat {} \; \) \
+      -o \( -type l -printf '>> %p = symlink\n' -exec readlink {} \; \) \
+      -o \( -type d -empty -printf '>> %p = dir\n' \) \
         | perl -E 'local $/; print for sort split /^(?=>>)/m, <>' > "$TESTCASE_DIR/tree"
     cd "$TESTCASE_DIR/"
 

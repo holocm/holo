@@ -29,6 +29,7 @@ hhh
 ggg
 ggg
 iii
+>> ./tmp = dir
 >> ./usr/share/holo/files/01-first/etc/link-and-script.conf = symlink
 contents1
 >> ./usr/share/holo/files/01-first/etc/link-through-scripts.conf.holoscript = regular

@@ -3,6 +3,7 @@ bbb
 >> ./etc/holorc = regular
 >> ./etc/holorc.d/files = symlink
 ../../../../holorc
+>> ./tmp = dir
 >> ./usr/share/holo/files/01-first/etc/foo.conf = regular
 bbb
 >> ./var/lib/holo/files/base/etc/foo.conf = regular
