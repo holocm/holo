@@ -21,3 +21,4 @@ Working on file:target/etc/targetfile-with-rpmsave.conf
 
 >> found updated target base: target/etc/targetfile-with-rpmsave.conf (with .rpmsave) -> target/var/lib/holo/files/base/etc/targetfile-with-rpmsave.conf
 
+exit status 0

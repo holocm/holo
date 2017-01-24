@@ -4,3 +4,4 @@ new file mode 100644
 +++ target/etc/foo.conf
 @@ -0,0 +1 @@
 +aaa
+exit status 0

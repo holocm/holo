@@ -9,3 +9,4 @@ file:target/etc/targetfile-with-pacnew.conf
     store at target/var/lib/holo/files/base/etc/targetfile-with-pacnew.conf
     passthru target/usr/share/holo/files/01-first/etc/targetfile-with-pacnew.conf.holoscript
 
+exit status 0

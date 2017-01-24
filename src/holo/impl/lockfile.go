@@ -33,14 +33,9 @@ var (
 )
 
 //AcquireLockfile will create a lock file to ensure that only one instance of
-//Holo is running at the same time. If the operation fails, it will os.Exit().
-func AcquireLockfile() {
-	//where to store the lock file?
-	if RootDirectory() == "/" {
-		lockPath = "/run/holo.pid"
-	} else {
-		lockPath = filepath.Join(RootDirectory(), "holo.pid")
-	}
+//Holo is running at the same time. Returns whether the operation succeeded.
+func AcquireLockfile() bool {
+	lockPath = filepath.Join(RootDirectory(), "run/holo.pid")
 
 	var err error
 	lockFile, err = os.OpenFile(lockPath, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0644)
@@ -54,10 +49,11 @@ func AcquireLockfile() {
 				fmt.Fprintln(Stderr, "If not, you can try to delete the lock file manually.")
 			}
 		}
-		os.Exit(255)
+		return false
 	}
 	fmt.Fprintf(lockFile, "%d\n", os.Getpid())
 	lockFile.Sync()
+	return true
 }
 
 //ReleaseLockfile removes the lock file created by AcquireLockfile.

@@ -9,3 +9,4 @@ file:target/etc/foo.conf
        apply target/usr/share/holo/files/02-second/etc/foo.conf
     passthru target/usr/share/holo/files/03-third/etc/foo.conf.holoscript
 
+exit status 0

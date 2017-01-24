@@ -13,3 +13,4 @@ file:target/etc/targetfile-with-rpmsave.conf
     store at target/var/lib/holo/files/base/etc/targetfile-with-rpmsave.conf
     passthru target/usr/share/holo/files/01-first/etc/targetfile-with-rpmsave.conf.holoscript
 
+exit status 0

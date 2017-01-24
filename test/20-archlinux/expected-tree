@@ -8,6 +8,8 @@ jjj
 d
 e
 f
+>> ./run = dir
+>> ./tmp = dir
 >> ./usr/share/holo/files/01-first/etc/targetfile-with-pacnew.conf.holoscript = symlink
 /usr/bin/sort
 >> ./var/lib/holo/files/base/etc/targetfile-with-pacnew.conf = regular

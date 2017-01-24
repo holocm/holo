@@ -14,3 +14,4 @@ diff --holo target/var/lib/holo/files/provisioned/etc/targetfile-with-dpkg-old.c
 +bbb
 +bbb
 +bbb
+exit status 0

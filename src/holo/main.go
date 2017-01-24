@@ -45,14 +45,20 @@ type Selector struct {
 }
 
 func main() {
+	os.Exit(Main())
+}
+
+// Main is the main entry point, but returns the exit code rather than
+// calling os.Exit().  This distinction is useful for testing purposes.
+func Main() (exitCode int) {
 	//a command word must be given as first argument
 	if len(os.Args) < 2 {
 		commandHelp()
-		return
+		return 0
 	}
 
 	//check that it is a known command word
-	var command func([]*impl.Entity, map[int]bool)
+	var command func([]*impl.Entity, map[int]bool) int
 	knownOpts := make(map[string]int)
 	switch os.Args[1] {
 	case "apply":
@@ -68,18 +74,18 @@ func main() {
 		}
 	case "version", "--version":
 		fmt.Println(version)
-		return
+		return 0
 	default:
 		commandHelp()
-		return
+		return 0
 	}
 
-	impl.WithCacheDirectory(func() {
+	return impl.WithCacheDirectory(func() (exitCode int) {
 		//load configuration
 		config := impl.ReadConfiguration()
 		if config == nil {
 			//some fatal error occurred - it was already reported, so just exit
-			os.Exit(255)
+			return 255
 		}
 
 		//parse command line
@@ -103,7 +109,7 @@ func main() {
 			pluginEntities := plugin.Scan()
 			if pluginEntities == nil {
 				//some fatal error occurred - it was already reported, so just exit
-				os.Exit(255)
+				return 255
 			}
 			entities = append(entities, pluginEntities...)
 			impl.Stdout.EndParagraph()
@@ -139,7 +145,7 @@ func main() {
 			}
 		}
 		if hasUnrecognizedArgs {
-			os.Exit(255)
+			return 255
 		}
 
 		//build a lookup hash for all known entities (for argument parsing)
@@ -149,7 +155,7 @@ func main() {
 		}
 
 		//execute command
-		command(entities, options)
+		return command(entities, options)
 
 	}) //end of WithCacheDirectory
 }
@@ -163,9 +169,11 @@ func commandHelp() {
 	fmt.Printf("\nSee `man 8 holo` for details.\n")
 }
 
-func commandApply(entities []*impl.Entity, options map[int]bool) {
+func commandApply(entities []*impl.Entity, options map[int]bool) (exitCode int) {
 	//ensure that we're the only Holo instance
-	impl.AcquireLockfile()
+	if !impl.AcquireLockfile() {
+		return 255
+	}
 	defer impl.ReleaseLockfile()
 
 	withForce := options[optionApplyForce]
@@ -176,9 +184,11 @@ func commandApply(entities []*impl.Entity, options map[int]bool) {
 		impl.Stdout.EndParagraph()
 		os.Stdout.Sync()
 	}
+
+	return 0
 }
 
-func commandScan(entities []*impl.Entity, options map[int]bool) {
+func commandScan(entities []*impl.Entity, options map[int]bool) (exitCode int) {
 	isPorcelain := options[optionScanPorcelain]
 	isShort := options[optionScanShort]
 	for _, entity := range entities {
@@ -191,9 +201,11 @@ func commandScan(entities []*impl.Entity, options map[int]bool) {
 			entity.PrintReport(false)
 		}
 	}
+
+	return 0
 }
 
-func commandDiff(entities []*impl.Entity, options map[int]bool) {
+func commandDiff(entities []*impl.Entity, options map[int]bool) (exitCode int) {
 	for _, entity := range entities {
 		output, err := entity.RenderDiff()
 		if err != nil {
@@ -205,4 +217,6 @@ func commandDiff(entities []*impl.Entity, options map[int]bool) {
 		impl.Stdout.EndParagraph()
 		os.Stdout.Sync()
 	}
+
+	return 0
 }

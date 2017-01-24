@@ -29,17 +29,23 @@ import (
 )
 
 func main() {
+	os.Exit(Main())
+}
+
+// Main is the main entry point, but returns the exit code rather than
+// calling os.Exit().  This distinction is useful for testing purposes.
+func Main() (exitCode int) {
 	//the "info" action does not require any scanning
 	if os.Args[1] == "info" {
 		os.Stdout.Write([]byte("MIN_API_VERSION=3\nMAX_API_VERSION=3\n"))
-		return
+		return 0
 	}
 
 	//scan for entities
 	entities := impl.ScanRepo()
 	if entities == nil {
 		//some fatal error occurred - it was already reported, so just exit
-		os.Exit(1)
+		return 1
 	}
 
 	//scan action requires no arguments
@@ -47,7 +53,7 @@ func main() {
 		for _, entity := range entities {
 			entity.PrintReport()
 		}
-		return
+		return 0
 	}
 
 	//all other actions require an entity selection
@@ -61,7 +67,7 @@ func main() {
 	}
 	if selectedEntity == nil {
 		fmt.Fprintf(os.Stderr, "!! unknown entity ID \"%s\"\n", entityID)
-		os.Exit(1)
+		return 1
 	}
 
 	switch os.Args[1] {
@@ -79,6 +85,8 @@ func main() {
 			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		}
 	}
+
+	return 0
 }
 
 func applyEntity(entity *impl.TargetFile, withForce bool) {

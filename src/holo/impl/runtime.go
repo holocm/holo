@@ -21,38 +21,20 @@
 package impl
 
 import (
-	"fmt"
+	"io/ioutil"
 	"os"
-	"path/filepath"
 )
 
 var cachePath string
 
 //WithCacheDirectory executes the worker function after having set up a cache
 //directory, and ensures that the cache directory is cleaned up afterwards.
-func WithCacheDirectory(worker func()) {
-	//choose
-	rootDir := RootDirectory()
-	if rootDir == "/" {
-		//in productive mode, honor the TMPDIR variable (through os.TempDir)
-		//and include the PID to avoid collisions between parallel runs of
-		//"holo scan" (which is not protected by the /run/holo.pid lockfile)
-		cachePath = filepath.Join(os.TempDir(), fmt.Sprintf("holo-%d", os.Getpid()))
-	} else {
-		//during unit tests, we are free to choose a simple, reproducible cache
-		//location
-		cachePath = filepath.Join(rootDir, "tmp/holo")
-	}
-
-	//if the cache directory exists from a previous run, remove it recursively
-	err := os.RemoveAll(cachePath)
-	if err == nil {
-		//create the cache directory
-		err = os.MkdirAll(cachePath, 0700)
-	}
+func WithCacheDirectory(worker func() (exitCode int)) (exitCode int) {
+	var err error
+	cachePath, err = ioutil.TempDir(os.TempDir(), "holo.")
 	if err != nil {
 		Errorf(Stderr, err.Error())
-		os.Exit(255)
+		return 255
 	}
 
 	//ensure that the cache is removed even if worker() panics
@@ -61,7 +43,7 @@ func WithCacheDirectory(worker func()) {
 		cachePath = ""
 	}()
 
-	worker()
+	return worker()
 }
 
 //CachePath returns the path below which plugin cache directories can be allocated.
