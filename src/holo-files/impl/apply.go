@@ -81,7 +81,7 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 	}
 	if updatedTBPath != "" {
 		//an updated stock configuration is available at updatedTBPath
-		fmt.Printf(">> found updated target base: %s -> %s", reportedTBPath, targetBasePath)
+		fmt.Printf(">> found updated target base: %s -> %s\n", reportedTBPath, targetBasePath)
 		err := common.CopyFile(updatedTBPath, targetBasePath)
 		if err != nil {
 			return false, fmt.Errorf("Cannot copy %s to %s: %s", updatedTBPath, targetBasePath, err.Error())
