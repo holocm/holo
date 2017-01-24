@@ -23,3 +23,4 @@ Working on file:target/etc/symlink-to-file.conf
   store at target/var/lib/holo/files/base/etc/symlink-to-file.conf
      apply target/usr/share/holo/files/01-first/etc/symlink-to-file.conf
 
+exit status 0

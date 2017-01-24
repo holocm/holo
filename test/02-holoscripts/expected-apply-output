@@ -28,3 +28,4 @@ Working on file:target/etc/plain-with-stderr.conf
 First line of stderr output.
 Second line of stderr output.
 
+exit status 0

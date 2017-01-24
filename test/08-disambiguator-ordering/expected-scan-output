@@ -4,3 +4,4 @@ file:target/etc/foo.conf
     passthru target/usr/share/holo/files/01-foo/etc/foo.conf.holoscript
     passthru target/usr/share/holo/files/01-foo-bar/etc/foo.conf.holoscript
 
+exit status 0

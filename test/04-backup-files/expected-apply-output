@@ -9,3 +9,4 @@ Working on file:target/etc/still-existing.conf
 Scrubbing file:target/etc/targetfile-deleted.conf (target was deleted)
    delete target/var/lib/holo/files/base/etc/targetfile-deleted.conf
 
+exit status 0

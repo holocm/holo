@@ -29,3 +29,4 @@ Working on file:target/etc/script-and-script.conf
   passthru target/usr/share/holo/files/01-first/etc/script-and-script.conf.holoscript
   passthru target/usr/share/holo/files/02-second/etc/script-and-script.conf.holoscript
 
+exit status 0

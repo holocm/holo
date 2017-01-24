@@ -13,3 +13,4 @@ file:target/etc/targetfile-with-dpkg-old.conf
     store at target/var/lib/holo/files/base/etc/targetfile-with-dpkg-old.conf
     passthru target/usr/share/holo/files/01-first/etc/targetfile-with-dpkg-old.conf.holoscript
 
+exit status 0

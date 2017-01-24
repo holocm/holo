@@ -21,3 +21,4 @@ Working on file:target/etc/targetfile-with-dpkg-old.conf
 
 >> found updated target base: target/etc/targetfile-with-dpkg-old.conf (with .dpkg-old) -> target/var/lib/holo/files/base/etc/targetfile-with-dpkg-old.conf
 
+exit status 0

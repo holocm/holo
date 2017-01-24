@@ -27,3 +27,4 @@ Working on file:target/etc/stock-file-missing.conf
 
 !! skipping target: not a manageable file
 
+exit status 0

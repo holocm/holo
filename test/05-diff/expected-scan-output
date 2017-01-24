@@ -31,3 +31,4 @@ file:target/etc/symlink-unmodified.conf
     store at target/var/lib/holo/files/base/etc/symlink-unmodified.conf
        apply target/usr/share/holo/files/01-first/etc/symlink-unmodified.conf
 
+exit status 0
