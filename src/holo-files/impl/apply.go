@@ -104,26 +104,30 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 		}
 	}
 
+	//render desired state of target file
+	buffer, err := target.Render()
+	if err != nil {
+		return false, err
+	}
+
 	//compare it against the target version (which must exist at this point
 	//unless we are using --force)
+	needToWriteTargetFile := true
 	if targetExists && lastProvisionedBuffer != nil {
 		targetBuffer, err := NewFileBuffer(targetPath, targetPath)
 		if err != nil {
 			return false, err
 		}
+		needToWriteTargetFile = !targetBuffer.EqualTo(buffer)
 		if !targetBuffer.EqualTo(lastProvisionedBuffer) {
 			if withForce {
 				needForcefulReprovision = true
 			} else {
-				return false, ErrNeedForceToOverwrite
+				if needToWriteTargetFile {
+					return false, ErrNeedForceToOverwrite
+				}
 			}
 		}
-	}
-
-	//render desired state of target file
-	buffer, err := target.Render()
-	if err != nil {
-		return false, err
 	}
 
 	//don't do anything more if nothing has changed and the target file has not been touched
@@ -136,18 +140,26 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 
 	//save a copy of the provisioned config file to check for manual
 	//modifications in the next Apply() run
-	provisionedDir := filepath.Dir(lastProvisionedPath)
-	err = os.MkdirAll(provisionedDir, 0755)
-	if err != nil {
-		return false, fmt.Errorf("Cannot write %s: %s", lastProvisionedPath, err.Error())
+	if lastProvisionedBuffer == nil || !buffer.EqualTo(lastProvisionedBuffer) {
+		provisionedDir := filepath.Dir(lastProvisionedPath)
+		err = os.MkdirAll(provisionedDir, 0755)
+		if err != nil {
+			return false, fmt.Errorf("Cannot write %s: %s", lastProvisionedPath, err.Error())
+		}
+		err = buffer.Write(lastProvisionedPath)
+		if err != nil {
+			return false, err
+		}
+		err = common.ApplyFilePermissions(targetBasePath, lastProvisionedPath)
+		if err != nil {
+			return false, err
+		}
 	}
-	err = buffer.Write(lastProvisionedPath)
-	if err != nil {
-		return false, err
-	}
-	err = common.ApplyFilePermissions(targetBasePath, lastProvisionedPath)
-	if err != nil {
-		return false, err
+
+	//we're done now if the target file already has the correct contents
+	if !needToWriteTargetFile {
+		//just check ownership again
+		return true, common.ApplyFilePermissions(targetBasePath, targetPath)
 	}
 
 	//write the result buffer to the target location and copy
