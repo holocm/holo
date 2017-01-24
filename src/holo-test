@@ -23,6 +23,12 @@ ORIGINAL_CWD="$PWD"
 # by default, use installed Holo binary
 : ${HOLO_BINARY:=holo}
 
+if ! type colordiff &>/dev/null; then
+    colordiff() {
+        cat
+    }
+fi
+
 run_testcase() (
     local TEST_NAME=$1
     echo ">> Running test case $TEST_NAME..."
@@ -94,7 +100,7 @@ run_testcase() (
         if [ -f $FILE ]; then
             if diff -q expected-$FILE $FILE >/dev/null; then true; else
                 echo "!! The $FILE deviates from our expectation. Diff follows:"
-                diff -u expected-$FILE $FILE 2>&1 | sed 's/^/    /'
+                diff -u expected-$FILE $FILE 2>&1 | colordiff | sed 's/^/    /'
                 EXIT_CODE=1
             fi
         fi
