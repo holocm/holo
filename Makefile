@@ -23,6 +23,8 @@ build/man/%: doc/%.pod
 
 test: check # just a synonym
 check: default
+	@if s="$$(gofmt -l src 2>/dev/null)"                        && test -n "$$s"; then printf ' => %s\n%s\n' gofmt  "$$s"; false; fi
+	@if s="$$(find src -type d -exec golint {} \; 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
 	@go test ./src/holo/impl
 	@env HOLO_BINARY=../../build/holo bash src/holo-test holo $(sort $(wildcard test/??-*))
 
