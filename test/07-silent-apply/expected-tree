@@ -6,6 +6,7 @@ bbb
 >> ./etc/requireforce.conf = regular
 ccc
 ddd
+>> ./run = dir
 >> ./tmp = dir
 >> ./usr/share/holo/files/01-first/etc/normal.conf = regular
 aaa

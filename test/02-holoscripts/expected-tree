@@ -34,6 +34,7 @@ baz
 foo
 bor
 boz
+>> ./run = dir
 >> ./tmp = dir
 >> ./usr/share/holo/files/02-holoscripts/etc/link-through-link.conf.holoscript = symlink
 /usr/bin/uniq

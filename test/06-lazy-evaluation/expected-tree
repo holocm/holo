@@ -4,6 +4,7 @@ original bar
 modified file
 >> ./etc/holorc = symlink
 ../../../holorc
+>> ./run = dir
 >> ./tmp = dir
 >> ./usr/share/holo/files/01-first/etc/bar.conf.holoscript = regular
 #!/bin/sh

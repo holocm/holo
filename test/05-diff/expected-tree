@@ -24,6 +24,7 @@ ccc
 /bin/true
 >> ./etc/symlink-unmodified.conf = symlink
 /bin/true
+>> ./run = dir
 >> ./tmp = dir
 >> ./usr/share/holo/files/01-first/etc/file-deleted.conf = regular
 aaa

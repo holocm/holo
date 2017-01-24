@@ -5,6 +5,7 @@ ccc
 ddd
 >> ./etc/holorc = symlink
 ../../../holorc
+>> ./run = dir
 >> ./tmp = dir
 >> ./usr/share/holo/files/01-foo-bar/etc/foo.conf.holoscript = regular
 #!/bin/sh
