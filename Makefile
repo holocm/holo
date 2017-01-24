@@ -22,7 +22,7 @@ build/man/%: doc/%.pod
 		$< $@
 
 test: check # just a synonym
-check: default
+check: default clean-tests
 	@if s="$$(gofmt -l src 2>/dev/null)"                        && test -n "$$s"; then printf ' => %s\n%s\n' gofmt  "$$s"; false; fi
 	@if s="$$(find src -type d -exec golint {} \; 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
 	@go test ./src/holo/impl
@@ -48,9 +48,9 @@ install: default conf/holorc conf/holorc.holo-files src/holo-test util/autocompl
 	install -D -m 0644 build/man/holo-plugin-interface.7 "$(DESTDIR)/usr/share/man/man7/holo-plugin-interface.7"
 	env DESTDIR=$(DESTDIR) ./src/distribution-integration/install.sh
 
-clean:
-	rm -fr -- build/holo build/holo-files build/man test/*/{target,tree} test/*/{colored-,}{apply,apply-force,diff,scan}-output
+clean: clean-tests
 	rm -fr -- build/holo build/holo-files build/man
-	rm -fr -- test/*/target test/*/tree test/*/[acds]*-output
+clean-tests:
+	rm -fr -- test/*/{target,tree,{colored-,}{apply,apply-force,diff,scan}-output}
 
-.PHONY: prepare-build test check install clean
+.PHONY: prepare-build test check install clean clean-tests
