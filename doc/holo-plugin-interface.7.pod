@@ -265,9 +265,9 @@ If the entity does not have a meaningful diff (e.g. for the C<run-scripts>
 plugin), the plugin shall exit with zero exit code without doing anything.
 
 Otherwise, two NUL-terminated filesystem paths must be printed on file
-descriptor 3. The first file represents the state of the entity that will be
-applied (or force-applied) by the plugin, the second file represents the current
-state of the entity.
+descriptor 3. The first file represents the state of the entity as it was last
+applied by the plugin (i.e., the state the plugin expects it to currently be
+in), the second file represents the actual current state of the entity.
 
 The plugin is allowed to return paths that do not exist in the file system, in
 which case Holo will diff against `/dev/null` instead. `/dev/null` can also be
