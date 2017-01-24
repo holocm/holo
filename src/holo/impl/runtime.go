@@ -29,12 +29,12 @@ var cachePath string
 
 //WithCacheDirectory executes the worker function after having set up a cache
 //directory, and ensures that the cache directory is cleaned up afterwards.
-func WithCacheDirectory(worker func()) {
+func WithCacheDirectory(worker func() (exitCode int)) (exitCode int) {
 	var err error
 	cachePath, err = ioutil.TempDir(os.TempDir(), "holo.")
 	if err != nil {
 		Errorf(Stderr, err.Error())
-		os.Exit(255)
+		return 255
 	}
 
 	//ensure that the cache is removed even if worker() panics
@@ -43,7 +43,7 @@ func WithCacheDirectory(worker func()) {
 		cachePath = ""
 	}()
 
-	worker()
+	return worker()
 }
 
 //CachePath returns the path below which plugin cache directories can be allocated.
