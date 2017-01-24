@@ -3,6 +3,6 @@ deleted file mode 100644
 --- var/lib/holo/files/provisioned/etc/targetfile-deleted-with-pacsave.conf
 +++ /dev/null
 @@ -1,2 +0,0 @@
--ddd
--ddd
+-eee
+-eee
 exit status 0

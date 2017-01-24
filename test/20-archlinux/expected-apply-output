@@ -4,6 +4,9 @@ Scrubbing file:/etc/repofile-deleted-with-pacnew.conf (all repository files were
 
 >> found updated target base: target/etc/repofile-deleted-with-pacnew.conf.pacnew -> target/etc/repofile-deleted-with-pacnew.conf
 
+Scrubbing file:/etc/targetfile-deleted-with-modified-pacsave.conf (target was deleted)
+   delete target/var/lib/holo/files/base/etc/targetfile-deleted-with-modified-pacsave.conf
+
 Scrubbing file:/etc/targetfile-deleted-with-pacsave.conf (target was deleted)
    delete target/var/lib/holo/files/base/etc/targetfile-deleted-with-pacsave.conf
 
