@@ -1,8 +1,8 @@
 >> ./etc/foo.conf = regular
 ccc
 ddd
->> ./etc/holorc = regular
-plugin files=../../build/holo-files
+>> ./etc/holorc = symlink
+../../../holorc
 >> ./etc/os-release = regular
 ID=arch
 >> ./run = dir
