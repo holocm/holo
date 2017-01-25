@@ -1,0 +1,37 @@
+>> ./etc/holorc = regular
+plugin files
+>> ./etc/os-release = regular
+ID=arch
+>> ./etc/repofile-deleted-with-pacnew.conf = regular
+ggg
+hhh
+iii
+>> ./etc/repofile-deleted-with-pacnew.conf.pacnew = regular
+ggg
+hhh
+jjj
+>> ./etc/targetfile-with-pacnew.conf = regular
+d
+e
+f
+>> ./run = dir
+>> ./tmp = dir
+>> ./usr/lib/holo/holo-files = symlink
+../../../../../../build/holo-files
+>> ./usr/share/holo/files/01-first/etc/targetfile-with-pacnew.conf.holoscript = symlink
+/usr/bin/sort
+>> ./var/lib/holo/files/base/etc/repofile-deleted-with-pacnew.conf = regular
+ggg
+hhh
+>> ./var/lib/holo/files/base/etc/targetfile-with-pacnew.conf = regular
+d
+f
+e
+>> ./var/lib/holo/files/provisioned/etc/repofile-deleted-with-pacnew.conf = regular
+ggg
+hhh
+iii
+>> ./var/lib/holo/files/provisioned/etc/targetfile-with-pacnew.conf = regular
+d
+e
+f
