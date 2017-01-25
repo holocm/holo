@@ -98,6 +98,11 @@ This means that when configuration is applied as a holoscript on top of the
 default configuration, future updates to the default configuration will
 automatically be picked up, as long as C<holo apply> is run after the system update.
 
+When detecting these files, to know which suffixes to look for, holo-files
+inspects C<ID> and C<ID_LIKE> in L<os-release(5)> to determine which family the
+operating system belongs to, and thus which package manager is used.  It
+currently recognizes C<arch>, C<debian>, C<fedora> and C<suse>.
+
 =head2 Handling package removal
 
 If there exist target bases below F</var/lib/holo/files> for which there are no
