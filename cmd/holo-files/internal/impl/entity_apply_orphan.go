@@ -41,9 +41,6 @@ func (entity *Entity) scanOrphan() (targetPath, strategy, assessment string) {
 
 //applyOrphan cleans up an orphaned entity.
 func (entity *Entity) applyOrphan() []error {
-	targetPath, strategy, _ := entity.scanOrphan()
-	basePath := entity.PathIn(common.BaseDirectory())
-
 	var errs []error
 	appendError := func(err error) {
 		if err != nil {
@@ -51,39 +48,49 @@ func (entity *Entity) applyOrphan() []error {
 		}
 	}
 
-	switch strategy {
-	case "delete":
+	current, err := entity.GetCurrent()
+	if !os.IsNotExist(err) {
+		appendError(err)
+	}
+
+	provisioned, err := entity.GetProvisioned()
+	appendError(err)
+
+	basePath := entity.PathIn(common.BaseDirectory())
+
+	if !current.Manageable { // delete
 		//if the package management left behind additional cleanup targets
 		//(most likely a backup of our custom configuration), we can delete
 		//these too
-		cleanupTargets := platform.Implementation().AdditionalCleanupTargets(targetPath)
-		for _, otherFile := range cleanupTargets {
-			fmt.Printf(">> also deleting %s\n", otherFile)
-			appendError(os.Remove(otherFile))
+		cleanupTargets := platform.Implementation().AdditionalCleanupTargets(current.Path)
+		for _, path := range cleanupTargets {
+			otherFile, err := common.NewFileBuffer(path)
+			if err != nil {
+				continue
+			}
+			if otherFile.EqualTo(provisioned) {
+				fmt.Printf(">> also deleting %s\n", otherFile.Path)
+				appendError(os.Remove(otherFile.Path))
+			}
 		}
-	case "restore":
+
+		appendError(os.Remove(provisioned.Path))
+		appendError(os.Remove(basePath))
+	} else { // restore
 		//target is still there - restore the target base, *but* before that,
 		//check if there is an updated target base
-		updatedTBPath, reportedTBPath, err := platform.Implementation().FindUpdatedTargetBase(targetPath)
+		updatedTBPath, reportedTBPath, err := platform.Implementation().FindUpdatedTargetBase(current.Path)
 		appendError(err)
 		if updatedTBPath != "" {
-			fmt.Printf(">> found updated target base: %s -> %s", reportedTBPath, targetPath)
+			fmt.Printf(">> found updated target base: %s -> %s", reportedTBPath, current.Path)
 			//use this target base instead of the one in the BaseDirectory
 			appendError(os.Remove(basePath))
 			basePath = updatedTBPath
 		}
 
-		//now really restore the target base
-		appendError(common.CopyFile(basePath, targetPath))
+		appendError(os.Remove(provisioned.Path))
+		appendError(common.MoveFile(basePath, current.Path))
 	}
-
-	//target is not managed by Holo anymore, so delete the provisioned and the base
-	provisionedPath := entity.PathIn(common.ProvisionedDirectory())
-	err := os.Remove(provisionedPath)
-	if err != nil && !os.IsNotExist(err) {
-		appendError(err)
-	}
-	appendError(os.Remove(basePath))
 
 	//TODO: cleanup empty directories below BaseDirectory() and ProvisionedDirectory()
 	return errs
