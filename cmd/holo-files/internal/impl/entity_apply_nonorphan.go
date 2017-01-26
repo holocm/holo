@@ -74,20 +74,7 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 
 	////////////////////////////////////////////////////////////////////////
 
-	//step 1: make sure there is a current file (unless --force)
-	needForcefulReprovision := false
-	if !current.Manageable {
-		if !base.Manageable {
-			return false, errors.New("skipping target: not a manageable file")
-		}
-		if withForce {
-			needForcefulReprovision = true
-		} else {
-			return false, ErrNeedForceToRestore
-		}
-	}
-
-	//step 2: if we don't have a base yet, the file at current *is*
+	//step 1: if we don't have a base yet, the file at current *is*
 	//the base which we have to copy now
 	if !base.Manageable && current.Manageable {
 		baseDir := filepath.Dir(base.Path)
@@ -107,6 +94,13 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 
 	if !base.Manageable {
 		return false, errors.New("skipping target: not a manageable file")
+	}
+
+	//step 2: make sure there is a current file (unless --force)
+	if !current.Manageable {
+		if !withForce {
+			return false, ErrNeedForceToRestore
+		}
 	}
 
 	//step 3: check if a system update installed a new version of the stock
@@ -137,31 +131,15 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 
 	//compare it against the last provisioned version (which must exist at this point
 	//unless we are using --force)
-	needToWriteTarget := true
-	if current.Manageable && provisioned.Manageable {
-		needToWriteTarget = !current.EqualTo(desired)
-		if !current.EqualTo(provisioned) {
-			if withForce {
-				needForcefulReprovision = true
-			} else {
-				if needToWriteTarget {
-					return false, ErrNeedForceToOverwrite
-				}
-			}
-		}
-	}
-
-	//don't do anything more if nothing has changed and the target file has not been touched
-	if !needForcefulReprovision && provisioned.Manageable {
-		if desired.EqualTo(provisioned) {
-			//since we did not do anything, don't report this
-			return true, nil
+	if provisioned.Manageable && !(current.EqualTo(provisioned) || current.EqualTo(desired)) {
+		if !withForce {
+			return false, ErrNeedForceToOverwrite
 		}
 	}
 
 	//save a copy of the provisioned config file to check for manual
 	//modifications in the next Apply() run
-	if !provisioned.Manageable || !desired.EqualTo(provisioned) {
+	if !desired.EqualTo(provisioned) {
 		provisionedDir := filepath.Dir(provisioned.Path)
 		err = os.MkdirAll(provisionedDir, 0755)
 		if err != nil {
@@ -173,21 +151,19 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 		}
 	}
 
-	//we're done now if the target already has the correct contents
-	if !needToWriteTarget {
-		return true, nil
+	if !desired.EqualTo(current) {
+		//write the result buffer to the target and copy
+		//owners/permissions from base file to target file
+		newTargetPath := current.Path + ".holonew"
+		err = desired.Write(newTargetPath)
+		if err != nil {
+			return false, err
+		}
+		//move $target.holonew -> $target atomically (to ensure that there is
+		//always a valid file at $target)
+		return false, os.Rename(newTargetPath, current.Path)
 	}
-
-	//write the result buffer to the target and copy
-	//owners/permissions from base file to target file
-	newTargetPath := current.Path + ".holonew"
-	err = desired.Write(newTargetPath)
-	if err != nil {
-		return false, err
-	}
-	//move $target.holonew -> $target atomically (to ensure that there is
-	//always a valid file at $target)
-	return false, os.Rename(newTargetPath, current.Path)
+	return true, nil
 }
 
 //GetBase return the package manager-supplied base version of the
