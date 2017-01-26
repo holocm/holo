@@ -28,21 +28,21 @@ import (
 	"github.com/holocm/holo/cmd/holo-files/internal/platform"
 )
 
-//scanOrphanedTargetBase locates a target file for a given orphaned target base
+//scanOrphan locates an entity for a given orphaned entity
 //and assesses the situation. This logic is grouped in one function because
 //it's used by both `holo scan` and `holo apply`.
-func (target *TargetFile) scanOrphanedTargetBase() (theTargetPath, strategy, assessment string) {
-	targetPath := target.PathIn(common.TargetDirectory())
+func (entity *Entity) scanOrphan() (targetPath, strategy, assessment string) {
+	targetPath = entity.PathIn(common.TargetDirectory())
 	if common.IsManageableFile(targetPath) {
 		return targetPath, "restore", "all repository files were deleted"
 	}
 	return targetPath, "delete", "target was deleted"
 }
 
-//handleOrphanedTargetBase cleans up an orphaned target base.
-func (target *TargetFile) handleOrphanedTargetBase() []error {
-	targetPath, strategy, _ := target.scanOrphanedTargetBase()
-	targetBasePath := target.PathIn(common.TargetBaseDirectory())
+//applyOrphan cleans up an orphaned entity.
+func (entity *Entity) applyOrphan() []error {
+	targetPath, strategy, _ := entity.scanOrphan()
+	basePath := entity.PathIn(common.BaseDirectory())
 
 	var errs []error
 	appendError := func(err error) {
@@ -68,23 +68,23 @@ func (target *TargetFile) handleOrphanedTargetBase() []error {
 		appendError(err)
 		if updatedTBPath != "" {
 			fmt.Printf(">> found updated target base: %s -> %s", reportedTBPath, targetPath)
-			//use this target base instead of the one in the TargetBaseDirectory
-			appendError(os.Remove(targetBasePath))
-			targetBasePath = updatedTBPath
+			//use this target base instead of the one in the BaseDirectory
+			appendError(os.Remove(basePath))
+			basePath = updatedTBPath
 		}
 
 		//now really restore the target base
-		appendError(common.CopyFile(targetBasePath, targetPath))
+		appendError(common.CopyFile(basePath, targetPath))
 	}
 
-	//target is not managed by Holo anymore, so delete the provisioned target and the target base
-	lastProvisionedPath := target.PathIn(common.ProvisionedDirectory())
-	err := os.Remove(lastProvisionedPath)
+	//target is not managed by Holo anymore, so delete the provisioned and the base
+	provisionedPath := entity.PathIn(common.ProvisionedDirectory())
+	err := os.Remove(provisionedPath)
 	if err != nil && !os.IsNotExist(err) {
 		appendError(err)
 	}
-	appendError(os.Remove(targetBasePath))
+	appendError(os.Remove(basePath))
 
-	//TODO: cleanup empty directories below TargetBaseDirectory() and ProvisionedDirectory()
+	//TODO: cleanup empty directories below BaseDirectory() and ProvisionedDirectory()
 	return errs
 }

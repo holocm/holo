@@ -30,25 +30,28 @@ import (
 	"github.com/holocm/holo/cmd/holo-files/internal/platform"
 )
 
-//Apply performs the complete application algorithm for the given TargetFile.
-//This includes taking a copy of the target base if necessary, applying all
-//repository entries, and saving the result in the target path with the correct
+//applyNonOrphan performs the complete application algorithm for the given Entity.
+//This includes taking a copy of the base if necessary, applying all
+//resources, and saving the result in the target path with the correct
 //file metadata.
-func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
+func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error) {
 	//determine the related paths
-	targetPath := target.PathIn(common.TargetDirectory())
-	targetBasePath := target.PathIn(common.TargetBaseDirectory())
+	var (
+		targetPath      = entity.PathIn(common.TargetDirectory())
+		basePath        = entity.PathIn(common.BaseDirectory())
+		provisionedPath = entity.PathIn(common.ProvisionedDirectory())
+	)
 
-	//step 1: will only apply targets if:
+	//step 1: entities may only be applied if:
 	//option 1: there is a manageable file in the target location (this target
-	//file is either the target base from the application package or the
+	//file is either the base from the application package or the
 	//product of a previous Apply run)
-	//option 2: the target file was deleted, but we have a target base that we
+	//option 2: the target file was deleted, but we have a base that we
 	//can start from
 	needForcefulReprovision := false
 	targetExists := common.IsManageableFile(targetPath)
 	if !targetExists {
-		if !common.IsManageableFile(targetBasePath) {
+		if !common.IsManageableFile(basePath) {
 			return false, errors.New("skipping target: not a manageable file")
 		}
 		if withForce {
@@ -58,18 +61,18 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 		}
 	}
 
-	//step 2: if we don't have a target base yet, the file at targetPath *is*
-	//the targetBase which we have to copy now
-	if !common.IsManageableFile(targetBasePath) {
-		targetBaseDir := filepath.Dir(targetBasePath)
-		err := os.MkdirAll(targetBaseDir, 0755)
+	//step 2: if we don't have a base yet, the file at targetPath *is*
+	//the base which we have to copy now
+	if !common.IsManageableFile(basePath) {
+		baseDir := filepath.Dir(basePath)
+		err := os.MkdirAll(baseDir, 0755)
 		if err != nil {
-			return false, fmt.Errorf("Cannot create directory %s: %s", targetBaseDir, err.Error())
+			return false, fmt.Errorf("Cannot create directory %s: %s", baseDir, err.Error())
 		}
 
-		err = common.CopyFile(targetPath, targetBasePath)
+		err = common.CopyFile(targetPath, basePath)
 		if err != nil {
-			return false, fmt.Errorf("Cannot copy %s to %s: %s", targetPath, targetBasePath, err.Error())
+			return false, fmt.Errorf("Cannot copy %s to %s: %s", targetPath, basePath, err.Error())
 		}
 	}
 
@@ -81,49 +84,48 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 	}
 	if updatedTBPath != "" {
 		//an updated stock configuration is available at updatedTBPath
-		fmt.Printf(">> found updated target base: %s -> %s\n", reportedTBPath, targetBasePath)
-		err := common.CopyFile(updatedTBPath, targetBasePath)
+		fmt.Printf(">> found updated target base: %s -> %s\n", reportedTBPath, basePath)
+		err := common.CopyFile(updatedTBPath, basePath)
 		if err != nil {
-			return false, fmt.Errorf("Cannot copy %s to %s: %s", updatedTBPath, targetBasePath, err.Error())
+			return false, fmt.Errorf("Cannot copy %s to %s: %s", updatedTBPath, basePath, err.Error())
 		}
 		_ = os.Remove(updatedTBPath) //this can fail silently
 	}
 
-	//step 4: apply the repo files *if* the version at targetPath is the one
-	//installed by the package (which can be found at targetBasePath); complain if
+	//step 4: apply the resources *if* the version at targetPath is the one
+	//installed by the package (which can be found at basePath); complain if
 	//the user made any changes to config files governed by holo (this check is
 	//overridden by the --force option)
 
 	//load the last provisioned version
-	var lastProvisionedBuffer *common.FileBuffer
-	lastProvisionedPath := target.PathIn(common.ProvisionedDirectory())
-	if common.IsManageableFile(lastProvisionedPath) {
-		lastProvisionedBuffer, err = common.NewFileBuffer(lastProvisionedPath, targetPath)
+	var provisionedBuffer *common.FileBuffer
+	if common.IsManageableFile(provisionedPath) {
+		provisionedBuffer, err = common.NewFileBuffer(provisionedPath, targetPath)
 		if err != nil {
 			return false, err
 		}
 	}
 
-	//render desired state of target file
-	buffer, err := target.Render()
+	//render desired state of entity
+	buffer, err := entity.Render()
 	if err != nil {
 		return false, err
 	}
 
-	//compare it against the target version (which must exist at this point
+	//compare it against the last provisioned version (which must exist at this point
 	//unless we are using --force)
-	needToWriteTargetFile := true
-	if targetExists && lastProvisionedBuffer != nil {
+	needToWriteTarget := true
+	if targetExists && provisionedBuffer != nil {
 		targetBuffer, err := common.NewFileBuffer(targetPath, targetPath)
 		if err != nil {
 			return false, err
 		}
-		needToWriteTargetFile = !targetBuffer.EqualTo(buffer)
-		if !targetBuffer.EqualTo(lastProvisionedBuffer) {
+		needToWriteTarget = !targetBuffer.EqualTo(buffer)
+		if !targetBuffer.EqualTo(provisionedBuffer) {
 			if withForce {
 				needForcefulReprovision = true
 			} else {
-				if needToWriteTargetFile {
+				if needToWriteTarget {
 					return false, ErrNeedForceToOverwrite
 				}
 			}
@@ -131,8 +133,8 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 	}
 
 	//don't do anything more if nothing has changed and the target file has not been touched
-	if !needForcefulReprovision && lastProvisionedBuffer != nil {
-		if buffer.EqualTo(lastProvisionedBuffer) {
+	if !needForcefulReprovision && provisionedBuffer != nil {
+		if buffer.EqualTo(provisionedBuffer) {
 			//since we did not do anything, don't report this
 			return true, nil
 		}
@@ -140,36 +142,36 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 
 	//save a copy of the provisioned config file to check for manual
 	//modifications in the next Apply() run
-	if lastProvisionedBuffer == nil || !buffer.EqualTo(lastProvisionedBuffer) {
-		provisionedDir := filepath.Dir(lastProvisionedPath)
+	if provisionedBuffer == nil || !buffer.EqualTo(provisionedBuffer) {
+		provisionedDir := filepath.Dir(provisionedPath)
 		err = os.MkdirAll(provisionedDir, 0755)
 		if err != nil {
-			return false, fmt.Errorf("Cannot write %s: %s", lastProvisionedPath, err.Error())
+			return false, fmt.Errorf("Cannot write %s: %s", provisionedPath, err.Error())
 		}
-		err = buffer.Write(lastProvisionedPath)
+		err = buffer.Write(provisionedPath)
 		if err != nil {
 			return false, err
 		}
-		err = common.ApplyFilePermissions(targetBasePath, lastProvisionedPath)
+		err = common.ApplyFilePermissions(basePath, provisionedPath)
 		if err != nil {
 			return false, err
 		}
 	}
 
-	//we're done now if the target file already has the correct contents
-	if !needToWriteTargetFile {
+	//we're done now if the target already has the correct contents
+	if !needToWriteTarget {
 		//just check ownership again
-		return true, common.ApplyFilePermissions(targetBasePath, targetPath)
+		return true, common.ApplyFilePermissions(basePath, targetPath)
 	}
 
-	//write the result buffer to the target location and copy
-	//owners/permissions from target base to target file
+	//write the result buffer to the target and copy
+	//owners/permissions from base file to target file
 	newTargetPath := targetPath + ".holonew"
 	err = buffer.Write(newTargetPath)
 	if err != nil {
 		return false, err
 	}
-	err = common.ApplyFilePermissions(targetBasePath, newTargetPath)
+	err = common.ApplyFilePermissions(basePath, newTargetPath)
 	if err != nil {
 		return false, err
 	}
@@ -178,29 +180,29 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 	return false, os.Rename(newTargetPath, targetPath)
 }
 
-//Render applies all the repo files for this TargetFile onto the target base.
-func (t *TargetFile) Render() (*common.FileBuffer, error) {
+//Render applies all the resources for this Entity onto the base.
+func (entity *Entity) Render() (*common.FileBuffer, error) {
 	//check if we can skip any application steps (firstStep = -1 means: start
-	//with loading the target base and apply all steps, firstStep >= 0 means:
+	//with loading the base and apply all steps, firstStep >= 0 means:
 	//start at that application step with an empty buffer)
 	firstStep := -1
-	repoEntries := t.RepoEntries()
-	for idx, repoFile := range repoEntries {
-		if repoFile.DiscardsPreviousBuffer() {
+	resources := entity.Resources()
+	for idx, resource := range resources {
+		if resource.DiscardsPreviousBuffer() {
 			firstStep = idx
 		}
 	}
 
-	//load the target base into a buffer as the start for the application
+	//load the base into a buffer as the start for the application
 	//algorithm, unless it will be discarded by an application step
-	targetBasePath := t.PathIn(common.TargetBaseDirectory())
-	targetPath := t.PathIn(common.TargetDirectory())
+	basePath := entity.PathIn(common.BaseDirectory())
+	targetPath := entity.PathIn(common.TargetDirectory())
 	var (
 		buffer *common.FileBuffer
 		err    error
 	)
 	if firstStep == -1 {
-		buffer, err = common.NewFileBuffer(targetBasePath, targetPath)
+		buffer, err = common.NewFileBuffer(basePath, targetPath)
 		if err != nil {
 			return nil, err
 		}
@@ -208,13 +210,13 @@ func (t *TargetFile) Render() (*common.FileBuffer, error) {
 		buffer = common.NewFileBufferFromContents([]byte(nil), targetPath)
 	}
 
-	//apply all the applicable repo files in order (starting from the first one
+	//apply all the applicable resources in order (starting from the first one
 	//that matters)
 	if firstStep > 0 {
-		repoEntries = repoEntries[firstStep:]
+		resources = resources[firstStep:]
 	}
-	for _, repoFile := range repoEntries {
-		buffer, err = repoFile.ApplyTo(buffer)
+	for _, resource := range resources {
+		buffer, err = resource.ApplyTo(buffer)
 		if err != nil {
 			return nil, err
 		}

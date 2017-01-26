@@ -26,15 +26,15 @@ import (
 )
 
 var (
-	targetDirectory   string
+	rootDirectory     string
 	stateDirectory    string
 	resourceDirectory string
 )
 
 func init() {
-	targetDirectory = strings.TrimSuffix(os.Getenv("HOLO_ROOT_DIR"), "/")
-	if targetDirectory == "" {
-		targetDirectory = "/"
+	rootDirectory = strings.TrimSuffix(os.Getenv("HOLO_ROOT_DIR"), "/")
+	if rootDirectory == "" {
+		rootDirectory = "/"
 	}
 	stateDirectory = strings.TrimSuffix(os.Getenv("HOLO_STATE_DIR"), "/")
 	resourceDirectory = strings.TrimSuffix(os.Getenv("HOLO_RESOURCE_DIR"), "/")
@@ -42,7 +42,7 @@ func init() {
 
 //TargetDirectory is $HOLO_ROOT_DIR (or "/" if not set).
 func TargetDirectory() string {
-	return targetDirectory
+	return rootDirectory
 }
 
 //ResourceDirectory is $HOLO_RESOURCE_DIR.
@@ -50,8 +50,8 @@ func ResourceDirectory() string {
 	return resourceDirectory
 }
 
-//TargetBaseDirectory is $HOLO_STATE_DIR/base.
-func TargetBaseDirectory() string {
+//BaseDirectory is $HOLO_STATE_DIR/base.
+func BaseDirectory() string {
 	return stateDirectory + "/base"
 }
 

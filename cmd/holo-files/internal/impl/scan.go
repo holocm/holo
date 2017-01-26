@@ -29,81 +29,79 @@ import (
 	"github.com/holocm/holo/cmd/holo-files/internal/common"
 )
 
-//ScanRepo returns a slice of all the TargetFile entities.
-func ScanRepo() []*TargetFile {
-	//walk over the repo to find repo files (and thus the corresponding target files)
-	targets := make(map[string]*TargetFile)
-	repoDir := common.ResourceDirectory()
-	filepath.Walk(repoDir, func(repoPath string, repoFileInfo os.FileInfo, err error) error {
+//Scan returns a slice of all the Entities.
+func Scan() []*Entity {
+	entities := make(map[string]*Entity)
+	//walk over the resource directory to find resources (and thus the corresponding entities)
+	resourceDir := common.ResourceDirectory()
+	filepath.Walk(resourceDir, func(resourcePath string, resourceFileInfo os.FileInfo, err error) error {
 		//skip over unaccessible stuff
 		if err != nil {
 			return err
 		}
 		//only look at manageable files (regular files or symlinks)
-		if !(repoFileInfo.Mode().IsRegular() || common.IsFileInfoASymbolicLink(repoFileInfo)) {
+		if !(resourceFileInfo.Mode().IsRegular() || common.IsFileInfoASymbolicLink(resourceFileInfo)) {
 			return nil
 		}
-		//don't consider repoDir itself to be a repo entry (it might be a symlink)
-		if repoPath == repoDir {
+		// don't consider resourceDir itself to be a resource (it might be a symlink)
+		if resourcePath == resourceDir {
 			return nil
 		}
-		//only look at files within subdirectories (files in the repo directory
+		//only look at files within subdirectories (files in the resource directory
 		//itself are skipped)
-		relPath, _ := filepath.Rel(repoDir, repoPath)
+		relPath, _ := filepath.Rel(resourceDir, resourcePath)
 		if !strings.ContainsRune(relPath, filepath.Separator) {
 			return nil
 		}
 
-		//create new TargetFile if necessary and store the repo entry in it
-		repoEntry := NewRepoFile(repoPath)
-		targetPath := repoEntry.TargetPath()
-		if targets[targetPath] == nil {
-			targets[targetPath] = NewTargetFileFromPathIn(common.TargetDirectory(), targetPath)
+		//create new Entity if necessary and store the resource in it
+		resource := NewResource(resourcePath)
+		entityPath := resource.EntityPath()
+		if entities[entityPath] == nil {
+			entities[entityPath] = NewEntity(entityPath)
 		}
-		targets[targetPath].AddRepoEntry(repoEntry)
+		entities[entityPath].AddResource(resource)
 		return nil
 	})
 
-	//walk over the target base directory to find orphaned target bases
-	targetBaseDir := common.TargetBaseDirectory()
-	filepath.Walk(targetBaseDir, func(targetBasePath string, targetBaseFileInfo os.FileInfo, err error) error {
+	//walk over the base directory to find orphaned entities
+	baseDir := common.BaseDirectory()
+	filepath.Walk(baseDir, func(basePath string, baseFileInfo os.FileInfo, err error) error {
 		//skip over unaccessible stuff
 		if err != nil {
 			return err
 		}
 		//only look at manageable files (regular files or symlinks)
-		if !(targetBaseFileInfo.Mode().IsRegular() || common.IsFileInfoASymbolicLink(targetBaseFileInfo)) {
+		if !(baseFileInfo.Mode().IsRegular() || common.IsFileInfoASymbolicLink(baseFileInfo)) {
 			return nil
 		}
-		//don't consider targetBaseDir itself to be a target base (it might be a symlink)
-		if targetBasePath == targetBaseDir {
+		//don't consider baseDir itself to be a base (it might be a symlink)
+		if basePath == baseDir {
 			return nil
 		}
 
-		//check if we have seen the config file for this target base
-		//(if not, it's orphaned)
-		//TODO: s/(targetBase)Path/\1Dir/g and s/(targetBase)File/Path/g
-		target := NewTargetFileFromPathIn(targetBaseDir, targetBasePath)
-		targetPath := target.PathIn(common.TargetDirectory())
-		if targets[targetPath] == nil {
-			target.orphaned = true
-			targets[targetPath] = target
+		//ensure that there is an Entity for this base
+		//(it could be orphaned)
+		entityPath, _ := filepath.Rel(baseDir, basePath)
+		entity := NewEntity(entityPath)
+		if entities[entityPath] == nil {
+			entities[entityPath] = entity
 		}
 		return nil
 	})
 
 	//flatten result into list
-	result := make([]*TargetFile, 0, len(targets))
-	for _, target := range targets {
-		result = append(result, target)
+	result := make([]*Entity, 0, len(entities))
+	for _, entity := range entities {
+		result = append(result, entity)
 	}
 
-	sort.Sort(filesByPath(result))
+	sort.Sort(entityList(result))
 	return result
 }
 
-type filesByPath []*TargetFile
+type entityList []*Entity
 
-func (f filesByPath) Len() int           { return len(f) }
-func (f filesByPath) Less(i, j int) bool { return f[i].relTargetPath < f[j].relTargetPath }
-func (f filesByPath) Swap(i, j int)      { f[i], f[j] = f[j], f[i] }
+func (f entityList) Len() int           { return len(f) }
+func (f entityList) Less(i, j int) bool { return f[i].relPath < f[j].relPath }
+func (f entityList) Swap(i, j int)      { f[i], f[j] = f[j], f[i] }
