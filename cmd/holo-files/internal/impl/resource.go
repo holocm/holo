@@ -1,6 +1,7 @@
 /*******************************************************************************
 *
 * Copyright 2015 Stefan Majewsky <majewsky@gmx.net>
+* Copyright 2017 Luke Shumaker <lukeshu@sbcglobal.net>
 *
 * This file is part of Holo.
 *
@@ -94,31 +95,39 @@ func (resource Resource) DiscardsPreviousBuffer() bool {
 //ApplyTo applies this Resource to a file buffer, as part of the `holo apply`
 //algorithm. Regular repofiles will replace the file buffer, while a holoscript
 //will be executed on the file buffer to obtain the new buffer.
-func (resource Resource) ApplyTo(buffer *common.FileBuffer) (*common.FileBuffer, error) {
+func (resource Resource) ApplyTo(entityBuffer common.FileBuffer) (common.FileBuffer, error) {
 	if resource.ApplicationStrategy() == "apply" {
-		return common.NewFileBuffer(resource.Path(), buffer.BasePath)
+		resourceBuffer, err := common.NewFileBuffer(resource.Path())
+		if err != nil {
+			return common.FileBuffer{}, err
+		}
+		entityBuffer.Mode = (entityBuffer.Mode &^ os.ModeType) | (resourceBuffer.Mode & os.ModeType)
+		entityBuffer.Contents = resourceBuffer.Contents
+		return entityBuffer, nil
 	}
 
 	//application of a holoscript requires file contents
-	buffer, err := buffer.ResolveSymlink()
+	entityBuffer, err := entityBuffer.ResolveSymlink()
 	if err != nil {
-		return nil, err
+		return common.FileBuffer{}, err
 	}
 
 	//run command, fetch result file into buffer (not into the entity
 	//directly, in order not to corrupt the file there if the script run fails)
 	var stdout bytes.Buffer
 	cmd := exec.Command(resource.Path())
-	cmd.Stdin = bytes.NewBuffer(buffer.Contents)
+	cmd.Stdin = strings.NewReader(entityBuffer.Contents)
 	cmd.Stdout = &stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	if err != nil {
-		return nil, fmt.Errorf("execution of %s failed: %s", resource.Path(), err.Error())
+		return common.FileBuffer{}, fmt.Errorf("execution of %s failed: %s", resource.Path(), err.Error())
 	}
 
 	//result is the stdout of the script
-	return common.NewFileBufferFromContents(stdout.Bytes(), buffer.BasePath), nil
+	entityBuffer.Mode &^= os.ModeType
+	entityBuffer.Contents = stdout.String()
+	return entityBuffer, nil
 }
 
 //Resources holds a slice of Resource instances, and implements some methods

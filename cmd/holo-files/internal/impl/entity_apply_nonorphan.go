@@ -1,6 +1,7 @@
 /*******************************************************************************
 *
 * Copyright 2015 Stefan Majewsky <majewsky@gmx.net>
+* Copyright 2017 Luke Shumaker <lukeshu@sbcglobal.net>
 *
 * This file is part of Holo.
 *
@@ -98,12 +99,9 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 	//overridden by the --force option)
 
 	//load the last provisioned version
-	var provisionedBuffer *common.FileBuffer
-	if common.IsManageableFile(provisionedPath) {
-		provisionedBuffer, err = common.NewFileBuffer(provisionedPath, targetPath)
-		if err != nil {
-			return false, err
-		}
+	provisionedBuffer, err := common.NewFileBuffer(provisionedPath)
+	if err != nil && !os.IsNotExist(err) {
+		return false, err
 	}
 
 	//render desired state of entity
@@ -115,8 +113,8 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 	//compare it against the last provisioned version (which must exist at this point
 	//unless we are using --force)
 	needToWriteTarget := true
-	if targetExists && provisionedBuffer != nil {
-		targetBuffer, err := common.NewFileBuffer(targetPath, targetPath)
+	if targetExists && provisionedBuffer.Manageable {
+		targetBuffer, err := common.NewFileBuffer(targetPath)
 		if err != nil {
 			return false, err
 		}
@@ -133,7 +131,7 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 	}
 
 	//don't do anything more if nothing has changed and the target file has not been touched
-	if !needForcefulReprovision && provisionedBuffer != nil {
+	if !needForcefulReprovision && provisionedBuffer.Manageable {
 		if buffer.EqualTo(provisionedBuffer) {
 			//since we did not do anything, don't report this
 			return true, nil
@@ -142,7 +140,7 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 
 	//save a copy of the provisioned config file to check for manual
 	//modifications in the next Apply() run
-	if provisionedBuffer == nil || !buffer.EqualTo(provisionedBuffer) {
+	if !provisionedBuffer.Manageable || !buffer.EqualTo(provisionedBuffer) {
 		provisionedDir := filepath.Dir(provisionedPath)
 		err = os.MkdirAll(provisionedDir, 0755)
 		if err != nil {
@@ -152,16 +150,11 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 		if err != nil {
 			return false, err
 		}
-		err = common.ApplyFilePermissions(basePath, provisionedPath)
-		if err != nil {
-			return false, err
-		}
 	}
 
 	//we're done now if the target already has the correct contents
 	if !needToWriteTarget {
-		//just check ownership again
-		return true, common.ApplyFilePermissions(basePath, targetPath)
+		return true, nil
 	}
 
 	//write the result buffer to the target and copy
@@ -171,54 +164,37 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 	if err != nil {
 		return false, err
 	}
-	err = common.ApplyFilePermissions(basePath, newTargetPath)
-	if err != nil {
-		return false, err
-	}
 	//move $target.holonew -> $target atomically (to ensure that there is
 	//always a valid file at $target)
 	return false, os.Rename(newTargetPath, targetPath)
 }
 
 //Render applies all the resources for this Entity onto the base.
-func (entity *Entity) Render() (*common.FileBuffer, error) {
-	//check if we can skip any application steps (firstStep = -1 means: start
-	//with loading the base and apply all steps, firstStep >= 0 means:
-	//start at that application step with an empty buffer)
-	firstStep := -1
+func (entity *Entity) Render() (common.FileBuffer, error) {
 	resources := entity.Resources()
+
+	// Optimization: check if we can skip any application steps
+	firstStep := 0
 	for idx, resource := range resources {
 		if resource.DiscardsPreviousBuffer() {
 			firstStep = idx
 		}
 	}
+	resources = resources[firstStep:]
 
 	//load the base into a buffer as the start for the application
-	//algorithm, unless it will be discarded by an application step
-	basePath := entity.PathIn(common.BaseDirectory())
-	targetPath := entity.PathIn(common.TargetDirectory())
-	var (
-		buffer *common.FileBuffer
-		err    error
-	)
-	if firstStep == -1 {
-		buffer, err = common.NewFileBuffer(basePath, targetPath)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		buffer = common.NewFileBufferFromContents([]byte(nil), targetPath)
+	//algorithm
+	buffer, err := common.NewFileBuffer(entity.PathIn(common.BaseDirectory()))
+	buffer.Path = entity.PathIn(common.TargetDirectory())
+	if err != nil {
+		return common.FileBuffer{}, err
 	}
 
-	//apply all the applicable resources in order (starting from the first one
-	//that matters)
-	if firstStep > 0 {
-		resources = resources[firstStep:]
-	}
+	//apply all the applicable resources in order
 	for _, resource := range resources {
 		buffer, err = resource.ApplyTo(buffer)
 		if err != nil {
-			return nil, err
+			return common.FileBuffer{}, err
 		}
 	}
 
