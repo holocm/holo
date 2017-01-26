@@ -32,47 +32,39 @@ import (
 	"github.com/holocm/holo/cmd/holo-files/internal/common"
 )
 
-//Resource represents a single file in $HOLO_RESOURCE_DIR. The string
-//stored in it is the path to the repo file (also accessible as Path()).
-type Resource string
+//Resource represents a single file in $HOLO_RESOURCE_DIR.
+type Resource struct {
+	path          string
+	disambiguator string
+	entityPath    string
+}
 
 //NewResource creates a Resource instance when its path in the file system is
 //known.
 func NewResource(path string) Resource {
-	return Resource(path)
+	relPath, _ := filepath.Rel(common.ResourceDirectory(), path)
+	segments := strings.SplitN(relPath, string(filepath.Separator), 2)
+	return Resource{
+		path:          path,
+		disambiguator: segments[0],
+		entityPath:    strings.TrimSuffix(segments[1], ".holoscript"),
+	}
 }
 
 //Path returns the path to this resource in the file system.
 func (resource Resource) Path() string {
-	return string(resource)
+	return resource.path
 }
 
 //EntityPath returns the path to the corresponding entity.
 func (resource Resource) EntityPath() string {
-	//the optional ".holoscript" suffix appears only on resources
-	path := resource.Path()
-	path = strings.TrimSuffix(path, ".holoscript")
-
-	//make path relative
-	relPath, _ := filepath.Rel(common.ResourceDirectory(), path)
-	//remove the disambiguation path element to get to the relPath for the ConfigFile
-	//e.g. path     = '/usr/share/holo/files/23-foo/etc/foo.conf'
-	//  -> relPath  = '23-foo/etc/foo.conf'
-	//  -> relPath  = 'etc/foo.conf'
-	segments := strings.SplitN(relPath, fmt.Sprintf("%c", filepath.Separator), 2)
-	relPath = segments[1]
-
-	return relPath
+	return resource.entityPath
 }
 
 //Disambiguator returns the disambiguator, i.e. the Path() element before the
 //EntityPath() that disambiguates multiple resources for the same entity.
 func (resource Resource) Disambiguator() string {
-	//make path relative to ResourceDirectory()
-	relPath, _ := filepath.Rel(common.ResourceDirectory(), resource.Path())
-	//the disambiguator is the first path element in there
-	segments := strings.SplitN(relPath, fmt.Sprintf("%c", filepath.Separator), 2)
-	return segments[0]
+	return resource.disambiguator
 }
 
 //ApplicationStrategy returns the human-readable name for the strategy that
