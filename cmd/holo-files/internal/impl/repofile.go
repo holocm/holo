@@ -96,9 +96,9 @@ func (file RepoFile) DiscardsPreviousBuffer() bool {
 //ApplyTo applies this RepoFile to a file buffer, as part of the `holo apply`
 //algorithm. Regular repofiles will replace the file buffer, while a holoscript
 //will be executed on the file buffer to obtain the new buffer.
-func (file RepoFile) ApplyTo(buffer *FileBuffer) (*FileBuffer, error) {
+func (file RepoFile) ApplyTo(buffer *common.FileBuffer) (*common.FileBuffer, error) {
 	if file.ApplicationStrategy() == "apply" {
-		return NewFileBuffer(file.Path(), buffer.BasePath)
+		return common.NewFileBuffer(file.Path(), buffer.BasePath)
 	}
 
 	//application of a holoscript requires file contents
@@ -120,7 +120,7 @@ func (file RepoFile) ApplyTo(buffer *FileBuffer) (*FileBuffer, error) {
 	}
 
 	//result is the stdout of the script
-	return NewFileBufferFromContents(stdout.Bytes(), buffer.BasePath), nil
+	return common.NewFileBufferFromContents(stdout.Bytes(), buffer.BasePath), nil
 }
 
 //RepoFiles holds a slice of RepoFile instances, and implements some methods

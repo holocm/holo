@@ -95,10 +95,10 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 	//overridden by the --force option)
 
 	//load the last provisioned version
-	var lastProvisionedBuffer *FileBuffer
+	var lastProvisionedBuffer *common.FileBuffer
 	lastProvisionedPath := target.PathIn(common.ProvisionedDirectory())
 	if common.IsManageableFile(lastProvisionedPath) {
-		lastProvisionedBuffer, err = NewFileBuffer(lastProvisionedPath, targetPath)
+		lastProvisionedBuffer, err = common.NewFileBuffer(lastProvisionedPath, targetPath)
 		if err != nil {
 			return false, err
 		}
@@ -114,7 +114,7 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 	//unless we are using --force)
 	needToWriteTargetFile := true
 	if targetExists && lastProvisionedBuffer != nil {
-		targetBuffer, err := NewFileBuffer(targetPath, targetPath)
+		targetBuffer, err := common.NewFileBuffer(targetPath, targetPath)
 		if err != nil {
 			return false, err
 		}
@@ -179,7 +179,7 @@ func apply(target *TargetFile, withForce bool) (skipReport bool, err error) {
 }
 
 //Render applies all the repo files for this TargetFile onto the target base.
-func (t *TargetFile) Render() (*FileBuffer, error) {
+func (t *TargetFile) Render() (*common.FileBuffer, error) {
 	//check if we can skip any application steps (firstStep = -1 means: start
 	//with loading the target base and apply all steps, firstStep >= 0 means:
 	//start at that application step with an empty buffer)
@@ -196,16 +196,16 @@ func (t *TargetFile) Render() (*FileBuffer, error) {
 	targetBasePath := t.PathIn(common.TargetBaseDirectory())
 	targetPath := t.PathIn(common.TargetDirectory())
 	var (
-		buffer *FileBuffer
+		buffer *common.FileBuffer
 		err    error
 	)
 	if firstStep == -1 {
-		buffer, err = NewFileBuffer(targetBasePath, targetPath)
+		buffer, err = common.NewFileBuffer(targetBasePath, targetPath)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		buffer = NewFileBufferFromContents([]byte(nil), targetPath)
+		buffer = common.NewFileBufferFromContents([]byte(nil), targetPath)
 	}
 
 	//apply all the applicable repo files in order (starting from the first one

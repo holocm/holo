@@ -18,7 +18,7 @@
 *
 *******************************************************************************/
 
-package impl
+package common
 
 import (
 	"bytes"
@@ -26,8 +26,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-
-	"github.com/holocm/holo/cmd/holo-files/internal/common"
 )
 
 //FileBuffer represents the contents of a file. It is used in holo.Apply() as
@@ -51,7 +49,7 @@ func NewFileBuffer(path string, basePath string) (*FileBuffer, error) {
 	}
 
 	//a manageable file is either a symlink...
-	if common.IsFileInfoASymbolicLink(info) {
+	if IsFileInfoASymbolicLink(info) {
 		target, err := os.Readlink(path)
 		if err != nil {
 			return nil, err
@@ -103,7 +101,7 @@ func (fb *FileBuffer) Write(path string) error {
 		return err
 	}
 	if err == nil {
-		if !(info.Mode().IsRegular() || common.IsFileInfoASymbolicLink(info)) {
+		if !(info.Mode().IsRegular() || IsFileInfoASymbolicLink(info)) {
 			return &os.PathError{
 				Op:   "holo.FileBuffer.Write",
 				Path: path,
