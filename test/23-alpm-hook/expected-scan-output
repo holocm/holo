@@ -1,0 +1,12 @@
+
+file:/etc/repofile-deleted-with-pacnew.conf (all repository files were deleted)
+     restore var/lib/holo/files/base/etc/repofile-deleted-with-pacnew.conf
+
+file:/etc/targetfile-deleted-with-pacsave.conf (target was deleted)
+      delete var/lib/holo/files/base/etc/targetfile-deleted-with-pacsave.conf
+
+file:/etc/targetfile-with-pacnew.conf
+    store at var/lib/holo/files/base/etc/targetfile-with-pacnew.conf
+    passthru usr/share/holo/files/01-first/etc/targetfile-with-pacnew.conf.holoscript
+
+exit status 0

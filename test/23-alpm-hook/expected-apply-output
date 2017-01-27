@@ -1,0 +1,13 @@
+
+Scrubbing file:/etc/targetfile-deleted-with-pacsave.conf (target was deleted)
+   delete var/lib/holo/files/base/etc/targetfile-deleted-with-pacsave.conf
+
+>> also deleting etc/targetfile-deleted-with-pacsave.conf.pacsave
+
+Working on file:/etc/targetfile-with-pacnew.conf
+  store at var/lib/holo/files/base/etc/targetfile-with-pacnew.conf
+  passthru usr/share/holo/files/01-first/etc/targetfile-with-pacnew.conf.holoscript
+
+>> found updated target base: etc/targetfile-with-pacnew.conf.pacnew -> var/lib/holo/files/base/etc/targetfile-with-pacnew.conf
+
+exit status 0
