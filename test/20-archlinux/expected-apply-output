@@ -1,15 +1,15 @@
 
-Scrubbing file:target/etc/repofile-deleted-with-pacnew.conf (all repository files were deleted)
+Scrubbing file:/etc/repofile-deleted-with-pacnew.conf (all repository files were deleted)
   restore target/var/lib/holo/files/base/etc/repofile-deleted-with-pacnew.conf
 
 >> found updated target base: target/etc/repofile-deleted-with-pacnew.conf.pacnew -> target/etc/repofile-deleted-with-pacnew.conf
 
-Scrubbing file:target/etc/targetfile-deleted-with-pacsave.conf (target was deleted)
+Scrubbing file:/etc/targetfile-deleted-with-pacsave.conf (target was deleted)
    delete target/var/lib/holo/files/base/etc/targetfile-deleted-with-pacsave.conf
 
 >> also deleting target/etc/targetfile-deleted-with-pacsave.conf.pacsave
 
-Working on file:target/etc/targetfile-with-pacnew.conf
+Working on file:/etc/targetfile-with-pacnew.conf
   store at target/var/lib/holo/files/base/etc/targetfile-with-pacnew.conf
   passthru target/usr/share/holo/files/01-first/etc/targetfile-with-pacnew.conf.holoscript
 

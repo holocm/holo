@@ -1,33 +1,33 @@
 
-file:target/etc/file-deleted.conf
+file:/etc/file-deleted.conf
     store at target/var/lib/holo/files/base/etc/file-deleted.conf
        apply target/usr/share/holo/files/01-first/etc/file-deleted.conf
 
-file:target/etc/file-modified.conf
+file:/etc/file-modified.conf
     store at target/var/lib/holo/files/base/etc/file-modified.conf
        apply target/usr/share/holo/files/01-first/etc/file-modified.conf
 
-file:target/etc/file-to-symlink.conf
+file:/etc/file-to-symlink.conf
     store at target/var/lib/holo/files/base/etc/file-to-symlink.conf
        apply target/usr/share/holo/files/01-first/etc/file-to-symlink.conf
 
-file:target/etc/file-unmodified.conf
+file:/etc/file-unmodified.conf
     store at target/var/lib/holo/files/base/etc/file-unmodified.conf
        apply target/usr/share/holo/files/01-first/etc/file-unmodified.conf
 
-file:target/etc/symlink-deleted.conf
+file:/etc/symlink-deleted.conf
     store at target/var/lib/holo/files/base/etc/symlink-deleted.conf
        apply target/usr/share/holo/files/01-first/etc/symlink-deleted.conf
 
-file:target/etc/symlink-modified.conf
+file:/etc/symlink-modified.conf
     store at target/var/lib/holo/files/base/etc/symlink-modified.conf
        apply target/usr/share/holo/files/01-first/etc/symlink-modified.conf
 
-file:target/etc/symlink-to-file.conf
+file:/etc/symlink-to-file.conf
     store at target/var/lib/holo/files/base/etc/symlink-to-file.conf
        apply target/usr/share/holo/files/01-first/etc/symlink-to-file.conf
 
-file:target/etc/symlink-unmodified.conf
+file:/etc/symlink-unmodified.conf
     store at target/var/lib/holo/files/base/etc/symlink-unmodified.conf
        apply target/usr/share/holo/files/01-first/etc/symlink-unmodified.conf
 

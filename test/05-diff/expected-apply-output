@@ -1,11 +1,11 @@
 
-Working on file:target/etc/file-deleted.conf
+Working on file:/etc/file-deleted.conf
   store at target/var/lib/holo/files/base/etc/file-deleted.conf
      apply target/usr/share/holo/files/01-first/etc/file-deleted.conf
 
 !! Entity has been deleted by user (use --force to restore)
 
-Working on file:target/etc/file-modified.conf
+Working on file:/etc/file-modified.conf
   store at target/var/lib/holo/files/base/etc/file-modified.conf
      apply target/usr/share/holo/files/01-first/etc/file-modified.conf
 
@@ -20,7 +20,7 @@ Working on file:target/etc/file-modified.conf
     +xxx
      ccc
 
-Working on file:target/etc/file-to-symlink.conf
+Working on file:/etc/file-to-symlink.conf
   store at target/var/lib/holo/files/base/etc/file-to-symlink.conf
      apply target/usr/share/holo/files/01-first/etc/file-to-symlink.conf
 
@@ -42,13 +42,13 @@ Working on file:target/etc/file-to-symlink.conf
     +/bin/ls
     \ No newline at end of file
 
-Working on file:target/etc/symlink-deleted.conf
+Working on file:/etc/symlink-deleted.conf
   store at target/var/lib/holo/files/base/etc/symlink-deleted.conf
      apply target/usr/share/holo/files/01-first/etc/symlink-deleted.conf
 
 !! Entity has been deleted by user (use --force to restore)
 
-Working on file:target/etc/symlink-modified.conf
+Working on file:/etc/symlink-modified.conf
   store at target/var/lib/holo/files/base/etc/symlink-modified.conf
      apply target/usr/share/holo/files/01-first/etc/symlink-modified.conf
 
@@ -63,7 +63,7 @@ Working on file:target/etc/symlink-modified.conf
     +/bin/ls
     \ No newline at end of file
 
-Working on file:target/etc/symlink-to-file.conf
+Working on file:/etc/symlink-to-file.conf
   store at target/var/lib/holo/files/base/etc/symlink-to-file.conf
      apply target/usr/share/holo/files/01-first/etc/symlink-to-file.conf
 

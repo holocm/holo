@@ -27,6 +27,6 @@ new file mode 100644
 +eee
 +eee
 
-!! cannot diff file:target/etc/stock-file-is-directory.conf: file target/etc/stock-file-is-directory.conf has wrong file type
+!! cannot diff file:/etc/stock-file-is-directory.conf: file target/etc/stock-file-is-directory.conf has wrong file type
 
 exit status 0

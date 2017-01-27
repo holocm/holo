@@ -1,9 +1,9 @@
 
-file:target/etc/normal.conf
+file:/etc/normal.conf
     store at target/var/lib/holo/files/base/etc/normal.conf
        apply target/usr/share/holo/files/01-first/etc/normal.conf
 
-file:target/etc/requireforce.conf
+file:/etc/requireforce.conf
     store at target/var/lib/holo/files/base/etc/requireforce.conf
        apply target/usr/share/holo/files/01-first/etc/requireforce.conf
 

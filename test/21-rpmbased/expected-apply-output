@@ -1,21 +1,21 @@
 
-Scrubbing file:target/etc/repofile-deleted-with-rpmnew.conf (all repository files were deleted)
+Scrubbing file:/etc/repofile-deleted-with-rpmnew.conf (all repository files were deleted)
   restore target/var/lib/holo/files/base/etc/repofile-deleted-with-rpmnew.conf
 
 >> found updated target base: target/etc/repofile-deleted-with-rpmnew.conf.rpmnew -> target/etc/repofile-deleted-with-rpmnew.conf
 
-Scrubbing file:target/etc/repofile-deleted-with-rpmsave.conf (all repository files were deleted)
+Scrubbing file:/etc/repofile-deleted-with-rpmsave.conf (all repository files were deleted)
   restore target/var/lib/holo/files/base/etc/repofile-deleted-with-rpmsave.conf
 
 >> found updated target base: target/etc/repofile-deleted-with-rpmsave.conf (with .rpmsave) -> target/etc/repofile-deleted-with-rpmsave.conf
 
-Working on file:target/etc/targetfile-with-rpmnew.conf
+Working on file:/etc/targetfile-with-rpmnew.conf
   store at target/var/lib/holo/files/base/etc/targetfile-with-rpmnew.conf
   passthru target/usr/share/holo/files/01-first/etc/targetfile-with-rpmnew.conf.holoscript
 
 >> found updated target base: target/etc/targetfile-with-rpmnew.conf.rpmnew -> target/var/lib/holo/files/base/etc/targetfile-with-rpmnew.conf
 
-Working on file:target/etc/targetfile-with-rpmsave.conf
+Working on file:/etc/targetfile-with-rpmsave.conf
   store at target/var/lib/holo/files/base/etc/targetfile-with-rpmsave.conf
   passthru target/usr/share/holo/files/01-first/etc/targetfile-with-rpmsave.conf.holoscript
 
