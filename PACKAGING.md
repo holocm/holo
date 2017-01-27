@@ -17,7 +17,7 @@ Build-time dependencies for this repo:
 
 ## Configuration files
 
-`/etc/holorc` should be marked as a configuration file.
+`/etc/holorc` and `/etc/holorc.d/*` should be marked as configuration files.
 
 ## Caveats
 
