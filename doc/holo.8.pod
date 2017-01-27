@@ -60,13 +60,16 @@ multiple entities.
 Each entity is identified by a name, usually of the form C<type:identifier>.
 Refer to the manpage of each plugin for the format for its entities' names.
 
+An entity that was created and still exists, but for which all source files have
+been removed, is said to be B<orphaned> or an B<orphan>. Orphaned entities are
+removed the next time an apply operation is performed on them.
+
 =head1 OPERATIONS
 
 All operations act on all entities by default, but can be restricted to certain
-entities by giving B<selectors> on the command line.
-
-A selector can be either an entity name (such as C<file:/etc/sddm/sddm.conf>),
-or the path to a resource file that defines this entity (for instance,
+entities by giving B<selectors> on the command line. A selector can be either an
+entity name (such as C<file:/etc/sddm/sddm.conf>), or the path to a resource
+file that defines this entity (such as
 C</usr/share/holo/files/40-desktop/etc/sddm/sddm.conf>), or a plugin ID (such
 as C<files>). A plugin ID as selector matches all entities known to that
 plugin.
@@ -79,11 +82,11 @@ Prompt all plugins to scan for entities and list all known entities (or, if
 selectors are given, all entities matching these selectors) including the
 information returned from plugins about these entities.
 
-With C<--short>, only list the entity names.
+With C<-s> or C<--short>, only list the entity names.
 
-With C<--porcelain>, show the raw scan report as received from the plugins. The
-format is documented in L<holo-plugin-interface(7)>. The format is more
-machine-readable and stable, and thus the preferred choice for parsing in
+With C<-p> or C<--porcelain>, show the raw scan report as received from the
+plugins. The format is documented in L<holo-plugin-interface(7)>. The format is
+more machine-readable and stable, and thus the preferred choice for parsing in
 scripts.
 
 =item B<apply> [I<-f|--force>] [I<selector> ...]
@@ -91,17 +94,17 @@ scripts.
 Apply the selected (or all) entities. Refer to the manpage of each plugin for
 what "applying" entails.
 
-By default, Holo will refuse to provision entities that have been changed by the
-user or by other programs. Apply B<--force> to overwrite such changes or perform
-otherwise dangerous activities.
+By default, Holo plugins will refuse to provision entities that have been
+changed by the user or by other programs. Apply C<-f> or C<--force> to overwrite
+such changes or perform otherwise dangerous activities.
 
 If you want to check what will be done, use C<holo scan> as a dry run before
 C<holo apply>.
 
 =item B<diff> [I<selector> ...]
 
-Print a L<diff(1)> between the last provisioned version of each selected target
-file and the actual contents of that target file.
+Print a L<diff(1)> between the last provisioned version of each selected entity
+and the actual contents of that entity.
 
 For entities that are not files, refer to the plugin's manpage for what the
 diff contains. When a plugin is not able to produce a meaningful textual
@@ -117,7 +120,43 @@ Print out Holo's version string including the release name.
 
 =back
 
+=head1 ENVIRONMENT
+
+=over 4
+
+=item C<$TMPDIR> (default: F</tmp>)
+
+Where to place temporary files.
+
+=back
+
+=head1 FILES
+
+=over 4
+
+=item F</etc/holorc> (see L<holorc(5)>)
+
+=item F</etc/holorc.d/*> (see L<holorc(5)>)
+
+=item F</run/holo.pid>
+
+=back
+
+For each plugin:
+
+=over 4
+
+=item F</usr/lib/holo/holo-$PLUGIN_ID> (can be overridden in L<holorc(5)>)
+
+=item F</usr/share/holo/$PLUGIN_ID/> (must exist)
+
+=item F</var/lib/holo/$PLUGIN_ID/> (will be created if does not exist)
+
+=back
+
 =head1 SEE ALSO
+
+L<holorc(5)>
 
 L<holo-build(8)> can optionally be used in conjunction with Holo to simplify
 the package build process.

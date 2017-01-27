@@ -8,8 +8,9 @@ holo-files - Holo plugin to provision files
 
 When using Holo, configuration is usually stored in system packages, so files
 can be provisioned by just including them in a configuration package. This
-plugin extends this basic capability to allow a configuration package to
-overwrite or modify a file that has been installed by an application package.
+plugin extends this basic capability to allow one package (a configuration
+package) to overwrite or modify a file that has been installed by another
+package (an application package).
 
 =head2 Structure of the resource directory
 
@@ -18,11 +19,11 @@ resource directory at F</usr/share/holo/files>. Each B<resource> file works on a
 certain B<target>, as determined by its file name:
 
     /usr/share/holo/files/20-webserver/etc/nginx/nginx.conf
-                           ^          --+------------------
-                           |            |
-                           |            +-- path to target
-                           |
-                           +-- disambiguator
+                          \__________/\___________________/
+                            |           |
+                            |           `-- path to target
+                            |
+                            `-- disambiguator
 
 The B<disambiguator> is always required, and allows multiple resource files to
 operate on the same target (sorted alphabetically by their disambiguator). The
@@ -30,7 +31,7 @@ pattern of putting a number at the start of the disambiguator is not required,
 but useful to control the ordering of resource files.
 
 Each target file that has such resource files is an B<entity> within Holo. Its entity
-name is C<file:$target> where C<$target> is the absolute path to the target
+ID is C<file:$target> where C<$target> is the absolute path to the target
 file.
 
 =head2 Application strategy
@@ -46,7 +47,7 @@ previous application step). The target contents will be piped through the
 script. This is typically used when the default configuration for an
 application shall be used, but with some minor modifications. The following
 example uses the default configuration for L<pacman(8)>, but enables the
-"Color" and "TotalDownload" option:
+"Color" and "TotalDownload" options:
 
     $ cat /usr/share/holo/files/20-enable-color/etc/pacman.conf.holoscript
     #!/bin/sh
@@ -95,6 +96,11 @@ its target base with this file:
 
     >> found updated target base: /etc/pacman.conf.pacnew -> /var/lib/holo/files/base/etc/pacman.conf
 
+(Unless disabled, it would not normally be nescessary to manually run C<sudo
+holo apply> in the above example, as holo-files provides a pacman hook that
+causes pacman to automatically call C<holo apply> to handle C<.pacnew> files.
+This is not (yet) true for other package managers.)
+
 This means that when configuration is applied as a holoscript on top of the
 default configuration, future updates to the default configuration will
 automatically be picked up, as long as C<holo apply> is run after the system update.
@@ -114,7 +120,7 @@ This usually occurs because a package has been removed from the system, or
 because a different package version were installed that do not contain the
 resource files in question anymore.
 
-There are two subcases to consider, If only configuration packages were
+There are two subcases to consider, if only configuration packages were
 deleted, C<holo apply> will restore the target base (as installed by the
 application package):
 
@@ -160,6 +166,8 @@ can be used to reset the target files to their defined state.
 =head1 SEE ALSO
 
 L<holo(8)> provides the user interface for using this plugin.
+
+L<os-release(5)>
 
 =head1 AUTHOR
 

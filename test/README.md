@@ -10,3 +10,19 @@ The test cases are run with `holo-test`, which is documented in its manpage at
 repository root:
 
     ./util/holo-test holo ./test/??-*
+
+There are several test-hooks built in to the binaries:
+
+ - `holo-files` also supports the `unittest` os-release ID, which disables
+   package-manager specific functionality.
+
+ - The environment variable `$HOLO_TEST_FLAGS` can be used to send flags to the
+   testing subsystem (that is, the "testing" Go package). Documentation on
+   supported test flags can be accessed by running `HOLO_TEST_FLAGS=-help
+   ./bin/holo.test`.
+
+ - The environment variable `$HOLO_TEST_COVERDIR` can be used to augment
+   `$HOLO_TEST_FLAGS`. At process start up, the program will insert
+   `-test.coverprofile $HOLO_TEST_COVERDIR/$UNIQ_FILE` into the flags passed to
+   the testing subsystem, where `$UNIQ_FILE` is a identifier unique to that
+   process invocation.

@@ -35,9 +35,18 @@ and C<foosql-users>.
 
 Plugins are not discovered automatically. They MUST be referenced in
 F<$HOLO_ROOT_DIR/etc/holorc> or F<$HOLO_ROOT_DIR/etc/holorc.d/*> (see
-L<holorc(5)>) by adding the line:
+L<holorc(5)>) by adding the line in one of the following forms:
 
     plugin $PLUGIN_ID
+    plugin $PLUGIN_ID=$PLUGIN_BINARY
+
+If the form without an explicit C<$PLUGIN_BINARY> is given, then Holo will use a
+default value of
+
+    PLUGIN_BINARY=/usr/lib/holo/holo-$PLUGIN_ID
+
+Note that this default value for C<$PLUGIN_BINARY> does NOT respect
+C<$HOLO_ROOT_DIR>.
 
 It is RECOMMENDED that plugins install a L<holorc(5)> snippet to achieve this:
 
@@ -52,19 +61,30 @@ scripts. This is no longer required if holorc snippets are used.
 =head1 ENVIRONMENT
 
 Plugins SHALL locate and store their data in the directories named by the
-following environment variables:
+following environment variables which are set by Holo before executing the
+plugin:
 
 =over 4
 
+=item C<$HOLO_API_VERSION> (default: C<3>)
+
+This variable is a single positive integer identifying the version of the API
+that the plugin is expected to conform to. Plugins SHALL not require that
+C<$HOLO_API_VERSION> be defined for the C<info> operation, but SHOULD verify
+that they support the specified version for all other operations.
+
 =item C<$HOLO_ROOT_DIR> (default: F</>)
 
-Plugins MUST recognize the environment variable C<$HOLO_ROOT_DIR>: If this
-variable exists, plugins SHALL assume that Holo is running in test mode. The
-variable holds the path to a directory which contains a test scenario resembling
-a normal root partition (at least the parts needed for the test scenario).
+Plugins MUST recognize the environment variable C<$HOLO_ROOT_DIR>: if this
+variable exists and is set to a value other than F</>, then plugins SHALL assume
+that Holo is running in test mode. The variable holds the path to a directory
+resembling a normal root partition (at least the parts needed for the test
+scenario).
 
-In test mode, plugins SHOULD NOT talk to system-level daemons or write files
-outside the C<$HOLO_ROOT_DIR>. Appropriate mock implementations SHALL be used
+In test mode, plugins SHOULD NOT talk to system-level daemons.  In test mode,
+plugins SHOULD NOT write files outside the C<$HOLO_ROOT_DIR>; with the exception
+of C<$HOLO_CACHE_DIR> (defined below), which may or may not be inside of
+C<$HOLO_ROOT_DIR>. Appropriate mock implementations SHALL be used
 instead. Modifying files below C<$HOLO_ROOT_DIR> is allowed.
 
 =item C<$HOLO_RESOURCE_DIR> (default: F<$HOLO_ROOT_DIR/usr/share/holo/$PLUGIN_ID>)
@@ -80,7 +100,7 @@ directory is missing, Holo will create it before calling the plugin executable.
 However, plugins are encouraged to create the state directory at their
 installation time if they are going to need it.
 
-=item C<$HOLO_CACHE_DIR> (default: below F</tmp>)
+=item C<$HOLO_CACHE_DIR> (default: below C<${TMPDIR:-/tmp}>)
 
 Where plugins may store temporary data, such as results from an initial scan
 operation. Holo will create this directory when it starts up, and clean it up
@@ -92,18 +112,19 @@ Future versions of Holo may start to choose these paths differently (or allow
 the user to do so), but the default values are stable and can safely be
 communicated to users in documentation. Because these paths can be chosen by
 Holo, plugins SHALL always use the paths in the environment variables rather
-than trying to compute them by themselves. The paths are always given as
-absolute paths, and are located below C<$HOLO_ROOT_DIR> during test cases.
+than trying to compute them by themselves. The paths may or may not be given as
+absolute paths, so plugins must be careful to handle relative paths correctly if
+they change directories during operation.
 
 =head1 EXECUTION
 
-The plugin binary is executed one or multiple times when Holo is run.
+The plugin binary is executed one or multiple times when Holo is run, each time
+with a different operation.
 
 =head2 The C<info> operation
 
 The first invocation is always with the single argument C<info>:
 
-    PLUGIN_BINARY=/usr/lib/holo/holo-$PLUGIN_ID
     $PLUGIN_BINARY info
 
 The plugin shall then report metadata about itself on stdout, as key-value
@@ -288,7 +309,9 @@ C<$HOLO_CACHE_DIR>. An example of this is the C<holo-users-groups> plugin.
 
 =head1 SEE ALSO
 
-L<holo(8)>, L<holo-test(7)> (test runner for Holo plugins)
+L<holo(8)>, L<holorc(5)>
+
+L<holo-test(7)> (test runner for Holo plugins)
 
 =head1 AUTHOR
 
