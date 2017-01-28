@@ -69,7 +69,7 @@ install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomp
 	install -D -m 0644 build/man/holo-plugin-interface.7 "$(DESTDIR)/usr/share/man/man7/holo-plugin-interface.7"
 ifneq ($(filter arch,$(DIST_IDS)),)
 	install -D -m 0644 distribution-integration/alpm.hook    "$(DESTDIR)/usr/share/libalpm/hooks/01-holo-resolve-pacnew.hook"
-	install -D -m 0755 distribution-integration/alpm-hook.sh "$(DESTDIR)/usr/lib/holo/alpm-hook-resolve-pacnew"
+	install -D -m 0755 distribution-integration/alpm-hook.sh "$(DESTDIR)/usr/share/libalpm/scripts/holo-resolve-pacnew"
 endif
 
 clean: clean-tests

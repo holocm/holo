@@ -7,5 +7,5 @@ Target = *
 Description = Checking for .pacnew files that can be resolved by Holo...
 When = PostTransaction
 Depends = holo
-Exec = /usr/lib/holo/alpm-hook-resolve-pacnew
+Exec = /usr/share/libalpm/scripts/holo-resolve-pacnew
 NeedsTargets
