@@ -189,9 +189,12 @@ describing the action taken, and a reason for doing so. For example, the
 C<files> plugin uses the action verb C<Scrubbing> to signal that a deleted
 configuration file is being cleaned up after.
 
-    ENTITY: file:target/etc/targetfile-deleted.conf
+    ENTITY: file:/etc/targetfile-deleted.conf
     ACTION: Scrubbing (target was deleted)
-    delete: target/var/lib/holo/files/base/etc/targetfile-deleted.conf
+    delete: /var/lib/holo/files/base/etc/targetfile-deleted.conf
+
+When not given, Holo will display a generic action verb like "Working on"
+or "Applying".
 
 =back
 
