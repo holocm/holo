@@ -36,6 +36,15 @@ make check
 sudo make install
 ```
 
+The binaries are also go-gettable, but the installation method via `make
+install` is preferred because it puts the binaries into the proper paths in
+`/usr`, rather than into `$GOBIN`.
+
+```
+go get github.com/holocm/holo/cmd/holo
+go get github.com/holocm/holo/cmd/holo-files
+```
+
 ## Documentation
 
 User documentation is available in man page form:

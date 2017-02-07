@@ -26,8 +26,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"../common"
-	"../platform"
+	"github.com/holocm/holo/lib/holo-files/common"
+	"github.com/holocm/holo/lib/holo-files/platform"
 )
 
 //Apply performs the complete application algorithm for the given TargetFile.

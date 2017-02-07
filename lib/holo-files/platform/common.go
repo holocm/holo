@@ -31,7 +31,7 @@ import (
 	"sort"
 	"strings"
 
-	"../common"
+	"github.com/holocm/holo/lib/holo-files/common"
 )
 
 //Impl provides integration points with a distribution's toolchain.
