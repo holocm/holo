@@ -9,7 +9,7 @@ holo_wrapper() (
 			printf '%s\n' \
 			       etc/targetfile-deleted-with-pacsave.conf \
 			       etc/targetfile-with-pacnew.conf \
-			| PATH="${holo_topdir}/build:$PATH" "${holo_topdir}/util/distribution-integration/alpm-hook.sh"
+			| PATH="${holo_topdir}/.gopath/bin:$PATH" "${holo_topdir}/util/distribution-integration/alpm-hook.sh"
 			;;
 		*)
 			exec $holo_wrapper_BINARY "$@"
