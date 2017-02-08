@@ -24,8 +24,8 @@ import (
 	"fmt"
 	"os"
 
-	"./common"
-	"./impl"
+	"github.com/holocm/holo/lib/holo-files/common"
+	"github.com/holocm/holo/lib/holo-files/impl"
 )
 
 func main() {
