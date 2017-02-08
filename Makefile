@@ -35,11 +35,17 @@ build/man/%: doc/%.pod .version
 		$< $@
 
 test: check # just a synonym
-check: default clean-tests $(foreach b,$(bins),build/$b.test)
+check: default test/cov.html test/cov.func.txt
+test/cov.cov: clean-tests $(foreach b,$(bins),build/$b.test)
 	@if s="$$(gofmt -l cmd 2>/dev/null)"                        && test -n "$$s"; then printf ' => %s\n%s\n' gofmt  "$$s"; false; fi
 	@if s="$$(find cmd -type d -exec golint {} \; 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
-	@$(GO) test $(GO_TESTFLAGS) $(pkg)/cmd/holo/internal
-	@env HOLO_BINARY=../../build/holo bash util/holo-test holo $(sort $(wildcard test/??-*))
+	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/holo-output.cov $(pkg)/cmd/holo/internal
+	@env HOLO_BINARY=../../build/holo.test HOLO_TEST_COVERDIR=$(abspath test/cov) bash util/holo-test holo $(sort $(wildcard test/??-*))
+	util/gocovcat.go test/cov/*.cov > test/cov.cov
+%.html: %.cov
+	$(GO) tool cover -html $< -o $@
+%.func.txt: %.cov
+	$(GO) tool cover -func $< -o $@
 
 install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomplete.bash util/autocomplete.zsh
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files"
@@ -66,6 +72,7 @@ clean: clean-tests
 	rm -f -- .version cmd/holo/version.go
 clean-tests:
 	rm -fr -- test/*/{target,tree,{colored-,}{apply,apply-force,diff,scan}-output}
+	rm -f -- test/cov.* test/cov/*
 
 .PHONY: prepare-build test check install clean clean-tests
 .PHONY: FORCE

@@ -1,5 +1,4 @@
 holo_topdir="$(readlink -f ../../)"
-holo_wrapper_BINARY="$(readlink -f -- "$HOLO_BINARY")"
 holo_wrapper() (
 	TMPDIR="$(readlink -f -- "$TMPDIR")"
 	cd "$HOLO_ROOT_DIR"
@@ -9,10 +8,10 @@ holo_wrapper() (
 			printf '%s\n' \
 			       etc/targetfile-deleted-with-pacsave.conf \
 			       etc/targetfile-with-pacnew.conf \
-			| PATH="${holo_topdir}/build:$PATH" "${holo_topdir}/util/distribution-integration/alpm-hook.sh"
+			| PATH="usr/bin:$PATH" "${holo_topdir}/util/distribution-integration/alpm-hook.sh"
 			;;
 		*)
-			exec $holo_wrapper_BINARY "$@"
+			exec usr/bin/holo "$@"
 			;;
 	esac
 )

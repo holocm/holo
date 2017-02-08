@@ -22,9 +22,12 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
 
 var exit int
@@ -39,6 +42,10 @@ func TestMain(m *testing.M) {
 	var flags []string
 	if str, ok := os.LookupEnv("HOLO_TEST_FLAGS"); ok {
 		flags = append(flags, strings.Split(str, " ")...)
+	}
+	if dir := os.Getenv("HOLO_TEST_COVERDIR"); dir != "" {
+		coverfile := fmt.Sprintf("%s.%d.%d.cov", filepath.Base(os.Args[0]), os.Getpid(), time.Now().UnixNano())
+		flags = append(flags, "-test.coverprofile", filepath.Join(dir, coverfile))
 	}
 
 	flag.CommandLine.Parse(flags)
