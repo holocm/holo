@@ -24,8 +24,8 @@ import (
 	"fmt"
 	"os"
 
-	"../common"
-	"../platform"
+	"github.com/holocm/holo/cmd/holo-files/internal/common"
+	"github.com/holocm/holo/cmd/holo-files/internal/platform"
 )
 
 //scanOrphanedTargetBase locates a target file for a given orphaned target base

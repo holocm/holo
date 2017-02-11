@@ -1,18 +1,22 @@
+bins = holo holo-files
+mans = holorc.5 holo-plugin-interface.7 holo-test.7 holo.8 holo-files.8
+
 default: prepare-build
-default: build/holo build/holo-files
-default: build/man/holorc.5 build/man/holo-plugin-interface.7 build/man/holo-test.7 build/man/holo.8 build/man/holo-files.8
+default: $(addprefix build/,$(bins))
+default: $(addprefix build/man/,$(mans))
+.PHONY: default
 
 VERSION := $(shell ./util/find_version.sh)
 
+GO            := GOPATH=$(CURDIR)/.go-workspace GOBIN=$(CURDIR)/build go
 GO_BUILDFLAGS :=
-GO_LDFLAGS    := -s -w
+GO_LDFLAGS    := -s -w -X main.version=$(VERSION)
 
 prepare-build:
 	@mkdir -p build/man
-build/holo: src/holo/main.go src/holo/*/*.go
-	go build $(GO_BUILDFLAGS) --ldflags "$(GO_LDFLAGS) -X main.version=$(VERSION)" -o $@ $<
-build/holo-files: src/holo-files/main.go src/holo-files/*/*.go
-	go build $(GO_BUILDFLAGS) --ldflags "$(GO_LDFLAGS)" -o $@ $<
+
+$(addprefix %/,$(bins)): FORCE
+	$(GO) install $(GO_BUILDFLAGS) --ldflags '$(GO_LDFLAGS)' $(addprefix github.com/holocm/holo/cmd/,$(bins))
 
 # manpages are generated using pod2man (which comes with Perl and therefore
 # should be readily available on almost every Unix system)
@@ -23,9 +27,9 @@ build/man/%: doc/%.pod
 
 test: check # just a synonym
 check: default clean-tests
-	@if s="$$(gofmt -l src 2>/dev/null)"                        && test -n "$$s"; then printf ' => %s\n%s\n' gofmt  "$$s"; false; fi
-	@if s="$$(find src -type d -exec golint {} \; 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
-	@go test ./src/holo/impl
+	@if s="$$(gofmt -l cmd 2>/dev/null)"                        && test -n "$$s"; then printf ' => %s\n%s\n' gofmt  "$$s"; false; fi
+	@if s="$$(find cmd -type d -exec golint {} \; 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
+	@$(GO) test github.com/holocm/holo/cmd/holo/internal
 	@env HOLO_BINARY=../../build/holo bash src/holo-test holo $(sort $(wildcard test/??-*))
 
 install: default conf/holorc conf/holorc.holo-files src/holo-test util/autocomplete.bash util/autocomplete.zsh
@@ -49,8 +53,9 @@ install: default conf/holorc conf/holorc.holo-files src/holo-test util/autocompl
 	env DESTDIR=$(DESTDIR) ./src/distribution-integration/install.sh
 
 clean: clean-tests
-	rm -fr -- build/holo build/holo-files build/man
+	rm -fr -- build/holo build/holo-files build/man .go-workspace/pkg
 clean-tests:
 	rm -fr -- test/*/{target,tree,{colored-,}{apply,apply-force,diff,scan}-output}
 
 .PHONY: prepare-build test check install clean clean-tests
+.PHONY: FORCE
