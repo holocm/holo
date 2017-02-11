@@ -9,4 +9,4 @@ The test cases are run with `holo-test`, which is documented in its manpage at
 `doc/holo-test.7.pod`. To run all test cases, do the following from the
 repository root:
 
-    ./src/holo-test holo ./test/??-*
+    ./util/holo-test holo ./test/??-*
