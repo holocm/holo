@@ -20,7 +20,7 @@
 
 package platform
 
-import "../common"
+import "github.com/holocm/holo/cmd/holo-files/internal/common"
 
 //archImpl provides the platform.Impl for Arch Linux and derivatives.
 type archImpl struct{}

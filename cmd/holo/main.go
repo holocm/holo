@@ -24,7 +24,7 @@ import (
 	"fmt"
 	"os"
 
-	"./impl"
+	impl "github.com/holocm/holo/cmd/holo/internal"
 )
 
 //this is populated at compile-time, see Makefile
