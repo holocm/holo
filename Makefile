@@ -1,3 +1,4 @@
+pkg = github.com/holocm/holo
 bins = holo holo-files
 mans = holorc.5 holo-plugin-interface.7 holo-test.7 holo.8 holo-files.8
 
@@ -20,7 +21,7 @@ cmd/holo/version.go: .version
 	printf 'package main\n\nfunc init() {\n\tversion = "%s"\n}\n' "$$(cat $<)" > $@
 
 $(addprefix %/,$(bins)): FORCE cmd/holo/version.go
-	$(GO) install $(GO_BUILDFLAGS) --ldflags '$(GO_LDFLAGS)' $(addprefix github.com/holocm/holo/cmd/,$(bins))
+	$(GO) install $(GO_BUILDFLAGS) --ldflags '$(GO_LDFLAGS)' $(addprefix $(pkg)/cmd/,$(bins))
 
 # manpages are generated using pod2man (which comes with Perl and therefore
 # should be readily available on almost every Unix system)
@@ -33,7 +34,7 @@ test: check # just a synonym
 check: default clean-tests
 	@if s="$$(gofmt -l cmd 2>/dev/null)"                        && test -n "$$s"; then printf ' => %s\n%s\n' gofmt  "$$s"; false; fi
 	@if s="$$(find cmd -type d -exec golint {} \; 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
-	@$(GO) test github.com/holocm/holo/cmd/holo/internal
+	@$(GO) test $(pkg)/cmd/holo/internal
 	@env HOLO_BINARY=../../build/holo bash util/holo-test holo $(sort $(wildcard test/??-*))
 
 install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomplete.bash util/autocomplete.zsh
@@ -57,7 +58,7 @@ install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomp
 	env DESTDIR=$(DESTDIR) ./util/distribution-integration/install.sh
 
 clean: clean-tests
-	rm -fr -- build/holo build/holo-files build/man .go-workspace/pkg
+	rm -fr -- build/ .go-workspace/pkg/
 	rm -f -- .version cmd/holo/version.go
 clean-tests:
 	rm -fr -- test/*/{target,tree,{colored-,}{apply,apply-force,diff,scan}-output}
