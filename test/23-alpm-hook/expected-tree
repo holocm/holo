@@ -16,8 +16,10 @@ e
 f
 >> ./run = dir
 >> ./tmp = dir
+>> ./usr/bin/holo = symlink
+../../../../../build/holo.test
 >> ./usr/lib/holo/holo-files = symlink
-../../../../../../build/holo-files
+../../../../../../build/holo-files.test
 >> ./usr/share/holo/files/01-first/etc/targetfile-with-pacnew.conf.holoscript = symlink
 /usr/bin/sort
 >> ./var/lib/holo/files/base/etc/repofile-deleted-with-pacnew.conf = regular

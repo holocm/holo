@@ -9,7 +9,7 @@ ID=unittest
 if [ "$1" = scan ]; then
 	exit 1
 fi
-exec ../../build/holo-files "$@"
+exec ../../build/holo-files.test "$@"
 >> ./usr/share/holo/files = dir
 >> ./var/lib/holo/files/base = dir
 >> ./var/lib/holo/files/provisioned = dir

@@ -1,3 +1,4 @@
+pkg = github.com/holocm/holo
 bins = holo holo-files
 mans = holorc.5 holo-plugin-interface.7 holo-test.7 holo.8 holo-files.8
 
@@ -6,31 +7,45 @@ default: $(addprefix build/,$(bins))
 default: $(addprefix build/man/,$(mans))
 .PHONY: default
 
-VERSION := $(shell ./util/find_version.sh)
-
 GO            := GOPATH=$(CURDIR)/.go-workspace GOBIN=$(CURDIR)/build go
 GO_BUILDFLAGS :=
-GO_LDFLAGS    := -s -w -X main.version=$(VERSION)
+GO_LDFLAGS    := -s -w
+GO_TESTFLAGS  := -covermode=count
+GO_DEPS       := $(GO) list -f '{{.ImportPath}}{{"\n"}}{{join .Deps "\n"}}'
 
 prepare-build:
 	@mkdir -p build/man
 
-$(addprefix %/,$(bins)): FORCE
-	$(GO) install $(GO_BUILDFLAGS) --ldflags '$(GO_LDFLAGS)' $(addprefix github.com/holocm/holo/cmd/,$(bins))
+.version: FORCE
+	./util/find_version.sh | util/write-ifchanged $@
+
+cmd/holo/version.go: .version
+	printf 'package main\n\nfunc init() {\n\tversion = "%s"\n}\n' "$$(cat $<)" > $@
+
+$(addprefix %/,$(bins)): FORCE cmd/holo/version.go
+	$(GO) install $(GO_BUILDFLAGS) --ldflags '$(GO_LDFLAGS)' $(addprefix $(pkg)/cmd/,$(bins))
+build/%.test: build/% cmd/%/main_test.go
+	$(GO) test -c -o $@ $(GO_TESTFLAGS) -coverpkg $$($(GO_DEPS) $(pkg)/cmd/$*|grep ^$(pkg)|tr '\n' ,|sed 's/,$$//') $(pkg)/cmd/$*
 
 # manpages are generated using pod2man (which comes with Perl and therefore
 # should be readily available on almost every Unix system)
-build/man/%: doc/%.pod
+build/man/%: doc/%.pod .version
 	pod2man --name="$(shell echo $* | cut -d. -f1)" --section=$(shell echo $* | cut -d. -f2) \
-		--center="Configuration Management" --release="Holo $(VERSION)" \
+		--center="Configuration Management" --release="Holo $$(cat .version)" \
 		$< $@
 
 test: check # just a synonym
-check: default clean-tests
+check: default test/cov.html test/cov.func.txt
+test/cov.cov: clean-tests $(foreach b,$(bins),build/$b.test)
 	@if s="$$(gofmt -l cmd 2>/dev/null)"                        && test -n "$$s"; then printf ' => %s\n%s\n' gofmt  "$$s"; false; fi
 	@if s="$$(find cmd -type d -exec golint {} \; 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
-	@$(GO) test github.com/holocm/holo/cmd/holo/internal
-	@env HOLO_BINARY=../../build/holo bash util/holo-test holo $(sort $(wildcard test/??-*))
+	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/holo-output.cov $(pkg)/cmd/holo/internal
+	@env HOLO_BINARY=../../build/holo.test HOLO_TEST_COVERDIR=$(abspath test/cov) bash util/holo-test holo $(sort $(wildcard test/??-*))
+	util/gocovcat.go test/cov/*.cov > test/cov.cov
+%.html: %.cov
+	$(GO) tool cover -html $< -o $@
+%.func.txt: %.cov
+	$(GO) tool cover -func $< -o $@
 
 install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomplete.bash util/autocomplete.zsh
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files"
@@ -53,9 +68,11 @@ install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomp
 	env DESTDIR=$(DESTDIR) ./util/distribution-integration/install.sh
 
 clean: clean-tests
-	rm -fr -- build/holo build/holo-files build/man .go-workspace/pkg
+	rm -fr -- build/ .go-workspace/pkg/
+	rm -f -- .version cmd/holo/version.go
 clean-tests:
 	rm -fr -- test/*/{target,tree,{colored-,}{apply,apply-force,diff,scan}-output}
+	rm -f -- test/cov.* test/cov/*
 
 .PHONY: prepare-build test check install clean clean-tests
 .PHONY: FORCE
