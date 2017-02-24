@@ -1,6 +1,7 @@
 # Holo - minimalistic config management
 
 [![Build Status](https://travis-ci.org/holocm/holo.svg?branch=master)](https://travis-ci.org/holocm/holo)
+[![Coverage Status](https://coveralls.io/repos/github/holocm/holo/badge.svg?branch=master)](https://coveralls.io/github/holocm/holo?branch=master)
 
 Holo is a radically simple configuration management tool that relies as much as
 possible on package management for the whole system setup and maintenance
