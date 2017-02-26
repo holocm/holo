@@ -20,7 +20,14 @@
 
 package platform
 
-import "github.com/holocm/holo/cmd/holo-files/internal/common"
+import (
+	"io/ioutil"
+	"path/filepath"
+	"strconv"
+	"strings"
+
+	"github.com/holocm/holo/cmd/holo-files/internal/common"
+)
 
 //archImpl provides the platform.Impl for Arch Linux and derivatives.
 type archImpl struct{}
@@ -33,10 +40,32 @@ func (p archImpl) FindUpdatedTargetBase(targetPath string) (actualPath, reported
 	return "", "", nil
 }
 
-func (p archImpl) AdditionalCleanupTargets(targetPath string) []string {
+func (p archImpl) AdditionalCleanupTargets(targetPath string) (ret []string) {
 	pacsavePath := targetPath + ".pacsave"
 	if common.IsManageableFile(pacsavePath) {
-		return []string{pacsavePath}
+		ret = append(ret, pacsavePath)
 	}
-	return nil
+
+	// check for .pacsave.+[0-9]
+	dir := filepath.Dir(targetPath)
+	fileinfos, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return
+	}
+	base := filepath.Base(targetPath) + ".pacsave."
+	for _, fileinfo := range fileinfos {
+		if !strings.HasPrefix(fileinfo.Name(), base) {
+			continue
+		}
+		suffix := strings.TrimPrefix(fileinfo.Name(), base)
+		if _, err := strconv.ParseUint(suffix, 10, 0); err != nil {
+			continue
+		}
+		if !common.IsManageableFileInfo(fileinfo) {
+			continue
+		}
+		ret = append(ret, filepath.Join(dir, fileinfo.Name()))
+	}
+
+	return
 }
