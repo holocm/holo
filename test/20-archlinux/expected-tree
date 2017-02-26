@@ -10,6 +10,9 @@ jjj
 holo
 user
 holo
+>> ./etc/targetfile-deleted-with-pacsave.conf.pacsave.u = regular
+holo
+holo
 >> ./etc/targetfile-with-pacnew.conf = regular
 d
 e
