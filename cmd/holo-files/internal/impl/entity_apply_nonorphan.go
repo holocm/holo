@@ -36,23 +36,48 @@ import (
 //resources, and saving the result in the target path with the correct
 //file metadata.
 func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error) {
-	//determine the related paths
-	var (
-		targetPath      = entity.PathIn(common.TargetDirectory())
-		basePath        = entity.PathIn(common.BaseDirectory())
-		provisionedPath = entity.PathIn(common.ProvisionedDirectory())
-	)
+	//step 1: check if a system update installed a new version of the stock
+	//configuration
+	//
+	// This has to come first because it might shuffle some files
+	// around, and if we do anything else first, we might end up
+	// stat()ing the wrong file.
+	newBasePath, newBase, err := entity.GetNewBase()
+	if err != nil {
+		return false, err
+	}
 
-	//step 1: entities may only be applied if:
-	//option 1: there is a manageable file in the target location (this target
-	//file is either the base from the application package or the
-	//product of a previous Apply run)
-	//option 2: the target file was deleted, but we have a base that we
-	//can start from
+	// step 2: Load our 3 versions into memory.
+	current, err := entity.GetCurrent()
+	if err != nil && !os.IsNotExist(err) {
+		if pe, ok := err.(*os.PathError); ok {
+			err = errors.New("skipping target: " + pe.Err.Error())
+		}
+		return false, err
+	}
+
+	base, err := entity.GetBase()
+	if err != nil && !os.IsNotExist(err) {
+		if pe, ok := err.(*os.PathError); ok {
+			err = errors.New("skipping target: " + pe.Err.Error())
+		}
+		return false, err
+	}
+
+	provisioned, err := entity.GetProvisioned()
+	if err != nil && !os.IsNotExist(err) {
+		if pe, ok := err.(*os.PathError); ok {
+			err = errors.New("skipping target: " + pe.Err.Error())
+		}
+		return false, err
+	}
+
+	////////////////////////////////////////////////////////////////////////
+
+	//step 1: make sure there is a current file (unless --force)
 	needForcefulReprovision := false
-	targetExists := common.IsManageableFile(targetPath)
-	if !targetExists {
-		if !common.IsManageableFile(basePath) {
+	if !current.Manageable {
+		if !base.Manageable {
 			return false, errors.New("skipping target: not a manageable file")
 		}
 		if withForce {
@@ -62,50 +87,50 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 		}
 	}
 
-	//step 2: if we don't have a base yet, the file at targetPath *is*
+	//step 2: if we don't have a base yet, the file at current *is*
 	//the base which we have to copy now
-	if !common.IsManageableFile(basePath) {
-		baseDir := filepath.Dir(basePath)
+	if !base.Manageable && current.Manageable {
+		baseDir := filepath.Dir(base.Path)
 		err := os.MkdirAll(baseDir, 0755)
 		if err != nil {
 			return false, fmt.Errorf("Cannot create directory %s: %s", baseDir, err.Error())
 		}
 
-		err = common.CopyFile(targetPath, basePath)
+		err = current.Write(base.Path)
 		if err != nil {
-			return false, fmt.Errorf("Cannot copy %s to %s: %s", targetPath, basePath, err.Error())
+			return false, fmt.Errorf("Cannot copy %s to %s: %s", current.Path, base.Path, err.Error())
 		}
+		tmp := current
+		tmp.Path = base.Path
+		base = current
+	}
+
+	if !base.Manageable {
+		return false, errors.New("skipping target: not a manageable file")
 	}
 
 	//step 3: check if a system update installed a new version of the stock
 	//configuration
-	updatedTBPath, reportedTBPath, err := platform.Implementation().FindUpdatedTargetBase(targetPath)
-	if err != nil {
-		return false, err
-	}
-	if updatedTBPath != "" {
-		//an updated stock configuration is available at updatedTBPath
-		fmt.Printf(">> found updated target base: %s -> %s\n", reportedTBPath, basePath)
-		err := common.CopyFile(updatedTBPath, basePath)
+	if newBase.Manageable {
+		//an updated stock configuration is available at newBase.Path
+		//(but show it to the user as newBasePath)
+		fmt.Printf(">> found updated target base: %s -> %s\n", newBasePath, base.Path)
+		err := newBase.Write(base.Path)
 		if err != nil {
-			return false, fmt.Errorf("Cannot copy %s to %s: %s", updatedTBPath, basePath, err.Error())
+			return false, fmt.Errorf("Cannot copy %s to %s: %v", newBase.Path, base.Path, err)
 		}
-		_ = os.Remove(updatedTBPath) //this can fail silently
+		_ = os.Remove(newBase.Path) //this can fail silently
+		newBase.Path = base.Path
+		base = newBase
 	}
 
-	//step 4: apply the resources *if* the version at targetPath is the one
-	//installed by the package (which can be found at basePath); complain if
+	//step 4: apply the resources *if* the version at current is the one
+	//installed by the package (which can be found at base); complain if
 	//the user made any changes to config files governed by holo (this check is
 	//overridden by the --force option)
 
-	//load the last provisioned version
-	provisionedBuffer, err := common.NewFileBuffer(provisionedPath)
-	if err != nil && !os.IsNotExist(err) {
-		return false, err
-	}
-
 	//render desired state of entity
-	buffer, err := entity.Render()
+	desired, err := entity.GetDesired(base)
 	if err != nil {
 		return false, err
 	}
@@ -113,13 +138,9 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 	//compare it against the last provisioned version (which must exist at this point
 	//unless we are using --force)
 	needToWriteTarget := true
-	if targetExists && provisionedBuffer.Manageable {
-		targetBuffer, err := common.NewFileBuffer(targetPath)
-		if err != nil {
-			return false, err
-		}
-		needToWriteTarget = !targetBuffer.EqualTo(buffer)
-		if !targetBuffer.EqualTo(provisionedBuffer) {
+	if current.Manageable && provisioned.Manageable {
+		needToWriteTarget = !current.EqualTo(desired)
+		if !current.EqualTo(provisioned) {
 			if withForce {
 				needForcefulReprovision = true
 			} else {
@@ -131,8 +152,8 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 	}
 
 	//don't do anything more if nothing has changed and the target file has not been touched
-	if !needForcefulReprovision && provisionedBuffer.Manageable {
-		if buffer.EqualTo(provisionedBuffer) {
+	if !needForcefulReprovision && provisioned.Manageable {
+		if desired.EqualTo(provisioned) {
 			//since we did not do anything, don't report this
 			return true, nil
 		}
@@ -140,13 +161,13 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 
 	//save a copy of the provisioned config file to check for manual
 	//modifications in the next Apply() run
-	if !provisionedBuffer.Manageable || !buffer.EqualTo(provisionedBuffer) {
-		provisionedDir := filepath.Dir(provisionedPath)
+	if !provisioned.Manageable || !desired.EqualTo(provisioned) {
+		provisionedDir := filepath.Dir(provisioned.Path)
 		err = os.MkdirAll(provisionedDir, 0755)
 		if err != nil {
-			return false, fmt.Errorf("Cannot write %s: %s", provisionedPath, err.Error())
+			return false, fmt.Errorf("Cannot write %s: %s", provisioned.Path, err.Error())
 		}
-		err = buffer.Write(provisionedPath)
+		err = desired.Write(provisioned.Path)
 		if err != nil {
 			return false, err
 		}
@@ -159,18 +180,49 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 
 	//write the result buffer to the target and copy
 	//owners/permissions from base file to target file
-	newTargetPath := targetPath + ".holonew"
-	err = buffer.Write(newTargetPath)
+	newTargetPath := current.Path + ".holonew"
+	err = desired.Write(newTargetPath)
 	if err != nil {
 		return false, err
 	}
 	//move $target.holonew -> $target atomically (to ensure that there is
 	//always a valid file at $target)
-	return false, os.Rename(newTargetPath, targetPath)
+	return false, os.Rename(newTargetPath, current.Path)
 }
 
-//Render applies all the resources for this Entity onto the base.
-func (entity *Entity) Render() (common.FileBuffer, error) {
+//GetBase return the package manager-supplied base version of the
+//entity, as recorded the last time it was provisioned.
+func (entity *Entity) GetBase() (common.FileBuffer, error) {
+	return common.NewFileBuffer(entity.PathIn(common.BaseDirectory()))
+}
+
+//GetProvisioned returns the recorded last-provisioned state of the
+//entity.
+func (entity *Entity) GetProvisioned() (common.FileBuffer, error) {
+	return common.NewFileBuffer(entity.PathIn(common.ProvisionedDirectory()))
+}
+
+//GetCurrent returns the current version of the entity.
+func (entity *Entity) GetCurrent() (common.FileBuffer, error) {
+	return common.NewFileBuffer(entity.PathIn(common.TargetDirectory()))
+}
+
+//GetNewBase returns the base version of the entity, if it has been
+//updated by the package manager since last applied.
+func (entity *Entity) GetNewBase() (path string, buf common.FileBuffer, err error) {
+	realPath, path, err := platform.Implementation().FindUpdatedTargetBase(entity.PathIn(common.TargetDirectory()))
+	if err != nil {
+		return
+	}
+	if realPath != "" {
+		buf, err = common.NewFileBuffer(realPath)
+		return
+	}
+	return
+}
+
+//GetDesired applies all the resources for this Entity onto the base.
+func (entity *Entity) GetDesired(base common.FileBuffer) (common.FileBuffer, error) {
 	resources := entity.Resources()
 
 	// Optimization: check if we can skip any application steps
@@ -184,13 +236,11 @@ func (entity *Entity) Render() (common.FileBuffer, error) {
 
 	//load the base into a buffer as the start for the application
 	//algorithm
-	buffer, err := common.NewFileBuffer(entity.PathIn(common.BaseDirectory()))
+	buffer := base
 	buffer.Path = entity.PathIn(common.TargetDirectory())
-	if err != nil {
-		return common.FileBuffer{}, err
-	}
 
 	//apply all the applicable resources in order
+	var err error
 	for _, resource := range resources {
 		buffer, err = resource.ApplyTo(buffer)
 		if err != nil {
