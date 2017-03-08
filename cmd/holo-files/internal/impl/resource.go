@@ -1,6 +1,7 @@
 /*******************************************************************************
 *
 * Copyright 2015 Stefan Majewsky <majewsky@gmx.net>
+* Copyright 2017 Luke Shumaker <lukeshu@sbcglobal.net>
 *
 * This file is part of Holo.
 *
@@ -31,46 +32,44 @@ import (
 	"github.com/holocm/holo/cmd/holo-files/internal/common"
 )
 
-//RepoFile represents a single file in the configuration repository. The string
+//Resource represents a single file in $HOLO_RESOURCE_DIR. The string
 //stored in it is the path to the repo file (also accessible as Path()).
-type RepoFile string
+type Resource string
 
-//NewRepoFile creates a RepoFile instance when its path in the file system is
+//NewResource creates a Resource instance when its path in the file system is
 //known.
-func NewRepoFile(path string) RepoFile {
-	return RepoFile(path)
+func NewResource(path string) Resource {
+	return Resource(path)
 }
 
-//Path returns the path to this repo file in the file system.
-func (file RepoFile) Path() string {
-	return string(file)
+//Path returns the path to this resource in the file system.
+func (resource Resource) Path() string {
+	return string(resource)
 }
 
-//TargetPath returns the path to the corresponding target file.
-func (file RepoFile) TargetPath() string {
-	//the optional ".holoscript" suffix appears only on repo files
-	repoFile := file.Path()
-	if strings.HasSuffix(repoFile, ".holoscript") {
-		repoFile = strings.TrimSuffix(repoFile, ".holoscript")
-	}
+//EntityPath returns the path to the corresponding entity.
+func (resource Resource) EntityPath() string {
+	//the optional ".holoscript" suffix appears only on resources
+	path := resource.Path()
+	path = strings.TrimSuffix(path, ".holoscript")
 
 	//make path relative
-	relPath, _ := filepath.Rel(common.ResourceDirectory(), repoFile)
+	relPath, _ := filepath.Rel(common.ResourceDirectory(), path)
 	//remove the disambiguation path element to get to the relPath for the ConfigFile
-	//e.g. repoFile = '/usr/share/holo/files/23-foo/etc/foo.conf'
+	//e.g. path     = '/usr/share/holo/files/23-foo/etc/foo.conf'
 	//  -> relPath  = '23-foo/etc/foo.conf'
 	//  -> relPath  = 'etc/foo.conf'
 	segments := strings.SplitN(relPath, fmt.Sprintf("%c", filepath.Separator), 2)
 	relPath = segments[1]
 
-	return filepath.Join(common.TargetDirectory(), relPath)
+	return relPath
 }
 
 //Disambiguator returns the disambiguator, i.e. the Path() element before the
-//TargetPath() that disambiguates multiple repo entries for the same target file.
-func (file RepoFile) Disambiguator() string {
+//EntityPath() that disambiguates multiple resources for the same entity.
+func (resource Resource) Disambiguator() string {
 	//make path relative to ResourceDirectory()
-	relPath, _ := filepath.Rel(common.ResourceDirectory(), file.Path())
+	relPath, _ := filepath.Rel(common.ResourceDirectory(), resource.Path())
 	//the disambiguator is the first path element in there
 	segments := strings.SplitN(relPath, fmt.Sprintf("%c", filepath.Separator), 2)
 	return segments[0]
@@ -78,8 +77,8 @@ func (file RepoFile) Disambiguator() string {
 
 //ApplicationStrategy returns the human-readable name for the strategy that
 //will be employed to apply this repo file.
-func (file RepoFile) ApplicationStrategy() string {
-	if strings.HasSuffix(file.Path(), ".holoscript") {
+func (resource Resource) ApplicationStrategy() string {
+	if strings.HasSuffix(resource.Path(), ".holoscript") {
 		return "passthru"
 	}
 	return "apply"
@@ -89,44 +88,52 @@ func (file RepoFile) ApplicationStrategy() string {
 //previous file buffer (and thus the effect of all previous application steps).
 //This is used as a hint by the application algorithm to decide whether
 //application steps can be skipped completely.
-func (file RepoFile) DiscardsPreviousBuffer() bool {
-	return file.ApplicationStrategy() == "apply"
+func (resource Resource) DiscardsPreviousBuffer() bool {
+	return resource.ApplicationStrategy() == "apply"
 }
 
-//ApplyTo applies this RepoFile to a file buffer, as part of the `holo apply`
+//ApplyTo applies this Resource to a file buffer, as part of the `holo apply`
 //algorithm. Regular repofiles will replace the file buffer, while a holoscript
 //will be executed on the file buffer to obtain the new buffer.
-func (file RepoFile) ApplyTo(buffer *FileBuffer) (*FileBuffer, error) {
-	if file.ApplicationStrategy() == "apply" {
-		return NewFileBuffer(file.Path(), buffer.BasePath)
+func (resource Resource) ApplyTo(entityBuffer common.FileBuffer) (common.FileBuffer, error) {
+	if resource.ApplicationStrategy() == "apply" {
+		resourceBuffer, err := common.NewFileBuffer(resource.Path())
+		if err != nil {
+			return common.FileBuffer{}, err
+		}
+		entityBuffer.Mode = (entityBuffer.Mode &^ os.ModeType) | (resourceBuffer.Mode & os.ModeType)
+		entityBuffer.Contents = resourceBuffer.Contents
+		return entityBuffer, nil
 	}
 
 	//application of a holoscript requires file contents
-	buffer, err := buffer.ResolveSymlink()
+	entityBuffer, err := entityBuffer.ResolveSymlink()
 	if err != nil {
-		return nil, err
+		return common.FileBuffer{}, err
 	}
 
-	//run command, fetch result file into buffer (not into the targetPath
+	//run command, fetch result file into buffer (not into the entity
 	//directly, in order not to corrupt the file there if the script run fails)
 	var stdout bytes.Buffer
-	cmd := exec.Command(file.Path())
-	cmd.Stdin = bytes.NewBuffer(buffer.Contents)
+	cmd := exec.Command(resource.Path())
+	cmd.Stdin = strings.NewReader(entityBuffer.Contents)
 	cmd.Stdout = &stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	if err != nil {
-		return nil, fmt.Errorf("execution of %s failed: %s", file.Path(), err.Error())
+		return common.FileBuffer{}, fmt.Errorf("execution of %s failed: %s", resource.Path(), err.Error())
 	}
 
 	//result is the stdout of the script
-	return NewFileBufferFromContents(stdout.Bytes(), buffer.BasePath), nil
+	entityBuffer.Mode &^= os.ModeType
+	entityBuffer.Contents = stdout.String()
+	return entityBuffer, nil
 }
 
-//RepoFiles holds a slice of RepoFile instances, and implements some methods
+//Resources holds a slice of Resource instances, and implements some methods
 //to satisfy the sort.Interface interface.
-type RepoFiles []RepoFile
+type Resources []Resource
 
-func (f RepoFiles) Len() int           { return len(f) }
-func (f RepoFiles) Less(i, j int) bool { return f[i].Disambiguator() < f[j].Disambiguator() }
-func (f RepoFiles) Swap(i, j int)      { f[i], f[j] = f[j], f[i] }
+func (f Resources) Len() int           { return len(f) }
+func (f Resources) Less(i, j int) bool { return f[i].Disambiguator() < f[j].Disambiguator() }
+func (f Resources) Swap(i, j int)      { f[i], f[j] = f[j], f[i] }

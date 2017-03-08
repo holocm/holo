@@ -42,7 +42,7 @@ func Main() (exitCode int) {
 	}
 
 	//scan for entities
-	entities := impl.ScanRepo()
+	entities := impl.Scan()
 	if entities == nil {
 		//some fatal error occurred - it was already reported, so just exit
 		return 1
@@ -58,7 +58,7 @@ func Main() (exitCode int) {
 
 	//all other actions require an entity selection
 	entityID := os.Args[2]
-	var selectedEntity *impl.TargetFile
+	var selectedEntity *impl.Entity
 	for _, entity := range entities {
 		if entity.EntityID() == entityID {
 			selectedEntity = entity
@@ -89,7 +89,7 @@ func Main() (exitCode int) {
 	return 0
 }
 
-func applyEntity(entity *impl.TargetFile, withForce bool) {
+func applyEntity(entity *impl.Entity, withForce bool) {
 	skipReport, needForceToOverwrite, needForceToRestore := entity.Apply(withForce)
 
 	if skipReport {

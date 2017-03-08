@@ -6,6 +6,13 @@ ID=arch
 ggg
 hhh
 jjj
+>> ./etc/targetfile-deleted-with-modified-pacsave.conf.pacsave = regular
+holo
+user
+holo
+>> ./etc/targetfile-deleted-with-pacsave.conf.pacsave.u = regular
+holo
+holo
 >> ./etc/targetfile-with-pacnew.conf = regular
 d
 e
