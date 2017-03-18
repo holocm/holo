@@ -3,7 +3,7 @@ Upstream-Name: holo
 Source: <https://github.com/holocm/holo>
 
 Files: *
-Copyright: 2015-2016 Stefan Majewsky <majewsky@gmx.net>
+Copyright: 2015-2017 Stefan Majewsky <majewsky@gmx.net> and others
 License: GPL-3+
  Holo is free software: you can redistribute it and/or modify it under the
  terms of the GNU General Public License as published by the Free Software

@@ -1,3 +1,41 @@
+# v1.3 (2017-03-18)
+
+Special thanks to new contributor @LukeShu who did a lot of the hard work that went into this release, both in terms of
+new features, boring refactoring work and documentation proof-reading.
+
+Changes:
+
+- `holo-files` now allows for fast-forwarding: When the computed content of a target file changes, but that change has
+  already been done by the user, `holo-files` will now skip writing the target file and just update
+  `/var/lib/holo/files/provisioned` instead of complaining that the target file does not match the previously
+  provisioned content. (#24)
+- When invoking Holo, plugin IDs can be used as selectors. For example, `holo apply ssh-keys` will apply all entities
+  from the `holo-ssh-keys` plugin.
+
+Bugfixes:
+
+- Bring the scrubbing logic in line with the applying logic:
+  - When a resource file is deleted while the target base is updated, restore the updated target base instead of the old
+    one. (#16)
+  - When a resource file is deleted and the saved version (`.pacsave`, `.rpmsave`, `.dpkg-old`) has been changed by the
+    user, do not delete it. (#29)
+  - Scrubbing has become more resilient against filesystem errors. When some file cannot be cleaned up, it will report
+    that and keep going as much as possible. This is useful because Holo will forget about the entity once it is
+    scrubbed, so the user should be informed about which actions remain to properly clean up the target file.
+  - On Arch Linux, `.pacsave.N` files are now handled properly, similar to the existing handling for `.pacsave` files.
+- Make sure that the cache directory (usually at `/tmp/holo.$$/`) is cleaned up even when an operation fails. (#20)
+- Fix `make clean` to run correctly when the source is extracted from a tarball rather than cloned from git.
+- Various fixes to `make check` to avoid false negatives.
+
+Miscellaneous:
+
+- Various internal refactorings.
+- The documentation was proof-read and clarified in various locations.
+- The test suite now checks code coverage.
+- There are some files in `debian/` which should make it pretty easy to make a Debian package for Holo if anyone is
+  interested in submitting it to Debian, Ubuntu etc.
+- Releases are now signed by GPG key `0xD6019A3E17CA2D96`.
+
 # v1.2.1 (2016-05-25)
 
 Bugfixes:
