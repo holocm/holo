@@ -15,7 +15,14 @@ typeset -A opt_args
 
 (( $+functions[_holo_selector] )) || _holo_selector()
 {
-    _alternative "selectors:Holo selectors:($(holo scan --porcelain | sed -n '/^ENTITY:\|^SOURCE:/ { s/^ENTITY: \|^SOURCE: //; p }' | sort -u))"
+    _alternative "selectors:Holo selectors:($(
+        (
+            # list entities and source files
+            holo scan --porcelain | sed -n '/^ENTITY:\|^SOURCE:/ { s/^ENTITY: \|^SOURCE: //; p }'
+            # list plugin IDs
+            cat /etc/holorc /etc/holorc.d/* | awk '/^plugin/{print$2}' | cut -d= -f1
+        ) | sort -u
+    ))"
     return 0
 }
 

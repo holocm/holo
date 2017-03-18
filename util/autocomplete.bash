@@ -1,7 +1,12 @@
 # bash completion for holo(8)
 
 _holo_valid_selectors() {
-    holo scan --porcelain | sed -n '/^ENTITY:\|^SOURCE:/ { s/^ENTITY: \|^SOURCE: //; p }' | sort -u
+    (
+        # list entities and source files
+        holo scan --porcelain | sed -n '/^ENTITY:\|^SOURCE:/ { s/^ENTITY: \|^SOURCE: //; p }'
+        # list plugin IDs
+        cat /etc/holorc /etc/holorc.d/* | awk '/^plugin/{print$2}' | cut -d= -f1
+    ) | sort -u
 }
 
 _holo() {
