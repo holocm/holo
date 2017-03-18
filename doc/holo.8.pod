@@ -64,7 +64,9 @@ entities by giving selectors on the command line.
 
 A selector can be either an entity name (such as C<file:/etc/sddm/sddm.conf>),
 or the path to a source file that defines this entity (for instance,
-C</usr/share/holo/files/40-desktop/etc/sddm/sddm.conf>).
+C</usr/share/holo/files/40-desktop/etc/sddm/sddm.conf>), or a plugin ID (such
+as C<files>). A plugin ID as selector matches all entities known to that
+plugin.
 
 =over 4
 

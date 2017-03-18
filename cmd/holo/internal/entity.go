@@ -55,6 +55,9 @@ func (e *Entity) MatchesSelector(value string) bool {
 	if e.id == value {
 		return true
 	}
+	if e.plugin.id == value {
+		return true
+	}
 	for _, file := range e.sourceFiles {
 		if file == value {
 			return true
