@@ -7,12 +7,9 @@ go:
 
 install:
     - go get -u github.com/golang/lint/golint
-    - go get github.com/mattn/goveralls
+    - go get -u github.com/mattn/goveralls
 
 script:
     - make && make check
-    - $HOME/gopath/bin/goveralls -coverprofile=test/cov.cov -service=travis-ci -repotoken=$COVERALLS_TOKEN
-
-env:
-    global:
-        secure: diMtoc0kIvNNoriCtwCpYJsnRa4vpk0HuSlEKF1QbIwV/O0eCEX+8aFUvAxcHQOWUYGFXh4Y7N/8yQ9ZldqDaA0CFxIdSiC+W13yQveUD7JR6BkeYpCQNMbDnGmnKkgdJ1n2zElEgzuhi4tsQfdNITljGx194uDPg03qw4iVCFAulPcCt3Zxr10U9UgLley0A1q4LEE7Fbbs36+/E5K/8OCX1iIfeJ3MR0i4dJ9rm9Rdwe/ZmlKzulCbN5gZIEU77dDD6gAQupS3za+7qMFGIcpRFsSY5UeERvnyEZ2iHNoWpOY49LmRo1jqVvkRMhIBCAdaj7aBXkvgBqVEykXLq8S1zlRIZ2V357i94IJvla2WR8WJDmGZmb1oIL7w3/innMj+0RqxvKdbYoq5QMaqVEkuiGBEXr3deF8MocdH18VqKGPwkJGIwdOOFN8pM46NoRL01SAX6Th0dHMCIoff9gn6qvGCZTjrerwQHJYUXLRGQCeK+wvC3MmvVqzBvZI2TgZe5d2ub8QqZ8vr4kd0xAjApgntgGhSDUkrmb8oBH+W6eeU5aD+9ntVYHK8f1k0Av+ABeJlG9Z91HPg66ZWXAqbBdtrUK3kQupA4DLa35O/6NXwEgBY4yMz77ehCvn7RP1EGIZaxSra/0b+9otiaejXkm/TMIiUVE1zyxu9VZ4=
+after_success:
+    - goveralls -coverprofile=test/cov.cov -service=travis-ci
