@@ -28,7 +28,7 @@ import (
 )
 
 //this is populated at compile-time, see Makefile
-var version string
+var version = "unknown"
 
 const (
 	optionApplyForce = iota

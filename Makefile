@@ -47,6 +47,8 @@ test/cov.cov: clean-tests $(foreach b,$(bins),build/$b.test)
 %.func.txt: %.cov
 	$(GO) tool cover -func $< -o $@
 
+DIST_IDS = $(shell [ -f /etc/os-release ] && source /etc/os-release || source /usr/lib/os-release; echo "$$ID $$ID_LIKE")
+
 install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomplete.bash util/autocomplete.zsh
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files"
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files/base"
@@ -65,7 +67,10 @@ install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomp
 	install -D -m 0644 build/man/holo-files.8            "$(DESTDIR)/usr/share/man/man8/holo-files.8"
 	install -D -m 0644 build/man/holo-test.7             "$(DESTDIR)/usr/share/man/man7/holo-test.7"
 	install -D -m 0644 build/man/holo-plugin-interface.7 "$(DESTDIR)/usr/share/man/man7/holo-plugin-interface.7"
-	env DESTDIR=$(DESTDIR) ./util/distribution-integration/install.sh
+ifneq ($(filter arch,$(DIST_IDS)),)
+	install -D -m 0644 distribution-integration/alpm.hook    "$(DESTDIR)/usr/share/libalpm/hooks/01-holo-resolve-pacnew.hook"
+	install -D -m 0755 distribution-integration/alpm-hook.sh "$(DESTDIR)/usr/share/libalpm/scripts/holo-resolve-pacnew"
+endif
 
 clean: clean-tests
 	rm -fr -- build/ .go-workspace/pkg/

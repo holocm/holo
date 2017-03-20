@@ -43,7 +43,9 @@ func Scan() []*Entity {
 		if !(resourceFileInfo.Mode().IsRegular() || common.IsFileInfoASymbolicLink(resourceFileInfo)) {
 			return nil
 		}
-		// don't consider resourceDir itself to be a resource (it might be a symlink)
+		// don't consider resourceDir itself to be a resource
+		// (it might have passed the IsManageableFileInfo
+		// check because it might be a symlink)
 		if resourcePath == resourceDir {
 			return nil
 		}
@@ -75,7 +77,9 @@ func Scan() []*Entity {
 		if !(baseFileInfo.Mode().IsRegular() || common.IsFileInfoASymbolicLink(baseFileInfo)) {
 			return nil
 		}
-		//don't consider baseDir itself to be a base (it might be a symlink)
+		// don't consider baseDir itself to be a base (it
+		// might have passed the IsManageableFileInfo check
+		// because it might be a symlink)
 		if basePath == baseDir {
 			return nil
 		}
