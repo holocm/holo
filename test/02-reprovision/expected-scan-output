@@ -50,3 +50,4 @@ ssh-keyset:user8/foo
       key is 2048 SHA256:BPwneuiBV/tqWEUSKBdXI1uFAgwP5J5Opw17Gw7xEkY user@key0 (RSA)
       key is 2048 SHA256:INu+TuczyJpYs1IiMb6csykJDbJ778oJeXmG40WCCHI user@key1 (RSA)
 
+exit status 0

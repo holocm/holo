@@ -6,3 +6,4 @@ Working on ssh-keyset:user2/foo
     key is 2048 SHA256:INu+TuczyJpYs1IiMb6csykJDbJ778oJeXmG40WCCHI user@key1 (RSA)
     key is 2048 SHA256:bb8t1lzOwTyq6dy93w7ClVFbd3iLAh82fgLLVqcJKbA user@key3 (RSA)
 
+exit status 0
