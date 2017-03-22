@@ -80,6 +80,12 @@ run_testcase() (
     grep -q -- --force apply-output && \
     { $HOLO_BINARY apply --force 2>&1; echo exit status $?; } | tee colored-apply-force-output | sed 's/\x1b\[[0-9;]*m//g' > apply-force-output
 
+    # diff outputs may contain non-deterministic tempdir names (like
+    # "target/tmp/holo.13587923") if the plugin placed files there for diffing
+    for FILE in diff-output apply-output; do
+        sed -i 's,target/tmp/holo.[0-9]\+,target/tmp/holo,g' $FILE
+    done
+
     # clean up the useless Git repo we created earlier to fix a Travis bug
     rm -rf -- .git
 
