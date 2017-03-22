@@ -1,5 +1,7 @@
 >> ./etc/holorc = symlink
 ../../../holorc
+>> ./run = dir
+>> ./tmp = dir
 >> ./usr/share/holo/run-scripts/01-successful.sh = regular
 #!/bin/sh
 echo "Running provisioning script 01-successful.sh"
@@ -23,3 +25,6 @@ exit 0
 >> ./usr/share/holo/run-scripts/04-failing-nooutput.sh = regular
 #!/bin/sh
 exit 1
+>> ./var/lib/holo/files/base = dir
+>> ./var/lib/holo/files/provisioned = dir
+>> ./var/lib/holo/run-scripts = dir

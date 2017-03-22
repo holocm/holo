@@ -24,3 +24,4 @@ Executing script:04-failing-nooutput.sh
 
 !! exit status 1
 
+exit status 0

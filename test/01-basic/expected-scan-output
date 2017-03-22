@@ -11,3 +11,4 @@ script:03-successful-nooutput.sh
 script:04-failing-nooutput.sh
     found at target/usr/share/holo/run-scripts/04-failing-nooutput.sh
 
+exit status 0
