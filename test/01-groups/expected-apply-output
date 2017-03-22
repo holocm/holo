@@ -20,3 +20,4 @@ Working on group:wronggid
     -gid = 42
     +gid = 102
 
+exit status 0

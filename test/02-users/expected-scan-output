@@ -30,3 +30,4 @@ user:wronguid
     found in target/usr/share/holo/users-groups/01-users.toml
         with UID: 1003
 
+exit status 0

@@ -69,3 +69,4 @@ diff --holo target/tmp/holo/users-groups/user:wronguid/desired.toml target/tmp/h
  home = "/home/wronguid"
  group = "users"
  shell = "/bin/zsh"
+exit status 0

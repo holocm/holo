@@ -13,3 +13,4 @@ Working on user:stacked
 
 MOCK: useradd --system --uid 1001 --comment 'Stacked User' --home-dir /home/stacked --gid stacked --groups bar,baz,foo --shell /bin/bash stacked
 
+exit status 0

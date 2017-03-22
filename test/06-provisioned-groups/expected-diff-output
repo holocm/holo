@@ -6,3 +6,4 @@ diff --holo target/tmp/holo/users-groups/group:wronggid/desired.toml target/tmp/
  name = "wronggid"
 -gid = 42
 +gid = 102
+exit status 0

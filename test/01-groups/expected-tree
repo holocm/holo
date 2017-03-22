@@ -14,6 +14,8 @@ existing:x:101:
 wronggid:x:102:
 >> ./etc/holorc = symlink
 ../../../holorc
+>> ./run = dir
+>> ./tmp = dir
 >> ./usr/share/holo/users-groups/01-groups.json = regular
 {
     "groups": [
@@ -31,6 +33,8 @@ name = "existing"
 [[group]]
 name = "wronggid"
 gid = 42
+>> ./var/lib/holo/files/base = dir
+>> ./var/lib/holo/files/provisioned = dir
 >> ./var/lib/holo/users-groups/base/group:existing.toml = regular
 [[group]]
 name = "existing"

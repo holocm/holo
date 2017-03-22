@@ -23,3 +23,4 @@ user:wronguid
     found in target/usr/share/holo/users-groups/01-users.toml
         with UID: 1003, home: /home/wronguid, login group: users, login shell: /bin/zsh
 
+exit status 0

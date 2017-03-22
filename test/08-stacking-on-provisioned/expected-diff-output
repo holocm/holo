@@ -19,3 +19,4 @@ diff --holo target/tmp/holo/users-groups/user:test/desired.toml target/tmp/holo/
  group = "users"
 -shell = "/bin/zsh"
 +shell = "/bin/bash"
+exit status 0

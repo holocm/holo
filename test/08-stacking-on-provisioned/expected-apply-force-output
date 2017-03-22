@@ -13,3 +13,4 @@ Working on user:test
 
 MOCK: usermod --comment 'This comment is set by Holo.' --shell /bin/zsh test
 
+exit status 0

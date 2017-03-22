@@ -17,3 +17,4 @@ deleted file mode 100644
 -home = "/home/test"
 -group = "users"
 -shell = "/bin/bash"
+exit status 0

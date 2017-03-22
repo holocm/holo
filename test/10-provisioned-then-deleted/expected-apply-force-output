@@ -10,3 +10,4 @@ Working on user:test
 
 MOCK: useradd --uid 1000 --home-dir /home/test --gid users --shell /bin/bash test
 
+exit status 0

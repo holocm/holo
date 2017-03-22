@@ -58,6 +58,8 @@ systemd-timesync:x:192:192:systemd-timesync:/:/usr/bin/nologin
 systemd-network:x:193:193:systemd-network:/:/usr/bin/nologin
 systemd-bus-proxy:x:194:194:systemd-bus-proxy:/:/usr/bin/nologin
 systemd-resolve:x:195:195:systemd-resolve:/:/usr/bin/nologin
+>> ./run = dir
+>> ./tmp = dir
 >> ./usr/share/holo/users-groups/01-first.toml = regular
 [[group]]
 name    = "stacked"
@@ -104,6 +106,8 @@ group   = "stacked"
 groups  = [ "foo", "baz" ]
 home    = "/home/stacked"
 shell   = "/bin/bash"
+>> ./var/lib/holo/files/base = dir
+>> ./var/lib/holo/files/provisioned = dir
 >> ./var/lib/holo/users-groups/base/group:valid.toml = regular
 [[group]]
 name = "valid"

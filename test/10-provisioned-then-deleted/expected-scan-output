@@ -6,3 +6,4 @@ user:test
     found in target/usr/share/holo/users-groups/01-test.toml
         with login group: users
 
+exit status 0

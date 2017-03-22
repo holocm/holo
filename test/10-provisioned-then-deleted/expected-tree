@@ -23,6 +23,8 @@ http:x:33:33:http:/srv/http:/usr/bin/nologin
 uuidd:x:68:68:uuidd:/:/usr/bin/nologin
 dbus:x:81:81:dbus:/:/usr/bin/nologin
 nobody:x:99:99:nobody:/:/usr/bin/nologin
+>> ./run = dir
+>> ./tmp = dir
 >> ./usr/share/holo/users-groups/01-test.toml = regular
 [[group]]
 name = "test"
@@ -30,6 +32,8 @@ name = "test"
 [[user]]
 name = "test"
 group = "users"
+>> ./var/lib/holo/files/base = dir
+>> ./var/lib/holo/files/provisioned = dir
 >> ./var/lib/holo/users-groups/base/group:test.toml = regular
 [[group]]
 name = "test"

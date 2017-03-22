@@ -64,6 +64,8 @@ wronghome:x:1004:100::/var/lib/wronghome:/bin/zsh
 wronggroup:x:1005:99::/home/wronggroup:/bin/zsh
 wronggroups:x:1005:100::/home/wronggroups:/bin/zsh
 wrongshell:x:1005:100::/home/wrongshell:/bin/bash
+>> ./run = dir
+>> ./tmp = dir
 >> ./usr/share/holo/users-groups/01-users.json = regular
 { "users": [
     {
@@ -120,6 +122,8 @@ groups  = ["network"]
 [[user]]
 name    = "wrongshell"
 shell   = "/bin/zsh"
+>> ./var/lib/holo/files/base = dir
+>> ./var/lib/holo/files/provisioned = dir
 >> ./var/lib/holo/users-groups/base/user:existing.toml = regular
 [[user]]
 name = "existing"

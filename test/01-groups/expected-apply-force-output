@@ -11,3 +11,4 @@ Working on group:wronggid
 
 MOCK: groupmod --gid 42 wronggid
 
+exit status 0

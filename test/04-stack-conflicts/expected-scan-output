@@ -17,3 +17,4 @@ user:valid
     found in target/usr/share/holo/users-groups/01-first.toml
         with UID: 1010
 
+exit status 0

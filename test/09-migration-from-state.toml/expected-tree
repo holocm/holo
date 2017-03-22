@@ -26,6 +26,8 @@ dbus:x:81:81:dbus:/:/usr/bin/nologin
 nobody:x:99:99:nobody:/:/usr/bin/nologin
 modified:x:1001:100::/home/modified:/bin/zsh
 unchanged:x:1002:100::/home/unchanged:/bin/bash
+>> ./run = dir
+>> ./tmp = dir
 >> ./usr/share/holo/users-groups/01-test.toml = regular
 [[group]]
 name = "created"
@@ -36,6 +38,8 @@ shell = "/bin/zsh"
 
 [[user]]
 name = "unchanged"
+>> ./var/lib/holo/files/base = dir
+>> ./var/lib/holo/files/provisioned = dir
 >> ./var/lib/holo/users-groups/base/group:created.toml = regular
 [[group]]
 name = "created"

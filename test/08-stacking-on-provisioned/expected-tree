@@ -25,6 +25,8 @@ uuidd:x:68:68:uuidd:/:/usr/bin/nologin
 dbus:x:81:81:dbus:/:/usr/bin/nologin
 nobody:x:99:99:nobody:/:/usr/bin/nologin
 test:x:1001:100:This is the comment set by another program.:/home/test:/bin/bash
+>> ./run = dir
+>> ./tmp = dir
 >> ./usr/share/holo/users-groups/01-initial.toml = regular
 [[group]]
 name = "test"
@@ -40,6 +42,8 @@ gid  = 123
 name    = "test"
 comment = "This comment is set by Holo."
 shell   = "/bin/zsh"
+>> ./var/lib/holo/files/base = dir
+>> ./var/lib/holo/files/provisioned = dir
 >> ./var/lib/holo/users-groups/base/group:test.toml = regular
 [[group]]
 name = "test"

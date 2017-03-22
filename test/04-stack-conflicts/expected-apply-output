@@ -21,3 +21,4 @@ Working on user:valid
 
 MOCK: useradd --uid 1010 valid
 
+exit status 0

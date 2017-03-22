@@ -85,3 +85,4 @@ Working on user:wronguid
      group = "users"
      shell = "/bin/zsh"
 
+exit status 0

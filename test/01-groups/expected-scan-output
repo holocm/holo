@@ -10,3 +10,4 @@ group:wronggid
     found in target/usr/share/holo/users-groups/01-groups.toml
         with GID: 42
 
+exit status 0

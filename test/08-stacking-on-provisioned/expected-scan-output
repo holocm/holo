@@ -9,3 +9,4 @@ user:test
     found in target/usr/share/holo/users-groups/02-added.toml
         with login shell: /bin/zsh, comment: This comment is set by Holo.
 
+exit status 0

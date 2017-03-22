@@ -62,3 +62,10 @@ systemd-bus-proxy:x:194:194:systemd-bus-proxy:/:/usr/bin/nologin
 systemd-resolve:x:195:195:systemd-resolve:/:/usr/bin/nologin
 deleted:x:1000:101:deleted:/var/lib/deleted:/usr/bin/nologin
 restored:x:1011:101:This user will be restored.:/var/lib/restored:/bin/bash
+>> ./run = dir
+>> ./tmp = dir
+>> ./usr/share/holo/users-groups = dir
+>> ./var/lib/holo/files/base = dir
+>> ./var/lib/holo/files/provisioned = dir
+>> ./var/lib/holo/users-groups/base = dir
+>> ./var/lib/holo/users-groups/provisioned = dir

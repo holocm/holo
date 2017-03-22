@@ -19,3 +19,4 @@ deleted file mode 100644
 -group = "stacked"
 -groups = ["bar", "baz", "foo"]
 -shell = "/bin/bash"
+exit status 0

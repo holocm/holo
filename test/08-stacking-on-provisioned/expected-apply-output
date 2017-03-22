@@ -36,3 +36,4 @@ Working on user:test
     -shell = "/bin/zsh"
     +shell = "/bin/bash"
 
+exit status 0
