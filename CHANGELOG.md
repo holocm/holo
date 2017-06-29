@@ -1,3 +1,9 @@
+# v1.3.1 (2017-03-19)
+
+Bugfixes:
+
+- Fix a bug where, on Arch Linux, the post-installation hook could get confused when Holo sorted entity names differently than sort(1) did.
+
 # v1.3 (2017-03-18)
 
 Special thanks to new contributor @LukeShu who did a lot of the hard work that went into this release, both in terms of
