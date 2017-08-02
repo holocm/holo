@@ -20,8 +20,9 @@
 # from which directory where we called?
 ORIGINAL_CWD="$PWD"
 
-# by default, use installed Holo binary
+# by default, use installed Holo binary and installed dump-to-tree.sh/tree-to-dump.sh
 : ${HOLO_BINARY:=holo}
+: ${HOLO_TEST_SCRIPTPATH:=/usr/lib/holo}
 
 if ! type colordiff &>/dev/null; then
     colordiff() {
@@ -44,7 +45,7 @@ run_testcase() (
 
     # setup chroot for holo run
     rm -rf -- target/
-    ../../util/dump-to-tree.sh target/ < source-tree
+    "${HOLO_TEST_SCRIPTPATH}/dump-to-tree.sh" target/ < source-tree
     mkdir -p target/run
     mkdir -p target/tmp
     grep -o 'plugin [^=]\+' target/etc/holorc target/etc/holorc.d/* 2>/dev/null | while read _ PLUGIN; do
@@ -80,11 +81,11 @@ run_testcase() (
         sed -i 's,target/tmp/holo.[0-9]\+,target/tmp/holo,g' $FILE
     done
 
+    # dump the contents of the target directory into a single file for diff'ing with the source-tree
+    "${HOLO_TEST_SCRIPTPATH}/tree-to-dump.sh" target/ > tree
+
     # clean up the useless Git repo we created earlier to fix a Travis bug
     rm -rf -- .git
-
-    # dump the contents of the target directory into a single file for diff'ing with the source-tree
-    ../../util/tree-to-dump.sh target/ > tree
 
     local EXIT_CODE=0
 
