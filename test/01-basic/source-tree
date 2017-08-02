@@ -2,27 +2,23 @@ symlink   0777 ./etc/holorc
 ../../../holorc
 ----------------------------------------
 symlink   0777 ./etc/link-over-link.conf
-ddd
+hhh
 ----------------------------------------
-symlink   0777 ./etc/link-over-plain.conf
-ccc
+file      0644 ./etc/link-over-plain.conf
+fff
+fff
 ----------------------------------------
 file      0644 ./etc/os-release
 ID=unittest
 ----------------------------------------
-file      0755 ./etc/plain-over-link.conf
-bbb
-bbb
+symlink   0777 ./etc/plain-over-link.conf
+ggg
 ----------------------------------------
 file      0644 ./etc/plain-over-plain.conf
-aaa
-aaa
+eee
+eee
 ----------------------------------------
 directory 0755 ./etc/stock-file-is-directory.conf/
-----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
 ----------------------------------------
 symlink   0777 ./usr/share/holo/files/01-normal/etc/link-over-link.conf
 ddd
@@ -46,32 +42,4 @@ no stock file D:
 ----------------------------------------
 file      0644 ./usr/share/holo/files/not-a-repo-file.conf
 not a repo file
-----------------------------------------
-symlink   0777 ./var/lib/holo/files/base/etc/link-over-link.conf
-hhh
-----------------------------------------
-file      0644 ./var/lib/holo/files/base/etc/link-over-plain.conf
-fff
-fff
-----------------------------------------
-symlink   0777 ./var/lib/holo/files/base/etc/plain-over-link.conf
-ggg
-----------------------------------------
-file      0644 ./var/lib/holo/files/base/etc/plain-over-plain.conf
-eee
-eee
-----------------------------------------
-symlink   0777 ./var/lib/holo/files/provisioned/etc/link-over-link.conf
-ddd
-----------------------------------------
-symlink   0777 ./var/lib/holo/files/provisioned/etc/link-over-plain.conf
-ccc
-----------------------------------------
-file      0755 ./var/lib/holo/files/provisioned/etc/plain-over-link.conf
-bbb
-bbb
-----------------------------------------
-file      0644 ./var/lib/holo/files/provisioned/etc/plain-over-plain.conf
-aaa
-aaa
 ----------------------------------------

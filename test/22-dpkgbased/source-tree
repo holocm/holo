@@ -7,6 +7,11 @@ ID=debian
 file      0644 ./etc/repofile-deleted-with-dpkg-dist.conf
 ggg
 hhh
+iii
+----------------------------------------
+file      0644 ./etc/repofile-deleted-with-dpkg-dist.conf.dpkg-dist
+ggg
+hhh
 jjj
 ----------------------------------------
 file      0644 ./etc/repofile-deleted-with-dpkg-old.conf
@@ -14,17 +19,28 @@ ggg
 hhh
 jjj
 ----------------------------------------
+file      0644 ./etc/repofile-deleted-with-dpkg-old.conf.dpkg-old
+ggg
+hhh
+iii
+----------------------------------------
 file      0644 ./etc/targetfile-with-dpkg-dist.conf
+a
+b
+c
+----------------------------------------
+file      0644 ./etc/targetfile-with-dpkg-dist.conf.dpkg-dist
 d
-e
 f
+e
 ----------------------------------------
 file      0644 ./etc/targetfile-with-dpkg-old.conf
 bbb
+bbb
+bbb
 ----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
+file      0644 ./etc/targetfile-with-dpkg-old.conf.dpkg-old
+aaa
 ----------------------------------------
 symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-dpkg-dist.conf.holoscript
 /usr/bin/sort
@@ -32,21 +48,39 @@ symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-dpkg-dist.con
 symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-dpkg-old.conf.holoscript
 /usr/bin/uniq
 ----------------------------------------
+file      0644 ./var/lib/holo/files/base/etc/repofile-deleted-with-dpkg-dist.conf
+ggg
+hhh
+----------------------------------------
+file      0644 ./var/lib/holo/files/base/etc/repofile-deleted-with-dpkg-old.conf
+ggg
+hhh
+----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/targetfile-with-dpkg-dist.conf
-d
-f
-e
+b
+c
+a
 ----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/targetfile-with-dpkg-old.conf
-bbb
-bbb
-bbb
+aaa
+aaa
+aaa
+----------------------------------------
+file      0644 ./var/lib/holo/files/provisioned/etc/repofile-deleted-with-dpkg-dist.conf
+ggg
+hhh
+iii
+----------------------------------------
+file      0644 ./var/lib/holo/files/provisioned/etc/repofile-deleted-with-dpkg-old.conf
+ggg
+hhh
+iii
 ----------------------------------------
 file      0644 ./var/lib/holo/files/provisioned/etc/targetfile-with-dpkg-dist.conf
-d
-e
-f
+a
+b
+c
 ----------------------------------------
 file      0644 ./var/lib/holo/files/provisioned/etc/targetfile-with-dpkg-old.conf
-bbb
+aaa
 ----------------------------------------

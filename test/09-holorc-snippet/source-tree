@@ -1,5 +1,5 @@
 file      0644 ./etc/foo.conf
-bbb
+aaa
 ----------------------------------------
 file      0644 ./etc/holorc
 ----------------------------------------
@@ -9,16 +9,6 @@ symlink   0777 ./etc/holorc.d/files
 file      0644 ./etc/os-release
 ID=unittest
 ----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
-----------------------------------------
 file      0644 ./usr/share/holo/files/01-first/etc/foo.conf
-bbb
-----------------------------------------
-file      0644 ./var/lib/holo/files/base/etc/foo.conf
-aaa
-----------------------------------------
-file      0644 ./var/lib/holo/files/provisioned/etc/foo.conf
 bbb
 ----------------------------------------

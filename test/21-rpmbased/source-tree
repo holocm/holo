@@ -7,6 +7,11 @@ ID=fedora
 file      0644 ./etc/repofile-deleted-with-rpmnew.conf
 ggg
 hhh
+iii
+----------------------------------------
+file      0644 ./etc/repofile-deleted-with-rpmnew.conf.rpmnew
+ggg
+hhh
 jjj
 ----------------------------------------
 file      0644 ./etc/repofile-deleted-with-rpmsave.conf
@@ -14,17 +19,28 @@ ggg
 hhh
 jjj
 ----------------------------------------
+file      0644 ./etc/repofile-deleted-with-rpmsave.conf.rpmsave
+ggg
+hhh
+iii
+----------------------------------------
 file      0644 ./etc/targetfile-with-rpmnew.conf
+a
+b
+c
+----------------------------------------
+file      0644 ./etc/targetfile-with-rpmnew.conf.rpmnew
 d
-e
 f
+e
 ----------------------------------------
 file      0644 ./etc/targetfile-with-rpmsave.conf
 bbb
+bbb
+bbb
 ----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
+file      0644 ./etc/targetfile-with-rpmsave.conf.rpmsave
+aaa
 ----------------------------------------
 symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-rpmnew.conf.holoscript
 /usr/bin/sort
@@ -32,21 +48,39 @@ symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-rpmnew.conf.h
 symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-rpmsave.conf.holoscript
 /usr/bin/uniq
 ----------------------------------------
+file      0644 ./var/lib/holo/files/base/etc/repofile-deleted-with-rpmnew.conf
+ggg
+hhh
+----------------------------------------
+file      0644 ./var/lib/holo/files/base/etc/repofile-deleted-with-rpmsave.conf
+ggg
+hhh
+----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/targetfile-with-rpmnew.conf
-d
-f
-e
+b
+c
+a
 ----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/targetfile-with-rpmsave.conf
-bbb
-bbb
-bbb
+aaa
+aaa
+aaa
+----------------------------------------
+file      0644 ./var/lib/holo/files/provisioned/etc/repofile-deleted-with-rpmnew.conf
+ggg
+hhh
+iii
+----------------------------------------
+file      0644 ./var/lib/holo/files/provisioned/etc/repofile-deleted-with-rpmsave.conf
+ggg
+hhh
+iii
 ----------------------------------------
 file      0644 ./var/lib/holo/files/provisioned/etc/targetfile-with-rpmnew.conf
-d
-e
-f
+a
+b
+c
 ----------------------------------------
 file      0644 ./var/lib/holo/files/provisioned/etc/targetfile-with-rpmsave.conf
-bbb
+aaa
 ----------------------------------------

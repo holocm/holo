@@ -1,4 +1,0 @@
-#!/bin/sh
-echo 'First line of stderr output.' >&2
-sed s/a/o/
-echo 'Second line of stderr output.' >&2

@@ -5,26 +5,38 @@ file      0644 ./etc/os-release
 ID=unittest
 ----------------------------------------
 file      0644 ./etc/repofile-deleted.conf
-eee
-eee
+ddd
+ddd
 ----------------------------------------
 file      0644 ./etc/still-existing.conf
-bbb
-bbb
-----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
+aaa
+aaa
 ----------------------------------------
 file      0644 ./usr/share/holo/files/01-first/etc/still-existing.conf
 bbb
 bbb
 ----------------------------------------
+file      0644 ./var/lib/holo/files/base/etc/repofile-deleted.conf
+eee
+eee
+----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/still-existing.conf
 aaa
 aaa
 ----------------------------------------
+file      0644 ./var/lib/holo/files/base/etc/targetfile-deleted.conf
+ccc
+ccc
+----------------------------------------
+file      0644 ./var/lib/holo/files/provisioned/etc/repofile-deleted.conf
+ddd
+ddd
+----------------------------------------
 file      0644 ./var/lib/holo/files/provisioned/etc/still-existing.conf
-bbb
-bbb
+aaa
+aaa
+----------------------------------------
+file      0644 ./var/lib/holo/files/provisioned/etc/targetfile-deleted.conf
+ccc
+ccc
 ----------------------------------------

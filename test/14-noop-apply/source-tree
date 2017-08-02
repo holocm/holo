@@ -2,15 +2,14 @@ file      0644 ./etc/foo.conf
 ccc
 ddd
 ----------------------------------------
+file      0644 ./etc/foo.conf.pacnew
+ccc
+----------------------------------------
 symlink   0777 ./etc/holorc
 ../../../holorc
 ----------------------------------------
 file      0644 ./etc/os-release
 ID=arch
-----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
 ----------------------------------------
 file      0755 ./usr/share/holo/files/01-first/etc/foo.conf.holoscript
 #!/bin/sh
@@ -18,9 +17,9 @@ cat
 echo ddd
 ----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/foo.conf
-ccc
+bbb
 ----------------------------------------
 file      0644 ./var/lib/holo/files/provisioned/etc/foo.conf
-ccc
+bbb
 ddd
 ----------------------------------------

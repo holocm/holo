@@ -9,30 +9,23 @@ bar
 symlink   0777 ./etc/holorc
 ../../../holorc
 ----------------------------------------
-file      0644 ./etc/link-through-link.conf
-foo
-baz
-bar
+symlink   0777 ./etc/link-through-link.conf
+contents
 ----------------------------------------
-file      0644 ./etc/link-through-plain.conf
-foo
-foo
-foo
-buz
-bur
-bur
+symlink   0777 ./etc/link-through-plain.conf
+contents
 ----------------------------------------
 file      0644 ./etc/os-release
 ID=unittest
 ----------------------------------------
 file      0644 ./etc/plain-through-link.conf
+tomato
 apple
 banana
-tomato
 ----------------------------------------
 file      0644 ./etc/plain-through-plain.conf
 foo
-qux
+bar
 baz
 ----------------------------------------
 file      0644 ./etc/plain-with-nonzero-exitcode.conf
@@ -42,12 +35,8 @@ baz
 ----------------------------------------
 file      0644 ./etc/plain-with-stderr.conf
 foo
-bor
-boz
-----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
+bar
+baz
 ----------------------------------------
 symlink   0777 ./usr/share/holo/files/02-holoscripts/etc/link-through-link.conf.holoscript
 /usr/bin/uniq
@@ -73,58 +62,4 @@ file      0755 ./usr/share/holo/files/02-holoscripts/etc/plain-with-stderr.conf.
 echo 'First line of stderr output.' >&2
 sed s/a/o/
 echo 'Second line of stderr output.' >&2
-----------------------------------------
-symlink   0777 ./var/lib/holo/files/base/etc/link-through-link.conf
-contents
-----------------------------------------
-symlink   0777 ./var/lib/holo/files/base/etc/link-through-plain.conf
-contents
-----------------------------------------
-file      0644 ./var/lib/holo/files/base/etc/plain-through-link.conf
-tomato
-apple
-banana
-----------------------------------------
-file      0644 ./var/lib/holo/files/base/etc/plain-through-plain.conf
-foo
-bar
-baz
-----------------------------------------
-file      0644 ./var/lib/holo/files/base/etc/plain-with-nonzero-exitcode.conf
-foo
-bar
-baz
-----------------------------------------
-file      0644 ./var/lib/holo/files/base/etc/plain-with-stderr.conf
-foo
-bar
-baz
-----------------------------------------
-file      0644 ./var/lib/holo/files/provisioned/etc/link-through-link.conf
-foo
-baz
-bar
-----------------------------------------
-file      0644 ./var/lib/holo/files/provisioned/etc/link-through-plain.conf
-foo
-foo
-foo
-buz
-bur
-bur
-----------------------------------------
-file      0644 ./var/lib/holo/files/provisioned/etc/plain-through-link.conf
-apple
-banana
-tomato
-----------------------------------------
-file      0644 ./var/lib/holo/files/provisioned/etc/plain-through-plain.conf
-foo
-qux
-baz
-----------------------------------------
-file      0644 ./var/lib/holo/files/provisioned/etc/plain-with-stderr.conf
-foo
-bor
-boz
 ----------------------------------------

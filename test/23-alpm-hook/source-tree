@@ -14,14 +14,19 @@ ggg
 hhh
 jjj
 ----------------------------------------
+file      0644 ./etc/targetfile-deleted-with-pacsave.conf.pacsave
+eee
+eee
+----------------------------------------
 file      0644 ./etc/targetfile-with-pacnew.conf
+a
+b
+c
+----------------------------------------
+file      0644 ./etc/targetfile-with-pacnew.conf.pacnew
 d
-e
 f
-----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
+e
 ----------------------------------------
 symlink   0777 ./usr/bin/holo
 ../../../../../build/holo.test
@@ -36,18 +41,26 @@ file      0644 ./var/lib/holo/files/base/etc/repofile-deleted-with-pacnew.conf
 ggg
 hhh
 ----------------------------------------
+file      0644 ./var/lib/holo/files/base/etc/targetfile-deleted-with-pacsave.conf
+ddd
+ddd
+----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/targetfile-with-pacnew.conf
-d
-f
-e
+b
+c
+a
 ----------------------------------------
 file      0644 ./var/lib/holo/files/provisioned/etc/repofile-deleted-with-pacnew.conf
 ggg
 hhh
 iii
 ----------------------------------------
+file      0644 ./var/lib/holo/files/provisioned/etc/targetfile-deleted-with-pacsave.conf
+eee
+eee
+----------------------------------------
 file      0644 ./var/lib/holo/files/provisioned/etc/targetfile-with-pacnew.conf
-d
-e
-f
+a
+b
+c
 ----------------------------------------

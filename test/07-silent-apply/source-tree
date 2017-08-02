@@ -8,14 +8,6 @@ bbb
 file      0644 ./etc/os-release
 ID=unittest
 ----------------------------------------
-file      0644 ./etc/requireforce.conf
-ccc
-ddd
-----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
-----------------------------------------
 file      0644 ./usr/share/holo/files/01-first/etc/normal.conf
 aaa
 bbb

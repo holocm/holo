@@ -1,6 +1,5 @@
 file      0644 ./etc/check-ordering.conf
-foofoo
-foobar
+test
 ----------------------------------------
 file      0644 ./etc/contents1
 jjj
@@ -14,36 +13,26 @@ symlink   0777 ./etc/holorc
 ../../../holorc
 ----------------------------------------
 file      0644 ./etc/link-and-script.conf
-ljj
-ljj
+kkk
+kkk
 ----------------------------------------
-file      0644 ./etc/link-through-scripts.conf
-nnn
-mmm
-mmm
-ooo
+symlink   0777 ./etc/link-through-scripts.conf
+contents2
 ----------------------------------------
 file      0644 ./etc/os-release
 ID=unittest
 ----------------------------------------
 file      0644 ./etc/plain-and-plain.conf
-ccc
-ccc
+aaa
+aaa
 ----------------------------------------
 file      0644 ./etc/plain-and-script.conf
-eee
-eee
-fff
+ddd
+ddd
 ----------------------------------------
 file      0644 ./etc/script-and-script.conf
-hhh
 ggg
 ggg
-iii
-----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
 ----------------------------------------
 symlink   0777 ./usr/share/holo/files/01-first/etc/link-and-script.conf
 contents1
@@ -96,55 +85,4 @@ bar
 file      0755 ./usr/share/holo/files/03-order/etc/check-ordering.conf.holoscript
 #!/bin/sh
 sed 's/^/foo/'
-----------------------------------------
-file      0644 ./var/lib/holo/files/base/etc/check-ordering.conf
-test
-----------------------------------------
-file      0644 ./var/lib/holo/files/base/etc/link-and-script.conf
-kkk
-kkk
-----------------------------------------
-symlink   0777 ./var/lib/holo/files/base/etc/link-through-scripts.conf
-contents2
-----------------------------------------
-file      0644 ./var/lib/holo/files/base/etc/plain-and-plain.conf
-aaa
-aaa
-----------------------------------------
-file      0644 ./var/lib/holo/files/base/etc/plain-and-script.conf
-ddd
-ddd
-----------------------------------------
-file      0644 ./var/lib/holo/files/base/etc/script-and-script.conf
-ggg
-ggg
-----------------------------------------
-file      0644 ./var/lib/holo/files/provisioned/etc/check-ordering.conf
-foofoo
-foobar
-----------------------------------------
-file      0644 ./var/lib/holo/files/provisioned/etc/link-and-script.conf
-ljj
-ljj
-----------------------------------------
-file      0644 ./var/lib/holo/files/provisioned/etc/link-through-scripts.conf
-nnn
-mmm
-mmm
-ooo
-----------------------------------------
-file      0644 ./var/lib/holo/files/provisioned/etc/plain-and-plain.conf
-ccc
-ccc
-----------------------------------------
-file      0644 ./var/lib/holo/files/provisioned/etc/plain-and-script.conf
-eee
-eee
-fff
-----------------------------------------
-file      0644 ./var/lib/holo/files/provisioned/etc/script-and-script.conf
-hhh
-ggg
-ggg
-iii
 ----------------------------------------

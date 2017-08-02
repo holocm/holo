@@ -1,5 +1,0 @@
-#!/bin/sh
-if [ "$1" = scan ]; then
-	exit 1
-fi
-exec ../../build/holo-files.test "$@"

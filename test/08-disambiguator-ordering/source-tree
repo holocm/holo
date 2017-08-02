@@ -1,18 +1,12 @@
 file      0644 ./etc/foo.conf
 aaa
 bbb
-ccc
-ddd
 ----------------------------------------
 symlink   0777 ./etc/holorc
 ../../../holorc
 ----------------------------------------
 file      0644 ./etc/os-release
 ID=unittest
-----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
 ----------------------------------------
 file      0755 ./usr/share/holo/files/01-foo/etc/foo.conf.holoscript
 #!/bin/sh
@@ -23,14 +17,4 @@ file      0755 ./usr/share/holo/files/01-foo-bar/etc/foo.conf.holoscript
 #!/bin/sh
 cat
 echo ddd
-----------------------------------------
-file      0644 ./var/lib/holo/files/base/etc/foo.conf
-aaa
-bbb
-----------------------------------------
-file      0644 ./var/lib/holo/files/provisioned/etc/foo.conf
-aaa
-bbb
-ccc
-ddd
 ----------------------------------------

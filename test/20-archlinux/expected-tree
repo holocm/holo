@@ -1,31 +1,42 @@
->> ./etc/holorc = symlink
+symlink   0777 ./etc/holorc
 ../../../holorc
->> ./etc/os-release = regular
+----------------------------------------
+file      0644 ./etc/os-release
 ID=arch
->> ./etc/repofile-deleted-with-pacnew.conf = regular
+----------------------------------------
+file      0644 ./etc/repofile-deleted-with-pacnew.conf
 ggg
 hhh
 jjj
->> ./etc/targetfile-deleted-with-modified-pacsave.conf.pacsave = regular
+----------------------------------------
+file      0644 ./etc/targetfile-deleted-with-modified-pacsave.conf.pacsave
 holo
 user
 holo
->> ./etc/targetfile-deleted-with-pacsave.conf.pacsave.u = regular
+----------------------------------------
+file      0644 ./etc/targetfile-deleted-with-pacsave.conf.pacsave.u
 holo
 holo
->> ./etc/targetfile-with-pacnew.conf = regular
+----------------------------------------
+file      0644 ./etc/targetfile-with-pacnew.conf
 d
 e
 f
->> ./run = dir
->> ./tmp = dir
->> ./usr/share/holo/files/01-first/etc/targetfile-with-pacnew.conf.holoscript = symlink
+----------------------------------------
+directory 0755 ./run/
+----------------------------------------
+directory 0755 ./tmp/
+----------------------------------------
+symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-pacnew.conf.holoscript
 /usr/bin/sort
->> ./var/lib/holo/files/base/etc/targetfile-with-pacnew.conf = regular
+----------------------------------------
+file      0644 ./var/lib/holo/files/base/etc/targetfile-with-pacnew.conf
 d
 f
 e
->> ./var/lib/holo/files/provisioned/etc/targetfile-with-pacnew.conf = regular
+----------------------------------------
+file      0644 ./var/lib/holo/files/provisioned/etc/targetfile-with-pacnew.conf
 d
 e
 f
+----------------------------------------

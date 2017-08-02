@@ -1,0 +1,13 @@
+file      0644 ./etc/holorc
+plugin files=target/usr/lib/holo/holo-files
+----------------------------------------
+file      0644 ./etc/os-release
+ID=unittest
+----------------------------------------
+file      0755 ./usr/lib/holo/holo-files
+#!/bin/sh
+if [ "$1" = scan ]; then
+	exit 1
+fi
+exec ../../build/holo-files.test "$@"
+----------------------------------------

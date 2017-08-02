@@ -1,9 +1,16 @@
->> ./etc/holorc = symlink
+symlink   0777 ./etc/holorc
 ../../../holorc
->> ./etc/os-release = regular
+----------------------------------------
+file      0644 ./etc/os-release
 ID=unittest
->> ./run = dir
->> ./tmp = dir
->> ./usr/share/holo/files = dir
->> ./var/lib/holo/files/base = dir
->> ./var/lib/holo/files/provisioned = dir
+----------------------------------------
+directory 0755 ./run/
+----------------------------------------
+directory 0755 ./tmp/
+----------------------------------------
+directory 0755 ./usr/share/holo/files/
+----------------------------------------
+directory 0755 ./var/lib/holo/files/base/
+----------------------------------------
+directory 0755 ./var/lib/holo/files/provisioned/
+----------------------------------------

@@ -1,17 +1,10 @@
-file      0644 ./etc/file-deleted.conf
-aaa
-bbb
-ccc
-----------------------------------------
 file      0644 ./etc/file-modified.conf
 aaa
-bbb
+xxx
 ccc
 ----------------------------------------
-file      0644 ./etc/file-to-symlink.conf
-aaa
-bbb
-ccc
+symlink   0777 ./etc/file-to-symlink.conf
+/bin/ls
 ----------------------------------------
 file      0644 ./etc/file-unmodified.conf
 aaa
@@ -24,21 +17,16 @@ symlink   0777 ./etc/holorc
 file      0644 ./etc/os-release
 ID=unittest
 ----------------------------------------
-symlink   0777 ./etc/symlink-deleted.conf
-/bin/true
-----------------------------------------
 symlink   0777 ./etc/symlink-modified.conf
-/bin/true
+/bin/ls
 ----------------------------------------
-symlink   0777 ./etc/symlink-to-file.conf
-/bin/true
+file      0644 ./etc/symlink-to-file.conf
+ggg
+hhh
+iii
 ----------------------------------------
 symlink   0777 ./etc/symlink-unmodified.conf
 /bin/true
-----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
 ----------------------------------------
 file      0644 ./usr/share/holo/files/01-first/etc/file-deleted.conf
 aaa

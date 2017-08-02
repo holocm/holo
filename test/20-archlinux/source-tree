@@ -1,0 +1,85 @@
+symlink   0777 ./etc/holorc
+../../../holorc
+----------------------------------------
+file      0644 ./etc/os-release
+ID=arch
+----------------------------------------
+file      0644 ./etc/repofile-deleted-with-pacnew.conf
+ggg
+hhh
+iii
+----------------------------------------
+file      0644 ./etc/repofile-deleted-with-pacnew.conf.pacnew
+ggg
+hhh
+jjj
+----------------------------------------
+file      0644 ./etc/targetfile-deleted-with-modified-pacsave.conf.pacsave
+holo
+user
+holo
+----------------------------------------
+file      0644 ./etc/targetfile-deleted-with-pacsave.conf.pacsave
+holo
+holo
+----------------------------------------
+file      0644 ./etc/targetfile-deleted-with-pacsave.conf.pacsave.2
+holo
+holo
+----------------------------------------
+file      0644 ./etc/targetfile-deleted-with-pacsave.conf.pacsave.4
+holo
+holo
+----------------------------------------
+file      0644 ./etc/targetfile-deleted-with-pacsave.conf.pacsave.u
+holo
+holo
+----------------------------------------
+file      0644 ./etc/targetfile-with-pacnew.conf
+a
+b
+c
+----------------------------------------
+file      0644 ./etc/targetfile-with-pacnew.conf.pacnew
+d
+f
+e
+----------------------------------------
+symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-pacnew.conf.holoscript
+/usr/bin/sort
+----------------------------------------
+file      0644 ./var/lib/holo/files/base/etc/repofile-deleted-with-pacnew.conf
+ggg
+hhh
+----------------------------------------
+file      0644 ./var/lib/holo/files/base/etc/targetfile-deleted-with-modified-pacsave.conf
+base
+base
+----------------------------------------
+file      0644 ./var/lib/holo/files/base/etc/targetfile-deleted-with-pacsave.conf
+base
+base
+----------------------------------------
+file      0644 ./var/lib/holo/files/base/etc/targetfile-with-pacnew.conf
+b
+c
+a
+----------------------------------------
+file      0644 ./var/lib/holo/files/provisioned/etc/repofile-deleted-with-pacnew.conf
+ggg
+hhh
+iii
+----------------------------------------
+file      0644 ./var/lib/holo/files/provisioned/etc/targetfile-deleted-with-modified-pacsave.conf
+holo
+holo
+----------------------------------------
+file      0644 ./var/lib/holo/files/provisioned/etc/targetfile-deleted-with-pacsave.conf
+holo
+holo
+----------------------------------------
+file      0644 ./var/lib/holo/files/provisioned/etc/targetfile-with-pacnew.conf
+a
+b
+c
+----------------------------------------
