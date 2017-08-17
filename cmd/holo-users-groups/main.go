@@ -18,7 +18,7 @@
 *
 *******************************************************************************/
 
-package main
+package entrypoint
 
 import (
 	"encoding/gob"
@@ -27,10 +27,12 @@ import (
 	"path/filepath"
 )
 
-func main() {
+// Main is the main entry point, but returns the exit code rather than
+// calling os.Exit().  This distinction is useful for testing purposes.
+func Main() (exitCode int) {
 	if version := os.Getenv("HOLO_API_VERSION"); version != "3" {
 		fmt.Fprintf(os.Stderr, "!! holo-users-groups plugin called with unknown HOLO_API_VERSION %s\n", version)
-		os.Exit(1)
+		return 1
 	}
 
 	gob.Register(&GroupDefinition{})
@@ -48,8 +50,10 @@ func main() {
 	}
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-		os.Exit(1)
+		return 1
 	}
+
+	return 0
 }
 
 func pathToCacheFile() string {

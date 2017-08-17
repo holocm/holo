@@ -24,12 +24,15 @@ import (
 
 	cmd_holo "github.com/holocm/holo/cmd/holo"
 	cmd_holo_files "github.com/holocm/holo/cmd/holo-files"
+	cmd_holo_users_groups "github.com/holocm/holo/cmd/holo-users-groups"
 )
 
 func main() {
 	switch filepath.Base(os.Args[0]) {
 	case "holo-files":
 		os.Exit(cmd_holo_files.Main())
+	case "holo-users-groups":
+		os.Exit(cmd_holo_users_groups.Main())
 	default:
 		os.Exit(cmd_holo.Main())
 	}
