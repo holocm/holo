@@ -18,7 +18,7 @@ build/man/%: doc/%.pod
 
 test: check # just a synonym
 check: default
-	@holo-test holo-users-groups $(sort $(wildcard test/??-*))
+	@holo-test holo-users-groups $(sort $(wildcard test/users-groups/??-*))
 
 install: default conf/holorc.holo-users-groups
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/users-groups"
