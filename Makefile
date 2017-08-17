@@ -4,7 +4,7 @@ VERSION := $(shell ./util/find_version.sh)
 
 prepare-build:
 	@mkdir -p build/man
-build/holo-ssh-keys: src/main.go src/*/*.go
+build/holo-ssh-keys: cmd/holo-ssh-keys/main.go cmd/holo-ssh-keys/*/*.go
 	go build --ldflags "-s -w" -o $@ $<
 
 # manpages are generated using pod2man (which comes with Perl and therefore
@@ -16,13 +16,13 @@ build/man/%: doc/%.pod
 
 test: check # just a synonym
 check: default
-	@go test ./src/impl
+	@go test ./cmd/holo-ssh-keys/impl
 	@holo-test holo-ssh-keys $(sort $(wildcard test/??-*))
 
-install: default src/holorc
+install: default cmd/holo-ssh-keys/holorc
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/ssh-keys"
 	install -D -m 0755 build/holo-ssh-keys       "$(DESTDIR)/usr/lib/holo/holo-ssh-keys"
-	install -D -m 0644 src/holorc                "$(DESTDIR)/etc/holorc.d/25-ssh-keys"
+	install -D -m 0644 conf/holorc.holo-ssh-keys "$(DESTDIR)/etc/holorc.d/25-ssh-keys"
 	install -D -m 0644 build/man/holo-ssh-keys.8 "$(DESTDIR)/usr/share/man/man8/holo-ssh-keys.8"
 
 .PHONY: prepare-build test check install
