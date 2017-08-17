@@ -1,28 +1,46 @@
->> ./etc/holorc = symlink
+symlink   0777 ./etc/holorc
 ../../../holorc
->> ./home/user1/.ssh/authorized_keys = regular
+----------------------------------------
+directory 0700 ./home/user1/.ssh/
+----------------------------------------
+file      0600 ./home/user1/.ssh/authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn holo=ssh-keyset:user1/foo
->> ./home/user2/.ssh/authorized_keys = regular
+----------------------------------------
+directory 0700 ./home/user2/.ssh/
+----------------------------------------
+file      0600 ./home/user2/.ssh/authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn holo=ssh-keyset:user2/foo
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPLEjAqLN0L6OyzXZmvWJAflKdOD4/nxvdZQXZEQtIXX/BlHKc7YRjgAnbQcxI7Zq8I6QUhuMSQpXMe4l2elAtWkzmxqFPkpSHMqgz6DaXKHlWPYAESjO3zfeZ9WWy4sW4stCIFRSDC0GkOx68TQSVbE9bm5wHZdF9nGW7ec4xpGhEKW7UC+WQE3bsgRAOWUDmTeExAI8w1+Ala3IfX/6KO7cq4QsTTscnuUub21Vxb0uRaW2HFqm8ttwecr7I/B83QBqOSUeGurdsCGv1FYHfQJzlK6adMaRiZ+McQlOiKcKfXp06nmHL95xhx8rqAWOVjB9qpfzCSAqSpJZwpPz/ holo=ssh-keyset:user2/foo
->> ./home/user3/.ssh/authorized_keys = regular
+----------------------------------------
+directory 0700 ./home/user3/.ssh/
+----------------------------------------
+file      0600 ./home/user3/.ssh/authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDISlUCVUWDSuVm94/rVUL/X2g5k5kplyvxgkNRRTpBZjfdvjq6qy8VqIhczrrEoM0jK8zJ28NsLxmKkYyaoBDCf7L+QPyYD/oLguu7/3/eCSywrIfBtmZY6EXG8gypYt/KzNzp3o83wrKXCKTA6IbTgLKf3A1QfjMTNml9u6+ECdt+XjXbe8MQGultF646xKHeK3A5Zs1/tAxciia4MJyCULJf5NiVqilPQh2BaGvXZpcX7aaddT6G/eckUyWVw1XFymJgoBojEIknk9OyuWnBDuwpyDf0Nsx4siGpBCChyjuW6M9IIVGCf8jIc2lzNGKn9/1NVjvGOdGOz4Ar40xz holo=ssh-keyset:user3/bar
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn holo=ssh-keyset:user3/foo
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPLEjAqLN0L6OyzXZmvWJAflKdOD4/nxvdZQXZEQtIXX/BlHKc7YRjgAnbQcxI7Zq8I6QUhuMSQpXMe4l2elAtWkzmxqFPkpSHMqgz6DaXKHlWPYAESjO3zfeZ9WWy4sW4stCIFRSDC0GkOx68TQSVbE9bm5wHZdF9nGW7ec4xpGhEKW7UC+WQE3bsgRAOWUDmTeExAI8w1+Ala3IfX/6KO7cq4QsTTscnuUub21Vxb0uRaW2HFqm8ttwecr7I/B83QBqOSUeGurdsCGv1FYHfQJzlK6adMaRiZ+McQlOiKcKfXp06nmHL95xhx8rqAWOVjB9qpfzCSAqSpJZwpPz/ holo=ssh-keyset:user3/foo
->> ./home/user4/.ssh/authorized_keys = regular
+----------------------------------------
+directory 0700 ./home/user4/.ssh/
+----------------------------------------
+file      0600 ./home/user4/.ssh/authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDaRbfDHfXfdd/7WuRw8uthrtR4wt3UQgVKRHt58RQGkFbgrLpDhJvBFmGA1eoHZ/K6NL+aKN1g/kJKeo67+XbAigpcZ8LsQZIg2K71tSdC2kVstAsy9lfkbv7SQuzZ1zuOl6CI9k36VdtnNsViO9NWccCoTfeBV3HVlQjE+Le1GL8Dh+rdNZvFyEcrOoQjLhpmQmjTnioa9WN//UkEJP1aj6Rl8YPpOqx6aVKj/l6fiuO5AjBCxHtu2gVle2++dSc8bMdFyrj6QqA/Xmix5rYauI6UbNDronFmklZinPyaOXpTR+O314DGW3y2cYqi3uFkXTuHXCeer2Rs6RTylTWt user@key3
 # this is a comment, it should be left as-is
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGvOdd8CcTnlNkRQwSHzG8PBp2AUaWxWsCM+ddNviHmO0irjoddHH6mEdVY+s9K51hngJJFa30wm8Xx7/Z/ZZKNMIreZS/yrv4nzw+FClyyx0KL0Kz6adcY/fPkhuExsLrDl8uR++e+7PzJPaE13NkHk/8MGQbk5guyM77+ER5dHRbY1ZozCfj0Vh/LlRz3sCkWbIL1IDUJW8XIQOpwjgtn4TrcP1LMBHgx5znRGSnLx5eM/ejLKiy2pj9owtru/mf60ZkYrHVzymX7KmVvkn1ZTxr3kVBqGtoovZ7A0ksUykcvtf2odWqZwsr4ldLQfkzlm8PyH5/a9AYdzq0h0ON user@key4
 # another comment
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn holo=ssh-keyset:user4/foo
->> ./home/user5/.ssh/authorized_keys = regular
+----------------------------------------
+directory 0700 ./home/user5/.ssh/
+----------------------------------------
+file      0600 ./home/user5/.ssh/authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDaRbfDHfXfdd/7WuRw8uthrtR4wt3UQgVKRHt58RQGkFbgrLpDhJvBFmGA1eoHZ/K6NL+aKN1g/kJKeo67+XbAigpcZ8LsQZIg2K71tSdC2kVstAsy9lfkbv7SQuzZ1zuOl6CI9k36VdtnNsViO9NWccCoTfeBV3HVlQjE+Le1GL8Dh+rdNZvFyEcrOoQjLhpmQmjTnioa9WN//UkEJP1aj6Rl8YPpOqx6aVKj/l6fiuO5AjBCxHtu2gVle2++dSc8bMdFyrj6QqA/Xmix5rYauI6UbNDronFmklZinPyaOXpTR+O314DGW3y2cYqi3uFkXTuHXCeer2Rs6RTylTWt user@key3
 # this is a comment, it should be left as-is
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGvOdd8CcTnlNkRQwSHzG8PBp2AUaWxWsCM+ddNviHmO0irjoddHH6mEdVY+s9K51hngJJFa30wm8Xx7/Z/ZZKNMIreZS/yrv4nzw+FClyyx0KL0Kz6adcY/fPkhuExsLrDl8uR++e+7PzJPaE13NkHk/8MGQbk5guyM77+ER5dHRbY1ZozCfj0Vh/LlRz3sCkWbIL1IDUJW8XIQOpwjgtn4TrcP1LMBHgx5znRGSnLx5eM/ejLKiy2pj9owtru/mf60ZkYrHVzymX7KmVvkn1ZTxr3kVBqGtoovZ7A0ksUykcvtf2odWqZwsr4ldLQfkzlm8PyH5/a9AYdzq0h0ON user@key4
 # another comment
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn holo=ssh-keyset:user5/foo
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPLEjAqLN0L6OyzXZmvWJAflKdOD4/nxvdZQXZEQtIXX/BlHKc7YRjgAnbQcxI7Zq8I6QUhuMSQpXMe4l2elAtWkzmxqFPkpSHMqgz6DaXKHlWPYAESjO3zfeZ9WWy4sW4stCIFRSDC0GkOx68TQSVbE9bm5wHZdF9nGW7ec4xpGhEKW7UC+WQE3bsgRAOWUDmTeExAI8w1+Ala3IfX/6KO7cq4QsTTscnuUub21Vxb0uRaW2HFqm8ttwecr7I/B83QBqOSUeGurdsCGv1FYHfQJzlK6adMaRiZ+McQlOiKcKfXp06nmHL95xhx8rqAWOVjB9qpfzCSAqSpJZwpPz/ holo=ssh-keyset:user5/foo
->> ./home/user6/.ssh/authorized_keys = regular
+----------------------------------------
+directory 0700 ./home/user6/.ssh/
+----------------------------------------
+file      0600 ./home/user6/.ssh/authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDaRbfDHfXfdd/7WuRw8uthrtR4wt3UQgVKRHt58RQGkFbgrLpDhJvBFmGA1eoHZ/K6NL+aKN1g/kJKeo67+XbAigpcZ8LsQZIg2K71tSdC2kVstAsy9lfkbv7SQuzZ1zuOl6CI9k36VdtnNsViO9NWccCoTfeBV3HVlQjE+Le1GL8Dh+rdNZvFyEcrOoQjLhpmQmjTnioa9WN//UkEJP1aj6Rl8YPpOqx6aVKj/l6fiuO5AjBCxHtu2gVle2++dSc8bMdFyrj6QqA/Xmix5rYauI6UbNDronFmklZinPyaOXpTR+O314DGW3y2cYqi3uFkXTuHXCeer2Rs6RTylTWt user@key3
 # this is a comment, it should be left as-is
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGvOdd8CcTnlNkRQwSHzG8PBp2AUaWxWsCM+ddNviHmO0irjoddHH6mEdVY+s9K51hngJJFa30wm8Xx7/Z/ZZKNMIreZS/yrv4nzw+FClyyx0KL0Kz6adcY/fPkhuExsLrDl8uR++e+7PzJPaE13NkHk/8MGQbk5guyM77+ER5dHRbY1ZozCfj0Vh/LlRz3sCkWbIL1IDUJW8XIQOpwjgtn4TrcP1LMBHgx5znRGSnLx5eM/ejLKiy2pj9owtru/mf60ZkYrHVzymX7KmVvkn1ZTxr3kVBqGtoovZ7A0ksUykcvtf2odWqZwsr4ldLQfkzlm8PyH5/a9AYdzq0h0ON user@key4
@@ -30,52 +48,74 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGvOdd8CcTnlNkRQwSHzG8PBp2AUaWxWsCM+ddNviH
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDISlUCVUWDSuVm94/rVUL/X2g5k5kplyvxgkNRRTpBZjfdvjq6qy8VqIhczrrEoM0jK8zJ28NsLxmKkYyaoBDCf7L+QPyYD/oLguu7/3/eCSywrIfBtmZY6EXG8gypYt/KzNzp3o83wrKXCKTA6IbTgLKf3A1QfjMTNml9u6+ECdt+XjXbe8MQGultF646xKHeK3A5Zs1/tAxciia4MJyCULJf5NiVqilPQh2BaGvXZpcX7aaddT6G/eckUyWVw1XFymJgoBojEIknk9OyuWnBDuwpyDf0Nsx4siGpBCChyjuW6M9IIVGCf8jIc2lzNGKn9/1NVjvGOdGOz4Ar40xz holo=ssh-keyset:user6/bar
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn holo=ssh-keyset:user6/foo
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPLEjAqLN0L6OyzXZmvWJAflKdOD4/nxvdZQXZEQtIXX/BlHKc7YRjgAnbQcxI7Zq8I6QUhuMSQpXMe4l2elAtWkzmxqFPkpSHMqgz6DaXKHlWPYAESjO3zfeZ9WWy4sW4stCIFRSDC0GkOx68TQSVbE9bm5wHZdF9nGW7ec4xpGhEKW7UC+WQE3bsgRAOWUDmTeExAI8w1+Ala3IfX/6KO7cq4QsTTscnuUub21Vxb0uRaW2HFqm8ttwecr7I/B83QBqOSUeGurdsCGv1FYHfQJzlK6adMaRiZ+McQlOiKcKfXp06nmHL95xhx8rqAWOVjB9qpfzCSAqSpJZwpPz/ holo=ssh-keyset:user6/foo
->> ./home/user7/.ssh/authorized_keys = regular
+----------------------------------------
+directory 0700 ./home/user7/.ssh/
+----------------------------------------
+file      0600 ./home/user7/.ssh/authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDaRbfDHfXfdd/7WuRw8uthrtR4wt3UQgVKRHt58RQGkFbgrLpDhJvBFmGA1eoHZ/K6NL+aKN1g/kJKeo67+XbAigpcZ8LsQZIg2K71tSdC2kVstAsy9lfkbv7SQuzZ1zuOl6CI9k36VdtnNsViO9NWccCoTfeBV3HVlQjE+Le1GL8Dh+rdNZvFyEcrOoQjLhpmQmjTnioa9WN//UkEJP1aj6Rl8YPpOqx6aVKj/l6fiuO5AjBCxHtu2gVle2++dSc8bMdFyrj6QqA/Xmix5rYauI6UbNDronFmklZinPyaOXpTR+O314DGW3y2cYqi3uFkXTuHXCeer2Rs6RTylTWt user@key3
 # this is a comment, it should be left as-is
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGvOdd8CcTnlNkRQwSHzG8PBp2AUaWxWsCM+ddNviHmO0irjoddHH6mEdVY+s9K51hngJJFa30wm8Xx7/Z/ZZKNMIreZS/yrv4nzw+FClyyx0KL0Kz6adcY/fPkhuExsLrDl8uR++e+7PzJPaE13NkHk/8MGQbk5guyM77+ER5dHRbY1ZozCfj0Vh/LlRz3sCkWbIL1IDUJW8XIQOpwjgtn4TrcP1LMBHgx5znRGSnLx5eM/ejLKiy2pj9owtru/mf60ZkYrHVzymX7KmVvkn1ZTxr3kVBqGtoovZ7A0ksUykcvtf2odWqZwsr4ldLQfkzlm8PyH5/a9AYdzq0h0ON user@key4
 # another comment
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn holo=ssh-keyset:user7/foo
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDaRbfDHfXfdd/7WuRw8uthrtR4wt3UQgVKRHt58RQGkFbgrLpDhJvBFmGA1eoHZ/K6NL+aKN1g/kJKeo67+XbAigpcZ8LsQZIg2K71tSdC2kVstAsy9lfkbv7SQuzZ1zuOl6CI9k36VdtnNsViO9NWccCoTfeBV3HVlQjE+Le1GL8Dh+rdNZvFyEcrOoQjLhpmQmjTnioa9WN//UkEJP1aj6Rl8YPpOqx6aVKj/l6fiuO5AjBCxHtu2gVle2++dSc8bMdFyrj6QqA/Xmix5rYauI6UbNDronFmklZinPyaOXpTR+O314DGW3y2cYqi3uFkXTuHXCeer2Rs6RTylTWt holo=ssh-keyset:user7/foo
->> ./home/user8/.ssh/authorized_keys = regular
+----------------------------------------
+directory 0700 ./home/user8/.ssh/
+----------------------------------------
+file      0600 ./home/user8/.ssh/authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn holo=ssh-keyset:user8/bar
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDISlUCVUWDSuVm94/rVUL/X2g5k5kplyvxgkNRRTpBZjfdvjq6qy8VqIhczrrEoM0jK8zJ28NsLxmKkYyaoBDCf7L+QPyYD/oLguu7/3/eCSywrIfBtmZY6EXG8gypYt/KzNzp3o83wrKXCKTA6IbTgLKf3A1QfjMTNml9u6+ECdt+XjXbe8MQGultF646xKHeK3A5Zs1/tAxciia4MJyCULJf5NiVqilPQh2BaGvXZpcX7aaddT6G/eckUyWVw1XFymJgoBojEIknk9OyuWnBDuwpyDf0Nsx4siGpBCChyjuW6M9IIVGCf8jIc2lzNGKn9/1NVjvGOdGOz4Ar40xz holo=ssh-keyset:user8/bar
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn holo=ssh-keyset:user8/foo
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPLEjAqLN0L6OyzXZmvWJAflKdOD4/nxvdZQXZEQtIXX/BlHKc7YRjgAnbQcxI7Zq8I6QUhuMSQpXMe4l2elAtWkzmxqFPkpSHMqgz6DaXKHlWPYAESjO3zfeZ9WWy4sW4stCIFRSDC0GkOx68TQSVbE9bm5wHZdF9nGW7ec4xpGhEKW7UC+WQE3bsgRAOWUDmTeExAI8w1+Ala3IfX/6KO7cq4QsTTscnuUub21Vxb0uRaW2HFqm8ttwecr7I/B83QBqOSUeGurdsCGv1FYHfQJzlK6adMaRiZ+McQlOiKcKfXp06nmHL95xhx8rqAWOVjB9qpfzCSAqSpJZwpPz/ holo=ssh-keyset:user8/foo
->> ./run = dir
->> ./tmp = dir
->> ./usr/share/holo/ssh-keys/user1/foo.pub = regular
+----------------------------------------
+directory 0755 ./run/
+----------------------------------------
+directory 0755 ./tmp/
+----------------------------------------
+file      0644 ./usr/share/holo/ssh-keys/user1/foo.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn user@key0
->> ./usr/share/holo/ssh-keys/user2/foo.pub = regular
+----------------------------------------
+file      0644 ./usr/share/holo/ssh-keys/user2/foo.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn user@key0
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPLEjAqLN0L6OyzXZmvWJAflKdOD4/nxvdZQXZEQtIXX/BlHKc7YRjgAnbQcxI7Zq8I6QUhuMSQpXMe4l2elAtWkzmxqFPkpSHMqgz6DaXKHlWPYAESjO3zfeZ9WWy4sW4stCIFRSDC0GkOx68TQSVbE9bm5wHZdF9nGW7ec4xpGhEKW7UC+WQE3bsgRAOWUDmTeExAI8w1+Ala3IfX/6KO7cq4QsTTscnuUub21Vxb0uRaW2HFqm8ttwecr7I/B83QBqOSUeGurdsCGv1FYHfQJzlK6adMaRiZ+McQlOiKcKfXp06nmHL95xhx8rqAWOVjB9qpfzCSAqSpJZwpPz/ user@key1
->> ./usr/share/holo/ssh-keys/user3/bar.pub = regular
+----------------------------------------
+file      0644 ./usr/share/holo/ssh-keys/user3/bar.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDISlUCVUWDSuVm94/rVUL/X2g5k5kplyvxgkNRRTpBZjfdvjq6qy8VqIhczrrEoM0jK8zJ28NsLxmKkYyaoBDCf7L+QPyYD/oLguu7/3/eCSywrIfBtmZY6EXG8gypYt/KzNzp3o83wrKXCKTA6IbTgLKf3A1QfjMTNml9u6+ECdt+XjXbe8MQGultF646xKHeK3A5Zs1/tAxciia4MJyCULJf5NiVqilPQh2BaGvXZpcX7aaddT6G/eckUyWVw1XFymJgoBojEIknk9OyuWnBDuwpyDf0Nsx4siGpBCChyjuW6M9IIVGCf8jIc2lzNGKn9/1NVjvGOdGOz4Ar40xz user@key2
->> ./usr/share/holo/ssh-keys/user3/foo.pub = regular
+----------------------------------------
+file      0644 ./usr/share/holo/ssh-keys/user3/foo.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn user@key0
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPLEjAqLN0L6OyzXZmvWJAflKdOD4/nxvdZQXZEQtIXX/BlHKc7YRjgAnbQcxI7Zq8I6QUhuMSQpXMe4l2elAtWkzmxqFPkpSHMqgz6DaXKHlWPYAESjO3zfeZ9WWy4sW4stCIFRSDC0GkOx68TQSVbE9bm5wHZdF9nGW7ec4xpGhEKW7UC+WQE3bsgRAOWUDmTeExAI8w1+Ala3IfX/6KO7cq4QsTTscnuUub21Vxb0uRaW2HFqm8ttwecr7I/B83QBqOSUeGurdsCGv1FYHfQJzlK6adMaRiZ+McQlOiKcKfXp06nmHL95xhx8rqAWOVjB9qpfzCSAqSpJZwpPz/ user@key1
->> ./usr/share/holo/ssh-keys/user4/foo.pub = regular
+----------------------------------------
+file      0644 ./usr/share/holo/ssh-keys/user4/foo.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn user@key0
->> ./usr/share/holo/ssh-keys/user5/foo.pub = regular
+----------------------------------------
+file      0644 ./usr/share/holo/ssh-keys/user5/foo.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn user@key0
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPLEjAqLN0L6OyzXZmvWJAflKdOD4/nxvdZQXZEQtIXX/BlHKc7YRjgAnbQcxI7Zq8I6QUhuMSQpXMe4l2elAtWkzmxqFPkpSHMqgz6DaXKHlWPYAESjO3zfeZ9WWy4sW4stCIFRSDC0GkOx68TQSVbE9bm5wHZdF9nGW7ec4xpGhEKW7UC+WQE3bsgRAOWUDmTeExAI8w1+Ala3IfX/6KO7cq4QsTTscnuUub21Vxb0uRaW2HFqm8ttwecr7I/B83QBqOSUeGurdsCGv1FYHfQJzlK6adMaRiZ+McQlOiKcKfXp06nmHL95xhx8rqAWOVjB9qpfzCSAqSpJZwpPz/ user@key1
->> ./usr/share/holo/ssh-keys/user6/bar.pub = regular
+----------------------------------------
+file      0644 ./usr/share/holo/ssh-keys/user6/bar.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDISlUCVUWDSuVm94/rVUL/X2g5k5kplyvxgkNRRTpBZjfdvjq6qy8VqIhczrrEoM0jK8zJ28NsLxmKkYyaoBDCf7L+QPyYD/oLguu7/3/eCSywrIfBtmZY6EXG8gypYt/KzNzp3o83wrKXCKTA6IbTgLKf3A1QfjMTNml9u6+ECdt+XjXbe8MQGultF646xKHeK3A5Zs1/tAxciia4MJyCULJf5NiVqilPQh2BaGvXZpcX7aaddT6G/eckUyWVw1XFymJgoBojEIknk9OyuWnBDuwpyDf0Nsx4siGpBCChyjuW6M9IIVGCf8jIc2lzNGKn9/1NVjvGOdGOz4Ar40xz user@key2
->> ./usr/share/holo/ssh-keys/user6/foo.pub = regular
+----------------------------------------
+file      0644 ./usr/share/holo/ssh-keys/user6/foo.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn user@key0
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPLEjAqLN0L6OyzXZmvWJAflKdOD4/nxvdZQXZEQtIXX/BlHKc7YRjgAnbQcxI7Zq8I6QUhuMSQpXMe4l2elAtWkzmxqFPkpSHMqgz6DaXKHlWPYAESjO3zfeZ9WWy4sW4stCIFRSDC0GkOx68TQSVbE9bm5wHZdF9nGW7ec4xpGhEKW7UC+WQE3bsgRAOWUDmTeExAI8w1+Ala3IfX/6KO7cq4QsTTscnuUub21Vxb0uRaW2HFqm8ttwecr7I/B83QBqOSUeGurdsCGv1FYHfQJzlK6adMaRiZ+McQlOiKcKfXp06nmHL95xhx8rqAWOVjB9qpfzCSAqSpJZwpPz/ user@key1
->> ./usr/share/holo/ssh-keys/user7/foo.pub = regular
+----------------------------------------
+file      0644 ./usr/share/holo/ssh-keys/user7/foo.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn user@key0
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDaRbfDHfXfdd/7WuRw8uthrtR4wt3UQgVKRHt58RQGkFbgrLpDhJvBFmGA1eoHZ/K6NL+aKN1g/kJKeo67+XbAigpcZ8LsQZIg2K71tSdC2kVstAsy9lfkbv7SQuzZ1zuOl6CI9k36VdtnNsViO9NWccCoTfeBV3HVlQjE+Le1GL8Dh+rdNZvFyEcrOoQjLhpmQmjTnioa9WN//UkEJP1aj6Rl8YPpOqx6aVKj/l6fiuO5AjBCxHtu2gVle2++dSc8bMdFyrj6QqA/Xmix5rYauI6UbNDronFmklZinPyaOXpTR+O314DGW3y2cYqi3uFkXTuHXCeer2Rs6RTylTWt user@key3
->> ./usr/share/holo/ssh-keys/user8/bar.pub = regular
+----------------------------------------
+file      0644 ./usr/share/holo/ssh-keys/user8/bar.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn user@key0
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDISlUCVUWDSuVm94/rVUL/X2g5k5kplyvxgkNRRTpBZjfdvjq6qy8VqIhczrrEoM0jK8zJ28NsLxmKkYyaoBDCf7L+QPyYD/oLguu7/3/eCSywrIfBtmZY6EXG8gypYt/KzNzp3o83wrKXCKTA6IbTgLKf3A1QfjMTNml9u6+ECdt+XjXbe8MQGultF646xKHeK3A5Zs1/tAxciia4MJyCULJf5NiVqilPQh2BaGvXZpcX7aaddT6G/eckUyWVw1XFymJgoBojEIknk9OyuWnBDuwpyDf0Nsx4siGpBCChyjuW6M9IIVGCf8jIc2lzNGKn9/1NVjvGOdGOz4Ar40xz user@key2
->> ./usr/share/holo/ssh-keys/user8/foo.pub = regular
+----------------------------------------
+file      0644 ./usr/share/holo/ssh-keys/user8/foo.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC9lA02DybCuFKOMhcvCTgUphvpGht1waGT93RvqXYBTGKUcJYz09abjaArAv/dQGnX8gjYogwzXvre5tRZiLaGvpMBRQvozSU9NVQSZs4Qv6wXGEqS7eFc7A+sCQFBhFy7H86woJhWa47L7c7TzX0OD9mjksJrH8AZON4Vv3gUDJjQqfAx8HAF8l96VHuaM+DVnYYcZjRUTyt1kLH40Wi/v/R8LF74Nq9Ah72I8KGEHOB+4xoz5VX3flur1md2MYOdBFOOwFERJMqjp3ZQ2KErdq/UcPE92O89yIMGbaACL9pObh3K3oR5SHitw2nz4oveunZh0yOfLsubIazfHoIn user@key0
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDPLEjAqLN0L6OyzXZmvWJAflKdOD4/nxvdZQXZEQtIXX/BlHKc7YRjgAnbQcxI7Zq8I6QUhuMSQpXMe4l2elAtWkzmxqFPkpSHMqgz6DaXKHlWPYAESjO3zfeZ9WWy4sW4stCIFRSDC0GkOx68TQSVbE9bm5wHZdF9nGW7ec4xpGhEKW7UC+WQE3bsgRAOWUDmTeExAI8w1+Ala3IfX/6KO7cq4QsTTscnuUub21Vxb0uRaW2HFqm8ttwecr7I/B83QBqOSUeGurdsCGv1FYHfQJzlK6adMaRiZ+McQlOiKcKfXp06nmHL95xhx8rqAWOVjB9qpfzCSAqSpJZwpPz/ user@key1
->> ./var/lib/holo/files/base = dir
->> ./var/lib/holo/files/provisioned = dir
->> ./var/lib/holo/ssh-keys/provisioned-entities = regular
+----------------------------------------
+directory 0755 ./var/lib/holo/files/base/
+----------------------------------------
+directory 0755 ./var/lib/holo/files/provisioned/
+----------------------------------------
+file      0644 ./var/lib/holo/ssh-keys/provisioned-entities
 ssh-keyset:user1/foo
 ssh-keyset:user2/foo
 ssh-keyset:user3/bar
@@ -87,3 +127,4 @@ ssh-keyset:user6/foo
 ssh-keyset:user7/foo
 ssh-keyset:user8/bar
 ssh-keyset:user8/foo
+----------------------------------------
