@@ -1,9 +1,14 @@
-# upcoming release (TBD)
+# v2.0 (TBD)
 
 Backwards-incompatible changes:
 
 - `holo-test` has been removed from the public interface. Plugins that wish to use it are advised to vendor it from this
   repo into their own.
+
+Packagers beware:
+
+- Add `Provides` and `Replaces` package relations from this package to `holo-ssh-keys` and `holo-users-groups` (these
+  packages are now included in this one).
 
 Changes:
 
@@ -12,33 +17,6 @@ Changes:
 - Fix a bug in `holo-test` where tests could fail because of randomized names of temporary directories.
 - Install the ALPM hook in the standard location.
 - When Holo is installed via `go get`, show the version string "unknown" instead of an empty string.
-
-Packagers beware:
-
-- Add `Provides` and `Replaces` package relations from this package to `holo-ssh-keys` and `holo-users-groups`.
-
-Notes on commit history:
-
-- The history of the `holo-ssh-keys` repo can be found below the second parent of the merge commit e1e3d2e3d3826ddb2971f1e78b20b4dd467f3e28.
-  The following tags were in that repo at the time of merging:
-
-    a62c7288c464cbe359d9d0a17bc4c9b8556e3461 v1.0
-    b4a2dc668e0a5caa3d80dc5b628acb814926330f v1.1
-    453ac3fb6699e877584ba6e3027a6c88d206765f v1.2
-    e6e25242795166cbcb18eedbbc7bb58250122027 v1.2.1
-
-- The history of the `holo-users-groups` repo can be found below the second parent of the merge commit 2d6e87e41d62abced6f5c08428e7bea523cfb5a4.
-  The following tags were in that repo at the time of merging:
-
-    aced8d55b4dae5ef84eb3a4fde87240176498638 v1.0-beta.1
-    c843bb2a66160d5c6371ec11af968985c6742d33 v1.0
-    881c382776c48e543885662da74ea70a4f878793 v1.1
-    be71e6b0415a3071f415429b597297c8bb3ab153 v1.2
-    95f3792d73c7a82c923a43ebb81e537bde973618 v1.3
-    66f46701aafbaa65397c2e4d68f8773f70272018 v2.0
-    722e3be714ce5371e808e21d4af97c7dd8cdf9bd v2.0.1
-    88f9154e0034ffff01fc686bcfd6ea970a676f2a v2.1
-    f19426859936d15e43e6da5a3b28f11acd5f95e8 v2.1.1
 
 # v1.3.1 (2017-03-19)
 
@@ -203,3 +181,207 @@ This is the first release with the new split repository layout. Previous release
 [rs]: https://github.com/holocm/holo-run-scripts
 [ar]: https://github.com/holocm/holo-attic/releases
 
+------------------------------------------------------------------------------------------------------------------------
+
+# Changelog for holo-ssh-keys before merge in Holo 2.0
+
+The history of the `holo-ssh-keys` repo can be found below the second parent of the merge commit e1e3d2e3d3826ddb2971f1e78b20b4dd467f3e28.
+The following tags were in that repo at the time of merging:
+
+    a62c7288c464cbe359d9d0a17bc4c9b8556e3461 v1.0
+    b4a2dc668e0a5caa3d80dc5b628acb814926330f v1.1
+    453ac3fb6699e877584ba6e3027a6c88d206765f v1.2
+    e6e25242795166cbcb18eedbbc7bb58250122027 v1.2.1
+
+
+## v1.2.1 (2017-03-22)
+
+Changes:
+
+- Fix tests under Holo 1.3.
+
+## v1.2 (2016-05-25)
+
+Changes:
+
+- Create `/usr/share/holo/ssh-keys` during `make install`.
+- Install holorc snippet instead of holoscript. (This change requires `holo >= 1.2`.)
+- Strip binaries during build. (holocm/holo#14)
+
+## v1.1 (2016-04-10)
+
+Changes:
+
+- This release is compatible with version 3 of the Holo plugin interface, as used by Holo 1.1 and beyond.
+
+## v1.0 (2015-12-30)
+
+Initial release.
+
+------------------------------------------------------------------------------------------------------------------------
+
+# Changelog for holo-users-groups before merge in Holo 2.0
+
+The history of the `holo-users-groups` repo can be found below the second parent of the merge commit 2d6e87e41d62abced6f5c08428e7bea523cfb5a4.
+The following tags were in that repo at the time of merging:
+
+    aced8d55b4dae5ef84eb3a4fde87240176498638 v1.0-beta.1
+    c843bb2a66160d5c6371ec11af968985c6742d33 v1.0
+    881c382776c48e543885662da74ea70a4f878793 v1.1
+    be71e6b0415a3071f415429b597297c8bb3ab153 v1.2
+    95f3792d73c7a82c923a43ebb81e537bde973618 v1.3
+    66f46701aafbaa65397c2e4d68f8773f70272018 v2.0
+    722e3be714ce5371e808e21d4af97c7dd8cdf9bd v2.0.1
+    88f9154e0034ffff01fc686bcfd6ea970a676f2a v2.1
+    f19426859936d15e43e6da5a3b28f11acd5f95e8 v2.1.1
+
+## v2.1.1 (2017-03-22)
+
+Changes:
+
+- Fix tests under Holo 1.3.
+
+## v2.1 (2016-05-25)
+
+Bugfixes:
+
+- When an entity is deleted by another program, restore it correctly during force apply. (#3)
+
+Miscellaneous:
+
+- Strip binaries during build. (holocm/holo#14)
+- Install holorc snippet instead of holoscript. (This change requires `holo >= 1.2`.)
+
+## v2.0.1 (2016-05-09)
+
+Bugfixes:
+
+- Fix a bug that causes `usermod` to be called without arguments when user entities are underspecified.
+
+## v2.0 (2016-05-09)
+
+Backwards-incompatible changes:
+
+- Previous versions only tracked which users/groups were touched by holo-users-groups. v2.0 will instead record more
+  information (_base images_ and _provisioned images_) to make more competent decisions during `holo apply` and thus
+  require less user interaction. The introduction of base images requires manual intervention in some cases. Please
+  refer to the migration guide below for details.
+
+Misc. changes:
+
+- Create `/usr/share/holo/users-groups` during `make install`.
+
+### Migration guide
+
+When upgrading to v2.0, manual intervention is required in some cases. The following documentation outlines what you need to do.
+
+#### The old state format
+
+Versions 1.2 and 1.3 tracked which users and groups have been provisioned by holo-users-groups, by writing a single file like this:
+
+```
+$ cat /var/lib/holo/users-groups/state.toml
+ProvisionedGroups = ["mygroup"]
+ProvisionedUsers = ["myuser", "myotheruser"]
+```
+
+#### The new format
+
+Version 2.0 abandons this format and uses **base images** and **provisioned images** instead. Provisioned images are created automatically after every successful `holo apply` and don't require manual intervention during the upgrade. The bigger change is the base image, which records the state of the user or group just before the first provisioning. This change allows holo-users-groups to make more competent decisions when cleaning up an entity that is not needed anymore.
+
+After migrating to version 2.0, the first invocation of holo-users-groups will remove the state.toml and create empty base images for all the mentioned entities:
+
+```
+$ sudo holo apply
+...
+$ cat /var/lib/holo/users-groups/base/group:mygroup.toml
+[[group]]
+name = "mygroup"
+$ cat /var/lib/holo/users-groups/base/user:myuser.toml
+[[user]]
+name = "myuser"
+$ cat /var/lib/holo/users-groups/base/user:myotheruser.toml
+[[user]]
+name = "myotheruser"
+```
+
+#### What you need to do
+
+These base images are *empty* because they only contain the `name` attribute. Empty base images are appropriate when the entity (the user or group) was **created** by holo-users-groups. If the entity did exist already, and holo-users-groups just modified some of its attributes, you need to amend the base image to describe the state of the entity before the first provisioning.
+
+As an example, Arch Linux's default `/etc/passwd` contains the following `http` user:
+
+```
+$ getent passwd http
+http:x:33:33:http:/srv/http:/bin/false
+```
+
+Now consider that we use an entity definition that sets a different home directory:
+
+```
+$ cat /usr/share/holo/users-groups/http-home.toml
+[[user]]
+name = "http"
+home = "/srv/webspace"
+```
+
+In version 1.2/1.3 of holo-users-groups, this would change the home directory and record `ProvisionedUsers = ["http"]` in the `state.toml`. Upon migration to version 2.0, this would be converted to an empty base image:
+
+```
+$ cat /var/lib/holo/users-groups/base/user:http.toml
+[[user]]
+name = "http"
+```
+
+This implies that the `http` user was created by holo-users-groups, which is wrong! To fix this, you need to add all the entity's attributes to the base image as they were before the first provisioning (especially including the old home directory value!). The syntax is identical to entity definitions:
+
+```
+$ cat /var/lib/holo/users-groups/base/user:http.toml
+[[user]]
+name = "http"
+uid = 33
+group = "http"
+home = "/srv/http"
+shell = "/bin/false"
+```
+
+**Tip:** You can already create the non-empty base images *before* migrating to version 2.0. The upgrade process will recognize and use these. But be cautious: Non-empty base images must always include the actual UID or GID of the user or group.
+
+## v1.3 (2016-04-10)
+
+Changes:
+
+- This release is compatible with version 3 of the Holo plugin interface, as used by Holo 1.1 and beyond.
+
+## v1.2 (2015-12-20)
+
+New features:
+
+- Track users/groups that have been provisioned, and offer to delete them when the corresponding entity definitions are deleted. (#1)
+
+## v1.1 (2015-12-18)
+
+Changes:
+
+- This release is compatible with version 2 of the Holo plugin interface, as used by Holo 1.0 and beyond.
+
+## v1.0 (2015-12-04)
+
+Bugfixes:
+
+- Fix calculation of paths to `/etc/group` and `/etc/passwd`.
+  Changes:
+- Find `holo-test` in `$PATH`.
+
+## v1.0-beta.1 (2015-12-03)
+
+Changes:
+
+- This functionality is now offered as a Holo plugin for separate installation and packaging.
+
+Known issues:
+
+- If `make check` fails with "command not found: holo-test", edit the Makefile and replace `holo-test` with `/usr/lib/holo/holo-test`.
+- `holo apply` fails outside test scenarios because it tries to read `etc/passwd` and/or `etc/group` (without leading slash).
+
+This is the first release with the new split repository layout. Previous releases can be found [in the attic](https://github.com/holocm/holo-attic/releases).
