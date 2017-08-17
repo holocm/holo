@@ -7,8 +7,8 @@ Holo and its plugins should be straight-forward.
 
 Run-time dependencies for this repo:
 
-* `git diff` is used for file diffs. This was "strongly suggested" before, but
-  is now strictly required.
+* `git` (specifically, the `git diff` subcommand)
+* `openssh` (specifically, the `ssh-keygen` tool)
 * `shadow` (the package that provides the `{user,group}{add,mod,del}` tools)
 
 Build-time dependencies for this repo:
@@ -25,7 +25,7 @@ Build-time dependencies for this repo:
 ### The right package names
 
 Please set the package names identical to the repo names: `holo` for this repo,
-and `holo-foo-bar` for plugins (e.g. `holo-users-groups` or `holo-run-scripts`).
+and `holo-foo-bar` for plugins (e.g. `holo-run-scripts`).
 This is important because [holo-build](https://github.com/holocm/holo-build)
 will autogenerate depedencies on these packages when appropriate.
 
@@ -33,8 +33,8 @@ will autogenerate depedencies on these packages when appropriate.
 
 Holo includes several plugins for itself. Since `holo-build` will also generate
 dependencies on these, the `holo` package must have a Provides relation (or
-whatever this is called in your package format) to `holo-files` and
-`holo-users-groups`.
+whatever this is called in your package format) to `holo-files`,
+`holo-ssh-keys` and `holo-users-groups`.
 
 ### Verify Holo API version
 

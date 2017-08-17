@@ -1,6 +1,6 @@
 pkg = github.com/holocm/holo
-bins = holo holo-files holo-users-groups
-mans = holorc.5 holo-plugin-interface.7 holo-test.7 holo.8 holo-files.8 holo-users-groups.8
+bins = holo holo-files holo-ssh-keys holo-users-groups
+mans = holorc.5 holo-plugin-interface.7 holo-test.7 holo.8 holo-files.8 holo-ssh-keys.8 holo-users-groups.8
 
 default: prepare-build
 default: build/holo
@@ -40,8 +40,10 @@ test/cov.cov: clean-tests $(foreach b,$(bins),build/$b.test)
 	@if s="$$(gofmt -l cmd 2>/dev/null)"                        && test -n "$$s"; then printf ' => %s\n%s\n' gofmt  "$$s"; false; fi
 	@if s="$$(find cmd -type d -exec golint {} \; 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
 	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/holo-output.cov $(pkg)/cmd/holo/internal
+	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/ssh-keys-output.cov $(pkg)/cmd/holo-ssh-keys/impl
 	@env HOLO_BINARY=../../../build/holo.test HOLO_TEST_COVERDIR=$(abspath test/cov) HOLO_TEST_SCRIPTPATH=../../../util bash util/holo-test holo-files        $(sort $(wildcard test/files/??-*))
 	@env HOLO_BINARY=../../../build/holo.test HOLO_TEST_COVERDIR=$(abspath test/cov) HOLO_TEST_SCRIPTPATH=../../../util bash util/holo-test holo-users-groups $(sort $(wildcard test/users-groups/??-*))
+	@env HOLO_BINARY=../../../build/holo.test HOLO_TEST_COVERDIR=$(abspath test/cov) HOLO_TEST_SCRIPTPATH=../../../util bash util/holo-test holo-ssh-keys     $(sort $(wildcard test/ssh-keys/??-*))
 	util/gocovcat.go test/cov/*.cov > test/cov.cov
 %.html: %.cov
 	$(GO) tool cover -html $< -o $@
@@ -56,9 +58,11 @@ install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomp
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files/provisioned"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/files"
+	install -d -m 0755 "$(DESTDIR)/usr/share/holo/ssh-keys"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/users-groups"
 	install -D -m 0644 conf/holorc            "$(DESTDIR)/etc/holorc"
 	install -D -m 0644 conf/holorc.holo-files "$(DESTDIR)/etc/holorc.d/10-files"
+	install -D -m 0644 conf/holorc.holo-ssh-keys "$(DESTDIR)/etc/holorc.d/25-ssh-keys"
 	install -D -m 0644 conf/holorc.holo-users-groups "$(DESTDIR)/etc/holorc.d/20-users-groups"
 	install -D -m 0755 build/holo             "$(DESTDIR)/usr/bin/holo"
 	install -D -m 0644 util/autocomplete.bash "$(DESTDIR)/usr/share/bash-completion/completions/holo"
@@ -67,8 +71,10 @@ install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomp
 	install -D -m 0644 build/man/holo.8                  "$(DESTDIR)/usr/share/man/man8/holo.8"
 	install -D -m 0644 build/man/holo-files.8            "$(DESTDIR)/usr/share/man/man8/holo-files.8"
 	install -D -m 0644 build/man/holo-users-groups.8     "$(DESTDIR)/usr/share/man/man8/holo-users-groups.8"
+	install -D -m 0644 build/man/holo-ssh-keys.8 "$(DESTDIR)/usr/share/man/man8/holo-ssh-keys.8"
 	install -D -m 0644 build/man/holo-plugin-interface.7 "$(DESTDIR)/usr/share/man/man7/holo-plugin-interface.7"
 	ln -sfT ../../bin/holo "$(DESTDIR)/usr/lib/holo/holo-files"
+	ln -sfT ../../bin/holo "$(DESTDIR)/usr/lib/holo/holo-ssh-keys"
 	ln -sfT ../../bin/holo "$(DESTDIR)/usr/lib/holo/holo-users-groups"
 ifneq ($(filter arch,$(DIST_IDS)),)
 	install -D -m 0644 util/distribution-integration/alpm.hook    "$(DESTDIR)/usr/share/libalpm/hooks/01-holo-resolve-pacnew.hook"

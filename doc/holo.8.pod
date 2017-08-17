@@ -38,9 +38,10 @@ discover and enable plugins.
 
 Included with Holo is the L<holo-files(8)> plugin that allows holograms to
 replace or modify the default configuration files installed by application
-packages. Another well-known plugin (available separately) is
-L<holo-users-groups(8)> which provisions user accounts and groups to the
-standard L<passwd(5)> and L<group(5)> databases.
+packages, the L<holo-ssh-keys(8)> plugin for provisioning
+C<.ssh/authorized_keys>, and the L<holo-users-groups(8)> plugin which
+provisions user accounts and groups to the standard L<passwd(5)> and
+L<group(5)> databases.
 
 =head2 Entities, source files
 

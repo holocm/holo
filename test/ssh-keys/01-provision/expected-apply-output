@@ -1,0 +1,53 @@
+
+Working on ssh-keyset:user1/foo
+  found in target/usr/share/holo/ssh-keys/user1/foo.pub
+    key is 2048 SHA256:BPwneuiBV/tqWEUSKBdXI1uFAgwP5J5Opw17Gw7xEkY user@key0 (RSA)
+
+Working on ssh-keyset:user2/foo
+  found in target/usr/share/holo/ssh-keys/user2/foo.pub
+    key is 2048 SHA256:BPwneuiBV/tqWEUSKBdXI1uFAgwP5J5Opw17Gw7xEkY user@key0 (RSA)
+    key is 2048 SHA256:INu+TuczyJpYs1IiMb6csykJDbJ778oJeXmG40WCCHI user@key1 (RSA)
+
+Working on ssh-keyset:user3/bar
+  found in target/usr/share/holo/ssh-keys/user3/bar.pub
+    key is 2048 SHA256:Q1TXZxElJ9fjGiEKkJq91tgeCRFNSzlsCnJeoCA66s4 user@key2 (RSA)
+
+Working on ssh-keyset:user3/foo
+  found in target/usr/share/holo/ssh-keys/user3/foo.pub
+    key is 2048 SHA256:BPwneuiBV/tqWEUSKBdXI1uFAgwP5J5Opw17Gw7xEkY user@key0 (RSA)
+    key is 2048 SHA256:INu+TuczyJpYs1IiMb6csykJDbJ778oJeXmG40WCCHI user@key1 (RSA)
+
+Working on ssh-keyset:user4/foo
+  found in target/usr/share/holo/ssh-keys/user4/foo.pub
+    key is 2048 SHA256:BPwneuiBV/tqWEUSKBdXI1uFAgwP5J5Opw17Gw7xEkY user@key0 (RSA)
+
+Working on ssh-keyset:user5/foo
+  found in target/usr/share/holo/ssh-keys/user5/foo.pub
+    key is 2048 SHA256:BPwneuiBV/tqWEUSKBdXI1uFAgwP5J5Opw17Gw7xEkY user@key0 (RSA)
+    key is 2048 SHA256:INu+TuczyJpYs1IiMb6csykJDbJ778oJeXmG40WCCHI user@key1 (RSA)
+
+Working on ssh-keyset:user6/bar
+  found in target/usr/share/holo/ssh-keys/user6/bar.pub
+    key is 2048 SHA256:Q1TXZxElJ9fjGiEKkJq91tgeCRFNSzlsCnJeoCA66s4 user@key2 (RSA)
+
+Working on ssh-keyset:user6/foo
+  found in target/usr/share/holo/ssh-keys/user6/foo.pub
+    key is 2048 SHA256:BPwneuiBV/tqWEUSKBdXI1uFAgwP5J5Opw17Gw7xEkY user@key0 (RSA)
+    key is 2048 SHA256:INu+TuczyJpYs1IiMb6csykJDbJ778oJeXmG40WCCHI user@key1 (RSA)
+
+Working on ssh-keyset:user7/foo
+  found in target/usr/share/holo/ssh-keys/user7/foo.pub
+    key is 2048 SHA256:BPwneuiBV/tqWEUSKBdXI1uFAgwP5J5Opw17Gw7xEkY user@key0 (RSA)
+    key is 2048 SHA256:bb8t1lzOwTyq6dy93w7ClVFbd3iLAh82fgLLVqcJKbA user@key3 (RSA)
+
+Working on ssh-keyset:user8/bar
+  found in target/usr/share/holo/ssh-keys/user8/bar.pub
+    key is 2048 SHA256:BPwneuiBV/tqWEUSKBdXI1uFAgwP5J5Opw17Gw7xEkY user@key0 (RSA)
+    key is 2048 SHA256:Q1TXZxElJ9fjGiEKkJq91tgeCRFNSzlsCnJeoCA66s4 user@key2 (RSA)
+
+Working on ssh-keyset:user8/foo
+  found in target/usr/share/holo/ssh-keys/user8/foo.pub
+    key is 2048 SHA256:BPwneuiBV/tqWEUSKBdXI1uFAgwP5J5Opw17Gw7xEkY user@key0 (RSA)
+    key is 2048 SHA256:INu+TuczyJpYs1IiMb6csykJDbJ778oJeXmG40WCCHI user@key1 (RSA)
+
+exit status 0
