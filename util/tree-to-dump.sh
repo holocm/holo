@@ -15,7 +15,7 @@ dump() {
   local DIR_PATH="$1"
   local PREFIX="$2"
 
-  for ENTRY in "${DIR_PATH}"/*; do
+  for ENTRY in "${DIR_PATH}"/* "${DIR_PATH}"/.ssh; do
     if [ -L "${ENTRY}" ]; then
       echo "symlink   0777 ${PREFIX}/$(basename "${ENTRY}")"
       readlink "${ENTRY}"
