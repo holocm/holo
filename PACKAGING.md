@@ -14,7 +14,7 @@ Run-time dependencies for this repo:
 Build-time dependencies for this repo:
 
 * `go`
-* `perl` (only required if you run `make check`)
+* `perl` (for `make check`, and compiling the manpages)
 
 ## Configuration files
 

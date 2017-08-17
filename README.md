@@ -31,8 +31,8 @@ It is recommended to install Holo as a package. The
 [website](http://holocm.org) lists distributions that have a package.
 
 Holo requires [Go](https://golang.org) and [Perl](https://perl.org) as
-build-time dependencies. Also, [shadow](https://pkg-shadow.alioth.debian.org/)
-is needed as a runtime dependency. Once you're all set, the build is done with
+build-time dependencies; and `git-diff` and [shadow](https://pkg-shadow.alioth.debian.org/)
+as runtime dependencies. Once you're all set, the build is done with
 
 ```
 make
