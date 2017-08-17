@@ -9,6 +9,8 @@ Packagers beware:
 
 - Add `Provides` and `Replaces` package relations from this package to `holo-ssh-keys` and `holo-users-groups` (these
   packages are now included in this one).
+- New runtime dependencies: `shadow` (inherited from `holo-users-groups`) and `openssh` (inherited from
+  `holo-ssh-keys`). See [PACKAGING.md](./PACKAGING.md) for details.
 
 Changes:
 
