@@ -1,3 +1,37 @@
+# upcoming release (TBD)
+
+Backwards-incompatible changes:
+
+- `holo-test` has been removed from the public interface. Plugins that wish to use it can vendor it from this repo into
+  their own repos.
+
+Changes:
+
+- `holo`, `holo-files` and `holo-users-groups` have been merged into a single binary, thus massively reducing
+  installation size.
+- Fix a bug in `holo-test` where tests could fail because of randomized names of temporary directories.
+- Install the ALPM hook in the standard location.
+- When Holo is installed via `go get`, show the version string "unknown" instead of an empty string.
+
+Packagers beware:
+
+- Add `Provides` and `Replaces` package relations from this package to `holo-users-groups`.
+
+Notes on commit history:
+
+- The history of the `holo-users-groups` repo can be found below the second parent of the merge commit 2d6e87e41d62abced6f5c08428e7bea523cfb5a4.
+  The following tags were in that repo at the time of merging:
+
+    aced8d55b4dae5ef84eb3a4fde87240176498638 v1.0-beta.1
+    c843bb2a66160d5c6371ec11af968985c6742d33 v1.0
+    881c382776c48e543885662da74ea70a4f878793 v1.1
+    be71e6b0415a3071f415429b597297c8bb3ab153 v1.2
+    95f3792d73c7a82c923a43ebb81e537bde973618 v1.3
+    66f46701aafbaa65397c2e4d68f8773f70272018 v2.0
+    722e3be714ce5371e808e21d4af97c7dd8cdf9bd v2.0.1
+    88f9154e0034ffff01fc686bcfd6ea970a676f2a v2.1
+    f19426859936d15e43e6da5a3b28f11acd5f95e8 v2.1.1
+
 # v1.3.1 (2017-03-19)
 
 Bugfixes:
