@@ -1,4 +1,4 @@
-holo_topdir="$(readlink -f ../../)"
+holo_topdir="$(readlink -f ../../../)"
 holo_wrapper() (
 	TMPDIR="$(readlink -f -- "$TMPDIR")"
 	cd "$HOLO_ROOT_DIR"

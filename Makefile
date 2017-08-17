@@ -40,7 +40,7 @@ test/cov.cov: clean-tests $(foreach b,$(bins),build/$b.test)
 	@if s="$$(gofmt -l cmd 2>/dev/null)"                        && test -n "$$s"; then printf ' => %s\n%s\n' gofmt  "$$s"; false; fi
 	@if s="$$(find cmd -type d -exec golint {} \; 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
 	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/holo-output.cov $(pkg)/cmd/holo/internal
-	@env HOLO_BINARY=../../build/holo.test HOLO_TEST_COVERDIR=$(abspath test/cov) HOLO_TEST_SCRIPTPATH=../../util bash util/holo-test holo $(sort $(wildcard test/??-*))
+	@env HOLO_BINARY=../../../build/holo.test HOLO_TEST_COVERDIR=$(abspath test/cov) HOLO_TEST_SCRIPTPATH=../../../util bash util/holo-test holo $(sort $(wildcard test/files/??-*))
 	util/gocovcat.go test/cov/*.cov > test/cov.cov
 %.html: %.cov
 	$(GO) tool cover -html $< -o $@

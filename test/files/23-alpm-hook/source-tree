@@ -29,10 +29,10 @@ f
 e
 ----------------------------------------
 symlink   0777 ./usr/bin/holo
-../../../../../build/holo.test
+../../../../../../build/holo.test
 ----------------------------------------
 symlink   0777 ./usr/lib/holo/holo-files
-../../../../../../build/holo-files.test
+../../../../../../../build/holo-files.test
 ----------------------------------------
 symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-pacnew.conf.holoscript
 /usr/bin/sort
