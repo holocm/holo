@@ -18,7 +18,7 @@
 *
 *******************************************************************************/
 
-package main
+package entrypoint
 
 import (
 	"fmt"
@@ -27,10 +27,6 @@ import (
 	"github.com/holocm/holo/cmd/holo-files/internal/common"
 	"github.com/holocm/holo/cmd/holo-files/internal/impl"
 )
-
-func main() {
-	os.Exit(Main())
-}
 
 // Main is the main entry point, but returns the exit code rather than
 // calling os.Exit().  This distinction is useful for testing purposes.

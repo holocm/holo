@@ -3,7 +3,7 @@ bins = holo holo-files
 mans = holorc.5 holo-plugin-interface.7 holo-test.7 holo.8 holo-files.8
 
 default: prepare-build
-default: $(addprefix build/,$(bins))
+default: build/holo
 default: $(addprefix build/man/,$(mans))
 .PHONY: default
 
@@ -20,11 +20,11 @@ prepare-build:
 	./util/find_version.sh | util/write-ifchanged $@
 
 cmd/holo/version.go: .version
-	printf 'package main\n\nfunc init() {\n\tversion = "%s"\n}\n' "$$(cat $<)" > $@
+	printf 'package entrypoint\n\nfunc init() {\n\tversion = "%s"\n}\n' "$$(cat $<)" > $@
 
-$(addprefix %/,$(bins)): FORCE cmd/holo/version.go
-	$(GO) install $(GO_BUILDFLAGS) --ldflags '$(GO_LDFLAGS)' $(addprefix $(pkg)/cmd/,$(bins))
-build/%.test: build/% cmd/%/main_test.go
+%/holo: FORCE cmd/holo/version.go
+	$(GO) install $(GO_BUILDFLAGS) --ldflags '$(GO_LDFLAGS)' $(pkg)
+build/%.test: cmd/%/main_test.go
 	$(GO) test -c -o $@ $(GO_TESTFLAGS) -coverpkg $$($(GO_DEPS) $(pkg)/cmd/$*|grep ^$(pkg)|tr '\n' ,|sed 's/,$$//') $(pkg)/cmd/$*
 
 # manpages are generated using pod2man (which comes with Perl and therefore
@@ -58,7 +58,6 @@ install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomp
 	install -D -m 0644 conf/holorc            "$(DESTDIR)/etc/holorc"
 	install -D -m 0644 conf/holorc.holo-files "$(DESTDIR)/etc/holorc.d/10-files"
 	install -D -m 0755 build/holo             "$(DESTDIR)/usr/bin/holo"
-	install -D -m 0755 build/holo-files       "$(DESTDIR)/usr/lib/holo/holo-files"
 	install -D -m 0755 util/holo-test         "$(DESTDIR)/usr/bin/holo-test"
 	install -D -m 0755 util/dump-to-tree.sh   "$(DESTDIR)/usr/lib/holo/dump-to-tree.sh"
 	install -D -m 0755 util/tree-to-dump.sh   "$(DESTDIR)/usr/lib/holo/tree-to-dump.sh"
@@ -69,9 +68,10 @@ install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomp
 	install -D -m 0644 build/man/holo-files.8            "$(DESTDIR)/usr/share/man/man8/holo-files.8"
 	install -D -m 0644 build/man/holo-test.7             "$(DESTDIR)/usr/share/man/man7/holo-test.7"
 	install -D -m 0644 build/man/holo-plugin-interface.7 "$(DESTDIR)/usr/share/man/man7/holo-plugin-interface.7"
+	ln -sfT ../../bin/holo "$(DESTDIR)/usr/lib/holo/holo-files"
 ifneq ($(filter arch,$(DIST_IDS)),)
-	install -D -m 0644 distribution-integration/alpm.hook    "$(DESTDIR)/usr/share/libalpm/hooks/01-holo-resolve-pacnew.hook"
-	install -D -m 0755 distribution-integration/alpm-hook.sh "$(DESTDIR)/usr/share/libalpm/scripts/holo-resolve-pacnew"
+	install -D -m 0644 util/distribution-integration/alpm.hook    "$(DESTDIR)/usr/share/libalpm/hooks/01-holo-resolve-pacnew.hook"
+	install -D -m 0755 util/distribution-integration/alpm-hook.sh "$(DESTDIR)/usr/share/libalpm/scripts/holo-resolve-pacnew"
 endif
 
 clean: clean-tests

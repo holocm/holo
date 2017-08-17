@@ -18,7 +18,7 @@
 *
 *******************************************************************************/
 
-package main
+package entrypoint
 
 import (
 	"fmt"
@@ -42,10 +42,6 @@ const (
 type Selector struct {
 	String string
 	Used   bool
-}
-
-func main() {
-	os.Exit(Main())
 }
 
 // Main is the main entry point, but returns the exit code rather than
