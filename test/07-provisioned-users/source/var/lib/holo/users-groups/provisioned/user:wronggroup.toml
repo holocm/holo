@@ -1,6 +1,0 @@
-[[user]]
-name = "wronggroup"
-uid = 1005
-home = "/home/wronggroup"
-group = "users"
-shell = "/bin/zsh"

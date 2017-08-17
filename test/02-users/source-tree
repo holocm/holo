@@ -24,9 +24,9 @@ games:x:50:
 lock:x:54:
 uuidd:x:68:
 dbus:x:81:
-network:x:90:
-video:x:91:
-audio:x:92:
+network:x:90:existing
+video:x:91:existing,wronggroups
+audio:x:92:existing
 optical:x:93:
 floppy:x:94:
 storage:x:95:
@@ -60,59 +60,68 @@ systemd-timesync:x:192:192:systemd-timesync:/:/usr/bin/nologin
 systemd-network:x:193:193:systemd-network:/:/usr/bin/nologin
 systemd-bus-proxy:x:194:194:systemd-bus-proxy:/:/usr/bin/nologin
 systemd-resolve:x:195:195:systemd-resolve:/:/usr/bin/nologin
+existing:x:1002:100:Existing User:/home/existing:/bin/zsh
+wronguid:x:2003:100::/home/wronguid:/bin/zsh
+wronghome:x:1004:100::/var/lib/wronghome:/bin/zsh
+wronggroup:x:1005:99::/home/wronggroup:/bin/zsh
+wronggroups:x:1005:100::/home/wronggroups:/bin/zsh
+wrongshell:x:1005:100::/home/wrongshell:/bin/bash
 ----------------------------------------
-directory 0755 ./run/
+file      0644 ./usr/share/holo/users-groups/01-users.json
+{ "users": [
+    {
+        "name": "jsonisdeprecated",
+        "comment": "JSON is deprecated",
+        "uid": 1001,
+        "system": false,
+        "home": "/home/jsonisdeprecated",
+        "group": "users",
+        "groups": ["network","video","audio"],
+        "shell": "/bin/zsh"
+    }
+]}
 ----------------------------------------
-directory 0755 ./tmp/
-----------------------------------------
-file      0644 ./usr/share/holo/users-groups/01-first.toml
-[[group]]
-name   = "stacked"
-
+file      0644 ./usr/share/holo/users-groups/01-users.toml
 [[user]]
-name   = "stacked"
-groups = [ "foo", "bar" ]
-----------------------------------------
-file      0644 ./usr/share/holo/users-groups/02-second.toml
-[[group]]
-name    = "stacked"
-gid     = 1001
-system  = true
-
-[[user]]
-name    = "stacked"
-comment = "Stacked User"
-system  = true
+name    = "new"
+comment = "New User"
 uid     = 1001
-group   = "stacked"
-groups  = [ "foo", "baz" ]
-home    = "/home/stacked"
-shell   = "/bin/bash"
-----------------------------------------
-directory 0755 ./var/lib/holo/files/base/
-----------------------------------------
-directory 0755 ./var/lib/holo/files/provisioned/
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/base/group:stacked.toml
-[[group]]
-name = "stacked"
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/base/user:stacked.toml
+system  = false
+home    = "/home/new"
+group   = "users"
+groups  = [ "network", "video", "audio" ]
+shell   = "/bin/zsh"
+
 [[user]]
-name = "stacked"
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/provisioned/group:stacked.toml
-[[group]]
-name = "stacked"
-gid = 1001
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/provisioned/user:stacked.toml
+name    = "existing"
+comment = "Existing User"
+uid     = 1002
+system  = false
+home    = "/home/existing"
+group   = "users"
+groups  = [ "network", "video", "audio" ]
+shell   = "/bin/zsh"
+
 [[user]]
-name = "stacked"
-comment = "Stacked User"
-uid = 1001
-home = "/home/stacked"
-group = "stacked"
-groups = ["bar", "baz", "foo"]
-shell = "/bin/bash"
+name    = "minimal"
+
+[[user]]
+name    = "wronguid"
+uid     = 1003
+
+[[user]]
+name    = "wronghome"
+home    = "/home/wronghome"
+
+[[user]]
+name    = "wronggroup"
+group   = "users"
+
+[[user]]
+name    = "wronggroups"
+groups  = ["network"]
+
+[[user]]
+name    = "wrongshell"
+shell   = "/bin/zsh"
 ----------------------------------------

@@ -1,4 +1,4 @@
->> ./etc/group = regular
+file      0644 ./etc/group
 root:x:0:root
 bin:x:1:root,bin,daemon
 daemon:x:2:root,bin,daemon
@@ -12,30 +12,41 @@ kmem:x:9:
 wheel:x:10:root
 existing:x:101:
 wronggid:x:102:
->> ./etc/holorc = symlink
+----------------------------------------
+symlink   0777 ./etc/holorc
 ../../../holorc
->> ./run = dir
->> ./tmp = dir
->> ./usr/share/holo/users-groups/01-groups.toml = regular
+----------------------------------------
+directory 0755 ./run/
+----------------------------------------
+directory 0755 ./tmp/
+----------------------------------------
+file      0644 ./usr/share/holo/users-groups/01-groups.toml
 [[group]]
 name = "existing"
 
 [[group]]
 name = "wronggid"
 gid = 42
->> ./var/lib/holo/files/base = dir
->> ./var/lib/holo/files/provisioned = dir
->> ./var/lib/holo/users-groups/base/group:existing.toml = regular
+----------------------------------------
+directory 0755 ./var/lib/holo/files/base/
+----------------------------------------
+directory 0755 ./var/lib/holo/files/provisioned/
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/base/group:existing.toml
 [[group]]
 name = "existing"
->> ./var/lib/holo/users-groups/base/group:wronggid.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/base/group:wronggid.toml
 [[group]]
 name = "wronggid"
->> ./var/lib/holo/users-groups/provisioned/group:existing.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/provisioned/group:existing.toml
 [[group]]
 name = "existing"
 gid = 101
->> ./var/lib/holo/users-groups/provisioned/group:wronggid.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/provisioned/group:wronggid.toml
 [[group]]
 name = "wronggid"
 gid = 42
+----------------------------------------

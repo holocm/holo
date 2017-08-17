@@ -1,6 +1,0 @@
-[[user]]
-name  = "modified"
-uid   = 1001
-group = "users"
-home  = "/home/modified"
-shell = "/bin/bash"

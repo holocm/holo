@@ -1,6 +1,0 @@
-[[group]]
-name   = "stacked"
-
-[[user]]
-name   = "stacked"
-groups = [ "foo", "bar" ]

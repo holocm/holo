@@ -1,9 +1,0 @@
-[[group]]
-name = "created"
-
-[[user]]
-name = "modified"
-shell = "/bin/zsh"
-
-[[user]]
-name = "unchanged"

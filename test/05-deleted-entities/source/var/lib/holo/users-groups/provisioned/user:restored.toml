@@ -1,8 +1,0 @@
-[[user]]
-name = "restored"
-comment = "This user will be restored."
-uid = 1011
-home = "/var/lib/restored"
-group = "deleted"
-groups = ["deleted", "users"]
-shell = "/bin/bash"

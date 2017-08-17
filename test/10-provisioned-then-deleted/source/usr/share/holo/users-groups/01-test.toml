@@ -1,6 +1,0 @@
-[[group]]
-name = "test"
-
-[[user]]
-name = "test"
-group = "users"

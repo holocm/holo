@@ -67,10 +67,6 @@ wronggroup:x:1005:99::/home/wronggroup:/bin/zsh
 wronggroups:x:1005:100::/home/wronggroups:/bin/zsh
 wrongshell:x:1005:100::/home/wrongshell:/bin/bash
 ----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
-----------------------------------------
 file      0644 ./usr/share/holo/users-groups/01-users.toml
 [[user]]
 name    = "existing"
@@ -113,10 +109,6 @@ name    = "wrongshell"
 home    = "/home/wrongshell"
 group   = "users"
 shell   = "/bin/zsh"
-----------------------------------------
-directory 0755 ./var/lib/holo/files/base/
-----------------------------------------
-directory 0755 ./var/lib/holo/files/provisioned/
 ----------------------------------------
 file      0644 ./var/lib/holo/users-groups/base/user:existing.toml
 [[user]]

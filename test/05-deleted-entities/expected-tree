@@ -1,4 +1,4 @@
->> ./etc/group = regular
+file      0644 ./etc/group
 root:x:0:root
 bin:x:1:root,bin,daemon
 daemon:x:2:root,bin,daemon
@@ -43,9 +43,11 @@ systemd-bus-proxy:x:194:
 systemd-resolve:x:195:
 deleted:x:101:restored
 restored:x:112:
->> ./etc/holorc = symlink
+----------------------------------------
+symlink   0777 ./etc/holorc
 ../../../holorc
->> ./etc/passwd = regular
+----------------------------------------
+file      0644 ./etc/passwd
 root:x:0:0:root:/root:/bin/bash
 bin:x:1:1:bin:/bin:/usr/bin/nologin
 daemon:x:2:2:daemon:/:/usr/bin/nologin
@@ -62,10 +64,18 @@ systemd-bus-proxy:x:194:194:systemd-bus-proxy:/:/usr/bin/nologin
 systemd-resolve:x:195:195:systemd-resolve:/:/usr/bin/nologin
 deleted:x:1000:101:deleted:/var/lib/deleted:/usr/bin/nologin
 restored:x:1011:101:This user will be restored.:/var/lib/restored:/bin/bash
->> ./run = dir
->> ./tmp = dir
->> ./usr/share/holo/users-groups = dir
->> ./var/lib/holo/files/base = dir
->> ./var/lib/holo/files/provisioned = dir
->> ./var/lib/holo/users-groups/base = dir
->> ./var/lib/holo/users-groups/provisioned = dir
+----------------------------------------
+directory 0755 ./run/
+----------------------------------------
+directory 0755 ./tmp/
+----------------------------------------
+directory 0755 ./usr/share/holo/users-groups/
+----------------------------------------
+directory 0755 ./var/lib/holo/files/base/
+----------------------------------------
+directory 0755 ./var/lib/holo/files/provisioned/
+----------------------------------------
+directory 0755 ./var/lib/holo/users-groups/base/
+----------------------------------------
+directory 0755 ./var/lib/holo/users-groups/provisioned/
+----------------------------------------

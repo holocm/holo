@@ -16,22 +16,7 @@ wronggid:x:102:
 symlink   0777 ./etc/holorc
 ../../../holorc
 ----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
-----------------------------------------
-file      0644 ./usr/share/holo/users-groups/01-groups.json
-{
-    "groups": [
-        { "name": "jsonisdeprecated", "system": true, "gid": 43 }
-    ]
-}
-----------------------------------------
 file      0644 ./usr/share/holo/users-groups/01-groups.toml
-[[group]]
-name = "new"
-system = true
-
 [[group]]
 name = "existing"
 
@@ -39,33 +24,18 @@ name = "existing"
 name = "wronggid"
 gid = 42
 ----------------------------------------
-directory 0755 ./var/lib/holo/files/base/
-----------------------------------------
-directory 0755 ./var/lib/holo/files/provisioned/
-----------------------------------------
 file      0644 ./var/lib/holo/users-groups/base/group:existing.toml
 [[group]]
 name = "existing"
-gid = 101
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/base/group:new.toml
-[[group]]
-name = "new"
 ----------------------------------------
 file      0644 ./var/lib/holo/users-groups/base/group:wronggid.toml
 [[group]]
 name = "wronggid"
-gid = 102
 ----------------------------------------
 file      0644 ./var/lib/holo/users-groups/provisioned/group:existing.toml
 [[group]]
 name = "existing"
 gid = 101
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/provisioned/group:new.toml
-[[group]]
-name = "new"
-gid = 999
 ----------------------------------------
 file      0644 ./var/lib/holo/users-groups/provisioned/group:wronggid.toml
 [[group]]

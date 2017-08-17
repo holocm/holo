@@ -28,10 +28,6 @@ dbus:x:81:81:dbus:/:/usr/bin/nologin
 nobody:x:99:99:nobody:/:/usr/bin/nologin
 test:x:1001:100:This is the comment set by another program.:/home/test:/bin/bash
 ----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
-----------------------------------------
 file      0644 ./usr/share/holo/users-groups/01-initial.toml
 [[group]]
 name = "test"
@@ -49,10 +45,6 @@ name    = "test"
 comment = "This comment is set by Holo."
 shell   = "/bin/zsh"
 ----------------------------------------
-directory 0755 ./var/lib/holo/files/base/
-----------------------------------------
-directory 0755 ./var/lib/holo/files/provisioned/
-----------------------------------------
 file      0644 ./var/lib/holo/users-groups/base/group:test.toml
 [[group]]
 name = "test"
@@ -64,14 +56,13 @@ name = "test"
 file      0644 ./var/lib/holo/users-groups/provisioned/group:test.toml
 [[group]]
 name = "test"
-gid = 123
+gid = 101
 ----------------------------------------
 file      0644 ./var/lib/holo/users-groups/provisioned/user:test.toml
 [[user]]
 name = "test"
-comment = "This comment is set by Holo."
 uid = 1001
 home = "/home/test"
 group = "users"
-shell = "/bin/zsh"
+shell = "/bin/bash"
 ----------------------------------------

@@ -1,4 +1,4 @@
->> ./etc/group = regular
+file      0644 ./etc/group
 root:x:0:root
 bin:x:1:root,bin,daemon
 daemon:x:2:root,bin,daemon
@@ -41,9 +41,11 @@ systemd-timesync:x:192:
 systemd-network:x:193:
 systemd-bus-proxy:x:194:
 systemd-resolve:x:195:
->> ./etc/holorc = symlink
+----------------------------------------
+symlink   0777 ./etc/holorc
 ../../../holorc
->> ./etc/passwd = regular
+----------------------------------------
+file      0644 ./etc/passwd
 root:x:0:0:root:/root:/bin/bash
 bin:x:1:1:bin:/bin:/usr/bin/nologin
 daemon:x:2:2:daemon:/:/usr/bin/nologin
@@ -64,9 +66,12 @@ wronghome:x:1004:100::/var/lib/wronghome:/bin/zsh
 wronggroup:x:1005:99::/home/wronggroup:/bin/zsh
 wronggroups:x:1005:100::/home/wronggroups:/bin/zsh
 wrongshell:x:1005:100::/home/wrongshell:/bin/bash
->> ./run = dir
->> ./tmp = dir
->> ./usr/share/holo/users-groups/01-users.json = regular
+----------------------------------------
+directory 0755 ./run/
+----------------------------------------
+directory 0755 ./tmp/
+----------------------------------------
+file      0644 ./usr/share/holo/users-groups/01-users.json
 { "users": [
     {
         "name": "jsonisdeprecated",
@@ -79,7 +84,8 @@ wrongshell:x:1005:100::/home/wrongshell:/bin/bash
         "shell": "/bin/zsh"
     }
 ]}
->> ./usr/share/holo/users-groups/01-users.toml = regular
+----------------------------------------
+file      0644 ./usr/share/holo/users-groups/01-users.toml
 [[user]]
 name    = "new"
 comment = "New User"
@@ -122,9 +128,12 @@ groups  = ["network"]
 [[user]]
 name    = "wrongshell"
 shell   = "/bin/zsh"
->> ./var/lib/holo/files/base = dir
->> ./var/lib/holo/files/provisioned = dir
->> ./var/lib/holo/users-groups/base/user:existing.toml = regular
+----------------------------------------
+directory 0755 ./var/lib/holo/files/base/
+----------------------------------------
+directory 0755 ./var/lib/holo/files/provisioned/
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/base/user:existing.toml
 [[user]]
 name = "existing"
 comment = "Existing User"
@@ -133,20 +142,16 @@ home = "/home/existing"
 group = "users"
 groups = ["audio", "network", "video"]
 shell = "/bin/zsh"
->> ./var/lib/holo/users-groups/base/user:minimal.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/base/user:minimal.toml
 [[user]]
 name = "minimal"
->> ./var/lib/holo/users-groups/base/user:new.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/base/user:new.toml
 [[user]]
 name = "new"
->> ./var/lib/holo/users-groups/base/user:wronggroup.toml = regular
-[[user]]
-name = "wronggroup"
-uid = 1005
-home = "/home/wronggroup"
-group = "nobody"
-shell = "/bin/zsh"
->> ./var/lib/holo/users-groups/base/user:wronggroups.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/base/user:wronggroups.toml
 [[user]]
 name = "wronggroups"
 uid = 1005
@@ -154,28 +159,40 @@ home = "/home/wronggroups"
 group = "users"
 groups = ["video"]
 shell = "/bin/zsh"
->> ./var/lib/holo/users-groups/base/user:wronghome.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/base/user:wronggroup.toml
+[[user]]
+name = "wronggroup"
+uid = 1005
+home = "/home/wronggroup"
+group = "nobody"
+shell = "/bin/zsh"
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/base/user:wronghome.toml
 [[user]]
 name = "wronghome"
 uid = 1004
 home = "/var/lib/wronghome"
 group = "users"
 shell = "/bin/zsh"
->> ./var/lib/holo/users-groups/base/user:wrongshell.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/base/user:wrongshell.toml
 [[user]]
 name = "wrongshell"
 uid = 1005
 home = "/home/wrongshell"
 group = "users"
 shell = "/bin/bash"
->> ./var/lib/holo/users-groups/base/user:wronguid.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/base/user:wronguid.toml
 [[user]]
 name = "wronguid"
 uid = 2003
 home = "/home/wronguid"
 group = "users"
 shell = "/bin/zsh"
->> ./var/lib/holo/users-groups/provisioned/user:existing.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/provisioned/user:existing.toml
 [[user]]
 name = "existing"
 comment = "Existing User"
@@ -184,11 +201,13 @@ home = "/home/existing"
 group = "users"
 groups = ["audio", "network", "video"]
 shell = "/bin/zsh"
->> ./var/lib/holo/users-groups/provisioned/user:minimal.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/provisioned/user:minimal.toml
 [[user]]
 name = "minimal"
 uid = 999
->> ./var/lib/holo/users-groups/provisioned/user:new.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/provisioned/user:new.toml
 [[user]]
 name = "new"
 comment = "New User"
@@ -197,14 +216,8 @@ home = "/home/new"
 group = "users"
 groups = ["audio", "network", "video"]
 shell = "/bin/zsh"
->> ./var/lib/holo/users-groups/provisioned/user:wronggroup.toml = regular
-[[user]]
-name = "wronggroup"
-uid = 1005
-home = "/home/wronggroup"
-group = "users"
-shell = "/bin/zsh"
->> ./var/lib/holo/users-groups/provisioned/user:wronggroups.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/provisioned/user:wronggroups.toml
 [[user]]
 name = "wronggroups"
 uid = 1005
@@ -212,24 +225,36 @@ home = "/home/wronggroups"
 group = "users"
 groups = ["network", "video"]
 shell = "/bin/zsh"
->> ./var/lib/holo/users-groups/provisioned/user:wronghome.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/provisioned/user:wronggroup.toml
+[[user]]
+name = "wronggroup"
+uid = 1005
+home = "/home/wronggroup"
+group = "users"
+shell = "/bin/zsh"
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/provisioned/user:wronghome.toml
 [[user]]
 name = "wronghome"
 uid = 1004
 home = "/home/wronghome"
 group = "users"
 shell = "/bin/zsh"
->> ./var/lib/holo/users-groups/provisioned/user:wrongshell.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/provisioned/user:wrongshell.toml
 [[user]]
 name = "wrongshell"
 uid = 1005
 home = "/home/wrongshell"
 group = "users"
 shell = "/bin/zsh"
->> ./var/lib/holo/users-groups/provisioned/user:wronguid.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/provisioned/user:wronguid.toml
 [[user]]
 name = "wronguid"
 uid = 1003
 home = "/home/wronguid"
 group = "users"
 shell = "/bin/zsh"
+----------------------------------------

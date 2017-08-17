@@ -1,7 +1,0 @@
-[[user]]
-name = "deleted"
-comment = "deleted"
-uid = 1000
-home = "/var/lib/deleted"
-group = "deleted"
-shell = "/usr/bin/nologin"

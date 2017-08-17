@@ -29,10 +29,6 @@ nobody:x:99:99:nobody:/:/usr/bin/nologin
 modified:x:1001:100::/home/modified:/bin/zsh
 unchanged:x:1002:100::/home/unchanged:/bin/bash
 ----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
-----------------------------------------
 file      0644 ./usr/share/holo/users-groups/01-test.toml
 [[group]]
 name = "created"
@@ -44,14 +40,6 @@ shell = "/bin/zsh"
 [[user]]
 name = "unchanged"
 ----------------------------------------
-directory 0755 ./var/lib/holo/files/base/
-----------------------------------------
-directory 0755 ./var/lib/holo/files/provisioned/
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/base/group:created.toml
-[[group]]
-name = "created"
-----------------------------------------
 file      0644 ./var/lib/holo/users-groups/base/user:modified.toml
 [[user]]
 name  = "modified"
@@ -60,28 +48,7 @@ group = "users"
 home  = "/home/modified"
 shell = "/bin/bash"
 ----------------------------------------
-file      0644 ./var/lib/holo/users-groups/base/user:unchanged.toml
-[[user]]
-name = "unchanged"
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/provisioned/group:created.toml
-[[group]]
-name = "created"
-gid = 101
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/provisioned/user:modified.toml
-[[user]]
-name = "modified"
-uid = 1001
-home = "/home/modified"
-group = "users"
-shell = "/bin/zsh"
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/provisioned/user:unchanged.toml
-[[user]]
-name = "unchanged"
-uid = 1002
-home = "/home/unchanged"
-group = "users"
-shell = "/bin/bash"
+file      0644 ./var/lib/holo/users-groups/state.toml
+ProvisionedGroups = ["created"]
+ProvisionedUsers = ["modified", "unchanged"]
 ----------------------------------------

@@ -1,8 +1,0 @@
-[[group]]
-name = "test"
-gid  = 123
-
-[[user]]
-name    = "test"
-comment = "This comment is set by Holo."
-shell   = "/bin/zsh"

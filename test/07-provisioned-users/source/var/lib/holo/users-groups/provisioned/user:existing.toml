@@ -1,8 +1,0 @@
-[[user]]
-name = "existing"
-comment = "Existing User"
-uid = 1002
-home = "/home/existing"
-group = "users"
-groups = ["audio", "network", "video"]
-shell = "/bin/zsh"

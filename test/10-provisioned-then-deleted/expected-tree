@@ -1,4 +1,4 @@
->> ./etc/group = regular
+file      0644 ./etc/group
 root:x:0:root
 bin:x:1:root,bin,daemon
 daemon:x:2:root,bin,daemon
@@ -11,9 +11,11 @@ mem:x:8:
 kmem:x:9:
 wheel:x:10:root
 users:x:100:
->> ./etc/holorc = symlink
+----------------------------------------
+symlink   0777 ./etc/holorc
 ../../../holorc
->> ./etc/passwd = regular
+----------------------------------------
+file      0644 ./etc/passwd
 root:x:0:0:root:/root:/bin/bash
 bin:x:1:1:bin:/bin:/usr/bin/nologin
 daemon:x:2:2:daemon:/:/usr/bin/nologin
@@ -23,31 +25,41 @@ http:x:33:33:http:/srv/http:/usr/bin/nologin
 uuidd:x:68:68:uuidd:/:/usr/bin/nologin
 dbus:x:81:81:dbus:/:/usr/bin/nologin
 nobody:x:99:99:nobody:/:/usr/bin/nologin
->> ./run = dir
->> ./tmp = dir
->> ./usr/share/holo/users-groups/01-test.toml = regular
+----------------------------------------
+directory 0755 ./run/
+----------------------------------------
+directory 0755 ./tmp/
+----------------------------------------
+file      0644 ./usr/share/holo/users-groups/01-test.toml
 [[group]]
 name = "test"
 
 [[user]]
 name = "test"
 group = "users"
->> ./var/lib/holo/files/base = dir
->> ./var/lib/holo/files/provisioned = dir
->> ./var/lib/holo/users-groups/base/group:test.toml = regular
+----------------------------------------
+directory 0755 ./var/lib/holo/files/base/
+----------------------------------------
+directory 0755 ./var/lib/holo/files/provisioned/
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/base/group:test.toml
 [[group]]
 name = "test"
->> ./var/lib/holo/users-groups/base/user:test.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/base/user:test.toml
 [[user]]
 name = "test"
->> ./var/lib/holo/users-groups/provisioned/group:test.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/provisioned/group:test.toml
 [[group]]
 name = "test"
 gid = 101
->> ./var/lib/holo/users-groups/provisioned/user:test.toml = regular
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/provisioned/user:test.toml
 [[user]]
 name = "test"
 uid = 1000
 home = "/home/test"
 group = "users"
 shell = "/bin/bash"
+----------------------------------------

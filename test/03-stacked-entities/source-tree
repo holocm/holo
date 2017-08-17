@@ -61,41 +61,13 @@ systemd-network:x:193:193:systemd-network:/:/usr/bin/nologin
 systemd-bus-proxy:x:194:194:systemd-bus-proxy:/:/usr/bin/nologin
 systemd-resolve:x:195:195:systemd-resolve:/:/usr/bin/nologin
 ----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
-----------------------------------------
 file      0644 ./usr/share/holo/users-groups/01-first.toml
 [[group]]
-name    = "stacked"
-gid     = 1000
-system  = false
-
-[[group]]
-nam     = "typo"
-gid     = 1005
+name   = "stacked"
 
 [[user]]
-nam     = "typo"
-uid     = 1005
-
-[[user]]
-name    = "stacked"
-comment = "Unstackable User"
-system  = false
-uid     = 1000
-group   = "users"
-groups  = [ "foo", "bar" ]
-home    = "/var/lib/stacked"
-shell   = "/usr/bin/zsh"
-
-[[group]]
-name    = "valid"
-gid     = 1010
-
-[[user]]
-name    = "valid"
-uid     = 1010
+name   = "stacked"
+groups = [ "foo", "bar" ]
 ----------------------------------------
 file      0644 ./usr/share/holo/users-groups/02-second.toml
 [[group]]
@@ -112,26 +84,4 @@ group   = "stacked"
 groups  = [ "foo", "baz" ]
 home    = "/home/stacked"
 shell   = "/bin/bash"
-----------------------------------------
-directory 0755 ./var/lib/holo/files/base/
-----------------------------------------
-directory 0755 ./var/lib/holo/files/provisioned/
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/base/group:valid.toml
-[[group]]
-name = "valid"
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/base/user:valid.toml
-[[user]]
-name = "valid"
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/provisioned/group:valid.toml
-[[group]]
-name = "valid"
-gid = 1010
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/provisioned/user:valid.toml
-[[user]]
-name = "valid"
-uid = 1010
 ----------------------------------------

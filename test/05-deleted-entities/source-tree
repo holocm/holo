@@ -34,13 +34,15 @@ scanner:x:96:
 input:x:97:
 power:x:98:
 nobody:x:99:
-users:x:100:
+users:x:100:restored
 systemd-journal:x:190:
 systemd-journal-gateway:x:191:
 systemd-timesync:x:192:
 systemd-network:x:193:
 systemd-bus-proxy:x:194:
 systemd-resolve:x:195:
+deleted:x:101:restored
+restored:x:112:
 ----------------------------------------
 symlink   0777 ./etc/holorc
 ../../../holorc
@@ -60,78 +62,58 @@ systemd-timesync:x:192:192:systemd-timesync:/:/usr/bin/nologin
 systemd-network:x:193:193:systemd-network:/:/usr/bin/nologin
 systemd-bus-proxy:x:194:194:systemd-bus-proxy:/:/usr/bin/nologin
 systemd-resolve:x:195:195:systemd-resolve:/:/usr/bin/nologin
+deleted:x:1000:101:deleted:/var/lib/deleted:/usr/bin/nologin
+restored:x:1011:101:This user will be restored.:/var/lib/restored:/bin/bash
 ----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
-----------------------------------------
-file      0644 ./usr/share/holo/users-groups/01-first.toml
+file      0644 ./var/lib/holo/users-groups/base/group:deleted.toml
 [[group]]
-name    = "stacked"
-gid     = 1000
-system  = false
-
+name = "deleted"
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/base/group:restored.toml
 [[group]]
-nam     = "typo"
-gid     = 1005
-
+name = "restored"
+gid = 102
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/base/user:deleted.toml
 [[user]]
-nam     = "typo"
-uid     = 1005
-
+name = "deleted"
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/base/user:restored.toml
 [[user]]
-name    = "stacked"
-comment = "Unstackable User"
-system  = false
-uid     = 1000
-group   = "users"
-groups  = [ "foo", "bar" ]
-home    = "/var/lib/stacked"
-shell   = "/usr/bin/zsh"
-
+name = "restored"
+comment = "Restored User"
+uid = 1001
+home = "/home/restored"
+group = "restored"
+groups = ["users"]
+shell = "/usr/bin/nologin"
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/provisioned/group:deleted.toml
 [[group]]
-name    = "valid"
-gid     = 1010
-
-[[user]]
-name    = "valid"
-uid     = 1010
+name = "deleted"
+gid = 101
 ----------------------------------------
-file      0644 ./usr/share/holo/users-groups/02-second.toml
+file      0644 ./var/lib/holo/users-groups/provisioned/group:restored.toml
 [[group]]
-name    = "stacked"
-gid     = 1001
-system  = true
-
+name = "restored"
+gid = 112
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/provisioned/user:deleted.toml
 [[user]]
-name    = "stacked"
-comment = "Stacked User"
-system  = true
-uid     = 1001
-group   = "stacked"
-groups  = [ "foo", "baz" ]
-home    = "/home/stacked"
-shell   = "/bin/bash"
+name = "deleted"
+comment = "deleted"
+uid = 1000
+home = "/var/lib/deleted"
+group = "deleted"
+shell = "/usr/bin/nologin"
 ----------------------------------------
-directory 0755 ./var/lib/holo/files/base/
-----------------------------------------
-directory 0755 ./var/lib/holo/files/provisioned/
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/base/group:valid.toml
-[[group]]
-name = "valid"
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/base/user:valid.toml
+file      0644 ./var/lib/holo/users-groups/provisioned/user:restored.toml
 [[user]]
-name = "valid"
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/provisioned/group:valid.toml
-[[group]]
-name = "valid"
-gid = 1010
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/provisioned/user:valid.toml
-[[user]]
-name = "valid"
-uid = 1010
+name = "restored"
+comment = "This user will be restored."
+uid = 1011
+home = "/var/lib/restored"
+group = "deleted"
+groups = ["deleted", "users"]
+shell = "/bin/bash"
 ----------------------------------------

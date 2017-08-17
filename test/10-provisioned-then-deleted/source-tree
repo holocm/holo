@@ -11,7 +11,6 @@ mem:x:8:
 kmem:x:9:
 wheel:x:10:root
 users:x:100:
-test:x:101:
 ----------------------------------------
 symlink   0777 ./etc/holorc
 ../../../holorc
@@ -26,32 +25,14 @@ http:x:33:33:http:/srv/http:/usr/bin/nologin
 uuidd:x:68:68:uuidd:/:/usr/bin/nologin
 dbus:x:81:81:dbus:/:/usr/bin/nologin
 nobody:x:99:99:nobody:/:/usr/bin/nologin
-test:x:1001:100:This is the comment set by another program.:/home/test:/bin/bash
 ----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
-----------------------------------------
-file      0644 ./usr/share/holo/users-groups/01-initial.toml
+file      0644 ./usr/share/holo/users-groups/01-test.toml
 [[group]]
 name = "test"
 
 [[user]]
 name = "test"
-----------------------------------------
-file      0644 ./usr/share/holo/users-groups/02-added.toml
-[[group]]
-name = "test"
-gid  = 123
-
-[[user]]
-name    = "test"
-comment = "This comment is set by Holo."
-shell   = "/bin/zsh"
-----------------------------------------
-directory 0755 ./var/lib/holo/files/base/
-----------------------------------------
-directory 0755 ./var/lib/holo/files/provisioned/
+group = "users"
 ----------------------------------------
 file      0644 ./var/lib/holo/users-groups/base/group:test.toml
 [[group]]
@@ -64,14 +45,13 @@ name = "test"
 file      0644 ./var/lib/holo/users-groups/provisioned/group:test.toml
 [[group]]
 name = "test"
-gid = 123
+gid = 101
 ----------------------------------------
 file      0644 ./var/lib/holo/users-groups/provisioned/user:test.toml
 [[user]]
 name = "test"
-comment = "This comment is set by Holo."
-uid = 1001
+uid = 1000
 home = "/home/test"
 group = "users"
-shell = "/bin/zsh"
+shell = "/bin/bash"
 ----------------------------------------
