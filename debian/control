@@ -10,8 +10,10 @@ Vcs-Browser: https://github.com/holocm/holo
 
 Package: holo
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, git
-Provides: holo-files, holo-users-groups
+Depends: ${shlibs:Depends}, ${misc:Depends}, git, shadow, openssh
+Provides: holo-files, holo-ssh-keys, holo-users-groups
+Replaces: holo-ssh-keys, holo-users-groups
+Breaks: holo-ssh-keys, holo-users-groups
 Description: Minimalistic configuration management
  Holo builds on the system package manager and adds a minimal set of additional
  features to manage a system's configuration.

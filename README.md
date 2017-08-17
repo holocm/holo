@@ -45,6 +45,7 @@ User documentation is available in man page form:
 
 * [holo(8)](doc/holo.8.pod)
 * [holo-files(8)](doc/holo-files.8.pod)
+* [holo-ssh-keys(8)](doc/holo-ssh-keys.8.pod)
 * [holo-users-groups(8)](doc/holo-users-groups.8.pod)
 * [holorc(5)](doc/holorc.5.pod)
 * [holo-test(7)](doc/holo-test.7.pod)

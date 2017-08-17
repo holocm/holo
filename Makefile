@@ -42,8 +42,8 @@ test/cov.cov: clean-tests $(foreach b,$(bins),build/$b.test)
 	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/holo-output.cov $(pkg)/cmd/holo/internal
 	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/ssh-keys-output.cov $(pkg)/cmd/holo-ssh-keys/impl
 	@env HOLO_BINARY=../../../build/holo.test HOLO_TEST_COVERDIR=$(abspath test/cov) HOLO_TEST_SCRIPTPATH=../../../util bash util/holo-test holo-files        $(sort $(wildcard test/files/??-*))
-	@env HOLO_BINARY=../../../build/holo.test HOLO_TEST_COVERDIR=$(abspath test/cov) HOLO_TEST_SCRIPTPATH=../../../util bash util/holo-test holo-users-groups $(sort $(wildcard test/users-groups/??-*))
 	@env HOLO_BINARY=../../../build/holo.test HOLO_TEST_COVERDIR=$(abspath test/cov) HOLO_TEST_SCRIPTPATH=../../../util bash util/holo-test holo-ssh-keys     $(sort $(wildcard test/ssh-keys/??-*))
+	@env HOLO_BINARY=../../../build/holo.test HOLO_TEST_COVERDIR=$(abspath test/cov) HOLO_TEST_SCRIPTPATH=../../../util bash util/holo-test holo-users-groups $(sort $(wildcard test/users-groups/??-*))
 	util/gocovcat.go test/cov/*.cov > test/cov.cov
 %.html: %.cov
 	$(GO) tool cover -html $< -o $@
@@ -70,8 +70,8 @@ install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomp
 	install -D -m 0644 build/man/holorc.5                "$(DESTDIR)/usr/share/man/man5/holorc.5"
 	install -D -m 0644 build/man/holo.8                  "$(DESTDIR)/usr/share/man/man8/holo.8"
 	install -D -m 0644 build/man/holo-files.8            "$(DESTDIR)/usr/share/man/man8/holo-files.8"
+	install -D -m 0644 build/man/holo-ssh-keys.8         "$(DESTDIR)/usr/share/man/man8/holo-ssh-keys.8"
 	install -D -m 0644 build/man/holo-users-groups.8     "$(DESTDIR)/usr/share/man/man8/holo-users-groups.8"
-	install -D -m 0644 build/man/holo-ssh-keys.8 "$(DESTDIR)/usr/share/man/man8/holo-ssh-keys.8"
 	install -D -m 0644 build/man/holo-plugin-interface.7 "$(DESTDIR)/usr/share/man/man7/holo-plugin-interface.7"
 	ln -sfT ../../bin/holo "$(DESTDIR)/usr/lib/holo/holo-files"
 	ln -sfT ../../bin/holo "$(DESTDIR)/usr/lib/holo/holo-ssh-keys"

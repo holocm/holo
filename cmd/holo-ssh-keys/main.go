@@ -18,19 +18,21 @@
 *
 *******************************************************************************/
 
-package main
+package entrypoint
 
 import (
 	"fmt"
 	"os"
 
-	"./impl"
+	"github.com/holocm/holo/cmd/holo-ssh-keys/impl"
 )
 
-func main() {
+// Main is the main entry point, but returns the exit code rather than
+// calling os.Exit().  This distinction is useful for testing purposes.
+func Main() (exitCode int) {
 	if version := os.Getenv("HOLO_API_VERSION"); version != "3" {
 		fmt.Fprintf(os.Stderr, "!! holo-users-groups plugin called with unknown HOLO_API_VERSION %s\n", version)
-		os.Exit(1)
+		return 1
 	}
 
 	//operations that do not require any arguments
@@ -50,7 +52,7 @@ func main() {
 	entity, err := impl.NewEntityFromName(os.Args[2])
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-		os.Exit(1)
+		return 1
 	}
 
 	switch os.Args[1] {
@@ -70,4 +72,6 @@ func main() {
 			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
 		}
 	}
+
+	return 0
 }

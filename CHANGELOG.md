@@ -2,22 +2,30 @@
 
 Backwards-incompatible changes:
 
-- `holo-test` has been removed from the public interface. Plugins that wish to use it can vendor it from this repo into
-  their own repos.
+- `holo-test` has been removed from the public interface. Plugins that wish to use it are advised to vendor it from this
+  repo into their own.
 
 Changes:
 
-- `holo`, `holo-files` and `holo-users-groups` have been merged into a single binary, thus massively reducing
-  installation size.
+- `holo`, `holo-files`, `holo-ssh-keys` and `holo-users-groups` have been merged into a single binary, thus massively
+  reducing total installation size.
 - Fix a bug in `holo-test` where tests could fail because of randomized names of temporary directories.
 - Install the ALPM hook in the standard location.
 - When Holo is installed via `go get`, show the version string "unknown" instead of an empty string.
 
 Packagers beware:
 
-- Add `Provides` and `Replaces` package relations from this package to `holo-users-groups`.
+- Add `Provides` and `Replaces` package relations from this package to `holo-ssh-keys` and `holo-users-groups`.
 
 Notes on commit history:
+
+- The history of the `holo-ssh-keys` repo can be found below the second parent of the merge commit e1e3d2e3d3826ddb2971f1e78b20b4dd467f3e28.
+  The following tags were in that repo at the time of merging:
+
+    a62c7288c464cbe359d9d0a17bc4c9b8556e3461 v1.0
+    b4a2dc668e0a5caa3d80dc5b628acb814926330f v1.1
+    453ac3fb6699e877584ba6e3027a6c88d206765f v1.2
+    e6e25242795166cbcb18eedbbc7bb58250122027 v1.2.1
 
 - The history of the `holo-users-groups` repo can be found below the second parent of the merge commit 2d6e87e41d62abced6f5c08428e7bea523cfb5a4.
   The following tags were in that repo at the time of merging:
