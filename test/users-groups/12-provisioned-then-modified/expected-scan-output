@@ -1,0 +1,6 @@
+
+user:foo
+    found in target/usr/share/holo/users-groups/def.toml
+        with UID: 1001, home: /home/foo, login group: users, groups: adm, login shell: /bin/bash
+
+exit status 0

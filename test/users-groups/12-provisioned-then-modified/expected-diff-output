@@ -1,0 +1,11 @@
+diff --holo target/tmp/holo/users-groups/user:foo/desired.toml target/tmp/holo/users-groups/user:foo/actual.toml
+--- target/tmp/holo/users-groups/user:foo/desired.toml
++++ target/tmp/holo/users-groups/user:foo/actual.toml
+@@ -3,5 +3,5 @@ name = "foo"
+ uid = 1001
+ home = "/home/foo"
+ group = "users"
+-groups = ["adm"]
++groups = ["adm", "sys"]
+ shell = "/bin/bash"
+exit status 0

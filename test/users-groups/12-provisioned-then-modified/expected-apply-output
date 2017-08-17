@@ -1,0 +1,19 @@
+
+Working on user:foo
+  found in target/usr/share/holo/users-groups/def.toml
+      with UID: 1001, home: /home/foo, login group: users, groups: adm, login shell: /bin/bash
+
+!! Entity has been modified by user (use --force to overwrite)
+
+    diff --holo target/tmp/holo/users-groups/user:foo/desired.toml target/tmp/holo/users-groups/user:foo/actual.toml
+    --- target/tmp/holo/users-groups/user:foo/desired.toml
+    +++ target/tmp/holo/users-groups/user:foo/actual.toml
+    @@ -3,5 +3,5 @@ name = "foo"
+     uid = 1001
+     home = "/home/foo"
+     group = "users"
+    -groups = ["adm"]
+    +groups = ["adm", "sys"]
+     shell = "/bin/bash"
+
+exit status 0
