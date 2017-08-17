@@ -15,6 +15,8 @@ Changes:
 - `holo`, `holo-files`, `holo-ssh-keys` and `holo-users-groups` have been merged into a single binary, thus massively
   reducing total installation size.
 - Fix a bug in `holo-test` where tests could fail because of randomized names of temporary directories.
+- Fix a bug in `holo-users-groups` where scrubbing of a user definition fails
+  when the definition only adds an auxiliary group to a pre-existing user with no other auxiliary groups.
 - Install the ALPM hook in the standard location.
 - When Holo is installed via `go get`, show the version string "unknown" instead of an empty string.
 

@@ -1,0 +1,10 @@
+
+Scrubbing user:first (all definition files have been deleted)
+
+MOCK: usermod --groups '' first
+
+Scrubbing user:second (all definition files have been deleted)
+
+MOCK: usermod --groups adm second
+
+exit status 0

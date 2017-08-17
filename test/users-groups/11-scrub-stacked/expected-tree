@@ -1,0 +1,44 @@
+file      0644 ./etc/group
+root:x:0:root
+bin:x:1:root,bin,daemon
+daemon:x:2:root,bin,daemon
+sys:x:3:root,bin,first,second
+adm:x:4:root,daemon,second
+tty:x:5:
+disk:x:6:root
+lp:x:7:daemon
+mem:x:8:
+kmem:x:9:
+wheel:x:10:root
+users:x:100:
+----------------------------------------
+symlink   0777 ./etc/holorc
+../../../holorc
+----------------------------------------
+file      0644 ./etc/passwd
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/usr/bin/nologin
+daemon:x:2:2:daemon:/:/usr/bin/nologin
+mail:x:8:12:mail:/var/spool/mail:/usr/bin/nologin
+ftp:x:14:11:ftp:/srv/ftp:/usr/bin/nologin
+http:x:33:33:http:/srv/http:/usr/bin/nologin
+uuidd:x:68:68:uuidd:/:/usr/bin/nologin
+dbus:x:81:81:dbus:/:/usr/bin/nologin
+nobody:x:99:99:nobody:/:/usr/bin/nologin
+first:x:1001:100::/home/first:/bin/bash
+second:x:1002:100::/home/second:/bin/bash
+----------------------------------------
+directory 0755 ./run/
+----------------------------------------
+directory 0755 ./tmp/
+----------------------------------------
+directory 0755 ./usr/share/holo/users-groups/
+----------------------------------------
+directory 0755 ./var/lib/holo/files/base/
+----------------------------------------
+directory 0755 ./var/lib/holo/files/provisioned/
+----------------------------------------
+directory 0755 ./var/lib/holo/users-groups/base/
+----------------------------------------
+directory 0755 ./var/lib/holo/users-groups/provisioned/
+----------------------------------------

@@ -86,7 +86,7 @@ func (u *UserDefinition) Apply(theProvisioned EntityDefinition) error {
 	if u.Group != "" && u.Group != provisioned.Group {
 		args = append(args, "--gid", u.Group)
 	}
-	if len(u.Groups) > 0 && groupsToString(u.Groups) != groupsToString(provisioned.Groups) {
+	if groupsToString(u.Groups) != groupsToString(provisioned.Groups) {
 		args = append(args, "--groups", strings.Join(u.Groups, ","))
 	}
 	if u.Shell != "" && u.Shell != provisioned.Shell {
