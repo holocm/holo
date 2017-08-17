@@ -1,0 +1,13 @@
+
+Working on group:test
+  found in target/usr/share/holo/users-groups/01-test.toml
+
+MOCK: groupadd --gid 101 test
+
+Working on user:test
+  found in target/usr/share/holo/users-groups/01-test.toml
+      with login group: users
+
+MOCK: useradd --uid 1000 --home-dir /home/test --gid users --shell /bin/bash test
+
+exit status 0

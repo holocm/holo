@@ -1,0 +1,20 @@
+
+!! File target/usr/share/holo/users-groups/01-first.toml is invalid:
+>> groups[1] is missing required 'name' attribute
+>> users[0] is missing required 'name' attribute
+!! File target/usr/share/holo/users-groups/02-second.toml is invalid:
+>> conflicting GID for group:stacked (1000 vs. 1001)
+>> conflicting UID for user:stacked (1000 vs. 1001)
+>> conflicting home directory for user:stacked (/var/lib/stacked vs. /home/stacked)
+>> conflicting login group for user:stacked (users vs. stacked)
+>> conflicting login shell for user:stacked (/usr/bin/zsh vs. /bin/bash)
+
+group:valid
+    found in target/usr/share/holo/users-groups/01-first.toml
+        with GID: 1010
+
+user:valid
+    found in target/usr/share/holo/users-groups/01-first.toml
+        with UID: 1010
+
+exit status 0

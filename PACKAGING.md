@@ -9,6 +9,7 @@ Run-time dependencies for this repo:
 
 * `git diff` is used for file diffs. This was "strongly suggested" before, but
   is now strictly required.
+* `shadow` (the package that provides the `{user,group}{add,mod,del}` tools)
 
 Build-time dependencies for this repo:
 
@@ -28,11 +29,12 @@ and `holo-foo-bar` for plugins (e.g. `holo-users-groups` or `holo-run-scripts`).
 This is important because [holo-build](https://github.com/holocm/holo-build)
 will autogenerate depedencies on these packages when appropriate.
 
-### Holo includes holo-files
+### Holo includes plugins for itself
 
-Holo includes the `holo-files` plugin. Since `holo-build` will also generate
-dependencies on `holo-files`, the `holo` package must have a Provides relation
-(or whatever this is called in your package format) to `holo-files`.
+Holo includes several plugins for itself. Since `holo-build` will also generate
+dependencies on these, the `holo` package must have a Provides relation (or
+whatever this is called in your package format) to `holo-files` and
+`holo-users-groups`.
 
 ### Verify Holo API version
 

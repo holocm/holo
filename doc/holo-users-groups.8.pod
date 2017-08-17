@@ -1,0 +1,94 @@
+=encoding UTF-8
+
+=head1 NAME
+
+holo-users-groups - Holo plugin to provision user accounts and groups
+
+=head1 DESCRIPTION
+
+This plugin provisions UNIX user accounts to L<passwd(5)>, and groups to
+L<group(5)>. Provisioning uses the standard commands L<useradd(8)>,
+L<usermod(8)>, L<userdel(8)>, L<groupadd(8)>, L<groupmod(8)> and
+L<groupdel(8)>.
+
+Entity definitions are placed at F</usr/share/holo/users-groups/*.toml> and are
+written in TOML. The following fields are accepted for users and groups:
+
+    [[group]]
+    name    = "mygroup"            # string,  the group name
+    system  = false                # if true, gives --system to groupadd
+    gid     = 1001                 # integer, given to groupadd as --gid
+
+    [[user]]
+    name    = "myuser"             # string,  the user name
+    system  = false                # if true, gives --system to useradd
+    comment = "My Own User"        # string,  given to useradd as --comment
+    uid     = 1023                 # integer, given to useradd as --uid
+    group   = "mygroup"            # string,  given to useradd as --gid
+    groups  = [ "audio", "video" ] # strings, given to useradd as --groups
+    home    = "/var/lib/myuser"    # string,  given to useradd as --home-dir
+    shell   = "/usr/bin/zsh"       # string,  given to useradd as --shell
+
+In either case, C<name> is the only required attribute. Multiple entity
+definitions may apply to the same entity if they have the same C<name>
+attribute. This can be useful if a base hologram creates the entity and a later
+hologram requires more specific configuration for this entity. When entity
+definitions are stacked on each other, they are not allowed to contradict
+one another. (Different lists of auxiliary groups are allowed and will be
+merged.)
+
+The entity names for users and groups are C<user:$name> and C<group:$name>,
+respectively, where C<$name> is the user name or group name.
+
+=head2 Apply operation
+
+Ensure that the entity is present on the system and conforms to the
+entity definition. C<--force> is required to overwrite properties that conflict
+between the actual state and the entity definition.
+
+When an entity is applied for the first time, the previous state of the entity
+is saved into F</var/lib/holo/users-groups/base/$entity_id.toml>. If the entity
+did not exist before, the base image will only contain the type and name. The
+base image will be restored by C<holo apply> when all definition files for this
+entity are deleted.
+
+Whenever an entity is successfully applied, its state will be recorded into
+F</var/lib/holo/users-groups/provisioned/$entity_id.toml>. This provisioned
+image will be used for diffing.
+
+=head2 Diff operation
+
+Display a diff if the current state of the entity conflicts with the entity
+definition. The right side of the diff is always a serialization of the actual
+state of the entity, as stated by F</etc/passwd> and/or F</etc/group>. For
+example:
+
+    diff --holo /var/lib/holo/users-groups/provisioned/user:wrongshell.toml /tmp/holo/users-groups/user:wrongshell/actual.toml
+    --- /var/lib/holo/users-groups/provisioned/user:wrongshell.toml
+    +++ /tmp/holo/users-groups/user:wrongshell/actual.toml
+    @@ -3,4 +3,4 @@ name = "wrongshell"
+     uid = 1005
+     home = "/home/wrongshell"
+     group = "users"
+    -shell = "/bin/zsh"
+    +shell = "/bin/bash"
+
+For entities that have been applied at least once, the left side of the diff is
+F</var/lib/holo/users-groups/provisioned/$entity_id.toml>. For entities that
+have not been applied yet, the left side of the diff is the "desired state",
+obtained by merging the entity definition with the actual state. If any
+attributes have conflicting values, the entity definition takes precedence.
+
+=head1 SEE ALSO
+
+L<holo(8)> provides the user interface for using this plugin.
+
+=head1 AUTHOR
+
+Stefan Majewsky
+
+Further documentation is available at the project homepage: http://holocm.org
+
+Please report any issues and feature requests at Github: http://github.com/holocm/holo-users-groups/issues
+
+=cut

@@ -1,0 +1,18 @@
+
+Scrubbing group:deleted (all definition files have been deleted)
+
+MOCK: groupdel deleted
+
+Scrubbing group:restored (all definition files have been deleted)
+
+MOCK: groupmod --gid 102 restored
+
+Scrubbing user:deleted (all definition files have been deleted)
+
+MOCK: userdel deleted
+
+Scrubbing user:restored (all definition files have been deleted)
+
+MOCK: usermod --uid 1001 --comment 'Restored User' --home /home/restored --gid restored --groups users --shell /usr/bin/nologin restored
+
+exit status 0

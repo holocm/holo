@@ -1,6 +1,6 @@
 pkg = github.com/holocm/holo
-bins = holo holo-files
-mans = holorc.5 holo-plugin-interface.7 holo-test.7 holo.8 holo-files.8
+bins = holo holo-files holo-users-groups
+mans = holorc.5 holo-plugin-interface.7 holo-test.7 holo.8 holo-files.8 holo-users-groups.8
 
 default: prepare-build
 default: build/holo
@@ -41,6 +41,7 @@ test/cov.cov: clean-tests $(foreach b,$(bins),build/$b.test)
 	@if s="$$(find cmd -type d -exec golint {} \; 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
 	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/holo-output.cov $(pkg)/cmd/holo/internal
 	@env HOLO_BINARY=../../../build/holo.test HOLO_TEST_COVERDIR=$(abspath test/cov) HOLO_TEST_SCRIPTPATH=../../../util bash util/holo-test holo $(sort $(wildcard test/files/??-*))
+	@env HOLO_BINARY=../../../build/holo.test HOLO_TEST_COVERDIR=$(abspath test/cov) HOLO_TEST_SCRIPTPATH=../../../util bash util/holo-test holo $(sort $(wildcard test/users-groups/??-*))
 	util/gocovcat.go test/cov/*.cov > test/cov.cov
 %.html: %.cov
 	$(GO) tool cover -html $< -o $@
@@ -55,8 +56,10 @@ install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomp
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files/provisioned"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/files"
+	install -d -m 0755 "$(DESTDIR)/usr/share/holo/users-groups"
 	install -D -m 0644 conf/holorc            "$(DESTDIR)/etc/holorc"
 	install -D -m 0644 conf/holorc.holo-files "$(DESTDIR)/etc/holorc.d/10-files"
+	install -D -m 0644 conf/holorc.holo-users-groups "$(DESTDIR)/etc/holorc.d/20-users-groups"
 	install -D -m 0755 build/holo             "$(DESTDIR)/usr/bin/holo"
 	install -D -m 0755 util/holo-test         "$(DESTDIR)/usr/bin/holo-test"
 	install -D -m 0755 util/dump-to-tree.sh   "$(DESTDIR)/usr/lib/holo/dump-to-tree.sh"
@@ -66,9 +69,11 @@ install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomp
 	install -D -m 0644 build/man/holorc.5                "$(DESTDIR)/usr/share/man/man5/holorc.5"
 	install -D -m 0644 build/man/holo.8                  "$(DESTDIR)/usr/share/man/man8/holo.8"
 	install -D -m 0644 build/man/holo-files.8            "$(DESTDIR)/usr/share/man/man8/holo-files.8"
+	install -D -m 0644 build/man/holo-users-groups.8     "$(DESTDIR)/usr/share/man/man8/holo-users-groups.8"
 	install -D -m 0644 build/man/holo-test.7             "$(DESTDIR)/usr/share/man/man7/holo-test.7"
 	install -D -m 0644 build/man/holo-plugin-interface.7 "$(DESTDIR)/usr/share/man/man7/holo-plugin-interface.7"
 	ln -sfT ../../bin/holo "$(DESTDIR)/usr/lib/holo/holo-files"
+	ln -sfT ../../bin/holo "$(DESTDIR)/usr/lib/holo/holo-users-groups"
 ifneq ($(filter arch,$(DIST_IDS)),)
 	install -D -m 0644 util/distribution-integration/alpm.hook    "$(DESTDIR)/usr/share/libalpm/hooks/01-holo-resolve-pacnew.hook"
 	install -D -m 0755 util/distribution-integration/alpm-hook.sh "$(DESTDIR)/usr/share/libalpm/scripts/holo-resolve-pacnew"

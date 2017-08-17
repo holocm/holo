@@ -1,0 +1,72 @@
+diff --holo target/tmp/holo/users-groups/user:minimal/desired.toml target/tmp/holo/users-groups/user:minimal/actual.toml
+deleted file mode 100644
+--- target/tmp/holo/users-groups/user:minimal/desired.toml
++++ /dev/null
+@@ -1,2 +0,0 @@
+-[[user]]
+-name = "minimal"
+diff --holo target/tmp/holo/users-groups/user:new/desired.toml target/tmp/holo/users-groups/user:new/actual.toml
+deleted file mode 100644
+--- target/tmp/holo/users-groups/user:new/desired.toml
++++ /dev/null
+@@ -1,8 +0,0 @@
+-[[user]]
+-name = "new"
+-comment = "New User"
+-uid = 1001
+-home = "/home/new"
+-group = "users"
+-groups = ["audio", "network", "video"]
+-shell = "/bin/zsh"
+diff --holo target/tmp/holo/users-groups/user:wronggroup/desired.toml target/tmp/holo/users-groups/user:wronggroup/actual.toml
+--- target/tmp/holo/users-groups/user:wronggroup/desired.toml
++++ target/tmp/holo/users-groups/user:wronggroup/actual.toml
+@@ -2,5 +2,5 @@
+ name = "wronggroup"
+ uid = 1005
+ home = "/home/wronggroup"
+-group = "users"
++group = "nobody"
+ shell = "/bin/zsh"
+diff --holo target/tmp/holo/users-groups/user:wronggroups/desired.toml target/tmp/holo/users-groups/user:wronggroups/actual.toml
+--- target/tmp/holo/users-groups/user:wronggroups/desired.toml
++++ target/tmp/holo/users-groups/user:wronggroups/actual.toml
+@@ -3,5 +3,5 @@ name = "wronggroups"
+ uid = 1005
+ home = "/home/wronggroups"
+ group = "users"
+-groups = ["network", "video"]
++groups = ["video"]
+ shell = "/bin/zsh"
+diff --holo target/tmp/holo/users-groups/user:wronghome/desired.toml target/tmp/holo/users-groups/user:wronghome/actual.toml
+--- target/tmp/holo/users-groups/user:wronghome/desired.toml
++++ target/tmp/holo/users-groups/user:wronghome/actual.toml
+@@ -1,6 +1,6 @@
+ [[user]]
+ name = "wronghome"
+ uid = 1004
+-home = "/home/wronghome"
++home = "/var/lib/wronghome"
+ group = "users"
+ shell = "/bin/zsh"
+diff --holo target/tmp/holo/users-groups/user:wrongshell/desired.toml target/tmp/holo/users-groups/user:wrongshell/actual.toml
+--- target/tmp/holo/users-groups/user:wrongshell/desired.toml
++++ target/tmp/holo/users-groups/user:wrongshell/actual.toml
+@@ -3,4 +3,4 @@ name = "wrongshell"
+ uid = 1005
+ home = "/home/wrongshell"
+ group = "users"
+-shell = "/bin/zsh"
++shell = "/bin/bash"
+diff --holo target/tmp/holo/users-groups/user:wronguid/desired.toml target/tmp/holo/users-groups/user:wronguid/actual.toml
+--- target/tmp/holo/users-groups/user:wronguid/desired.toml
++++ target/tmp/holo/users-groups/user:wronguid/actual.toml
+@@ -1,6 +1,6 @@
+ [[user]]
+ name = "wronguid"
+-uid = 1003
++uid = 2003
+ home = "/home/wronguid"
+ group = "users"
+ shell = "/bin/zsh"
+exit status 0

@@ -1,0 +1,16 @@
+
+Working on group:test
+  found in target/usr/share/holo/users-groups/01-initial.toml
+  found in target/usr/share/holo/users-groups/02-added.toml
+      with GID: 123
+
+MOCK: groupmod --gid 123 test
+
+Working on user:test
+  found in target/usr/share/holo/users-groups/01-initial.toml
+  found in target/usr/share/holo/users-groups/02-added.toml
+      with login shell: /bin/zsh, comment: This comment is set by Holo.
+
+MOCK: usermod --comment 'This comment is set by Holo.' --shell /bin/zsh test
+
+exit status 0

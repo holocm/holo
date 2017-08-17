@@ -1,0 +1,22 @@
+diff --holo target/tmp/holo/users-groups/group:test/desired.toml target/tmp/holo/users-groups/group:test/actual.toml
+--- target/tmp/holo/users-groups/group:test/desired.toml
++++ target/tmp/holo/users-groups/group:test/actual.toml
+@@ -1,3 +1,3 @@
+ [[group]]
+ name = "test"
+-gid = 123
++gid = 101
+diff --holo target/tmp/holo/users-groups/user:test/desired.toml target/tmp/holo/users-groups/user:test/actual.toml
+--- target/tmp/holo/users-groups/user:test/desired.toml
++++ target/tmp/holo/users-groups/user:test/actual.toml
+@@ -1,7 +1,7 @@
+ [[user]]
+ name = "test"
+-comment = "This comment is set by Holo."
++comment = "This is the comment set by another program."
+ uid = 1001
+ home = "/home/test"
+ group = "users"
+-shell = "/bin/zsh"
++shell = "/bin/bash"
+exit status 0
