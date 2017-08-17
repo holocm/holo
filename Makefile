@@ -17,7 +17,7 @@ build/man/%: doc/%.pod
 test: check # just a synonym
 check: default
 	@go test ./cmd/holo-ssh-keys/impl
-	@holo-test holo-ssh-keys $(sort $(wildcard test/??-*))
+	@holo-test holo-ssh-keys $(sort $(wildcard test/ssh-keys/??-*))
 
 install: default cmd/holo-ssh-keys/holorc
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/ssh-keys"
