@@ -56,6 +56,11 @@ install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomp
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files"
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files/base"
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files/provisioned"
+	install -d -m 0755 "$(DESTDIR)/var/lib/holo/ssh-keys"
+	install -d -m 0755 "$(DESTDIR)/var/lib/holo/users-groups"
+	install -d -m 0755 "$(DESTDIR)/var/lib/holo/users-groups/base"
+	install -d -m 0755 "$(DESTDIR)/var/lib/holo/users-groups/provisioned"
+	install -d -m 0755 "$(DESTDIR)/usr/lib/holo"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/files"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/ssh-keys"
@@ -88,5 +93,9 @@ clean-tests:
 	rm -fr -- test/*/{target,tree,{colored-,}{apply,apply-force,diff,scan}-output}
 	rm -f -- test/cov.* test/cov/*
 
-.PHONY: prepare-build test check install clean clean-tests
+vendor: FORCE
+	@# vendoring by https://github.com/holocm/golangvend
+	golangvend
+
+.PHONY: prepare-build test check install clean clean-tests vendor
 .PHONY: FORCE

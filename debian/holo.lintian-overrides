@@ -2,7 +2,14 @@
 # to give GO_LDFLAGS="-s -w -I ld,-z,relro,-z,now", but lintian still complains
 # about this.
 holo binary: hardening-no-bindnow usr/bin/holo
-holo binary: hardening-no-bindnow usr/lib/holo/holo-files
 
 # Holo will not start if the resource directory for its plugin does not exist.
 holo binary: package-contains-empty-directory usr/share/holo/files/
+holo binary: package-contains-empty-directory usr/share/holo/ssh-keys/
+holo binary: package-contains-empty-directory usr/share/holo/users-groups/
+# Also, packaging the basic state directories is recommended.
+holo binary: package-contains-empty-directory var/lib/holo/files/base/
+holo binary: package-contains-empty-directory var/lib/holo/files/provisioned/
+holo binary: package-contains-empty-directory var/lib/holo/ssh-keys/
+holo binary: package-contains-empty-directory var/lib/holo/users-groups/base/
+holo binary: package-contains-empty-directory var/lib/holo/users-groups/provisioned/
