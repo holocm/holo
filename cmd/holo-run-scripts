@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+# Copyright 2015 Stefan Majewsky <majewsky@gmx.net>
+#
+# This file is part of Holo.
+#
+# Holo is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# Holo is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# Holo. If not, see <http://www.gnu.org/licenses/>.
+#
+
+if [ "$HOLO_API_VERSION" != 3 ]; then
+    echo "!! holo-run-scripts plugin called with unknown HOLO_API_VERSION $HOLO_API_VERSION" >&2
+    exit 1
+fi
+
+case "$1" in
+    info)
+        echo MIN_API_VERSION=3
+        echo MAX_API_VERSION=3
+        ;;
+    scan)
+        # list executables in $HOLO_RESOURCE_DIR
+        set -e
+        cd "$HOLO_RESOURCE_DIR"
+        find -mindepth 1 -maxdepth 1 \( -type f -o -type l \) -executable \
+            | cut -d/ -f2 | sort | while read FILENAME; do
+            echo "ENTITY: script:$FILENAME"
+            echo "ACTION: Executing"
+            echo "found at: $HOLO_RESOURCE_DIR/$FILENAME"
+            echo "SOURCE: $HOLO_RESOURCE_DIR/$FILENAME"
+        done
+        ;;
+    diff)
+        # diffs are not applicable to scripts, so always return an empty diff
+        ;;
+    apply|force-apply)
+        ENTITY_ID="$2"
+        FILENAME="${ENTITY_ID:7}" # strip "script:" prefix
+        SCRIPT="$(readlink -f "$HOLO_RESOURCE_DIR/$FILENAME")"
+        cd "$HOLO_ROOT_DIR"
+        exec "$SCRIPT"
+        ;;
+    *)
+        echo "!! holo-run-scripts plugin called with unknown command: $@" >&2
+        exit 1
+        ;;
+esac

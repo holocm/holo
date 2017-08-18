@@ -22,35 +22,8 @@ Build-time dependencies for this repo:
 
 ## Caveats
 
-### The right package names
-
-Please set the package names identical to the repo names: `holo` for this repo,
-and `holo-foo-bar` for plugins (e.g. `holo-run-scripts`).
-This is important because [holo-build](https://github.com/holocm/holo-build)
-will autogenerate depedencies on these packages when appropriate.
-
-### Holo includes plugins for itself
-
-Holo includes several plugins for itself. Since `holo-build` will also generate
+Holo includes several plugins for itself. Since
+[holo-build](https://github.com/holocm/holo-build) will also generate
 dependencies on these, the `holo` package must have a Provides relation (or
 whatever this is called in your package format) to `holo-files`,
-`holo-ssh-keys` and `holo-users-groups`.
-
-### Verify Holo API version
-
-Holo uses a custom protocol to communicate with its plugins. This protocol
-carries a version number, and the `holo` package should announce this version
-number as a Provides relation (or whatever this is called in your package
-format). Similarly, each plugin package should depend on the right API version.
-
-Changes to the API version will be noted in the release notes. If you don't
-know which API version is current, look for `API_VERSION` in the source
-code. For example:
-
-    $ ack API_VERSION ./src/
-    src/holo/impl/plugin.go
-    101:    env = append(env, "HOLO_API_VERSION=3")
-
-    src/holo-files/main.go
-    43:             fmt.Fprintln(os.Stdout, "MIN_API_VERSION=3")
-    44:             fmt.Fprintln(os.Stdout, "MAX_API_VERSION=3")
+`holo-run-scripts`, `holo-ssh-keys` and `holo-users-groups`.

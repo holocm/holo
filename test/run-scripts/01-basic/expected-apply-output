@@ -1,0 +1,27 @@
+
+Executing script:01-successful.sh
+ found at target/usr/share/holo/run-scripts/01-successful.sh
+
+Running provisioning script 01-successful.sh
+This is output on stdout
+This is output on stderr
+Done with 01-successful.sh, exiting with code 0
+
+Executing script:02-failing.sh
+ found at target/usr/share/holo/run-scripts/02-failing.sh
+
+Running provisioning script 02-failing.sh
+This is output on stdout
+This is output on stderr
+Done with 02-failing.sh, exiting with code 1
+!! exit status 1
+
+Executing script:03-successful-nooutput.sh
+ found at target/usr/share/holo/run-scripts/03-successful-nooutput.sh
+
+Executing script:04-failing-nooutput.sh
+ found at target/usr/share/holo/run-scripts/04-failing-nooutput.sh
+
+!! exit status 1
+
+exit status 0
