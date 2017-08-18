@@ -1,10 +1,6 @@
 symlink   0777 ./etc/holorc
 ../../../holorc
 ----------------------------------------
-directory 0755 ./run/
-----------------------------------------
-directory 0755 ./tmp/
-----------------------------------------
 file      0755 ./usr/share/holo/run-scripts/01-successful.sh
 #!/bin/sh
 echo "Running provisioning script 01-successful.sh"
@@ -31,10 +27,4 @@ exit 0
 file      0755 ./usr/share/holo/run-scripts/04-failing-nooutput.sh
 #!/bin/sh
 exit 1
-----------------------------------------
-directory 0755 ./var/lib/holo/files/base/
-----------------------------------------
-directory 0755 ./var/lib/holo/files/provisioned/
-----------------------------------------
-directory 0755 ./var/lib/holo/run-scripts/
 ----------------------------------------

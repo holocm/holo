@@ -1,1 +1,1 @@
-plugin run-scripts=../../../src/holo-run-scripts
+plugin run-scripts=../../../cmd/holo-run-scripts
