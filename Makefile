@@ -1,6 +1,6 @@
 pkg = github.com/holocm/holo
 bins = holo holo-files holo-ssh-keys holo-users-groups
-mans = holorc.5 holo-plugin-interface.7 holo-test.7 holo.8 holo-files.8 holo-ssh-keys.8 holo-users-groups.8
+mans = holorc.5 holo-plugin-interface.7 holo-test.7 holo.8 holo-files.8 holo-run-scripts.8 holo-ssh-keys.8 holo-users-groups.8
 
 default: prepare-build
 default: build/holo
