@@ -1,4 +1,4 @@
-# v2.0 (TBD)
+# v2.0 (2015-08-18)
 
 Backwards-incompatible changes:
 
