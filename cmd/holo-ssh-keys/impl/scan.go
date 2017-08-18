@@ -131,7 +131,7 @@ func scanDirectory(path string, entityNameWasSeen *map[string]bool) []error {
 
 var testFingerprintsForTravis = map[string]string{
 	//generated with:
-	//    for file in test/data/key?.pub; do printf '"%s": "%s",\n' $(awk '{print$3}' $file) "$(ssh-keygen -l -f $file)"; done
+	//    for file in test/ssh-keys/data/key?.pub; do printf '"%s": "%s",\n' $(awk '{print$3}' $file) "$(ssh-keygen -l -f $file)"; done
 	"user@key0": "2048 SHA256:BPwneuiBV/tqWEUSKBdXI1uFAgwP5J5Opw17Gw7xEkY user@key0 (RSA)",
 	"user@key1": "2048 SHA256:INu+TuczyJpYs1IiMb6csykJDbJ778oJeXmG40WCCHI user@key1 (RSA)",
 	"user@key2": "2048 SHA256:Q1TXZxElJ9fjGiEKkJq91tgeCRFNSzlsCnJeoCA66s4 user@key2 (RSA)",
