@@ -187,6 +187,63 @@ This is the first release with the new split repository layout. Previous release
 
 ------------------------------------------------------------------------------------------------------------------------
 
+# Changelog for holo-run-scripts before merge in Holo 2.0
+
+The history of the `holo-run-scripts` repo can be found below the second parent of the merge commit 515e921429ff7ef35309da2eccbaea5df78d3222.
+The following tags were in that repo at the time of merging:
+
+    5e233dd51ffa11b17dbea2ae9d81b54feefcf77f v1.0
+    29b4c9ce86a98bf2b266ad989a2c69ed1ed94ed5 v1.0-beta.1
+    f5842d1e78d12bc261488d516e05bd8fcb2c0364 v1.1
+    f28b1b52e2f09a8c444db1329e010679f9aa0793 v1.2
+    c67e9b2b72a5b137e762b688ec3cd595270113da v1.3
+    1f6c0d054c1913233fbe32884fafc619c395d73b v1.3.1
+
+## v1.3.1 (2017-03-22)
+
+Changes:
+
+- Fix tests when run against Holo 1.3.
+
+## v1.3 (2016-05-25)
+
+Changes:
+
+- Create `/usr/share/holo/run-scripts` during `make install`.
+- Install holorc snippet instead of holoscript. (This change requires `holo >= 1.2`.)
+
+## v1.2 (2016-04-10)
+
+Changes:
+
+- This release is compatible with version 3 of the Holo plugin interface, as used by Holo 1.1 and beyond.
+
+## v1.1 (2015-12-18)
+
+Changes:
+
+- This release is compatible with version 3 of the Holo plugin interface, as used by Holo 1.0 and beyond.
+
+## v1.0 (2015-12-04)
+
+Changes:
+
+- Find `holo-test` in `$PATH`.
+
+## v1.0-beta.1 (2015-12-04)
+
+Changes:
+
+- This functionality is now offered as a Holo plugin for separate installation and packaging.
+
+Known issues:
+
+- If `make check` fails with "command not found: holo-test", edit the Makefile and replace `holo-test` with `/usr/lib/holo/holo-test`.
+
+This is the first release with the new split repository layout. Previous releases can be found [in the attic](https://github.com/holocm/holo-attic/releases).
+
+------------------------------------------------------------------------------------------------------------------------
+
 # Changelog for holo-ssh-keys before merge in Holo 2.0
 
 The history of the `holo-ssh-keys` repo can be found below the second parent of the merge commit e1e3d2e3d3826ddb2971f1e78b20b4dd467f3e28.
@@ -196,7 +253,6 @@ The following tags were in that repo at the time of merging:
     b4a2dc668e0a5caa3d80dc5b628acb814926330f v1.1
     453ac3fb6699e877584ba6e3027a6c88d206765f v1.2
     e6e25242795166cbcb18eedbbc7bb58250122027 v1.2.1
-
 
 ## v1.2.1 (2017-03-22)
 
