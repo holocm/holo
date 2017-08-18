@@ -16,8 +16,8 @@ test: check # just a synonym
 check: default
 	@holo-test holo-run-scripts $(sort $(wildcard test/run-scripts/??-*))
 
-install: default src/holorc
+install: default
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/run-scripts"
-	install -D -m 0755 src/holo-run-scripts         "$(DESTDIR)/usr/lib/holo/holo-run-scripts"
-	install -D -m 0644 src/holorc                   "$(DESTDIR)/etc/holorc.d/95-holo-run-scripts"
+	install -D -m 0755 cmd/holo-run-scripts         "$(DESTDIR)/usr/lib/holo/holo-run-scripts"
+	install -D -m 0644 conf/holorc.holo-run-scripts "$(DESTDIR)/etc/holorc.d/95-holo-run-scripts"
 	install -D -m 0644 build/man/holo-run-scripts.8 "$(DESTDIR)/usr/share/man/man8/holo-run-scripts.8"
