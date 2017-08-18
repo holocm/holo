@@ -14,7 +14,7 @@ build/man/%: doc/%.pod
 
 test: check # just a synonym
 check: default
-	@holo-test holo-run-scripts $(sort $(wildcard test/??-*))
+	@holo-test holo-run-scripts $(sort $(wildcard test/run-scripts/??-*))
 
 install: default src/holorc
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/run-scripts"
