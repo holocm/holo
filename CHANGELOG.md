@@ -1,4 +1,11 @@
-# v2.0 (2015-08-18)
+# v2.0.1 (TBD)
+
+Bugfixes:
+
+- Fix a bug where, when applying a symlink over a file, `holo apply` would not stay silent if the symlink has already
+  been provisioned.
+
+# v2.0 (2017-08-18)
 
 Backwards-incompatible changes:
 

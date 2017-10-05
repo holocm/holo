@@ -101,8 +101,14 @@ func (resource Resource) ApplyTo(entityBuffer common.FileBuffer) (common.FileBuf
 		if err != nil {
 			return common.FileBuffer{}, err
 		}
-		entityBuffer.Mode = (entityBuffer.Mode &^ os.ModeType) | (resourceBuffer.Mode & os.ModeType)
 		entityBuffer.Contents = resourceBuffer.Contents
+		entityBuffer.Mode = (entityBuffer.Mode &^ os.ModeType) | (resourceBuffer.Mode & os.ModeType)
+
+		//since Linux disregards mode flags on symlinks and always reports 0777 perms,
+		//normalize the mode thusly to make FileBuffer.EqualTo() work reliably
+		if entityBuffer.Mode&os.ModeSymlink != 0 {
+			entityBuffer.Mode = os.ModeSymlink | os.ModePerm
+		}
 		return entityBuffer, nil
 	}
 
