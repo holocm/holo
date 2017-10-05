@@ -1,0 +1,18 @@
+symlink   0777 ./etc/holorc
+../../../holorc
+----------------------------------------
+symlink   0777 ./etc/link.conf
+/desired/path
+----------------------------------------
+file      0644 ./etc/os-release
+ID=unittest
+----------------------------------------
+symlink   0777 ./usr/share/holo/files/01-first/etc/link.conf
+/desired/path
+----------------------------------------
+file      0644 ./var/lib/holo/files/base/etc/link.conf
+original file
+----------------------------------------
+symlink   0777 ./var/lib/holo/files/provisioned/etc/link.conf
+/desired/path
+----------------------------------------

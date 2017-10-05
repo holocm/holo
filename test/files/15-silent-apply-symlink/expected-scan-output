@@ -1,0 +1,6 @@
+
+file:/etc/link.conf
+    store at target/var/lib/holo/files/base/etc/link.conf
+       apply target/usr/share/holo/files/01-first/etc/link.conf
+
+exit status 0
