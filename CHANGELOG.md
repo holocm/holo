@@ -1,3 +1,10 @@
+# v2.0.2 (TBD)
+
+Bugfixes:
+
+- Fix a bug where most invocations of `holo` would create empty directories called `base` and `provisioned` in the
+  current working directory.
+
 # v2.0.1 (2017-10-05)
 
 Bugfixes:
