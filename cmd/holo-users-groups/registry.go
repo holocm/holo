@@ -44,11 +44,13 @@ func init() {
 	BaseImageDir = ImageDir(filepath.Join(stateDir, "base"))
 	ProvisionedImageDir = ImageDir(filepath.Join(stateDir, "provisioned"))
 
-	for _, dir := range []string{string(BaseImageDir), string(ProvisionedImageDir)} {
-		err := os.MkdirAll(dir, 0755)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-			os.Exit(1)
+	if stateDir != "" {
+		for _, dir := range []string{string(BaseImageDir), string(ProvisionedImageDir)} {
+			err := os.MkdirAll(dir, 0755)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+				os.Exit(1)
+			}
 		}
 	}
 }

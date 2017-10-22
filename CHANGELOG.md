@@ -1,3 +1,7 @@
+# v2.0.3 (TBD)
+
+This contains the actual fix for the bugfix that was supposed to be fixed in the previous release.
+
 # v2.0.2 (2017-10-21)
 
 Bugfixes:

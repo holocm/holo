@@ -61,25 +61,24 @@ var impl Impl
 //Implementation returns the most suitable platform implementation for the
 //current system.
 func Implementation() Impl {
-	return impl
-}
-
-func init() {
-	//which distribution are we running on?
-	isDist := GetCurrentDistribution()
-	switch {
-	case isDist["arch"]:
-		impl = archImpl{}
-	case isDist["debian"]:
-		impl = dpkgImpl{}
-	case isDist["fedora"], isDist["suse"]:
-		impl = rpmImpl{}
-	case isDist["unittest"]:
-		impl = genericImpl{}
-	default:
-		ReportUnsupportedDistribution(isDist)
-		impl = genericImpl{}
+	if impl == nil {
+		//which distribution are we running on?
+		isDist := GetCurrentDistribution()
+		switch {
+		case isDist["arch"]:
+			impl = archImpl{}
+		case isDist["debian"]:
+			impl = dpkgImpl{}
+		case isDist["fedora"], isDist["suse"]:
+			impl = rpmImpl{}
+		case isDist["unittest"]:
+			impl = genericImpl{}
+		default:
+			ReportUnsupportedDistribution(isDist)
+			impl = genericImpl{}
+		}
 	}
+	return impl
 }
 
 //GetCurrentDistribution returns a set of distribution IDs, drawing on the ID=
