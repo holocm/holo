@@ -70,9 +70,7 @@ func NewPluginWithExecutablePath(id string, executablePath string) (*Plugin, err
 
 	//load metadata with the "info" command
 	var buf bytes.Buffer
-	cmd := p.Command([]string{"info"}, &buf, Stderr, nil)
-	p.setupEnvForCommand(cmd)
-	err = cmd.Run()
+	err = p.Command([]string{"info"}, &buf, Stderr, nil).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -128,18 +126,6 @@ func (p *Plugin) StateDirectory() string {
 	return filepath.Join(RootDirectory(), "var/lib/holo/"+p.id)
 }
 
-func (p *Plugin) setupEnvForCommand(cmd *exec.Cmd) {
-	env := os.Environ()
-	env = append(env, "HOLO_API_VERSION="+strconv.Itoa(PluginAPIVersion))
-	env = append(env, "HOLO_CACHE_DIR="+normalizePath(p.CacheDirectory()))
-	env = append(env, "HOLO_RESOURCE_DIR="+normalizePath(p.ResourceDirectory()))
-	env = append(env, "HOLO_STATE_DIR="+normalizePath(p.StateDirectory()))
-	if os.Getenv("HOLO_ROOT_DIR") == "" {
-		env = append(env, "HOLO_ROOT_DIR="+normalizePath(RootDirectory()))
-	}
-	cmd.Env = env
-}
-
 //Command returns an os.exec.Command structure that is set up to run the plugin
 //with the given arguments, producing output on the given output and error
 //channels. For commands that use file descriptor 3 as an extra output channel,
@@ -160,7 +146,17 @@ func (p *Plugin) Command(arguments []string, stdout io.Writer, stderr io.Writer,
 		cmd.ExtraFiles = []*os.File{msg}
 	}
 
-	p.setupEnvForCommand(cmd)
+	//setup environment
+	env := os.Environ()
+	env = append(env, "HOLO_API_VERSION="+strconv.Itoa(PluginAPIVersion))
+	env = append(env, "HOLO_CACHE_DIR="+normalizePath(p.CacheDirectory()))
+	env = append(env, "HOLO_RESOURCE_DIR="+normalizePath(p.ResourceDirectory()))
+	env = append(env, "HOLO_STATE_DIR="+normalizePath(p.StateDirectory()))
+	if os.Getenv("HOLO_ROOT_DIR") == "" {
+		env = append(env, "HOLO_ROOT_DIR="+normalizePath(RootDirectory()))
+	}
+	cmd.Env = env
+
 	return cmd
 }
 
