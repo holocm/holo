@@ -1,4 +1,4 @@
-# v2.0.3 (TBD)
+# v2.0.3 (2017-10-22)
 
 This contains the actual fix for the bugfix that was supposed to be fixed in the previous release.
 
