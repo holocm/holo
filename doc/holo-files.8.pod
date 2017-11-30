@@ -77,6 +77,7 @@ application package next to the target file, in paths such as
     $target.rpmnew          # for RPM    (Fedora, Mageia, openSUSE etc.)
     $target.dpkg-dist       # for dpkg   (Debian, Ubuntu etc.)
     $target.pacnew          # for pacman (Arch Linux etc.)
+    $target.apk-new         # for APK    (Alpine Linux etc.)
 
 When this happens, the next C<holo apply> run will detect this file and update
 its target base with this file:
@@ -101,7 +102,7 @@ automatically be picked up, as long as C<holo apply> is run after the system upd
 When detecting these files, to know which suffixes to look for, holo-files
 inspects C<ID> and C<ID_LIKE> in L<os-release(5)> to determine which family the
 operating system belongs to, and thus which package manager is used.  It
-currently recognizes C<arch>, C<debian>, C<fedora> and C<suse>.
+currently recognizes C<alpine>, C<arch>, C<debian>, C<fedora> and C<suse>.
 
 =head2 Handling package removal
 

@@ -1,0 +1,9 @@
+
+file:/etc/repofile-deleted-with-apknew.conf (all repository files were deleted)
+     restore target/var/lib/holo/files/base/etc/repofile-deleted-with-apknew.conf
+
+file:/etc/targetfile-with-apknew.conf
+    store at target/var/lib/holo/files/base/etc/targetfile-with-apknew.conf
+    passthru target/usr/share/holo/files/01-first/etc/targetfile-with-apknew.conf.holoscript
+
+exit status 0

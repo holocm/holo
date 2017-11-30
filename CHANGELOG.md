@@ -1,3 +1,10 @@
+# v2.1 (TBD)
+
+Changes:
+
+- `holo-files` now recognizes Alpine Linux and derivatives and handles `.apk-new` files correctly on these
+  distributions.
+
 # v2.0.3 (2017-10-22)
 
 This contains the actual fix for the bugfix that was supposed to be fixed in the previous release.

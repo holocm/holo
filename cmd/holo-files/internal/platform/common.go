@@ -65,6 +65,8 @@ func Implementation() Impl {
 		//which distribution are we running on?
 		isDist := GetCurrentDistribution()
 		switch {
+		case isDist["alpine"]:
+			impl = apkImpl{}
 		case isDist["arch"]:
 			impl = archImpl{}
 		case isDist["debian"]:

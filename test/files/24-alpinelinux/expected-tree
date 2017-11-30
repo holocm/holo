@@ -1,0 +1,33 @@
+symlink   0777 ./etc/holorc
+../../../holorc
+----------------------------------------
+file      0644 ./etc/os-release
+ID=alpine
+----------------------------------------
+file      0644 ./etc/repofile-deleted-with-apknew.conf
+ggg
+hhh
+jjj
+----------------------------------------
+file      0644 ./etc/targetfile-with-apknew.conf
+d
+e
+f
+----------------------------------------
+directory 0755 ./run/
+----------------------------------------
+directory 0755 ./tmp/
+----------------------------------------
+symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-apknew.conf.holoscript
+/usr/bin/sort
+----------------------------------------
+file      0644 ./var/lib/holo/files/base/etc/targetfile-with-apknew.conf
+d
+f
+e
+----------------------------------------
+file      0644 ./var/lib/holo/files/provisioned/etc/targetfile-with-apknew.conf
+d
+e
+f
+----------------------------------------
