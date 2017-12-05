@@ -122,13 +122,13 @@ file      0644 ./var/lib/holo/users-groups/base/user:existing.toml
 [[user]]
 name = "existing"
 ----------------------------------------
-file      0644 ./var/lib/holo/users-groups/base/user:wronggroups.toml
-[[user]]
-name = "wronggroups"
-----------------------------------------
 file      0644 ./var/lib/holo/users-groups/base/user:wronggroup.toml
 [[user]]
 name = "wronggroup"
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/base/user:wronggroups.toml
+[[user]]
+name = "wronggroups"
 ----------------------------------------
 file      0644 ./var/lib/holo/users-groups/base/user:wronghome.toml
 [[user]]
@@ -152,6 +152,14 @@ group = "users"
 groups = ["audio", "network", "video"]
 shell = "/bin/zsh"
 ----------------------------------------
+file      0644 ./var/lib/holo/users-groups/provisioned/user:wronggroup.toml
+[[user]]
+name = "wronggroup"
+uid = 1005
+home = "/home/wronggroup"
+group = "users"
+shell = "/bin/zsh"
+----------------------------------------
 file      0644 ./var/lib/holo/users-groups/provisioned/user:wronggroups.toml
 [[user]]
 name = "wronggroups"
@@ -159,14 +167,6 @@ uid = 1005
 home = "/home/wronggroups"
 group = "users"
 groups = ["network"]
-shell = "/bin/zsh"
-----------------------------------------
-file      0644 ./var/lib/holo/users-groups/provisioned/user:wronggroup.toml
-[[user]]
-name = "wronggroup"
-uid = 1005
-home = "/home/wronggroup"
-group = "users"
 shell = "/bin/zsh"
 ----------------------------------------
 file      0644 ./var/lib/holo/users-groups/provisioned/user:wronghome.toml
