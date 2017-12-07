@@ -15,6 +15,12 @@ Working on group:test
     -gid = 123
     +gid = 101
 
+Working on user:root
+  found in target/usr/share/holo/users-groups/02-added.toml
+      with groups: tty
+
+MOCK: usermod --groups adm,bin,daemon,disk,root,sys,tty,wheel root
+
 Working on user:test
   found in target/usr/share/holo/users-groups/01-initial.toml
   found in target/usr/share/holo/users-groups/02-added.toml

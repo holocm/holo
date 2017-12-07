@@ -4,6 +4,10 @@ group:test
     found in target/usr/share/holo/users-groups/02-added.toml
         with GID: 123
 
+user:root
+    found in target/usr/share/holo/users-groups/02-added.toml
+        with groups: tty
+
 user:test
     found in target/usr/share/holo/users-groups/01-initial.toml
     found in target/usr/share/holo/users-groups/02-added.toml

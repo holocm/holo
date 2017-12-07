@@ -9,3 +9,6 @@ This test simulates the following scenario:
 
 The next `holo apply` should complain about being able to apply these changes
 with `--force` only.
+
+Also, a group (`tty`) is added to a pre-existing user (`root`), and we check
+that the base image is initialized from the pre-existing state properly.

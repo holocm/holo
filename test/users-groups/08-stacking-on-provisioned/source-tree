@@ -44,6 +44,10 @@ gid  = 123
 name    = "test"
 comment = "This comment is set by Holo."
 shell   = "/bin/zsh"
+
+[[user]]
+name   = "root"
+groups = ["tty"]
 ----------------------------------------
 file      0644 ./var/lib/holo/users-groups/base/group:test.toml
 [[group]]

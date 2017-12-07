@@ -48,6 +48,10 @@ gid  = 123
 name    = "test"
 comment = "This comment is set by Holo."
 shell   = "/bin/zsh"
+
+[[user]]
+name   = "root"
+groups = ["tty"]
 ----------------------------------------
 directory 0755 ./var/lib/holo/files/base/
 ----------------------------------------
@@ -57,6 +61,16 @@ file      0644 ./var/lib/holo/users-groups/base/group:test.toml
 [[group]]
 name = "test"
 ----------------------------------------
+file      0644 ./var/lib/holo/users-groups/base/user:root.toml
+[[user]]
+name = "root"
+comment = "root"
+uid = 0
+home = "/root"
+group = "root"
+groups = ["adm", "bin", "daemon", "disk", "root", "sys", "wheel"]
+shell = "/bin/bash"
+----------------------------------------
 file      0644 ./var/lib/holo/users-groups/base/user:test.toml
 [[user]]
 name = "test"
@@ -65,6 +79,16 @@ file      0644 ./var/lib/holo/users-groups/provisioned/group:test.toml
 [[group]]
 name = "test"
 gid = 123
+----------------------------------------
+file      0644 ./var/lib/holo/users-groups/provisioned/user:root.toml
+[[user]]
+name = "root"
+comment = "root"
+uid = 0
+home = "/root"
+group = "root"
+groups = ["adm", "bin", "daemon", "disk", "root", "sys", "tty", "wheel"]
+shell = "/bin/bash"
 ----------------------------------------
 file      0644 ./var/lib/holo/users-groups/provisioned/user:test.toml
 [[user]]

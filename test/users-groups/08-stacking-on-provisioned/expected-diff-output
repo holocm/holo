@@ -6,6 +6,16 @@ diff --holo target/tmp/holo/users-groups/group:test/desired.toml target/tmp/holo
  name = "test"
 -gid = 123
 +gid = 101
+diff --holo target/tmp/holo/users-groups/user:root/desired.toml target/tmp/holo/users-groups/user:root/actual.toml
+--- target/tmp/holo/users-groups/user:root/desired.toml
++++ target/tmp/holo/users-groups/user:root/actual.toml
+@@ -4,5 +4,5 @@ comment = "root"
+ uid = 0
+ home = "/root"
+ group = "root"
+-groups = ["adm", "bin", "daemon", "disk", "root", "sys", "tty", "wheel"]
++groups = ["adm", "bin", "daemon", "disk", "root", "sys", "wheel"]
+ shell = "/bin/bash"
 diff --holo target/tmp/holo/users-groups/user:test/desired.toml target/tmp/holo/users-groups/user:test/actual.toml
 --- target/tmp/holo/users-groups/user:test/desired.toml
 +++ target/tmp/holo/users-groups/user:test/actual.toml
