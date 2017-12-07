@@ -120,6 +120,7 @@ group   = "users"
 [[user]]
 name    = "wronggroups"
 groups  = ["network"]
+skipBaseGroups = true
 
 [[user]]
 name    = "wrongshell"

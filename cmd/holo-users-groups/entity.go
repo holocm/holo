@@ -1,6 +1,6 @@
 /*******************************************************************************
 *
-* Copyright 2015-2016 Stefan Majewsky <majewsky@gmx.net>
+* Copyright 2015-2017 Stefan Majewsky <majewsky@gmx.net>
 *
 * This file is part of Holo.
 *
@@ -110,9 +110,11 @@ func (e *Entity) Apply(withForce bool) error {
 	//case, conflicts worthy of "--force" are detected by comparing that to the
 	//definition)
 	conflictCheckImage := e.Definition
+	conflictCheckMethod := MergeWhereCompatible
 	provisionedState, err := ProvisionedImageDir.LoadImageFor(e.Definition)
 	if err == nil {
-		conflictCheckImage, _ = conflictCheckImage.Merge(provisionedState, MergeEmptyOnly)
+		conflictCheckImage, _ = conflictCheckImage.Merge(provisionedState, MergeEmptyOnly, SkipDisabled)
+		conflictCheckMethod = MergeEmptyOnly
 	} else {
 		if os.IsNotExist(err) {
 			provisionedState = nil
@@ -132,7 +134,7 @@ func (e *Entity) Apply(withForce bool) error {
 		//   actual state and provisioned state)
 		//3. the entity has *not* been provisioned yet and the definition conflicts
 		//   with the current state (i.e. the base image)
-		_, conflicts := actualState.Merge(conflictCheckImage, MergeEmptyOnly)
+		_, conflicts := actualState.Merge(conflictCheckImage, conflictCheckMethod, SkipEnabled)
 		if len(conflicts) > 0 {
 			PrintCommandMessage("requires --force to overwrite\n")
 			return nil
@@ -140,14 +142,14 @@ func (e *Entity) Apply(withForce bool) error {
 	}
 
 	//desired state is obtained by merging the definition with the base image
-	desiredState, _ := e.Definition.Merge(baseImage, MergeWhereCompatible)
+	desiredState, _ := e.Definition.Merge(baseImage, MergeWhereCompatible, SkipEnabled)
 	//but make sure that we don't see a difference just because the definition
 	//does not define a particular attribute
-	desiredState, _ = desiredState.Merge(actualState, MergeEmptyOnly)
+	desiredState, _ = desiredState.Merge(actualState, MergeEmptyOnly, SkipDisabled)
 	//but if no one knows what to do, re-use the provisioned state (this is
 	//important when restoring an entity that was deleted by someone else)
 	if provisionedState != nil {
-		desiredState, _ = desiredState.Merge(provisionedState, MergeEmptyOnly)
+		desiredState, _ = desiredState.Merge(provisionedState, MergeEmptyOnly, SkipDisabled)
 	}
 
 	//check if changes are necessary
@@ -217,7 +219,7 @@ func (e *Entity) PrepareDiff() error {
 	if baseState == nil {
 		baseState = actualState
 	}
-	desiredState, _ := e.Definition.Merge(baseState, MergeWhereCompatible)
+	desiredState, _ := e.Definition.Merge(baseState, MergeWhereCompatible, SkipDisabled)
 	desiredPath := filepath.Join(tempDir, "desired.toml")
 	err = SerializeDefinitionIntoFile(desiredState, desiredPath)
 	if err != nil {

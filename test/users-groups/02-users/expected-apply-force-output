@@ -18,9 +18,9 @@ MOCK: usermod --gid users wronggroup
 
 Working on user:wronggroups
   found in target/usr/share/holo/users-groups/01-users.toml
-      with groups: network
+      with exact groups: network
 
-MOCK: usermod --groups network,video wronggroups
+MOCK: usermod --groups network wronggroups
 
 Working on user:wronghome
   found in target/usr/share/holo/users-groups/01-users.toml

@@ -124,6 +124,7 @@ group   = "users"
 [[user]]
 name    = "wronggroups"
 groups  = ["network"]
+skipBaseGroups = true
 
 [[user]]
 name    = "wrongshell"
@@ -231,7 +232,7 @@ name = "wronggroups"
 uid = 1005
 home = "/home/wronggroups"
 group = "users"
-groups = ["network", "video"]
+groups = ["network"]
 shell = "/bin/zsh"
 ----------------------------------------
 file      0644 ./var/lib/holo/users-groups/provisioned/user:wronghome.toml

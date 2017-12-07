@@ -42,7 +42,7 @@ func (e MergeError) Error() string {
 }
 
 //Merge implements the EntityDefinition interface.
-func (g *GroupDefinition) Merge(other EntityDefinition, method MergeMethod) (EntityDefinition, []error) {
+func (g *GroupDefinition) Merge(other EntityDefinition, mMethod MergeMethod, sMethod SkipMethod) (EntityDefinition, []error) {
 	//start by cloning `other`
 	if other.EntityID() != g.EntityID() {
 		panic("tried to merge entities with different IDs")
@@ -59,7 +59,7 @@ func (g *GroupDefinition) Merge(other EntityDefinition, method MergeMethod) (Ent
 	}
 
 	//with MergeNumericIDOnly, only the GID may be merged
-	if method == MergeNumericIDOnly {
+	if mMethod == MergeNumericIDOnly {
 		//we need all the other attributes from `u`, so it's easier to just take another copy
 		theResult := *g
 		theResult.GID = result.GID
@@ -73,7 +73,7 @@ func (g *GroupDefinition) Merge(other EntityDefinition, method MergeMethod) (Ent
 }
 
 //Merge implements the EntityDefinition interface.
-func (u *UserDefinition) Merge(other EntityDefinition, method MergeMethod) (EntityDefinition, []error) {
+func (u *UserDefinition) Merge(other EntityDefinition, mMethod MergeMethod, sMethod SkipMethod) (EntityDefinition, []error) {
 	//start by cloning `other`
 	if other.EntityID() != u.EntityID() {
 		panic("tried to merge entities with different IDs")
@@ -91,7 +91,7 @@ func (u *UserDefinition) Merge(other EntityDefinition, method MergeMethod) (Enti
 	}
 
 	//with MergeNumericIDOnly, only the UID may be merged
-	if method == MergeNumericIDOnly {
+	if mMethod == MergeNumericIDOnly {
 		//we need all the other attributes from `u`, so it's easier to just take another copy
 		theResult := *u
 		theResult.UID = result.UID
@@ -127,7 +127,7 @@ func (u *UserDefinition) Merge(other EntityDefinition, method MergeMethod) (Enti
 
 	//auxiliary groups can always be added, but only under the
 	//MergeWhereCompatible method
-	if method == MergeEmptyOnly {
+	if mMethod == MergeEmptyOnly {
 		if len(result.Groups) > 0 && len(u.Groups) > 0 {
 			sort.Strings(result.Groups)
 			sort.Strings(u.Groups)
@@ -141,8 +141,15 @@ func (u *UserDefinition) Merge(other EntityDefinition, method MergeMethod) (Enti
 			result.Groups = u.Groups
 		}
 	} else {
-		for _, group := range u.Groups {
-			result.Groups, _ = appendIfMissing(result.Groups, group)
+		//auxiliary groups will not be merged if we are respecting a SkipBaseGroups flag
+		if sMethod == SkipEnabled && u.SkipBaseGroups {
+			result.Groups = u.Groups
+		} else if sMethod == SkipEnabled && result.SkipBaseGroups {
+			//do not change result.Groups
+		} else {
+			for _, group := range u.Groups {
+				result.Groups, _ = appendIfMissing(result.Groups, group)
+			}
 		}
 	}
 	//make sure that the groups list is always sorted (esp. for reproducible test output)

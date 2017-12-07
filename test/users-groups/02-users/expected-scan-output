@@ -16,7 +16,7 @@ user:wronggroup
 
 user:wronggroups
     found in target/usr/share/holo/users-groups/01-users.toml
-        with groups: network
+        with exact groups: network
 
 user:wronghome
     found in target/usr/share/holo/users-groups/01-users.toml

@@ -70,7 +70,7 @@ func StoreAppliedState(def EntityDefinition, previous EntityDefinition) {
 
 		//merge attributes from previous actual state that were not specified
 		//in the newly applied state
-		def, _ = def.Merge(previous, MergeEmptyOnly)
+		def, _ = def.Merge(previous, MergeEmptyOnly, SkipDisabled)
 
 		appliedStates[def.EntityID()] = def
 	}

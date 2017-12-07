@@ -43,6 +43,17 @@ const (
 	MergeNumericIDOnly
 )
 
+//SkipMethod is the third argument for EntityDefinition.Merge().
+type SkipMethod uint
+
+const (
+	//SkipDisabled does not skip any fields during merging.
+	SkipDisabled SkipMethod = iota
+	//SkipEnabled skips fields where one of the definitions instructs us to do so
+	//(causing the other side's attribute to win).
+	SkipEnabled
+)
+
 //EntityDefinition contains data from a definition file that describes an entity
 //(a user account or group). Definitions can also be obtained by scanning the
 //user/group databases.
@@ -76,7 +87,7 @@ type EntityDefinition interface {
 	//
 	//The merge `method` tells which attributes may be merged. Possible values
 	//are MergeWhereCompatible, MergeEmptyOnly and MergeNumericIDOnly.
-	Merge(other EntityDefinition, method MergeMethod) (EntityDefinition, []error)
+	Merge(other EntityDefinition, mMethod MergeMethod, sMethod SkipMethod) (EntityDefinition, []error)
 	//Apply provisions this entity. The argument indicates the currently
 	//provisioned state. The argument's concrete type must match the callee.
 	Apply(provisioned EntityDefinition) error
@@ -116,14 +127,15 @@ type GroupDefinition struct {
 
 //UserDefinition represents a UNIX user account (as registered in /etc/passwd).
 type UserDefinition struct {
-	Name    string   `toml:"name"`              //the user name (the first field in /etc/passwd)
-	Comment string   `toml:"comment,omitempty"` //the full name (sometimes also called "comment"; the fifth field in /etc/passwd)
-	UID     *int     `toml:"uid,omitzero"`      //the user ID (the third field in /etc/passwd), or nil if no specific UID is enforced
-	System  bool     `toml:"system,omitempty"`  //whether the group is a system group (this influences the GID selection if gid = 0)
-	Home    string   `toml:"home,omitempty"`    //path to the user's home directory (or empty to use the default)
-	Group   string   `toml:"group,omitempty"`   //the name of the user's initial login group (or empty to use the default)
-	Groups  []string `toml:"groups,omitempty"`  //the names of supplementary groups which the user is also a member of
-	Shell   string   `toml:"shell,omitempty"`   //path to the user's login shell (or empty to use the default)
+	Name           string   `toml:"name"`                     //the user name (the first field in /etc/passwd)
+	Comment        string   `toml:"comment,omitempty"`        //the full name (sometimes also called "comment"; the fifth field in /etc/passwd)
+	UID            *int     `toml:"uid,omitzero"`             //the user ID (the third field in /etc/passwd), or nil if no specific UID is enforced
+	System         bool     `toml:"system,omitempty"`         //whether the group is a system group (this influences the GID selection if gid = 0)
+	Home           string   `toml:"home,omitempty"`           //path to the user's home directory (or empty to use the default)
+	Group          string   `toml:"group,omitempty"`          //the name of the user's initial login group (or empty to use the default)
+	Groups         []string `toml:"groups,omitempty"`         //the names of supplementary groups which the user is also a member of
+	Shell          string   `toml:"shell,omitempty"`          //path to the user's login shell (or empty to use the default)
+	SkipBaseGroups bool     `toml:"skipBaseGroups,omitempty"` //whether to consider supplementary groups in the base image during merging
 }
 
 //TypeName implements the EntityDefinition interface.
@@ -172,7 +184,11 @@ func (u *UserDefinition) Attributes() string {
 		attrs = append(attrs, "login group: "+u.Group)
 	}
 	if len(u.Groups) > 0 {
-		attrs = append(attrs, "groups: "+strings.Join(u.Groups, ","))
+		if u.SkipBaseGroups {
+			attrs = append(attrs, "exact groups: "+strings.Join(u.Groups, ","))
+		} else {
+			attrs = append(attrs, "groups: "+strings.Join(u.Groups, ","))
+		}
 	}
 	if u.Shell != "" {
 		attrs = append(attrs, "login shell: "+u.Shell)
@@ -194,9 +210,12 @@ func (g *GroupDefinition) WithSerializableState(callback func(EntityDefinition))
 
 //WithSerializableState implements the EntityDefinition interface.
 func (u *UserDefinition) WithSerializableState(callback func(EntityDefinition)) {
-	//we don't want to serialize the `system` attribute in diffs etc.
+	//we don't want to serialize the `system` and `skipBaseGroups` attributes in diffs etc.
 	system := u.System
+	skipBaseGroups := u.SkipBaseGroups
 	u.System = false
+	u.SkipBaseGroups = false
 	callback(u)
 	u.System = system
+	u.SkipBaseGroups = skipBaseGroups
 }

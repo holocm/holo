@@ -29,20 +29,9 @@ Working on user:wronggroup
 
 Working on user:wronggroups
   found in target/usr/share/holo/users-groups/01-users.toml
-      with groups: network
+      with exact groups: network
 
-!! Entity has been modified by user (use --force to overwrite)
-
-    diff --holo target/tmp/holo/users-groups/user:wronggroups/desired.toml target/tmp/holo/users-groups/user:wronggroups/actual.toml
-    --- target/tmp/holo/users-groups/user:wronggroups/desired.toml
-    +++ target/tmp/holo/users-groups/user:wronggroups/actual.toml
-    @@ -3,5 +3,5 @@ name = "wronggroups"
-     uid = 1005
-     home = "/home/wronggroups"
-     group = "users"
-    -groups = ["network", "video"]
-    +groups = ["video"]
-     shell = "/bin/zsh"
+MOCK: usermod --groups network wronggroups
 
 Working on user:wronghome
   found in target/usr/share/holo/users-groups/01-users.toml

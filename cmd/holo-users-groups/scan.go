@@ -167,7 +167,7 @@ func readDefinitionFile(definitionPath string, entities *map[string]*Entity) err
 		entity, exists := (*entities)[id]
 		if exists {
 			//stacked definition for this entity -> merge into existing entity
-			mergedDef, mergeErrors := def.Merge(entity.Definition, MergeWhereCompatible)
+			mergedDef, mergeErrors := def.Merge(entity.Definition, MergeWhereCompatible, SkipDisabled)
 			if len(mergeErrors) == 0 {
 				entity.Definition = mergedDef
 			} else {

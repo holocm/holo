@@ -1,3 +1,13 @@
+# v2.2 (TBD)
+
+Changes:
+
+- User definitions now have a new flag `SkipBaseGroups` which, if set, causes `holo-build` to ignore existing auxiliary
+  groups that this user is in before the first `holo apply` of this user.
+- Fix a bug where user definitions previously behaved as if `SkipBaseGroups = true`, even if the intention always was to
+  behave like `SkipBaseGroups = false` (which is the default).
+- Fix a bug where `user:root` could not be provisioned to because the user ID 0 was misinterpreted as "no UID".
+
 # v2.1 (2017-11-30)
 
 Changes:

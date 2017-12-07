@@ -56,6 +56,32 @@ Whenever an entity is successfully applied, its state will be recorded into
 F</var/lib/holo/users-groups/provisioned/$entity_id.toml>. This provisioned
 image will be used for diffing.
 
+=head3 Merging of attributes
+
+The desired state of the entity is computed by merging each attribute of the
+entity definition into the base image at
+F</var/lib/holo/users-groups/base/$entity_id.toml>. For most attributes, merging
+succeeds if the attribute is set by only one side or the other (or by neither
+side), or if the attribute is set to the same value on both sides.
+
+As an exception, the C<groups> field (the list of auxiliary groups) of a user
+definition is merged by compiling a list of all groups mentioned on either side.
+For example, if C</etc/passwd> contains a user C<http> by default, which is part
+of the auxiliary group C<grp1>, and you then add an entity definition like so:
+
+    [[user]]
+    name = "http"
+    groups = ["grp2"]
+
+Then after C<holo apply user:http>, the user will be part of both C<grp1>
+and C<grp2>. If you want to overwrite the set of auxiliary groups from the
+base image, set the C<skipBaseGroups> flag like so:
+
+    [[user]]
+    name = "http"
+    groups = ["grp2"]
+    skipBaseGroups = true
+
 =head2 Diff operation
 
 Display a diff if the current state of the entity conflicts with the entity
