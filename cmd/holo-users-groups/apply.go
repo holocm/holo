@@ -69,8 +69,8 @@ func (u *UserDefinition) Apply(theProvisioned EntityDefinition) error {
 	if !isProvisioned && u.System {
 		args = append(args, "--system")
 	}
-	if u.UID > 0 && u.UID != provisioned.UID {
-		args = append(args, "--uid", strconv.Itoa(u.UID))
+	if u.UID != nil && (provisioned.UID == nil || *u.UID != *provisioned.UID) {
+		args = append(args, "--uid", strconv.Itoa(*u.UID))
 	}
 	if u.Comment != "" && u.Comment != provisioned.Comment {
 		args = append(args, "--comment", u.Comment)

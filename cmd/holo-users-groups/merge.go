@@ -82,11 +82,12 @@ func (u *UserDefinition) Merge(other EntityDefinition, method MergeMethod) (Enti
 
 	//merge attributes
 	var e []error
-	if u.UID != 0 {
-		if result.UID != 0 && result.UID != u.UID {
-			e = append(e, &MergeError{"UID", u.EntityID(), result.UID, u.UID})
+	if u.UID != nil {
+		if result.UID != nil && *result.UID != *u.UID {
+			e = append(e, &MergeError{"UID", u.EntityID(), *result.UID, *u.UID})
 		}
-		result.UID = u.UID
+		value := *u.UID
+		result.UID = &value
 	}
 
 	//with MergeNumericIDOnly, only the UID may be merged

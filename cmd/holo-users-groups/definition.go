@@ -118,7 +118,7 @@ type GroupDefinition struct {
 type UserDefinition struct {
 	Name    string   `toml:"name"`              //the user name (the first field in /etc/passwd)
 	Comment string   `toml:"comment,omitempty"` //the full name (sometimes also called "comment"; the fifth field in /etc/passwd)
-	UID     int      `toml:"uid,omitzero"`      //the user ID (the third field in /etc/passwd), or 0 if no specific UID is enforced
+	UID     *int     `toml:"uid,omitzero"`      //the user ID (the third field in /etc/passwd), or nil if no specific UID is enforced
 	System  bool     `toml:"system,omitempty"`  //whether the group is a system group (this influences the GID selection if gid = 0)
 	Home    string   `toml:"home,omitempty"`    //path to the user's home directory (or empty to use the default)
 	Group   string   `toml:"group,omitempty"`   //the name of the user's initial login group (or empty to use the default)
@@ -142,7 +142,7 @@ func (u *UserDefinition) EntityID() string { return "user:" + u.Name }
 func (g *GroupDefinition) IsProvisioned() bool { return g.GID > 0 }
 
 //IsProvisioned implements the EntityDefinition interface.
-func (u *UserDefinition) IsProvisioned() bool { return u.UID > 0 }
+func (u *UserDefinition) IsProvisioned() bool { return u.UID != nil }
 
 //Attributes implements the EntityDefinition interface.
 func (g *GroupDefinition) Attributes() string {
@@ -162,8 +162,8 @@ func (u *UserDefinition) Attributes() string {
 	if u.System {
 		attrs = append(attrs, "type: system")
 	}
-	if u.UID > 0 {
-		attrs = append(attrs, fmt.Sprintf("UID: %d", u.UID))
+	if u.UID != nil {
+		attrs = append(attrs, fmt.Sprintf("UID: %d", *u.UID))
 	}
 	if u.Home != "" {
 		attrs = append(attrs, "home: "+u.Home)

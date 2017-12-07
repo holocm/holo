@@ -62,8 +62,9 @@ func StoreAppliedState(def EntityDefinition, previous EntityDefinition) {
 				def.GID = 999
 			}
 		case *UserDefinition:
-			if def.UID == 0 {
-				def.UID = 999
+			if def.UID == nil {
+				value := 999
+				def.UID = &value
 			}
 		}
 
@@ -206,7 +207,7 @@ func (u *UserDefinition) GetProvisionedState() (EntityDefinition, error) {
 	return &UserDefinition{
 		Name:    fields[0],
 		Comment: fields[4],
-		UID:     actualUID,
+		UID:     &actualUID,
 		Home:    fields[5],
 		Group:   groupName,
 		Groups:  groupNames,
