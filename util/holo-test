@@ -24,6 +24,8 @@ ORIGINAL_CWD="$PWD"
 : ${HOLO_BINARY:=holo}
 : ${HOLO_TEST_SCRIPTPATH:=/usr/lib/holo}
 
+umask 022
+
 if ! type colordiff &>/dev/null; then
     colordiff() {
         cat
