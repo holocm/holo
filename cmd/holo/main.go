@@ -45,7 +45,8 @@ type Selector struct {
 }
 
 // Main is the main entry point, but returns the exit code rather than
-// calling os.Exit().  This distinction is useful for testing purposes.
+// calling os.Exit().  This distinction is useful for monobinary and
+// testing purposes.
 func Main() (exitCode int) {
 	//a command word must be given as first argument
 	if len(os.Args) < 2 {
