@@ -53,7 +53,7 @@ test/cov.cov: clean-tests $(foreach b,$(bins),build/$b.test)
 
 DIST_IDS = $(shell [ -f /etc/os-release ] && source /etc/os-release || source /usr/lib/os-release; echo "$$ID $$ID_LIKE")
 
-install: default conf/holorc conf/holorc.holo-files util/holo-test util/autocomplete.bash util/autocomplete.zsh util/tree-to-dump.sh util/dump-to-tree.sh
+install: default conf/holorc conf/holorc.holo-files util/autocomplete.bash util/autocomplete.zsh
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files"
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files/base"
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files/provisioned"
