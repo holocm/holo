@@ -43,16 +43,6 @@ func init() {
 	stateDir := os.Getenv("HOLO_STATE_DIR")
 	BaseImageDir = ImageDir(filepath.Join(stateDir, "base"))
 	ProvisionedImageDir = ImageDir(filepath.Join(stateDir, "provisioned"))
-
-	if stateDir != "" {
-		for _, dir := range []string{string(BaseImageDir), string(ProvisionedImageDir)} {
-			err := os.MkdirAll(dir, 0755)
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
-				os.Exit(1)
-			}
-		}
-	}
 }
 
 //ImagePathFor returns the path where an image of the given entity definition

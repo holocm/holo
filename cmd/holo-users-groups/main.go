@@ -36,6 +36,16 @@ func Main() (exitCode int) {
 		return 1
 	}
 
+	if os.Getenv("HOLO_STATE_DIR") != "" {
+		for _, dir := range []string{string(BaseImageDir), string(ProvisionedImageDir)} {
+			err := os.MkdirAll(dir, 0755)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "!! %s\n", err.Error())
+				os.Exit(1)
+			}
+		}
+	}
+
 	gob.Register(&GroupDefinition{})
 	gob.Register(&UserDefinition{})
 	gob.Register(Entity{})
