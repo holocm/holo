@@ -1,7 +1,6 @@
 pkg = github.com/holocm/holo
 mans = holorc.5 holo-plugin-interface.7 holo-test.7 holo.8 holo-files.8 holo-run-scripts.8 holo-ssh-keys.8 holo-users-groups.8
 
-default: prepare-build
 default: build/holo
 default: $(addprefix build/man/,$(mans))
 .PHONY: default
@@ -12,8 +11,8 @@ GO_LDFLAGS    := -s -w
 GO_TESTFLAGS  := -covermode=count
 GO_DEPS       := $(GO) list -f '{{.ImportPath}}{{"\n"}}{{join .Deps "\n"}}'
 
-prepare-build:
-	@mkdir -p build/man
+build build/man:
+	@mkdir -p $@
 
 .version: FORCE
 	./util/find_version.sh | util/write-ifchanged $@
@@ -21,14 +20,14 @@ prepare-build:
 cmd/holo/version.go: .version
 	printf 'package entrypoint\n\nfunc init() {\n\tversion = "%s"\n}\n' "$$(cat $<)" > $@
 
-build/holo: FORCE cmd/holo/version.go
+build/holo: FORCE cmd/holo/version.go | build
 	$(GO) install $(GO_BUILDFLAGS) --ldflags '$(GO_LDFLAGS)' $(pkg)
 build/holo.test: build/holo main_test.go
 	$(GO) test -c -o $@ $(GO_TESTFLAGS) -coverpkg $$($(GO_DEPS) $(pkg)|grep ^$(pkg)|tr '\n' ,|sed 's/,$$//') $(pkg)
 
 # manpages are generated using pod2man (which comes with Perl and therefore
 # should be readily available on almost every Unix system)
-build/man/%: doc/%.pod .version
+build/man/%: doc/%.pod .version | build/man
 	pod2man --name="$(shell echo $* | cut -d. -f1)" --section=$(shell echo $* | cut -d. -f2) \
 		--center="Configuration Management" --release="Holo $$(cat .version)" \
 		$< $@
@@ -106,5 +105,5 @@ vendor: FORCE
 	@# vendoring by https://github.com/holocm/golangvend
 	golangvend
 
-.PHONY: prepare-build test check install clean clean-tests vendor
+.PHONY: test check install clean clean-tests vendor
 .PHONY: FORCE
