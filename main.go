@@ -29,14 +29,20 @@ import (
 )
 
 func main() {
+	os.Exit(Main())
+}
+
+// Main is the main entry point, but returns the exit code rather than
+// calling os.Exit().  This distinction is useful for testing purposes.
+func Main() (exitcode int) {
 	switch filepath.Base(os.Args[0]) {
 	case "holo-files":
-		os.Exit(cmd_holo_files.Main())
+		return cmd_holo_files.Main()
 	case "holo-ssh-keys":
-		os.Exit(cmd_holo_ssh_keys.Main())
+		return cmd_holo_ssh_keys.Main()
 	case "holo-users-groups":
-		os.Exit(cmd_holo_users_groups.Main())
+		return cmd_holo_users_groups.Main()
 	default:
-		os.Exit(cmd_holo.Main())
+		return cmd_holo.Main()
 	}
 }

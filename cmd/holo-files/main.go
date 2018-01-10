@@ -29,7 +29,8 @@ import (
 )
 
 // Main is the main entry point, but returns the exit code rather than
-// calling os.Exit().  This distinction is useful for testing purposes.
+// calling os.Exit().  This distinction is useful for monobinary and
+// testing purposes.
 func Main() (exitCode int) {
 	//the "info" action does not require any scanning
 	if os.Args[1] == "info" {
