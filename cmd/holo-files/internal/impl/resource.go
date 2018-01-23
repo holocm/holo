@@ -1,7 +1,7 @@
 /*******************************************************************************
 *
 * Copyright 2015 Stefan Majewsky <majewsky@gmx.net>
-* Copyright 2017 Luke Shumaker <lukeshu@sbcglobal.net>
+* Copyright 2017 Luke Shumaker <lukeshu@parabola.nu>
 *
 * This file is part of Holo.
 *
