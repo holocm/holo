@@ -118,7 +118,7 @@ There are two subcases to consider, If only configuration packages were
 deleted, C<holo apply> will restore the target base (as installed by the
 application package):
 
-    Scrubbing file:/etc/resourcefile-deleted.conf (all resource files were deleted)
+    Scrubbing file:/etc/resourcefile-deleted.conf (all repository files were deleted)
       restore /var/lib/holo/files/base/etc/resourcefile-deleted.conf
 
 If the application package (to whom the target file belongs) has also been
