@@ -1,0 +1,72 @@
+#!/bin/bash
+#
+# Copyright 2015-2017 Stefan Majewsky <majewsky@gmx.net>
+# Copyright 2018 Luke Shumaker <lukeshu@parabola.nu>
+#
+# This file is part of Holo.
+#
+# Holo is free software: you can redistribute it and/or modify it under the
+# terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# Holo is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# Holo. If not, see <http://www.gnu.org/licenses/>.
+#
+
+# by default, use installed Holo binary
+: ${HOLO_BINARY:=holo}
+
+empty() {
+    [[ -f "$1" && ! -s "$1" ]]
+}
+
+notempty() {
+    [[ -s "$1" ]]
+}
+
+# Create and chdir to a scratch temporary directory
+tmpdir=$(mktemp -td "${0##*/}".XXXXXXXXXX) || exit
+trap 'cd / && rm -rf -- "$tmpdir"' EXIT
+cd "$tmpdir"
+
+# In case we ever localize Holo, we want it to say "Usage:" for these
+# tests
+export LC_ALL=C
+
+# Don't check the full usage or version or error text--let's leave
+# that free to improve without needing to update the tests.  Just
+# check the general format of things; "is the exit code 0?", "was
+# anything on stdout?", "or stderr?"
+run_holo() {
+    echo ">> Running test case $TEST_NAME..."
+    declare -ig r=0
+    $HOLO_BINARY "$@" >stdout 2>stderr || r=$?
+    exec >& setx
+    set -x
+}
+fail() {
+    cat setx
+    echo "!! The above check failed"
+    TEST_EXIT_CODE=1
+}
+TEST_EXIT_CODE=0
+TEST_NAME='no args'      && ( run_holo            && test $r != 0 && empty stdout                     && notempty stderr ) || fail
+TEST_NAME='bogus op'     && ( run_holo frob       && test $r != 0 && empty stdout                     && notempty stderr ) || fail
+TEST_NAME='bogus flag'   && ( run_holo --frob     && test $r != 0 && empty stdout                     && notempty stderr ) || fail
+TEST_NAME='help op'      && ( run_holo help       && test $r == 0 && [[ "$(cat stdout)" == Usage:* ]] && empty stderr    ) || fail
+TEST_NAME='help flag'    && ( run_holo --help     && test $r == 0 && [[ "$(cat stdout)" == Usage:* ]] && empty stderr    ) || fail
+TEST_NAME='version op'   && ( run_holo version    && test $r == 0 && notempty stdout                  && empty stderr    ) || fail
+TEST_NAME='version flag' && ( run_holo --version  && test $r == 0 && notempty stdout                  && empty stderr    ) || fail
+
+TESTED_THING='holo help text'
+if [ $TEST_EXIT_CODE = 0 ]; then
+    echo ">> All tests for $TESTED_THING completed successfully."
+else
+    echo "!! Some or all tests for $TESTED_THING failed. Please check the output above for more information."
+fi
+exit $TEST_EXIT_CODE

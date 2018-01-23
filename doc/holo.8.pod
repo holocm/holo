@@ -12,7 +12,9 @@ holo B<diff> [I<selector> ...]
 
 holo B<scan> [I<-s|--short|-p|--porcelain>] [I<selector> ...]
 
-holo B<--help|--version>
+holo B<help>
+
+holo B<version>
 
 =head1 DESCRIPTION
 
@@ -105,17 +107,11 @@ For entities that are not files, refer to the plugin's manpage for what the
 diff contains. When a plugin is not able to produce a meaningful textual
 representation of the entity, no output will be produced for its entities.
 
-=back
-
-=head1 OPTIONS
-
-=over 4
-
-=item B<--help>
+=item B<help>
 
 Print out usage information.
 
-=item B<--version>
+=item B<version>
 
 Print out Holo's version string including the release name.
 
