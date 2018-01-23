@@ -173,7 +173,7 @@ multiple C<SOURCE> lines can be printed.
 
 This link is only used internally to resolve resource file arguments into the
 entities defined by them. It is therefore considered good practice to list the
-source files a second time as informational text, with appropriate lower-case
+resource files a second time as informational text, with appropriate lower-case
 keys. The C<users-groups> plugin demonstrates this practice:
 
     ENTITY: group:sudo

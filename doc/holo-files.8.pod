@@ -14,7 +14,7 @@ overwrite or modify a file that has been installed by an application package.
 =head2 Structure of the resource directory
 
 Configuration packages that want to use this plugin must place files in the
-resource directory at F</usr/share/holo/files>. Each source file works on a
+resource directory at F</usr/share/holo/files>. Each resource file works on a
 certain B<target>, as determined by its file name:
 
     /usr/share/holo/files/20-webserver/etc/nginx/nginx.conf
@@ -24,23 +24,23 @@ certain B<target>, as determined by its file name:
                            |
                            +-- disambiguator
 
-The disambiguator is always required, and allows multiple source files to
+The disambiguator is always required, and allows multiple resource files to
 operate on the same target (sorted alphabetically by their disambiguator). The
 pattern of putting a number at the start of the disambiguator is not required,
-but useful to control the ordering of source files.
+but useful to control the ordering of resource files.
 
-Each target file that has such source files is an entity within Holo. Its entity
+Each target file that has such resource files is an entity within Holo. Its entity
 name is C<file:$target> where C<$target> is the absolute path to the target
 file.
 
 =head2 Application strategy
 
-Source files are applied on the B<target base>, the initial version of the
+Resource files are applied on the B<target base>, the initial version of the
 target file that was found during the first C<holo apply> run. This target base
 is saved at F</var/lib/holo/files/base/$target>.
 
-Source files that are plain files or symlinks will just overwrite the target
-base (or all previous entries), whereas executable source files with an extra
+Resource files that are plain files or symlinks will just overwrite the target
+base (or all previous entries), whereas executable resource files with an extra
 C<.holoscript> suffix can be used to modify the target base (or the result of a
 previous application step). The target contents will be piped through the
 script. This is typically used when the default configuration for an
@@ -107,19 +107,19 @@ currently recognizes C<alpine>, C<arch>, C<debian>, C<fedora> and C<suse>.
 =head2 Handling package removal
 
 If there exist target bases below F</var/lib/holo/files> for which there are no
-corresponding source files below F</usr/share/holo/files>, these target bases
+corresponding resource files below F</usr/share/holo/files>, these target bases
 are considered orphaned.
 
 This usually occurs because a package has been removed from the system, or
 because a different package version were installed that do not contain the
-source files in question anymore.
+resource files in question anymore.
 
 There are two subcases to consider, If only configuration packages were
 deleted, C<holo apply> will restore the target base (as installed by the
 application package):
 
-    Scrubbing file:/etc/sourcefile-deleted.conf (all source files were deleted)
-      restore /var/lib/holo/files/base/etc/sourcefile-deleted.conf
+    Scrubbing file:/etc/resourcefile-deleted.conf (all resource files were deleted)
+      restore /var/lib/holo/files/base/etc/resourcefile-deleted.conf
 
 If the application package (to whom the target file belongs) has also been
 deleted, the target base will be deleted instead of restored:

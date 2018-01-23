@@ -33,7 +33,7 @@ C<holo=$entity_name>.
 
 Applying a key file entity will also remove all keys from
 C<.ssh/authorized_keys> which are tagged with this entity name, but are not
-present in the source file for this entity. Keys can thus be replaced in or
+present in the resource file for this entity. Keys can thus be replaced in or
 removed from the key file, and all changes will be propagated into
 C<.ssh/authorized_keys> automatically (without requiring C<--force>).
 

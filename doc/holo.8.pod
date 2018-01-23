@@ -45,16 +45,16 @@ C<.ssh/authorized_keys>, and the L<holo-users-groups(8)> plugin which
 provisions user accounts and groups to the standard L<passwd(5)> and
 L<group(5)> databases.
 
-=head2 Entities, source files
+=head2 Entities, resource files
 
 Holo calls the things that it works on B<entities>. Each entity belongs to a
 certain plugin, since plugins contain all the logic for discovering and working
 on entities.
 
-Entities are defined in B<source files> which configuration packages install
-into the resource directory of the corresponding plugin (at
+Entities are defined in B<source> or B<resource files> which configuration
+packages install into the resource directory of the corresponding plugin (at
 F</usr/share/holo/$PLUGIN_ID>). Depending on how the plugin works, a single
-entity may have multiple source files, or a single source file might define
+entity may have multiple resource files, or a single resource file might define
 multiple entities.
 
 Each entity is identified by a name, usually of the form C<type:identifier>.
@@ -66,7 +66,7 @@ All operations act on all entities by default, but can be restricted to certain
 entities by giving selectors on the command line.
 
 A selector can be either an entity name (such as C<file:/etc/sddm/sddm.conf>),
-or the path to a source file that defines this entity (for instance,
+or the path to a resource file that defines this entity (for instance,
 C</usr/share/holo/files/40-desktop/etc/sddm/sddm.conf>), or a plugin ID (such
 as C<files>). A plugin ID as selector matches all entities known to that
 plugin.
