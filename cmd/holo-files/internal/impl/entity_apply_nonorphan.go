@@ -89,7 +89,7 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 		}
 		tmp := current
 		tmp.Path = base.Path
-		base = current
+		base = tmp
 	}
 
 	if !base.Manageable {
@@ -129,9 +129,15 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 		return false, err
 	}
 
-	//compare it against the last provisioned version (which must exist at this point
-	//unless we are using --force)
-	if provisioned.Manageable && !(current.EqualTo(provisioned) || current.EqualTo(desired)) {
+	//compare it against the current expected state (a reference
+	//file for this must exist at this point); normally this will
+	//be the last-provisioned version, but if we've never
+	//provisioned it before, then it is the base version
+	expected := provisioned
+	if !provisioned.Manageable {
+		expected = base
+	}
+	if !(current.EqualTo(expected) || current.EqualTo(desired)) {
 		if !withForce {
 			return false, ErrNeedForceToOverwrite
 		}

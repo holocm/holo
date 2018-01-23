@@ -1,0 +1,17 @@
+file      0644 ./etc/foo.conf
+user
+----------------------------------------
+file      0644 ./etc/foo.conf.pacnew
+system
+----------------------------------------
+symlink   0777 ./etc/holorc
+../../../holorc
+----------------------------------------
+file      0644 ./etc/os-release
+ID=arch
+----------------------------------------
+file      0755 ./usr/share/holo/files/01-first/etc/foo.conf.holoscript
+#!/bin/sh
+cat
+echo hologram
+----------------------------------------
