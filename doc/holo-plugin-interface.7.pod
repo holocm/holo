@@ -59,27 +59,27 @@ In test mode, plugins SHOULD NOT talk to system-level daemons or write files
 outside the C<$HOLO_ROOT_DIR>. Appropriate mock implementations SHALL be used
 instead. Modifying files below C<$HOLO_ROOT_DIR> is allowed.
 
-=head3 HOLO_RESOURCE_DIR, HOLO_STATE_DIR, HOLO_CACHE_DIR
+=head3 C<$HOLO_RESOURCE_DIR>, C<$HOLO_STATE_DIR>, C<$HOLO_CACHE_DIR>
 
 Plugins SHALL locate and store their data in the directories named by the
 following environment variables:
 
 =over 4
 
-=item HOLO_RESOURCE_DIR (default: `/usr/share/holo/$PLUGIN_ID`)
+=item C<$HOLO_RESOURCE_DIR> (default: F</usr/share/holo/$PLUGIN_ID>)
 
 Where plugins can find their resources. Holo will refuse to operate if the
 resource directory does not exist, thus plugins SHOULD create the default
 path at installation time.
 
-=item HOLO_STATE_DIR (default: `/var/lib/holo/$PLUGIN_ID`)
+=item C<$HOLO_STATE_DIR> (default: F</var/lib/holo/$PLUGIN_ID>)
 
 Where plugins can store persistent state between runs of Holo. If the state
 directory is missing, Holo will create it before calling the plugin executable.
 However, plugins are encouraged to create the state directory at their
 installation time if they are going to need it.
 
-=item HOLO_CACHE_DIR (default: below `/tmp`)
+=item C<$HOLO_CACHE_DIR> (default: below F</tmp>)
 
 Where plugins may store temporary data, such as results from an initial scan
 operation. Holo will create this directory when it starts up, and clean it up
@@ -273,14 +273,14 @@ applied by the plugin (i.e., the state the plugin expects it to currently be
 in), the second file represents the actual current state of the entity.
 
 The plugin is allowed to return paths that do not exist in the file system, in
-which case Holo will diff against `/dev/null` instead. `/dev/null` can also be
+which case Holo will diff against F</dev/null> instead. F</dev/null> can also be
 given explicitly instead of a file that is missing. (The first file will be
 missing when the entity is orphaned, and the second file will be missing when
 the entity was deleted by the user or an external program.)
 
 For entities that are not backed by a file, the plugin is allowed to make up a
 useful textual representation of the entity, and write appropriate files to the
-C<HOLO_CACHE_DIR>. An example of this is the C<holo-users-groups> plugin.
+C<$HOLO_CACHE_DIR>. An example of this is the C<holo-users-groups> plugin.
 
 =head1 SEE ALSO
 
