@@ -14,7 +14,7 @@ overwrite or modify a file that has been installed by an application package.
 =head2 Structure of the resource directory
 
 Configuration packages that want to use this plugin must place files in the
-resource directory at F</usr/share/holo/files>. Each resource file works on a
+resource directory at F</usr/share/holo/files>. Each B<resource> file works on a
 certain B<target>, as determined by its file name:
 
     /usr/share/holo/files/20-webserver/etc/nginx/nginx.conf
@@ -24,12 +24,12 @@ certain B<target>, as determined by its file name:
                            |
                            +-- disambiguator
 
-The disambiguator is always required, and allows multiple resource files to
+The B<disambiguator> is always required, and allows multiple resource files to
 operate on the same target (sorted alphabetically by their disambiguator). The
 pattern of putting a number at the start of the disambiguator is not required,
 but useful to control the ordering of resource files.
 
-Each target file that has such resource files is an entity within Holo. Its entity
+Each target file that has such resource files is an B<entity> within Holo. Its entity
 name is C<file:$target> where C<$target> is the absolute path to the target
 file.
 
@@ -108,7 +108,7 @@ currently recognizes C<alpine>, C<arch>, C<debian>, C<fedora> and C<suse>.
 
 If there exist target bases below F</var/lib/holo/files> for which there are no
 corresponding resource files below F</usr/share/holo/files>, these target bases
-are considered orphaned.
+are considered B<orphaned>.
 
 This usually occurs because a package has been removed from the system, or
 because a different package version were installed that do not contain the

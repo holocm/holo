@@ -63,7 +63,7 @@ Refer to the manpage of each plugin for the format for its entities' names.
 =head1 OPERATIONS
 
 All operations act on all entities by default, but can be restricted to certain
-entities by giving selectors on the command line.
+entities by giving B<selectors> on the command line.
 
 A selector can be either an entity name (such as C<file:/etc/sddm/sddm.conf>),
 or the path to a resource file that defines this entity (for instance,
