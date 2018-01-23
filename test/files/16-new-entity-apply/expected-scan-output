@@ -1,0 +1,6 @@
+
+file:/etc/foo.conf
+    store at target/var/lib/holo/files/base/etc/foo.conf
+    passthru target/usr/share/holo/files/01-first/etc/foo.conf.holoscript
+
+exit status 0

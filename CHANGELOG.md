@@ -1,3 +1,11 @@
+# v2.2.1 (TBD)
+
+Bugfixes:
+
+- Fix a bug in `holo-files` where `--force` wasn't required in all cases where it should be. (#40)
+- Fix a bug in `holo-files` where, in some situations, it wrote the wrong thing to the persistent state directory,
+  causing incorrect results on future calls to `holo apply`. (#40)
+
 # v2.2 (2017-12-07)
 
 Changes:

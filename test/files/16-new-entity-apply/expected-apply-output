@@ -1,0 +1,16 @@
+
+Working on file:/etc/foo.conf
+  store at target/var/lib/holo/files/base/etc/foo.conf
+  passthru target/usr/share/holo/files/01-first/etc/foo.conf.holoscript
+
+>> found updated target base: target/etc/foo.conf.pacnew -> target/var/lib/holo/files/base/etc/foo.conf
+!! Entity has been modified by user (use --force to overwrite)
+
+    diff --holo target/var/lib/holo/files/provisioned/etc/foo.conf target/etc/foo.conf
+    new file mode 100644
+    --- /dev/null
+    +++ target/etc/foo.conf
+    @@ -0,0 +1 @@
+    +user
+
+exit status 0
