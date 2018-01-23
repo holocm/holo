@@ -34,13 +34,14 @@ by multiple plugins, appropriate plugin IDs could include C<foosql-databases>
 and C<foosql-users>.
 
 Plugins are not discovered automatically. They MUST be referenced in
-F</etc/holorc> (see L<holorc(5)>) by adding the line:
+F<$HOLO_ROOT_DIR/etc/holorc> or F<$HOLO_ROOT_DIR/etc/holorc.d/*> (see
+L<holorc(5)>) by adding the line:
 
     plugin $PLUGIN_ID
 
 It is RECOMMENDED that plugins install a L<holorc(5)> snippet to achieve this:
 
-    $ cat /etc/holorc.d/50-foosql
+    $ cat $HOLO_ROOT_DIR/etc/holorc.d/50-foosql
     # This file is part of the holo-foosql package.
     plugin foosql
 
@@ -66,13 +67,13 @@ following environment variables:
 
 =over 4
 
-=item C<$HOLO_RESOURCE_DIR> (default: F</usr/share/holo/$PLUGIN_ID>)
+=item C<$HOLO_RESOURCE_DIR> (default: F<$HOLO_ROOT_DIR/usr/share/holo/$PLUGIN_ID>)
 
 Where plugins can find their resources. Holo will refuse to operate if the
 resource directory does not exist, thus plugins SHOULD create the default
 path at installation time.
 
-=item C<$HOLO_STATE_DIR> (default: F</var/lib/holo/$PLUGIN_ID>)
+=item C<$HOLO_STATE_DIR> (default: F<$HOLO_ROOT_DIR/var/lib/holo/$PLUGIN_ID>)
 
 Where plugins can store persistent state between runs of Holo. If the state
 directory is missing, Holo will create it before calling the plugin executable.
