@@ -49,7 +49,14 @@ Old versions of Holo (prior to 1.2) required that the F</etc/holorc> be
 modified via L<holo-files(8)> through the use of post-install/upgrade/remove
 scripts. This is no longer required if holorc snippets are used.
 
-=head2 Runtime environment
+=head1 ENVIRONMENT
+
+Plugins SHALL locate and store their data in the directories named by the
+following environment variables:
+
+=over 4
+
+=item C<$HOLO_ROOT_DIR> (default: F</>)
 
 Plugins MUST recognize the environment variable C<$HOLO_ROOT_DIR>: If this
 variable exists, plugins SHALL assume that Holo is running in test mode. The
@@ -59,13 +66,6 @@ a normal root partition (at least the parts needed for the test scenario).
 In test mode, plugins SHOULD NOT talk to system-level daemons or write files
 outside the C<$HOLO_ROOT_DIR>. Appropriate mock implementations SHALL be used
 instead. Modifying files below C<$HOLO_ROOT_DIR> is allowed.
-
-=head3 C<$HOLO_RESOURCE_DIR>, C<$HOLO_STATE_DIR>, C<$HOLO_CACHE_DIR>
-
-Plugins SHALL locate and store their data in the directories named by the
-following environment variables:
-
-=over 4
 
 =item C<$HOLO_RESOURCE_DIR> (default: F<$HOLO_ROOT_DIR/usr/share/holo/$PLUGIN_ID>)
 
@@ -95,10 +95,13 @@ Holo, plugins SHALL always use the paths in the environment variables rather
 than trying to compute them by themselves. The paths are always given as
 absolute paths, and are located below C<$HOLO_ROOT_DIR> during test cases.
 
+=head1 EXECUTION
+
+The plugin binary is executed one or multiple times when Holo is run.
+
 =head2 The C<info> operation
 
-The plugin binary is executed one or multiple times when Holo is run. The first
-invocation is always with the single argument C<info>:
+The first invocation is always with the single argument C<info>:
 
     PLUGIN_BINARY=/usr/lib/holo/holo-$PLUGIN_ID
     $PLUGIN_BINARY info
