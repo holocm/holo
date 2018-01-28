@@ -10,6 +10,6 @@ install:
     - go get -u github.com/mattn/goveralls
 
 script:
-    - make && env IS_TRAVIS=1 make check
+    - make && make check
 after_success:
     - goveralls -coverprofile=test/cov.cov -service=travis-ci

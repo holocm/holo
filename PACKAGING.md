@@ -16,6 +16,9 @@ Build-time dependencies for this repo:
 * `go`
 * `perl` (for `make check`, and compiling the manpages)
 
+The test suite requires at least version 6.8 of openssh, but this
+version requirement is is not nescessary for actual use.
+
 ## Configuration files
 
 `/etc/holorc` and `/etc/holorc.d/*` should be marked as configuration files.
