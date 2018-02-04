@@ -22,6 +22,7 @@ package entrypoint
 
 import (
 	"fmt"
+	"io"
 	"os"
 
 	impl "github.com/holocm/holo/cmd/holo/internal"
@@ -50,8 +51,8 @@ type Selector struct {
 func Main() (exitCode int) {
 	//a command word must be given as first argument
 	if len(os.Args) < 2 {
-		commandHelp()
-		return 0
+		commandHelp(os.Stderr)
+		return 2
 	}
 
 	//check that it is a known command word
@@ -72,9 +73,12 @@ func Main() (exitCode int) {
 	case "version", "--version":
 		fmt.Println(version)
 		return 0
-	default:
-		commandHelp()
+	case "help", "--help":
+		commandHelp(os.Stdout)
 		return 0
+	default:
+		commandHelp(os.Stderr)
+		return 2
 	}
 
 	return impl.WithCacheDirectory(func() (exitCode int) {
@@ -157,13 +161,14 @@ func Main() (exitCode int) {
 	}) //end of WithCacheDirectory
 }
 
-func commandHelp() {
+func commandHelp(w io.Writer) {
 	program := os.Args[0]
-	fmt.Printf("Usage: %s <operation> [...]\nOperations:\n", program)
-	fmt.Printf("    %s apply [-f|--force] [selector ...]\n", program)
-	fmt.Printf("    %s diff [selector ...]\n", program)
-	fmt.Printf("    %s scan [-s|--short|-p|--porcelain] [selector ...]\n", program)
-	fmt.Printf("\nSee `man 8 holo` for details.\n")
+	fmt.Fprintf(w, "Usage: %s apply [-f|--force] [selector ...]\n", program)
+	fmt.Fprintf(w, "   or: %s diff [selector ...]\n", program)
+	fmt.Fprintf(w, "   or: %s scan [-s|--short|-p|--porcelain] [selector ...]\n", program)
+	fmt.Fprintf(w, "   or: %s version\n", program)
+	fmt.Fprintf(w, "   or: %s help\n", program)
+	fmt.Fprintf(w, "\nSee `man 8 holo` for details.\n")
 }
 
 func commandApply(entities []*impl.Entity, options map[int]bool) (exitCode int) {

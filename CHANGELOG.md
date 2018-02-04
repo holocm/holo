@@ -1,5 +1,9 @@
 # v2.2.1 (TBD)
 
+Changes:
+
+- Generally proofread and improve documentation; both manpages and `holo --help`.
+
 Bugfixes:
 
 - Fix a bug in `holo-files` where `--force` wasn't required in all cases where it should be. (#40)

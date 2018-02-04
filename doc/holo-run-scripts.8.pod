@@ -29,6 +29,6 @@ Stefan Majewsky
 
 Further documentation is available at the project homepage: http://holocm.org
 
-Please report any issues and feature requests at Github: http://github.com/holocm/holo-run-scripts/issues
+Please report any issues and feature requests at GitHub: http://github.com/holocm/holo-run-scripts/issues
 
 =cut

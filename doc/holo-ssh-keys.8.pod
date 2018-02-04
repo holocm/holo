@@ -33,7 +33,7 @@ C<holo=$entity_name>.
 
 Applying a key file entity will also remove all keys from
 C<.ssh/authorized_keys> which are tagged with this entity name, but are not
-present in the source file for this entity. Keys can thus be replaced in or
+present in the resource file for this entity. Keys can thus be replaced in or
 removed from the key file, and all changes will be propagated into
 C<.ssh/authorized_keys> automatically (without requiring C<--force>).
 
@@ -47,6 +47,6 @@ Stefan Majewsky
 
 Further documentation is available at the project homepage: http://holocm.org
 
-Please report any issues and feature requests at Github: http://github.com/holocm/holo-ssh-keys/issues
+Please report any issues and feature requests at GitHub: http://github.com/holocm/holo-ssh-keys/issues
 
 =cut
