@@ -22,10 +22,6 @@
 package impl
 
 import (
-	"bytes"
-	"fmt"
-	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -67,6 +63,10 @@ type rawResource struct {
 	entityPath    string
 }
 
+func (resource rawResource) Path() string          { return resource.path }
+func (resource rawResource) Disambiguator() string { return resource.disambiguator }
+func (resource rawResource) EntityPath() string    { return resource.entityPath }
+
 //NewResource creates a Resource instance when its path in the file system is
 //known.
 func NewResource(path string) Resource {
@@ -81,88 +81,6 @@ func NewResource(path string) Resource {
 		return Holoscript{raw}
 	}
 	return StaticResource{raw}
-}
-
-//Path returns the path to this resource in the file system.
-func (resource rawResource) Path() string {
-	return resource.path
-}
-
-//EntityPath returns the path to the corresponding entity.
-func (resource rawResource) EntityPath() string {
-	return resource.entityPath
-}
-
-//Disambiguator returns the disambiguator, i.e. the Path() element before the
-//EntityPath() that disambiguates multiple resources for the same entity.
-func (resource rawResource) Disambiguator() string {
-	return resource.disambiguator
-}
-
-// StaticResource is a Resource that is a plain static file that
-// replaces the current version of the entity.
-type StaticResource struct{ rawResource }
-
-// ApplicationStrategy implements the Resource interface.
-func (resource StaticResource) ApplicationStrategy() string { return "apply" }
-
-// DiscardsPreviousBuffer implements the Resource interface.
-func (resource StaticResource) DiscardsPreviousBuffer() bool { return true }
-
-// ApplyTo implements the Resource interface.
-func (resource StaticResource) ApplyTo(entityBuffer common.FileBuffer) (common.FileBuffer, error) {
-	if true { // bogus indentation to make the patch cleaner
-		resourceBuffer, err := common.NewFileBuffer(resource.Path())
-		if err != nil {
-			return common.FileBuffer{}, err
-		}
-		entityBuffer.Contents = resourceBuffer.Contents
-		entityBuffer.Mode = (entityBuffer.Mode &^ os.ModeType) | (resourceBuffer.Mode & os.ModeType)
-
-		//since Linux disregards mode flags on symlinks and always reports 0777 perms,
-		//normalize the mode thusly to make FileBuffer.EqualTo() work reliably
-		if entityBuffer.Mode&os.ModeSymlink != 0 {
-			entityBuffer.Mode = os.ModeSymlink | os.ModePerm
-		}
-		return entityBuffer, nil
-	}
-	panic("not reached")
-}
-
-// Holoscript is a Resource that is a script that edits the current
-// version of the entity.
-type Holoscript struct{ rawResource }
-
-// ApplicationStrategy implements the Resource interface.
-func (resource Holoscript) ApplicationStrategy() string { return "passthru" }
-
-// DiscardsPreviousBuffer implements the Resource interface.
-func (resource Holoscript) DiscardsPreviousBuffer() bool { return false }
-
-// ApplyTo implements the Resource interface.
-func (resource Holoscript) ApplyTo(entityBuffer common.FileBuffer) (common.FileBuffer, error) {
-	//application of a holoscript requires file contents
-	entityBuffer, err := entityBuffer.ResolveSymlink()
-	if err != nil {
-		return common.FileBuffer{}, err
-	}
-
-	//run command, fetch result file into buffer (not into the entity
-	//directly, in order not to corrupt the file there if the script run fails)
-	var stdout bytes.Buffer
-	cmd := exec.Command(resource.Path())
-	cmd.Stdin = strings.NewReader(entityBuffer.Contents)
-	cmd.Stdout = &stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		return common.FileBuffer{}, fmt.Errorf("execution of %s failed: %s", resource.Path(), err.Error())
-	}
-
-	//result is the stdout of the script
-	entityBuffer.Mode &^= os.ModeType
-	entityBuffer.Contents = stdout.String()
-	return entityBuffer, nil
 }
 
 //Resources holds a slice of Resource instances, and implements some methods
