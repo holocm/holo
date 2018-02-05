@@ -1,0 +1,26 @@
+
+file:/etc/symlink
+    store at target/var/lib/holo/files/base/etc/symlink
+       patch target/usr/share/holo/files/17-patches/etc/symlink.patch
+
+file:/etc/symlink-to-plain
+    store at target/var/lib/holo/files/base/etc/symlink-to-plain
+       patch target/usr/share/holo/files/17-patches/etc/symlink-to-plain.patch
+
+file:/etc/txtfile
+    store at target/var/lib/holo/files/base/etc/txtfile
+       patch target/usr/share/holo/files/17-patches/etc/txtfile.patch
+
+file:/etc/txtfile-to-symlink
+    store at target/var/lib/holo/files/base/etc/txtfile-to-symlink
+       patch target/usr/share/holo/files/17-patches/etc/txtfile-to-symlink.patch
+
+file:/etc/txtfile-with-fuzz
+    store at target/var/lib/holo/files/base/etc/txtfile-with-fuzz
+       patch target/usr/share/holo/files/17-patches/etc/txtfile-with-fuzz.patch
+
+file:/etc/txtfile-with-garbage
+    store at target/var/lib/holo/files/base/etc/txtfile-with-garbage
+       patch target/usr/share/holo/files/17-patches/etc/txtfile-with-garbage.patch
+
+exit status 0

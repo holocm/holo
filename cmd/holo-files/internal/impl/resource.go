@@ -72,15 +72,21 @@ func (resource rawResource) EntityPath() string    { return resource.entityPath 
 func NewResource(path string) Resource {
 	relPath, _ := filepath.Rel(common.ResourceDirectory(), path)
 	segments := strings.SplitN(relPath, string(filepath.Separator), 2)
+	ext := filepath.Ext(segments[1])
 	raw := rawResource{
 		path:          path,
 		disambiguator: segments[0],
-		entityPath:    strings.TrimSuffix(segments[1], ".holoscript"),
+		entityPath:    strings.TrimSuffix(segments[1], ext),
 	}
-	if strings.HasSuffix(raw.path, ".holoscript") {
+	switch ext {
+	case ".holoscript":
 		return Holoscript{raw}
+	case ".patch":
+		return Patchfile{raw}
+	default:
+		raw.entityPath += ext
+		return StaticResource{raw}
 	}
-	return StaticResource{raw}
 }
 
 //Resources holds a slice of Resource instances, and implements some methods

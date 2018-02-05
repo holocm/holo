@@ -66,12 +66,25 @@ default configuration for L<pacman(8)>, but enables the "Color" and
       passthru /usr/share/holo/files/20-enable-color/etc/pacman.conf.holoscript
 
 This allows the file contents to be modified; however, the file permissions and
-ownership are not changed, and are inherited from the target base.
+ownership are not changed, and are inherited from the target base or the
+previous resource application step.
+
+=item C<.patch> The resource file is understood to be a patch file that can be
+fed to the L<patch(1)> program.  Some patch formats have the ability to change
+file type and file permissions; this is respected, making this is the only
+resource format that can change file permissions.
+
+The filename to modify is not passed to L<patch(1)>; instead, a copy of the
+target is available as the only file in the directory passed to the C<-d> flag.
+This means that the filename used within the patch file must have the same
+basename as the entity being operated on.  Any other files that the patch file
+may create are ignored.
 
 =item Otherwise, the resource file is a plain file or symlink that will just
 overwrite the contents of the target base (and all previous resource application
 steps).  The ownership and file permissions are not set from the resource file,
-and are inherited from the target base.
+and are inherited from the target base or the previous resource application
+step.
 
 =back
 
