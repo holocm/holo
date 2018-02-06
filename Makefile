@@ -45,15 +45,22 @@ build/man/%: doc/%.pod .version | build/man
 test: check # just a synonym
 .PHONY: test
 
-check: default test/cov.html test/cov.func.txt
+check: default
+check: check-gofmt
+check: check-golint
+check: test/cov.html test/cov.func.txt
 .PHONY: check
 
-test/cov.cov: clean-tests build/holo.test
+check-gofmt:
 	@if s="$$(gofmt -l $(go_srcs) 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' gofmt  "$$s"; false; fi
+check-golint:
 	@if s="$$(golint   $(go_dirs) 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
+check-go-test: clean-tests
 	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/holo-output.cov $(pkg)/cmd/holo/internal
 	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/ssh-keys-output.cov $(pkg)/cmd/holo-ssh-keys/impl
+check-holo-test-help: clean-tests build/holo.test util/holo-test-help
 	@HOLO_BINARY="$$PWD/build/holo.test" HOLO_TEST_COVERDIR=$$PWD/test/cov ./util/holo-test-help
+check-holo-test: clean-tests build/holo.test util/holo-test
 	@\
 		export HOLO_BINARY=../../../build/holo.test && \
 		export HOLO_TEST_COVERDIR=$(abspath test/cov) && \
@@ -62,6 +69,12 @@ test/cov.cov: clean-tests build/holo.test
 			ln -sfT ../build/holo.test test/holo-$p && \
 			./util/holo-test holo-$p $(sort $(wildcard test/$p/??-*)) && ) \
 		true
+.PHONY: check-%
+
+test/cov.cov: check-go-test
+test/cov.cov: check-holo-test-help
+test/cov.cov: check-holo-test
+test/cov.cov: util/gocovcat.go
 	util/gocovcat.go test/cov/*.cov > test/cov.cov
 %.html: %.cov
 	$(GO) tool cover -html $< -o $@
