@@ -119,9 +119,11 @@ for TESTCASE in "$@"; do
     run_testcase $TESTCASE || TEST_EXIT_CODE=1
 done
 
-if [ $TEST_EXIT_CODE = 0 ]; then
-    echo ">> All tests for $TESTED_THING completed successfully."
-else
-    echo "!! Some or all tests for $TESTED_THING failed. Please check the output above for more information."
+if [ $# -gt 1 ]; then
+	if [ $TEST_EXIT_CODE = 0 ]; then
+		echo ">> All tests for $TESTED_THING completed successfully."
+	else
+		echo "!! Some or all tests for $TESTED_THING failed. Please check the output above for more information."
+	fi
 fi
 exit $TEST_EXIT_CODE
