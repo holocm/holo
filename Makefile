@@ -39,7 +39,7 @@ test/cov.cov: clean-tests build/holo.test
 	@if s="$$(find cmd -type d -exec golint {} \; 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
 	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/holo-output.cov $(pkg)/cmd/holo/internal
 	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/ssh-keys-output.cov $(pkg)/cmd/holo-ssh-keys/impl
-	@HOLO_BINARY="$$PWD/build/holo.test" HOLO_TEST_FLAGS="-test.coverprofile=$$PWD/test/cov/holo-help.cov" ./util/holo-test-help
+	@HOLO_BINARY="$$PWD/build/holo.test" HOLO_TEST_COVERDIR=$$PWD/test/cov ./util/holo-test-help
 	@\
 		export HOLO_BINARY=../../../build/holo.test && \
 		export HOLO_TEST_COVERDIR=$(abspath test/cov) && \
