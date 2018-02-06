@@ -43,7 +43,11 @@ build/man/%: doc/%.pod .version | build/man
 		$< $@
 
 test: check # just a synonym
+.PHONY: test
+
 check: default test/cov.html test/cov.func.txt
+.PHONY: check
+
 test/cov.cov: clean-tests build/holo.test
 	@if s="$$(gofmt -l $(go_srcs) 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' gofmt  "$$s"; false; fi
 	@if s="$$(golint   $(go_dirs) 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
@@ -104,6 +108,7 @@ ifneq ($(filter arch,$(DIST_IDS)),)
 	install -D -m 0644 util/distribution-integration/alpm.hook    "$(DESTDIR)/usr/share/libalpm/hooks/01-holo-resolve-pacnew.hook"
 	install -D -m 0755 util/distribution-integration/alpm-hook.sh "$(DESTDIR)/usr/share/libalpm/scripts/holo-resolve-pacnew"
 endif
+.PHONY: install
 
 clean: clean-tests
 	rm -fr -- build/ .go-workspace/pkg/
@@ -112,10 +117,11 @@ clean-tests:
 	rm -fr -- test/*/*/target
 	rm -f -- test/*/*/{tree,{colored-,}{apply,apply-force,diff,scan}-output}
 	rm -f -- test/cov.* test/cov/* test/holo-*
+.PHONY: clean clean-tests
 
 vendor: FORCE
 	@# vendoring by https://github.com/holocm/golangvend
 	golangvend
+.PHONY: vendor
 
-.PHONY: test check install clean clean-tests vendor
 .PHONY: FORCE
