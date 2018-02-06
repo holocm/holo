@@ -59,20 +59,18 @@ check-golint:
 	@$(GO) test $(GO_TESTFLAGS) -coverprofile=$@ $(pkg)/$*
 check-holo-test-help: clean-tests build/holo.test util/holo-test-help
 	@HOLO_BINARY="$$PWD/build/holo.test" HOLO_TEST_COVERDIR=$$PWD/test/cov ./util/holo-test-help
-check-holo-test: clean-tests build/holo.test util/holo-test
+test/%/check: test/%/source-tree clean-tests build/holo.test util/holo-test
 	@\
 		export HOLO_BINARY=../../../build/holo.test && \
 		export HOLO_TEST_COVERDIR=$(abspath test/cov) && \
 		export HOLO_TEST_SCRIPTPATH=../../../util && \
-		$(foreach p,files run-scripts ssh-keys users-groups,\
-			ln -sfT ../build/holo.test test/holo-$p && \
-			./util/holo-test holo-$p $(sort $(wildcard test/$p/??-*)) && ) \
-		true
-.PHONY: check-%
+		ln -sfT ../build/holo.test test/holo-$(firstword $(subst /, ,$*)) && \
+		./util/holo-test holo-$(firstword $(subst /, ,$*)) $(@D)
+.PHONY: check-% test/%/check
 
 test/cov.cov: $(sort $(shell find $(filter-out %.go,$(go_srcs)) -name '*_test.go' -printf '%h/go-test.cov\n'))
 test/cov.cov: check-holo-test-help
-test/cov.cov: check-holo-test
+test/cov.cov: $(sort $(patsubst %/source-tree,%/check,$(wildcard test/*/??-*/source-tree)))
 test/cov.cov: util/gocovcat.go
 	util/gocovcat.go test/cov/*.cov $(filter %.cov,$^) > $@
 %.html: %.cov
