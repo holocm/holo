@@ -11,6 +11,16 @@ GO_LDFLAGS    := -s -w
 GO_TESTFLAGS  := -covermode=count
 GO_DEPS       := $(GO) list -f '{{.ImportPath}}{{"\n"}}{{join .Deps "\n"}}'
 
+# go_pkgs and go_dirs are obvious.
+go_pkgs = $(sort $(filter-out $(pkg)/vendor%,$(filter $(pkg) $(pkg)/%,$(shell $(GO_DEPS) $(pkg)))))
+go_dirs = $(patsubst $(pkg)%,.%,$(go_pkgs))
+# go_srcs is like go_dirs, but for tools that crawl directories; it is
+# the minimal list of files and directories that will include all of
+# our Go sources, without just saying "." (we don't want to just say
+# "." because that would crawl ".git" and ".go-workspace" and other
+# things that it should skip).
+go_srcs = $(sort $(foreach f,$(patsubst .,*.go,$(patsubst ./%,%,$(go_dirs))),$(firstword $(subst /, ,$f))))
+
 build build/man:
 	@mkdir -p $@
 
@@ -23,7 +33,7 @@ cmd/holo/version.go: .version
 build/holo: FORCE cmd/holo/version.go | build
 	$(GO) install $(GO_BUILDFLAGS) --ldflags '$(GO_LDFLAGS)' $(pkg)
 build/holo.test: build/holo main_test.go
-	$(GO) test -c -o $@ $(GO_TESTFLAGS) -coverpkg $$($(GO_DEPS) $(pkg)|grep ^$(pkg)|tr '\n' ,|sed 's/,$$//') $(pkg)
+	$(GO) test -c -o $@ $(GO_TESTFLAGS) -coverpkg $$(echo $(go_pkgs) | tr ' ' ,) $(pkg)
 
 # manpages are generated using pod2man (which comes with Perl and therefore
 # should be readily available on almost every Unix system)
@@ -35,8 +45,8 @@ build/man/%: doc/%.pod .version | build/man
 test: check # just a synonym
 check: default test/cov.html test/cov.func.txt
 test/cov.cov: clean-tests build/holo.test
-	@if s="$$(gofmt -l cmd 2>/dev/null)"                        && test -n "$$s"; then printf ' => %s\n%s\n' gofmt  "$$s"; false; fi
-	@if s="$$(find cmd -type d -exec golint {} \; 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
+	@if s="$$(gofmt -l $(go_srcs) 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' gofmt  "$$s"; false; fi
+	@if s="$$(golint   $(go_dirs) 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
 	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/holo-output.cov $(pkg)/cmd/holo/internal
 	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/ssh-keys-output.cov $(pkg)/cmd/holo-ssh-keys/impl
 	@HOLO_BINARY="$$PWD/build/holo.test" HOLO_TEST_COVERDIR=$$PWD/test/cov ./util/holo-test-help
