@@ -99,7 +99,8 @@ clean: clean-tests
 	rm -fr -- build/ .go-workspace/pkg/
 	rm -f -- .version cmd/holo/version.go
 clean-tests:
-	rm -fr -- test/*/{target,tree,{colored-,}{apply,apply-force,diff,scan}-output}
+	rm -fr -- test/*/*/target
+	rm -f -- test/*/*/{tree,{colored-,}{apply,apply-force,diff,scan}-output}
 	rm -f -- test/cov.* test/cov/* test/holo-*
 
 vendor: FORCE
