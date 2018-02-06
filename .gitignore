@@ -1,3 +1,4 @@
 build/
 /.version
 .golangvend-cache/
+go-test.cov

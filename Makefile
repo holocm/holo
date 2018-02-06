@@ -55,9 +55,8 @@ check-gofmt:
 	@if s="$$(gofmt -l $(go_srcs) 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' gofmt  "$$s"; false; fi
 check-golint:
 	@if s="$$(golint   $(go_dirs) 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
-check-go-test: clean-tests
-	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/holo-output.cov $(pkg)/cmd/holo/internal
-	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/ssh-keys-output.cov $(pkg)/cmd/holo-ssh-keys/impl
+%/go-test.cov: clean-tests
+	@$(GO) test $(GO_TESTFLAGS) -coverprofile=$@ $(pkg)/$*
 check-holo-test-help: clean-tests build/holo.test util/holo-test-help
 	@HOLO_BINARY="$$PWD/build/holo.test" HOLO_TEST_COVERDIR=$$PWD/test/cov ./util/holo-test-help
 check-holo-test: clean-tests build/holo.test util/holo-test
@@ -71,11 +70,12 @@ check-holo-test: clean-tests build/holo.test util/holo-test
 		true
 .PHONY: check-%
 
-test/cov.cov: check-go-test
+test/cov.cov: cmd/holo/internal/go-test.cov
+test/cov.cov: cmd/holo-ssh-keys/impl/go-test.cov
 test/cov.cov: check-holo-test-help
 test/cov.cov: check-holo-test
 test/cov.cov: util/gocovcat.go
-	util/gocovcat.go test/cov/*.cov > test/cov.cov
+	util/gocovcat.go test/cov/*.cov $(filter %.cov,$^) > $@
 %.html: %.cov
 	$(GO) tool cover -html $< -o $@
 %.func.txt: %.cov
@@ -130,6 +130,7 @@ clean-tests:
 	rm -fr -- test/*/*/target
 	rm -f -- test/*/*/{tree,{colored-,}{apply,apply-force,diff,scan}-output}
 	rm -f -- test/cov.* test/cov/* test/holo-*
+	find -name go-test.cov -delete
 .PHONY: clean clean-tests
 
 vendor: FORCE
