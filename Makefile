@@ -23,6 +23,7 @@ cmd/holo/version.go: .version
 build/holo: FORCE cmd/holo/version.go | build
 	$(GO) install $(GO_BUILDFLAGS) --ldflags '$(GO_LDFLAGS)' $(pkg)
 build/holo.test: build/holo main_test.go
+	set -x; \
 	$(GO) test -c -o $@ $(GO_TESTFLAGS) -coverpkg $$($(GO_DEPS) $(pkg)|grep ^$(pkg)|tr '\n' ,|sed 's/,$$//') $(pkg)
 
 # manpages are generated using pod2man (which comes with Perl and therefore
@@ -53,6 +54,7 @@ test/cov.cov: clean-tests build/holo.test
 	$(GO) tool cover -html $< -o $@
 %.func.txt: %.cov
 	$(GO) tool cover -func $< -o $@
+	cat $@
 
 DIST_IDS = $(shell [ -f /etc/os-release ] && source /etc/os-release || source /usr/lib/os-release; echo "$$ID $$ID_LIKE")
 
