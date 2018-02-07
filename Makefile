@@ -70,8 +70,7 @@ check-holo-test: clean-tests build/holo.test util/holo-test
 		true
 .PHONY: check-%
 
-test/cov.cov: cmd/holo/internal/go-test.cov
-test/cov.cov: cmd/holo-ssh-keys/impl/go-test.cov
+test/cov.cov: $(sort $(shell find $(filter-out %.go,$(go_srcs)) -name '*_test.go' -printf '%h/go-test.cov\n'))
 test/cov.cov: check-holo-test-help
 test/cov.cov: check-holo-test
 test/cov.cov: util/gocovcat.go
