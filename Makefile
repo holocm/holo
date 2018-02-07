@@ -54,6 +54,7 @@ test/cov.cov: clean-tests build/holo.test
 	$(GO) tool cover -html $< -o $@
 %.func.txt: %.cov
 	$(GO) tool cover -func $< -o $@
+	cat $@
 
 DIST_IDS = $(shell [ -f /etc/os-release ] && source /etc/os-release || source /usr/lib/os-release; echo "$$ID $$ID_LIKE")
 
