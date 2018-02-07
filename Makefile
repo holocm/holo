@@ -23,6 +23,7 @@ cmd/holo/version.go: .version
 build/holo: FORCE cmd/holo/version.go | build
 	$(GO) install $(GO_BUILDFLAGS) --ldflags '$(GO_LDFLAGS)' $(pkg)
 build/holo.test: build/holo main_test.go
+	set -x; \
 	$(GO) test -c -o $@ $(GO_TESTFLAGS) -coverpkg $$($(GO_DEPS) $(pkg)|grep ^$(pkg)|tr '\n' ,|sed 's/,$$//') $(pkg)
 
 # manpages are generated using pod2man (which comes with Perl and therefore
