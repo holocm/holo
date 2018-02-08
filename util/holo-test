@@ -61,7 +61,7 @@ run_testcase() (
     # with the "git diff --no-index -- FILE FILE" syntax, which changes the
     # diff-output of the unit tests for holo-files; to fix this, we put a
     # temporary git root at the $PWD)
-    git init >/dev/null
+    ( unset GIT_DIR; git init ) >/dev/null
 
     # setup environment for holo run
     export HOLO_ROOT_DIR="./target/"
