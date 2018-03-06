@@ -27,10 +27,10 @@ directory 0755 ./run/
 directory 0755 ./tmp/
 ----------------------------------------
 symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-dpkg-dist.conf.holoscript
-/usr/bin/sort
+../../../../../../../../../binwrap/sort
 ----------------------------------------
 symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-dpkg-old.conf.holoscript
-/usr/bin/uniq
+../../../../../../../../../binwrap/uniq
 ----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/targetfile-with-dpkg-dist.conf
 d

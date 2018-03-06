@@ -43,10 +43,10 @@ file      0644 ./etc/targetfile-with-rpmsave.conf.rpmsave
 aaa
 ----------------------------------------
 symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-rpmnew.conf.holoscript
-/usr/bin/sort
+../../../../../../../../../binwrap/sort
 ----------------------------------------
 symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-rpmsave.conf.holoscript
-/usr/bin/uniq
+../../../../../../../../../binwrap/uniq
 ----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/repofile-deleted-with-rpmnew.conf
 ggg

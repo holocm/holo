@@ -50,14 +50,14 @@ directory 0755 ./run/
 directory 0755 ./tmp/
 ----------------------------------------
 symlink   0777 ./usr/share/holo/files/02-holoscripts/etc/link-through-link.conf.holoscript
-/usr/bin/uniq
+../../../../../../../../../binwrap/uniq
 ----------------------------------------
 file      0755 ./usr/share/holo/files/02-holoscripts/etc/link-through-plain.conf.holoscript
 #!/bin/sh
 sed s/a/u/
 ----------------------------------------
 symlink   0777 ./usr/share/holo/files/02-holoscripts/etc/plain-through-link.conf.holoscript
-/usr/bin/sort
+../../../../../../../../../binwrap/sort
 ----------------------------------------
 file      0755 ./usr/share/holo/files/02-holoscripts/etc/plain-through-plain.conf.holoscript
 #!/bin/sh

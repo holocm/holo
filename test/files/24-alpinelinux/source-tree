@@ -25,7 +25,7 @@ f
 e
 ----------------------------------------
 symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-apknew.conf.holoscript
-/usr/bin/sort
+../../../../../../../../../binwrap/sort
 ----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/repofile-deleted-with-apknew.conf
 ggg

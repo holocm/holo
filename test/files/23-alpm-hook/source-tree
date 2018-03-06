@@ -35,7 +35,7 @@ symlink   0777 ./usr/lib/holo/holo-files
 ../../../../../../holo-files
 ----------------------------------------
 symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-pacnew.conf.holoscript
-/usr/bin/sort
+../../../../../../../../../binwrap/sort
 ----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/repofile-deleted-with-pacnew.conf
 ggg
