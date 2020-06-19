@@ -54,7 +54,7 @@ test/cov.cov: clean-tests build/holo.test
 		export HOLO_BINARY=../../../build/holo.test && \
 		export HOLO_TEST_COVERDIR=$(abspath test/cov) && \
 		export HOLO_TEST_SCRIPTPATH=../../../util && \
-		$(foreach p,files run-scripts ssh-keys users-groups,\
+		$(foreach p,files run-scripts ssh-keys users-groups generators,\
 			ln -sfT ../build/holo.test test/holo-$p && \
 			./util/holo-test holo-$p $(sort $(wildcard test/$p/??-*)) && ) \
 		true
