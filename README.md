@@ -46,6 +46,7 @@ User documentation is available in man page form:
 * [holo-users-groups(8)](doc/holo-users-groups.8.pod)
 * [holorc(5)](doc/holorc.5.pod)
 * [holo-plugin-interface(7)](doc/holo-plugin-interface.7.pod)
+* [holo-generators(7)](doc/holo-generators.7.pod)
 * [holo-test(7)](doc/holo-test.7.pod) (not a public interface)
 
 For further information, visit [holocm.org](http://holocm.org).

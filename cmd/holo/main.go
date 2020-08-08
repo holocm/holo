@@ -104,6 +104,13 @@ func Main() (exitCode int) {
 			selectors = append(selectors, &Selector{String: arg, Used: false})
 		}
 
+		//run generators before scan phase
+		if err := impl.RunGenerators(config); err != nil {
+			impl.Errorf(impl.Stderr,
+				"Failed to process generators: %s", err.Error(),
+			)
+		}
+
 		//ask all plugins to scan for entities
 		var entities []*impl.Entity
 		for _, plugin := range config.Plugins {

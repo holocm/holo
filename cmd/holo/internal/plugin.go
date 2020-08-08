@@ -43,7 +43,9 @@ var ErrPluginExecutableMissing = errors.New("ErrPluginExecutableMissing")
 type Plugin struct {
 	id             string
 	executablePath string
-	metadata       map[string]string //from "info" call
+	// Root path for the plugin specific resource dir
+	resourceRoot string
+	metadata     map[string]string //from "info" call
 }
 
 //NewPlugin creates a new Plugin.
@@ -56,7 +58,12 @@ func NewPlugin(id string) (*Plugin, error) {
 //a non-standard location. (This is used exclusively for testing plugins before
 //they are installed.)
 func NewPluginWithExecutablePath(id string, executablePath string) (*Plugin, error) {
-	p := &Plugin{id, executablePath, make(map[string]string)}
+	p := &Plugin{
+		id,
+		executablePath,
+		"usr/share/holo/",
+		make(map[string]string),
+	}
 
 	//check if the plugin executable exists
 	_, err := os.Stat(executablePath)
@@ -108,10 +115,17 @@ func (p *Plugin) ID() string {
 	return p.id
 }
 
+//SetResourceRoot changes the resource root to given path.
+//Future calls to ResourceDirectory will return a path relative to
+//given path.
+func (p *Plugin) SetResourceRoot(path string) {
+	p.resourceRoot = path
+}
+
 //ResourceDirectory returns the path to the directory where this plugin may
 //find its resources (entity definitions etc.).
 func (p *Plugin) ResourceDirectory() string {
-	return filepath.Join(RootDirectory(), "usr/share/holo/"+p.id)
+	return filepath.Join(RootDirectory(), p.resourceRoot, p.id)
 }
 
 //CacheDirectory returns the path to the directory where this plugin may

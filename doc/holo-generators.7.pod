@@ -1,0 +1,56 @@
+=encoding UTF-8
+
+=head1 NAME
+
+holo-generators - dynamically generate files for other plugins
+
+=head1 DESCRIPTION
+
+Generators are executable files placed under 
+F</usr/share/holo/generators>.
+Holo will execute generators in lexical order before asking plugins
+to scan their files.
+Upon execution of a generator the environment variable C<$OUT> is 
+passed to it.
+Unless for caching purposes generators MUST only write to the 
+directory specified by C<$OUT>.
+The structure under C<$OUT> is the same as for static files under
+F</usr/share/holo/>.
+For example to generate files for the holo-files plugin a generator 
+MAY place files at F<$OUT/files>.
+
+Generated files placed under C<$OUT> and static files under 
+F</usr/share/holo/> will be made available for plugins, 
+while generated files take precedence over static files.
+This means if a generator places a file at 
+F<$OUT/files/20-webserver/etc/nginx/nginx.conf>
+the plugin holo-files will only see this file insteadof the file at
+F</usr/share/holo/files/20-webserver/etc/nginx/nginx.conf>.
+
+Files that have been written to C<$OUT> will be preserved between 
+runs.
+A generator MAY decide wether to overwrite existing files or not
+this includes files written by other generators.
+It is RECOMMENDED that generators only regenerate files if an output
+different from the previous run is expected. 
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and "OPTIONAL" in 
+this document are to be interpreted as described in 
+L<RFC 2119|https://tools.ietf.org/html/rfc2119>.
+
+=head1 SEE ALSO
+
+L<holorc(5)>
+
+L<holo-files(8)>.
+
+=head1 AUTHOR
+
+Peter Werner
+
+Further documentation is available at the project homepage: http://holocm.org
+
+Please report any issues and feature requests at GitHub: http://github.com/holocm/holo/issues
+
+=cut
