@@ -7,8 +7,7 @@ directory 0755 ./tmp/
 ----------------------------------------
 file      0755 ./usr/share/holo/generators/01-simple.sh
 #!/bin/sh
-echo "Running generator 01-simple.sh"
-mkdir "${OUT}/print/"
+mkdir -p "${OUT}/print/"
 echo "Simple generated file" > "${OUT}/print/file.txt"
 ----------------------------------------
 file      0755 ./usr/share/holo/print/dir/static1.txt

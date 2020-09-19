@@ -1,7 +1,4 @@
 
-Processing generators...
-target/usr/share/holo/generators/01-simple.sh
-
 env:target/var/tmp/holo/generated/print
     found at HOLO_RESOURCE_DIR
 

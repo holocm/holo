@@ -1,8 +1,8 @@
+Ran generator 02-failing.sh
+     found at target/usr/share/holo/generators/02-failing.sh
 
-Processing generators...
-target/usr/share/holo/generators/01-simple.sh
-target/usr/share/holo/generators/02-failing.sh
-!! Running generator failed: exit status 1
+02-failing.sh: failing
+!! exit status 1
 
 env:target/var/tmp/holo/generated/print
     found at HOLO_RESOURCE_DIR

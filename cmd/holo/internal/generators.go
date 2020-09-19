@@ -45,24 +45,7 @@ func RunGenerators(config *Configuration) error {
 			targetDir, err,
 		)
 	}
-	fmt.Fprintln(Stdout, "Processing generators...")
-	filepath.Walk(inputDir,
-		func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				Warnf(Stderr, "%s: %s", path, err.Error())
-				return nil
-			}
-			if isExecutableFile(info) {
-				fmt.Fprintln(Stdout, path)
-				if err = runGenerator(path, targetDir); err != nil {
-					Errorf(
-						Stderr,
-						"Running generator failed: %s", err.Error(),
-					)
-				}
-			}
-			return nil
-		})
+	runGenerators(inputDir, targetDir)
 	for _, plugin := range config.Plugins {
 		if err := updatePluginPaths(plugin, targetDir); err != nil {
 			Errorf(Stderr,
@@ -72,6 +55,31 @@ func RunGenerators(config *Configuration) error {
 		}
 	}
 	return nil
+}
+
+func runGenerators(inputDir string, targetDir string) {
+	filepath.Walk(inputDir,
+		func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				Warnf(Stderr, "%s: %s", path, err.Error())
+				return nil
+			}
+			if isExecutableFile(info) {
+				out, err := runGenerator(path, targetDir)
+				// Keep silent unless an error occurred or generator has
+				// printed output.
+				if err != nil || len(out) > 0 {
+					shortPath, _ := filepath.Rel(inputDir, path)
+					fmt.Fprintf(os.Stdout, "Ran generator %s\n", shortPath)
+					fmt.Fprintf(os.Stdout, "     found at %s\n", path)
+					Stdout.Write(out)
+					if err != nil {
+						Errorf(Stderr, err.Error())
+					}
+				}
+			}
+			return nil
+		})
 }
 
 func updatePluginPaths(plugin *Plugin, dir string) error {
@@ -121,7 +129,7 @@ func symlinkFiles(oldDir string, newDir string) error {
 		})
 }
 
-func runGenerator(fileToRun string, targetDir string) error {
+func runGenerator(fileToRun string, targetDir string) ([]byte, error) {
 	cmd := exec.Command(fileToRun)
 	env := os.Environ()
 	env = append(
@@ -129,7 +137,7 @@ func runGenerator(fileToRun string, targetDir string) error {
 		fmt.Sprintf("OUT=%s", targetDir),
 	)
 	cmd.Env = env
-	return cmd.Run()
+	return cmd.CombinedOutput()
 }
 
 func getGenertorsDir() string {

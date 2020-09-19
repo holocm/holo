@@ -7,13 +7,12 @@ directory 0755 ./tmp/
 ----------------------------------------
 file      0755 ./usr/share/holo/generators/01-simple.sh
 #!/bin/sh
-echo "Running generator 01-simple.sh"
-mkdir "${OUT}/print/"
+mkdir -p "${OUT}/print/"
 echo "Simple generated file" > "${OUT}/print/file.txt"
 ----------------------------------------
 file      0755 ./usr/share/holo/generators/02-failing.sh
 #!/bin/sh
-echo "Running generator 02-failing.sh"
+echo "02-failing.sh: failing"
 exit 1
 ----------------------------------------
 directory 0755 ./usr/share/holo/print/
