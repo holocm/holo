@@ -27,6 +27,8 @@ import (
 	"os"
 	"path/filepath"
 	"syscall"
+
+	"github.com/holocm/holo/internal/fs"
 )
 
 // FileBuffer errors
@@ -105,7 +107,7 @@ func (fb FileBuffer) Write(path string) error {
 		return err
 	}
 	if err == nil {
-		if !(info.Mode().IsRegular() || IsFileInfoASymbolicLink(info)) {
+		if !(info.Mode().IsRegular() || fs.IsFileInfoASymbolicLink(info)) {
 			return &os.PathError{
 				Op:   "holo.FileBuffer.Write",
 				Path: path,

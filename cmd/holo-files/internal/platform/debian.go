@@ -23,7 +23,7 @@ package platform
 import (
 	"fmt"
 
-	"github.com/holocm/holo/cmd/holo-files/internal/common"
+	"github.com/holocm/holo/internal/fs"
 )
 
 //dpkgImpl provides the platform.Impl for dpkg-based distributions (Debian and derivatives).
@@ -36,19 +36,19 @@ func (p dpkgImpl) FindUpdatedTargetBase(targetPath string) (actualPath, reported
 	//if "${target}.dpkg-old" exists, move it back to $target and move the
 	//updated target base to "${target}.dpkg-dist" so that the usual application
 	//logic can continue
-	if common.IsManageableFile(dpkgOldPath) {
-		err := common.MoveFile(targetPath, dpkgDistPath)
+	if fs.IsManageableFile(dpkgOldPath) {
+		err := fs.MoveFile(targetPath, dpkgDistPath)
 		if err != nil {
 			return "", "", err
 		}
-		err = common.MoveFile(dpkgOldPath, targetPath)
+		err = fs.MoveFile(dpkgOldPath, targetPath)
 		if err != nil {
 			return "", "", err
 		}
 		return dpkgDistPath, fmt.Sprintf("%s (with .dpkg-old)", targetPath), nil
 	}
 
-	if common.IsManageableFile(dpkgDistPath) {
+	if fs.IsManageableFile(dpkgDistPath) {
 		return dpkgDistPath, dpkgDistPath, nil
 	}
 	return "", "", nil

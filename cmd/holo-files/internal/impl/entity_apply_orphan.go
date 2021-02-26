@@ -26,6 +26,7 @@ import (
 
 	"github.com/holocm/holo/cmd/holo-files/internal/common"
 	"github.com/holocm/holo/cmd/holo-files/internal/platform"
+	"github.com/holocm/holo/internal/fs"
 )
 
 //scanOrphan locates an entity for a given orphaned entity
@@ -33,7 +34,7 @@ import (
 //it's used by both `holo scan` and `holo apply`.
 func (entity *Entity) scanOrphan() (targetPath, strategy, assessment string) {
 	targetPath = entity.PathIn(common.TargetDirectory())
-	if common.IsManageableFile(targetPath) {
+	if fs.IsManageableFile(targetPath) {
 		return targetPath, "restore", "all repository files were deleted"
 	}
 	return targetPath, "delete", "target was deleted"
@@ -89,7 +90,7 @@ func (entity *Entity) applyOrphan() []error {
 		}
 
 		appendError(os.Remove(provisioned.Path))
-		appendError(common.MoveFile(basePath, current.Path))
+		appendError(fs.MoveFile(basePath, current.Path))
 	}
 
 	//TODO: cleanup empty directories below BaseDirectory() and ProvisionedDirectory()

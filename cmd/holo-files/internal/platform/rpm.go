@@ -23,7 +23,7 @@ package platform
 import (
 	"fmt"
 
-	"github.com/holocm/holo/cmd/holo-files/internal/common"
+	"github.com/holocm/holo/internal/fs"
 )
 
 //rpmImpl provides the platform.Impl for RPM-based distributions.
@@ -36,19 +36,19 @@ func (p rpmImpl) FindUpdatedTargetBase(targetPath string) (actualPath, reportedP
 	//if "${target}.rpmsave" exists, move it back to $target and move the
 	//updated target base to "${target}.rpmnew" so that the usual application
 	//logic can continue
-	if common.IsManageableFile(rpmsavePath) {
-		err := common.MoveFile(targetPath, rpmnewPath)
+	if fs.IsManageableFile(rpmsavePath) {
+		err := fs.MoveFile(targetPath, rpmnewPath)
 		if err != nil {
 			return "", "", err
 		}
-		err = common.MoveFile(rpmsavePath, targetPath)
+		err = fs.MoveFile(rpmsavePath, targetPath)
 		if err != nil {
 			return "", "", err
 		}
 		return rpmnewPath, fmt.Sprintf("%s (with .rpmsave)", targetPath), nil
 	}
 
-	if common.IsManageableFile(rpmnewPath) {
+	if fs.IsManageableFile(rpmnewPath) {
 		return rpmnewPath, rpmnewPath, nil
 	}
 	return "", "", nil
