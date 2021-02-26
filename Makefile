@@ -5,7 +5,7 @@ default: build/holo
 default: $(addprefix build/man/,$(mans))
 .PHONY: default
 
-GO            := GOPATH=$(CURDIR)/.go-workspace GOBIN=$(CURDIR)/build go
+GO            := GO111MODULE=off GOPATH=$(CURDIR)/.go-workspace GOBIN=$(CURDIR)/build go
 GO_BUILDFLAGS :=
 GO_LDFLAGS    := -s -w
 GO_TESTFLAGS  := -covermode=count
