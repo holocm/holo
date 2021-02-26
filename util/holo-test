@@ -80,8 +80,8 @@ run_testcase() (
 
     # diff outputs may contain non-deterministic tempdir names (like
     # "target/tmp/holo.13587923") if the plugin placed files there for diffing
-    for FILE in diff-output apply-output; do
-        sed -i 's,target/tmp/holo.[0-9]\+,target/tmp/holo,g' $FILE
+    for FILE in scan-output diff-output apply-output apply-force-output; do
+        [ -f $FILE ] && sed -i 's,target/tmp/holo.[0-9]\+,target/tmp/holo,g' $FILE
     done
 
     # dump the contents of the target directory into a single file for diff'ing with the source-tree

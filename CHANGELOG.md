@@ -1,4 +1,4 @@
-# v2.3 (TBD)
+# v3.0.0 (TBD)
 
 The headline feature for this release are **generators**, as described in detail in the new `holo-generators(7)`
 manpage. It is still strongly encouraged to supply resource files statically in configuration packages if possible.
@@ -8,9 +8,15 @@ supplied in the configuration package for security reasons.
 
 Special thanks to new contributor @Backfighter for contributing to the design and implementation of this feature.
 
-Changes:
+**Backwards-incompatible changes:**
 
-- Holo can now run generators to render resource files at runtime. Refer to `holo-generators(7)` for details.
+- Instead of `/usr/share/holo/$PLUGIN_ID`, plugins now receive a _virtualized resource directory_ as their
+  `$HOLO_RESOURCE_DIR`. This is technically not a backwards-incompatible change because plugins were always expected to
+  not assume the default value for `$HOLO_RESOURCE_DIR`. But we all know how these things go in practice, so this alone
+  would have been justification for bumping the major version.
+
+Further changes:
+
 - Generally proofread and improve documentation; both manpages and `holo --help`.
 
 Bugfixes:

@@ -105,11 +105,17 @@ func Main() (exitCode int) {
 		}
 
 		//run generators before scan phase
-		err := impl.RunGenerators(config)
+		err := impl.RunAllGenerators()
+		if err == nil {
+			err = impl.FinalizeVirtualResourceRoot()
+		}
 		if err != nil {
 			impl.Errorf(impl.Stderr, err.Error())
 			impl.Stderr.EndParagraph()
 			return 1
+		}
+		for _, plugin := range config.Plugins {
+			plugin.UseVirtualResourceRoot()
 		}
 
 		//ask all plugins to scan for entities

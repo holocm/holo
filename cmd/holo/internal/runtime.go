@@ -23,15 +23,25 @@ package impl
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 )
 
-var cachePath string
+var (
+	cachePath           string
+	virtualResourceRoot string
+)
 
 //WithCacheDirectory executes the worker function after having set up a cache
 //directory, and ensures that the cache directory is cleaned up afterwards.
 func WithCacheDirectory(worker func() (exitCode int)) (exitCode int) {
 	var err error
 	cachePath, err = ioutil.TempDir(os.TempDir(), "holo.")
+	if err != nil {
+		Errorf(Stderr, err.Error())
+		return 255
+	}
+	virtualResourceRoot = filepath.Join(cachePath, "generated-resources")
+	err = os.Mkdir(virtualResourceRoot, 0777)
 	if err != nil {
 		Errorf(Stderr, err.Error())
 		return 255
@@ -52,4 +62,10 @@ func CachePath() string {
 		panic("Tried to use cachePath outside WithCacheDirectory() call!")
 	}
 	return cachePath
+}
+
+//VirtualResourceRoot returns the path below CachePath() where we compile all
+//resource files, both static and generated. This file is the generated counterpart for `$HOLO_ROOT_DIR/usr/share/holo`.
+func VirtualResourceRoot() string {
+	return virtualResourceRoot
 }

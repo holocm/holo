@@ -20,8 +20,6 @@
 
 package fs
 
-//This file needs to be in an extra package to break an import cycle.
-
 import (
 	"io/ioutil"
 	"os"
