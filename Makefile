@@ -78,6 +78,7 @@ install: default conf/holorc conf/holorc.holo-files util/autocomplete.bash util/
 	install -d -m 0755 "$(DESTDIR)/usr/lib/holo"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/files"
+	install -d -m 0755 "$(DESTDIR)/usr/share/holo/generators"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/run-scripts"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/ssh-keys"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/users-groups"

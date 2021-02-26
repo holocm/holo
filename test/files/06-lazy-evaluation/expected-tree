@@ -31,6 +31,8 @@ file      0755 ./usr/share/holo/files/03-third/etc/foo.conf.holoscript
 #!/bin/sh
 sed s/new/modified/
 ----------------------------------------
+directory 0755 ./usr/share/holo/generators/
+----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/bar.conf
 original bar
 ----------------------------------------

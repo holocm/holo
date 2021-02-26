@@ -97,6 +97,8 @@ file      0755 ./usr/share/holo/files/03-order/etc/check-ordering.conf.holoscrip
 #!/bin/sh
 sed 's/^/foo/'
 ----------------------------------------
+directory 0755 ./usr/share/holo/generators/
+----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/check-ordering.conf
 test
 ----------------------------------------

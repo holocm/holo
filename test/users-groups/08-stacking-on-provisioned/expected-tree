@@ -32,6 +32,8 @@ directory 0755 ./run/
 ----------------------------------------
 directory 0755 ./tmp/
 ----------------------------------------
+directory 0755 ./usr/share/holo/generators/
+----------------------------------------
 file      0644 ./usr/share/holo/users-groups/01-initial.toml
 [[group]]
 name = "test"

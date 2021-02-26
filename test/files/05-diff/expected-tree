@@ -72,6 +72,8 @@ symlink   0777 ./usr/share/holo/files/01-first/etc/symlink-to-file.conf
 symlink   0777 ./usr/share/holo/files/01-first/etc/symlink-unmodified.conf
 /bin/true
 ----------------------------------------
+directory 0755 ./usr/share/holo/generators/
+----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/file-deleted.conf
 ddd
 eee

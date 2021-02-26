@@ -14,6 +14,8 @@ directory 0755 ./tmp/
 symlink   0777 ./usr/share/holo/files/01-first/etc/link.conf
 /desired/path
 ----------------------------------------
+directory 0755 ./usr/share/holo/generators/
+----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/link.conf
 original file
 ----------------------------------------

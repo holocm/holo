@@ -33,22 +33,13 @@ import (
 // and changes the resource path of plugins for which files were
 // generated to.
 func RunGenerators(config *Configuration) error {
-	inputDir := filepath.Join(RootDirectory(), "/usr/share/holo/generators")
-	_, err := os.Stat(inputDir)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return nil
-		}
-		return err
-	}
-
 	targetDir := filepath.Join(CachePath(), "generated-resources")
-	err = os.Mkdir(targetDir, 0777)
+	err := os.Mkdir(targetDir, 0777)
 	if err != nil && !os.IsExist(err) {
 		return err
 	}
 
-	runGenerators(inputDir, targetDir)
+	runGenerators(targetDir)
 	for _, plugin := range config.Plugins {
 		err := updatePluginPaths(plugin, targetDir)
 		if err != nil {
@@ -61,7 +52,8 @@ func RunGenerators(config *Configuration) error {
 	return nil
 }
 
-func runGenerators(inputDir string, targetDir string) {
+func runGenerators(targetDir string) {
+	inputDir := filepath.Join(RootDirectory(), "/usr/share/holo/generators")
 	filepath.Walk(inputDir,
 		func(path string, info os.FileInfo, err error) error {
 			if err != nil {

@@ -47,6 +47,8 @@ no stock file D:
 file      0644 ./usr/share/holo/files/not-a-repo-file.conf
 not a repo file
 ----------------------------------------
+directory 0755 ./usr/share/holo/generators/
+----------------------------------------
 symlink   0777 ./var/lib/holo/files/base/etc/link-over-link.conf
 hhh
 ----------------------------------------

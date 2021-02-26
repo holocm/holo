@@ -55,6 +55,7 @@ run_testcase() (
     done
     mkdir -p target/var/lib/holo/files/base
     mkdir -p target/var/lib/holo/files/provisioned
+    mkdir -p target/usr/share/holo/generators
 
     # fix a bug with Travis (Travis has an ancient git which incorrectly prints
     # paths relative to the nearest git root instead of the $PWD when called

@@ -32,6 +32,8 @@ directory 0755 ./run/
 ----------------------------------------
 directory 0755 ./tmp/
 ----------------------------------------
+directory 0755 ./usr/share/holo/generators/
+----------------------------------------
 directory 0755 ./usr/share/holo/users-groups/
 ----------------------------------------
 directory 0755 ./var/lib/holo/files/base/

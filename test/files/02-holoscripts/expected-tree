@@ -74,6 +74,8 @@ echo 'First line of stderr output.' >&2
 sed s/a/o/
 echo 'Second line of stderr output.' >&2
 ----------------------------------------
+directory 0755 ./usr/share/holo/generators/
+----------------------------------------
 symlink   0777 ./var/lib/holo/files/base/etc/link-through-link.conf
 contents
 ----------------------------------------
