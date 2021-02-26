@@ -31,7 +31,7 @@ import (
 // and changes the resource path of plugins for which files were
 // generated to.
 func RunGenerators(config *Configuration) error {
-	inputDir := getGenertorsDir()
+	inputDir := getGeneratorsDir()
 	if _, err := os.Stat(inputDir); err != nil {
 		if os.IsNotExist(err) {
 			return nil
@@ -140,7 +140,7 @@ func runGenerator(fileToRun string, targetDir string) ([]byte, error) {
 	return cmd.CombinedOutput()
 }
 
-func getGenertorsDir() string {
+func getGeneratorsDir() string {
 	return filepath.Join(RootDirectory(), "/usr/share/holo/generators")
 }
 
@@ -160,13 +160,7 @@ func getGeneratorCacheDir() (string, error) {
 
 func prepareDir(pathParts ...string) (string, error) {
 	path := filepath.Join(pathParts...)
-	if err := os.MkdirAll(path, 0755); err != nil {
-		if os.IsExist(err) {
-			return path, nil
-		}
-		return "", err
-	}
-	return path, nil
+	return path, os.MkdirAll(path, 0755)
 }
 
 func isExecutableFile(stat os.FileInfo) bool {
