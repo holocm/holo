@@ -27,6 +27,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 // RunGenerators executes all generators in the generator directory
@@ -39,43 +40,34 @@ func RunGenerators(config *Configuration) error {
 		return err
 	}
 
-	runGenerators(targetDir)
+	err = runGenerators(targetDir)
+	if err != nil {
+		return err
+	}
+
 	for _, plugin := range config.Plugins {
 		err := updatePluginPaths(plugin, targetDir)
 		if err != nil {
-			Errorf(Stderr,
-				"Failed to perpare generated dir for plugin '%s': %s",
-				plugin.id, err.Error(),
-			)
+			return fmt.Errorf("while preparing virtual resource directory for plugin %q: %w", plugin.id, err)
 		}
 	}
 	return nil
 }
 
-func runGenerators(targetDir string) {
-	inputDir := filepath.Join(RootDirectory(), "/usr/share/holo/generators")
-	filepath.Walk(inputDir,
-		func(path string, info os.FileInfo, err error) error {
-			if err != nil {
-				Warnf(Stderr, "%s: %s", path, err.Error())
-				return nil
-			}
-			if isExecutableFile(info) {
-				out, err := runGenerator(path, targetDir)
-				// Keep silent unless an error occurred or generator has
-				// printed output.
-				if err != nil || len(out) > 0 {
-					shortPath, _ := filepath.Rel(inputDir, path)
-					fmt.Fprintf(os.Stdout, "Ran generator %s\n", shortPath)
-					fmt.Fprintf(os.Stdout, "     found at %s\n", path)
-					Stdout.Write(out)
-					if err != nil {
-						Errorf(Stderr, err.Error())
-					}
-				}
-			}
-			return nil
-		})
+func runGenerators(targetDir string) error {
+	generatorsDir := filepath.Join(RootDirectory(), "/usr/share/holo/generators")
+	return filepath.Walk(generatorsDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		//NOTE: We don't need to check for executability here. Having a
+		//non-executable file in the generators directory just produces an obvious
+		//error during exec.Command() down below.
+		if info.Mode().IsRegular() {
+			return runGenerator(path, targetDir)
+		}
+		return nil
+	})
 }
 
 func updatePluginPaths(plugin *Plugin, dir string) error {
@@ -131,13 +123,13 @@ func filepathMustRel(base, target string) string {
 	return rel
 }
 
-func runGenerator(fileToRun string, targetDir string) ([]byte, error) {
+func runGenerator(fileToRun, targetDir string) error {
 	//prepare a cache directory with a unique name for the generator
 	generatorID := sha256.Sum256([]byte(fileToRun))
 	cacheDir := filepath.Join(CachePath(), string(generatorID[:]))
 	err := os.Mkdir(cacheDir, 0777)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	cmd := exec.Command(fileToRun)
@@ -146,16 +138,16 @@ func runGenerator(fileToRun string, targetDir string) ([]byte, error) {
 		"HOLO_RESOURCE_ROOT="+filepath.Join(RootDirectory(), "/usr/share/holo"),
 		"OUT="+targetDir,
 	)
-	return cmd.CombinedOutput()
-}
 
-func isExecutableFile(stat os.FileInfo) bool {
-	mode := stat.Mode()
-	if !mode.IsRegular() {
-		return false
+	out, err := cmd.CombinedOutput()
+	for _, line := range strings.Split(string(out), "\n") {
+		line = strings.TrimSpace(line)
+		if line != "" {
+			Warnf(Stderr, "output from %s: %s", fileToRun, line)
+		}
 	}
-	if (mode & 0111) == 0 {
-		return false
+	if err != nil {
+		return fmt.Errorf("could not run %s: %w", fileToRun, err)
 	}
-	return true
+	return nil
 }

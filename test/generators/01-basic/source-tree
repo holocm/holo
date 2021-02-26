@@ -12,8 +12,11 @@ file      0755 ./usr/share/holo/generators/01-simple.sh
 mkdir -p "${OUT}/print/"
 echo "Simple generated file" > "${OUT}/print/file.txt"
 ----------------------------------------
-file      0755 ./usr/share/holo/generators/02-failing.sh
+file      0755 ./usr/share/holo/generators/02-check-order.sh
 #!/bin/sh
-echo "02-failing.sh: failing"
-exit 1
+test -f "${OUT}/print/file.txt"
+----------------------------------------
+file      0755 ./usr/share/holo/generators/03-chatty.sh
+#!/bin/sh
+echo "I'm just talking"
 ----------------------------------------

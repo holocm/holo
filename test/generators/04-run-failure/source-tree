@@ -10,19 +10,10 @@ file      0755 ./usr/share/holo/generators/01-simple.sh
 mkdir -p "${OUT}/print/"
 echo "Simple generated file" > "${OUT}/print/file.txt"
 ----------------------------------------
-file      0755 ./usr/share/holo/generators/02-check-order.sh
+file      0755 ./usr/share/holo/generators/02-failing.sh
 #!/bin/sh
-test -f "${OUT}/print/file.txt"
-----------------------------------------
-file      0755 ./usr/share/holo/generators/03-chatty.sh
-#!/bin/sh
-echo "I'm just talking"
+echo "I don't feel like working"
+exit 1
 ----------------------------------------
 directory 0755 ./usr/share/holo/print/
-----------------------------------------
-directory 0755 ./var/lib/holo/files/base/
-----------------------------------------
-directory 0755 ./var/lib/holo/files/provisioned/
-----------------------------------------
-directory 0755 ./var/lib/holo/print/
 ----------------------------------------

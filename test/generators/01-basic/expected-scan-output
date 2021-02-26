@@ -1,8 +1,5 @@
-Ran generator 02-failing.sh
-     found at target/usr/share/holo/generators/02-failing.sh
 
-02-failing.sh: failing
-!! exit status 1
+>> output from target/usr/share/holo/generators/03-chatty.sh: I'm just talking
 
 list-resource-dir
 

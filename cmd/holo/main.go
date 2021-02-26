@@ -105,10 +105,11 @@ func Main() (exitCode int) {
 		}
 
 		//run generators before scan phase
-		if err := impl.RunGenerators(config); err != nil {
-			impl.Errorf(impl.Stderr,
-				"Failed to process generators: %s", err.Error(),
-			)
+		err := impl.RunGenerators(config)
+		if err != nil {
+			impl.Errorf(impl.Stderr, err.Error())
+			impl.Stderr.EndParagraph()
+			return 1
 		}
 
 		//ask all plugins to scan for entities

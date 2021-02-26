@@ -1,0 +1,5 @@
+
+>> output from target/usr/share/holo/generators/02-failing.sh: I don't feel like working
+!! could not run target/usr/share/holo/generators/02-failing.sh: exit status 1
+
+exit status 1
