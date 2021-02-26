@@ -1,7 +1,16 @@
-# v2.2.1 (TBD)
+# v2.3 (TBD)
+
+The headline feature for this release are **generators**, as described in detail in the new `holo-generators(7)`
+manpage. It is still strongly encouraged to supply resource files statically in configuration packages if possible.
+Generated resource files are useful when static resource files just won't do, e.g. when the content (or existence) of a
+resource file depends on the availability of devices, or when resource files need to contain secrets that cannot be
+supplied in the configuration package for security reasons.
+
+Special thanks to new contributor @Backfighter for contributing to the design and implementation of this feature.
 
 Changes:
 
+- Holo can now run generators to render resource files at runtime. Refer to `holo-generators(7)` for details.
 - Generally proofread and improve documentation; both manpages and `holo --help`.
 
 Bugfixes:
