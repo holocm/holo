@@ -19,6 +19,3 @@ directory 0755 ./var/lib/holo/files/provisioned/
 ----------------------------------------
 directory 0755 ./var/lib/holo/print/
 ----------------------------------------
-file      0644 ./var/tmp/holo/generated/print/file.txt
-Simple generated file
-----------------------------------------

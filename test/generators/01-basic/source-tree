@@ -17,7 +17,3 @@ file      0755 ./usr/share/holo/generators/02-failing.sh
 echo "02-failing.sh: failing"
 exit 1
 ----------------------------------------
-directory 0755 ./var/lib/holo/files/base/
-----------------------------------------
-directory 0755 ./var/lib/holo/files/provisioned/
-----------------------------------------

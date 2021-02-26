@@ -1,5 +1,16 @@
 
-env:target/var/tmp/holo/generated/print
-    found at HOLO_RESOURCE_DIR
+list-resource-dir
+
+print:dir/static1.txt
+    found at dir/static1.txt
+
+print:dir/static2.txt
+    found at dir/static2.txt
+
+print:file.txt
+    found at file.txt
+
+print:static.txt
+    found at static.txt
 
 exit status 0

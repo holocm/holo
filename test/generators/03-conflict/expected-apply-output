@@ -1,5 +1,13 @@
 
-Printing env:target/var/tmp/holo/generated/print
-found at HOLO_RESOURCE_DIR
+Working on list-resource-dir
+
+file      0644 ./file.txt
+Simple generated file
+----------------------------------------
+
+Working on print:file.txt
+  found at file.txt
+
+Simple generated file
 
 exit status 0

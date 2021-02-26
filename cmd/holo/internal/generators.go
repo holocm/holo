@@ -1,6 +1,7 @@
 /*******************************************************************************
 *
 * Copyright 2020 Peter Werner <peter.wr@protonmail.com>
+* Copyright 2021 Stefan Majewsky <majewsky@gmx.net>
 *
 * This file is part of Holo.
 *
@@ -21,6 +22,7 @@
 package impl
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"os"
 	"os/exec"
@@ -31,23 +33,25 @@ import (
 // and changes the resource path of plugins for which files were
 // generated to.
 func RunGenerators(config *Configuration) error {
-	inputDir := getGeneratorsDir()
-	if _, err := os.Stat(inputDir); err != nil {
+	inputDir := filepath.Join(RootDirectory(), "/usr/share/holo/generators")
+	_, err := os.Stat(inputDir)
+	if err != nil {
 		if os.IsNotExist(err) {
 			return nil
 		}
 		return err
 	}
-	targetDir, err := getGeneratorCacheDir()
-	if err != nil {
-		return fmt.Errorf(
-			"couldn't access cache-dir ('%s') for generators: %s",
-			targetDir, err,
-		)
+
+	targetDir := filepath.Join(CachePath(), "generated-resources")
+	err = os.Mkdir(targetDir, 0777)
+	if err != nil && !os.IsExist(err) {
+		return err
 	}
+
 	runGenerators(inputDir, targetDir)
 	for _, plugin := range config.Plugins {
-		if err := updatePluginPaths(plugin, targetDir); err != nil {
+		err := updatePluginPaths(plugin, targetDir)
+		if err != nil {
 			Errorf(Stderr,
 				"Failed to perpare generated dir for plugin '%s': %s",
 				plugin.id, err.Error(),
@@ -104,9 +108,8 @@ func symlinkFiles(oldDir string, newDir string) error {
 			if err != nil || oldFile == oldDir {
 				return err
 			}
-			relPath, _ := filepath.Rel(oldDir, oldFile)
-			newFile := filepath.Join(newDir, relPath)
-			err = os.Symlink(oldFile, newFile)
+			newFile := filepath.Join(newDir, filepathMustRel(oldDir, oldFile))
+			err = os.Symlink(filepathMustRel(filepath.Dir(newFile), oldFile), newFile)
 			if os.IsExist(err) {
 				// newFile already exists. Examine it.
 				newFileInfo, err := os.Lstat(newFile)
@@ -129,38 +132,29 @@ func symlinkFiles(oldDir string, newDir string) error {
 		})
 }
 
+//Like filepath.Rel(), but assumes that no error occurs. This assumption is
+//safe if both inputs are absolute paths.
+func filepathMustRel(base, target string) string {
+	rel, _ := filepath.Rel(base, target)
+	return rel
+}
+
 func runGenerator(fileToRun string, targetDir string) ([]byte, error) {
+	//prepare a cache directory with a unique name for the generator
+	generatorID := sha256.Sum256([]byte(fileToRun))
+	cacheDir := filepath.Join(CachePath(), string(generatorID[:]))
+	err := os.Mkdir(cacheDir, 0777)
+	if err != nil {
+		return nil, err
+	}
+
 	cmd := exec.Command(fileToRun)
-	env := os.Environ()
-	env = append(
-		env,
-		fmt.Sprintf("OUT=%s", targetDir),
+	cmd.Env = append(os.Environ(),
+		"HOLO_CACHE_DIR="+cacheDir,
+		"HOLO_RESOURCE_ROOT="+filepath.Join(RootDirectory(), "/usr/share/holo"),
+		"OUT="+targetDir,
 	)
-	cmd.Env = env
 	return cmd.CombinedOutput()
-}
-
-func getGeneratorsDir() string {
-	return filepath.Join(RootDirectory(), "/usr/share/holo/generators")
-}
-
-func getGeneratorCacheDir() (string, error) {
-	path, err := prepareDir(RootDirectory(), "/var/tmp/holo/generated")
-	if err == nil {
-		return path, nil
-	}
-	path, err = prepareDir(
-		os.Getenv("HOLO_CACHE_DIR"), "holo/generated",
-	)
-	if err == nil {
-		return path, nil
-	}
-	return "", err
-}
-
-func prepareDir(pathParts ...string) (string, error) {
-	path := filepath.Join(pathParts...)
-	return path, os.MkdirAll(path, 0755)
 }
 
 func isExecutableFile(stat os.FileInfo) bool {

@@ -1,5 +1,34 @@
 
-Printing env:target/var/tmp/holo/generated/print
-found at HOLO_RESOURCE_DIR
+Working on list-resource-dir
+
+symlink   0777 ./dir
+../../../../usr/share/holo/print/dir
+----------------------------------------
+file      0644 ./file.txt
+Simple generated file
+----------------------------------------
+symlink   0777 ./static.txt
+../../../../usr/share/holo/print/static.txt
+----------------------------------------
+
+Working on print:dir/static1.txt
+  found at dir/static1.txt
+
+Simple static file 1
+
+Working on print:dir/static2.txt
+  found at dir/static2.txt
+
+Simple static file 2
+
+Working on print:file.txt
+  found at file.txt
+
+Simple generated file
+
+Working on print:static.txt
+  found at static.txt
+
+Simple static file
 
 exit status 0

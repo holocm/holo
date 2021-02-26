@@ -25,12 +25,3 @@ directory 0755 ./var/lib/holo/files/provisioned/
 ----------------------------------------
 directory 0755 ./var/lib/holo/print/
 ----------------------------------------
-symlink   0777 ./var/tmp/holo/generated/print/dir
-target/usr/share/holo/print/dir
-----------------------------------------
-file      0644 ./var/tmp/holo/generated/print/file.txt
-Simple generated file
-----------------------------------------
-symlink   0777 ./var/tmp/holo/generated/print/static.txt
-target/usr/share/holo/print/static.txt
-----------------------------------------

@@ -69,7 +69,7 @@ plugin:
 =item C<$HOLO_API_VERSION> (default: C<3>)
 
 This variable is a single positive integer identifying the version of the API
-that the plugin is expected to conform to. Plugins SHALL not require that
+that the plugin is expected to conform to. Plugins SHALL NOT require that
 C<$HOLO_API_VERSION> be defined for the C<info> operation, but SHOULD verify
 that they support the specified version for all other operations.
 

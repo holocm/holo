@@ -1,5 +1,7 @@
 
-env:target/var/tmp/holo/generated/print
-    found at HOLO_RESOURCE_DIR
+list-resource-dir
+
+print:file.txt
+    found at file.txt
 
 exit status 0
