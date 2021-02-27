@@ -8,12 +8,15 @@ supplied in the configuration package for security reasons.
 
 Special thanks to new contributor @Backfighter for contributing to the design and implementation of this feature.
 
-**Backwards-incompatible changes:**
+**Backwards-incompatible changes:** None of these are _technically_ backwards-incompatible, but all are likely enough to
+break existing plugins or scripts to warrant a major version bump.
 
 - Instead of `/usr/share/holo/$PLUGIN_ID`, plugins now receive a _virtualized resource directory_ as their
-  `$HOLO_RESOURCE_DIR`. This is technically not a backwards-incompatible change because plugins were always expected to
-  not assume the default value for `$HOLO_RESOURCE_DIR`. But we all know how these things go in practice, so this alone
-  would have been justification for bumping the major version.
+  `$HOLO_RESOURCE_DIR`.
+- In the output of `holo scan --porcelain`, `SOURCE` lines can now refer to generated resource files, using a special
+  syntax that is not an actual file path. For example, if the generator `/usr/share/holo/generators/example.sh`
+  generates the resource file `$HOLO_RESOURCE_DIR/foo/bar.toml`, the respective entities will report
+  `SOURCE: /usr/share/holo/generators/example.sh::foo/bar.toml`.
 
 Further changes:
 

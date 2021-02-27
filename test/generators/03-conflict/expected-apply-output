@@ -6,7 +6,7 @@ Simple generated file
 ----------------------------------------
 
 Working on print:file.txt
-  found at file.txt
+  found at target/usr/share/holo/generators/01-simple.sh::print/file.txt
 
 Simple generated file
 

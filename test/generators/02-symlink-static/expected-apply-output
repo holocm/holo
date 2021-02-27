@@ -15,22 +15,22 @@ Simple static file
 ----------------------------------------
 
 Working on print:dir/static1.txt
-  found at dir/static1.txt
+  found at target/usr/share/holo/print/dir/static1.txt
 
 Simple static file 1
 
 Working on print:dir/static2.txt
-  found at dir/static2.txt
+  found at target/usr/share/holo/print/dir/static2.txt
 
 Simple static file 2
 
 Working on print:file.txt
-  found at file.txt
+  found at target/usr/share/holo/generators/01-simple.sh::print/file.txt
 
 Simple generated file
 
 Working on print:static.txt
-  found at static.txt
+  found at target/usr/share/holo/print/static.txt
 
 Simple static file
 

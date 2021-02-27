@@ -16,7 +16,7 @@ case "$1" in
         cd "${HOLO_RESOURCE_DIR}"
         find -L . -name \*.txt | sort | cut -c3- | while read FILE; do
             echo "ENTITY: print:${FILE}"
-            echo "found at: ${FILE}"
+            echo "found at: ${HOLO_RESOURCE_DIR}/${FILE}"
             echo "SOURCE: ${HOLO_RESOURCE_DIR}/${FILE}"
         done
         ;;
