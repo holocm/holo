@@ -1,14 +1,17 @@
 
 Working on list-resource-dir
 
-symlink   0777 ./dir
-../../../../usr/share/holo/print/dir
+file      0755 ./dir/static1.txt
+Simple static file 1
+----------------------------------------
+file      0755 ./dir/static2.txt
+Simple static file 2
 ----------------------------------------
 file      0644 ./file.txt
 Simple generated file
 ----------------------------------------
-symlink   0777 ./static.txt
-../../../../usr/share/holo/print/static.txt
+file      0755 ./static.txt
+Simple static file
 ----------------------------------------
 
 Working on print:dir/static1.txt

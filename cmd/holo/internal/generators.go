@@ -137,7 +137,7 @@ func FinalizeVirtualResourceRoot() error {
 			//
 			//NOTE: We also cannot symlink static resource files since symlinks have
 			//special semantics in some plugins (most prominently in holo-files).
-			generatorForResourceFile[relPath] = "\000static\000"
+			generatorForResourceFile[relPath] = "" //not generated
 			return fs.CopyFile(physicalPath, virtualPath)
 		case err != nil:
 			return err
@@ -153,4 +153,39 @@ func FinalizeVirtualResourceRoot() error {
 func filepathMustRel(base, target string) string {
 	rel, _ := filepath.Rel(base, target)
 	return rel
+}
+
+//TranslateIfResourcePath checks if the input is a path to a resource file from
+//the virtual resource directory. If so, returns the human readable path for
+//this resource file (referring to the physical resource directory for static
+//resource files, or indicating the generator for generated resource files).
+//Otherwise, the input is returned unchanged.
+func TranslateIfResourcePath(input string) string {
+	var resourceRelPath string
+
+	stripped := strings.TrimPrefix(input, VirtualResourceRoot()+"/")
+	if stripped != input {
+		resourceRelPath = stripped
+	} else {
+		stripped := strings.TrimPrefix(input, AbsoluteVirtualResourceRoot()+"/")
+		if stripped != input {
+			resourceRelPath = stripped
+		}
+	}
+	if resourceRelPath == "" {
+		//not a resource
+		return input
+	}
+
+	generatorRelPath := generatorForResourceFile[resourceRelPath]
+	if generatorRelPath == "" {
+		//either this is a static resource file or it's a resource file we don't
+		//know anything about (sometimes diffs refer to resource files that were
+		//deleted since the last apply run)
+		return filepath.Join(RootDirectory(), "usr/share/holo/"+resourceRelPath)
+	}
+	return fmt.Sprintf("%s::%s",
+		filepath.Join(RootDirectory(), "/usr/share/holo/generators/"+generatorRelPath),
+		resourceRelPath,
+	)
 }

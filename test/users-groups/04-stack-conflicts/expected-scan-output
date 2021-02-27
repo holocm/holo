@@ -1,8 +1,8 @@
 
-!! File target/usr/share/holo/users-groups/01-first.toml is invalid:
+!! File target/tmp/holo/generated-resources/users-groups/01-first.toml is invalid:
 >> groups[1] is missing required 'name' attribute
 >> users[0] is missing required 'name' attribute
-!! File target/usr/share/holo/users-groups/02-second.toml is invalid:
+!! File target/tmp/holo/generated-resources/users-groups/02-second.toml is invalid:
 >> conflicting GID for group:stacked (1000 vs. 1001)
 >> conflicting UID for user:stacked (1000 vs. 1001)
 >> conflicting home directory for user:stacked (/var/lib/stacked vs. /home/stacked)

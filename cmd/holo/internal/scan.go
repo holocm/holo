@@ -77,6 +77,7 @@ func (p *Plugin) Scan() []*Entity {
 			Errorf(Stderr, "%s: expected entity ID, found attribute \"%s\"", errorIntro, line)
 			hadError = true
 		case key == "SOURCE":
+			value = TranslateIfResourcePath(value)
 			currentEntity.sourceFiles = append(currentEntity.sourceFiles, value)
 		case key == "ACTION":
 			//parse action verb/reason
@@ -90,6 +91,7 @@ func (p *Plugin) Scan() []*Entity {
 			}
 		default:
 			//store unrecognized keys as info lines
+			value = TranslateIfResourcePath(value)
 			currentEntity.infoLines = append(currentEntity.infoLines,
 				InfoLine{key, value},
 			)

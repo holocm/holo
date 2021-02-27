@@ -27,8 +27,9 @@ import (
 )
 
 var (
-	cachePath           string
-	virtualResourceRoot string
+	cachePath              string
+	virtualResourceRoot    string
+	absVirtualResourceRoot string
 )
 
 //WithCacheDirectory executes the worker function after having set up a cache
@@ -68,4 +69,12 @@ func CachePath() string {
 //resource files, both static and generated. This file is the generated counterpart for `$HOLO_ROOT_DIR/usr/share/holo`.
 func VirtualResourceRoot() string {
 	return virtualResourceRoot
+}
+
+//AbsoluteVirtualResourceRoot returns the same path as VirtualResourceRoot, but
+//as an absolute path. Since VirtualResourceRoot is below TMPDIR, this is not a
+//difference in production runs where TMPDIR is `/tmp` and thus already
+//absolute, but test runs typically specify TMPDIR as a relative path.
+func AbsoluteVirtualResourceRoot() string {
+	return absVirtualResourceRoot
 }
