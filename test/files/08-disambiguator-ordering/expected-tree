@@ -24,6 +24,8 @@ file      0755 ./usr/share/holo/files/01-foo-bar/etc/foo.conf.holoscript
 cat
 echo ddd
 ----------------------------------------
+directory 0755 ./usr/share/holo/generators/
+----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/foo.conf
 aaa
 bbb

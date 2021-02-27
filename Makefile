@@ -5,7 +5,7 @@ default: build/holo
 default: $(addprefix build/man/,$(mans))
 .PHONY: default
 
-GO            := GOPATH=$(CURDIR)/.go-workspace GOBIN=$(CURDIR)/build go
+GO            := GO111MODULE=off GOPATH=$(CURDIR)/.go-workspace GOBIN=$(CURDIR)/build go
 GO_BUILDFLAGS :=
 GO_LDFLAGS    := -s -w
 GO_TESTFLAGS  := -covermode=count
@@ -54,7 +54,7 @@ test/cov.cov: clean-tests build/holo.test
 		export HOLO_BINARY=../../../build/holo.test && \
 		export HOLO_TEST_COVERDIR=$(abspath test/cov) && \
 		export HOLO_TEST_SCRIPTPATH=../../../util && \
-		$(foreach p,files run-scripts ssh-keys users-groups,\
+		$(foreach p,files run-scripts ssh-keys users-groups generators,\
 			ln -sfT ../build/holo.test test/holo-$p && \
 			./util/holo-test holo-$p $(sort $(wildcard test/$p/??-*)) && ) \
 		true
@@ -78,6 +78,7 @@ install: default conf/holorc conf/holorc.holo-files util/autocomplete.bash util/
 	install -d -m 0755 "$(DESTDIR)/usr/lib/holo"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/files"
+	install -d -m 0755 "$(DESTDIR)/usr/share/holo/generators"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/run-scripts"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/ssh-keys"
 	install -d -m 0755 "$(DESTDIR)/usr/share/holo/users-groups"

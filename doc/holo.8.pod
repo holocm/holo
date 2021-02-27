@@ -64,6 +64,16 @@ An entity that was created and still exists, but for which all source files have
 been removed, is said to be B<orphaned> or an B<orphan>. Orphaned entities are
 removed the next time an apply operation is performed on them.
 
+=head2 Generated resource files
+
+Sometimes, resource files cannot be supplied in a package because their
+existence or contents depend on state not known at package build time, e.g. the
+set of devices present on the final system or the system's network environment.
+In this case, the configuration package can supply a B<generator> that produces
+the correct set of resource files when Holo runs.
+
+The interface for generators is described in L<holo-generators(7)>.
+
 =head1 OPERATIONS
 
 All operations act on all entities by default, but can be restricted to certain

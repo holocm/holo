@@ -32,6 +32,8 @@ symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-dpkg-dist.con
 symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-dpkg-old.conf.holoscript
 ../../../../../../../../../binwrap/uniq
 ----------------------------------------
+directory 0755 ./usr/share/holo/generators/
+----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/targetfile-with-dpkg-dist.conf
 d
 f

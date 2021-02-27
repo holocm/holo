@@ -26,7 +26,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/holocm/holo/cmd/holo-files/internal/common"
+	"github.com/holocm/holo/internal/fs"
 )
 
 //archImpl provides the platform.Impl for Arch Linux and derivatives.
@@ -34,7 +34,7 @@ type archImpl struct{}
 
 func (p archImpl) FindUpdatedTargetBase(targetPath string) (actualPath, reportedPath string, err error) {
 	pacnewPath := targetPath + ".pacnew"
-	if common.IsManageableFile(pacnewPath) {
+	if fs.IsManageableFile(pacnewPath) {
 		return pacnewPath, pacnewPath, nil
 	}
 	return "", "", nil
@@ -42,7 +42,7 @@ func (p archImpl) FindUpdatedTargetBase(targetPath string) (actualPath, reported
 
 func (p archImpl) AdditionalCleanupTargets(targetPath string) (ret []string) {
 	pacsavePath := targetPath + ".pacsave"
-	if common.IsManageableFile(pacsavePath) {
+	if fs.IsManageableFile(pacsavePath) {
 		ret = append(ret, pacsavePath)
 	}
 
@@ -61,7 +61,7 @@ func (p archImpl) AdditionalCleanupTargets(targetPath string) (ret []string) {
 		if _, err := strconv.ParseUint(suffix, 10, 0); err != nil {
 			continue
 		}
-		if !common.IsManageableFileInfo(fileinfo) {
+		if !fs.IsManageableFileInfo(fileinfo) {
 			continue
 		}
 		ret = append(ret, filepath.Join(dir, fileinfo.Name()))

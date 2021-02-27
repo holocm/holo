@@ -1,6 +1,24 @@
-# v2.2.1 (TBD)
+# v3.0.0 (TBD)
 
-Changes:
+The headline feature for this release are **generators**, as described in detail in the new `holo-generators(7)`
+manpage. It is still strongly encouraged to supply resource files statically in configuration packages if possible.
+Generated resource files are useful when static resource files just won't do, e.g. when the content (or existence) of a
+resource file depends on the availability of devices, or when resource files need to contain secrets that cannot be
+supplied in the configuration package for security reasons.
+
+Special thanks to new contributor @Backfighter for contributing to the design and implementation of this feature.
+
+**Backwards-incompatible changes:** None of these are _technically_ backwards-incompatible, but all are likely enough to
+break existing plugins or scripts to warrant a major version bump.
+
+- Instead of `/usr/share/holo/$PLUGIN_ID`, plugins now receive a _virtualized resource directory_ as their
+  `$HOLO_RESOURCE_DIR`.
+- In the output of `holo scan --porcelain`, `SOURCE` lines can now refer to generated resource files, using a special
+  syntax that is not an actual file path. For example, if the generator `/usr/share/holo/generators/example.sh`
+  generates the resource file `$HOLO_RESOURCE_DIR/foo/bar.toml`, the respective entities will report
+  `SOURCE: /usr/share/holo/generators/example.sh::foo/bar.toml`.
+
+Further changes:
 
 - Generally proofread and improve documentation; both manpages and `holo --help`.
 

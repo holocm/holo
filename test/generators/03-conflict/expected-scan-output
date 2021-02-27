@@ -1,0 +1,7 @@
+
+list-resource-dir
+
+print:file.txt
+    found at target/usr/share/holo/generators/01-simple.sh::print/file.txt
+
+exit status 0

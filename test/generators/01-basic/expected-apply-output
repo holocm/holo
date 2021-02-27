@@ -1,0 +1,15 @@
+
+>> output from target/usr/share/holo/generators/03-chatty.sh: I'm just talking
+
+Working on list-resource-dir
+
+file      0644 ./file.txt
+Simple generated file
+----------------------------------------
+
+Working on print:file.txt
+  found at target/usr/share/holo/generators/01-simple.sh::print/file.txt
+
+Simple generated file
+
+exit status 0

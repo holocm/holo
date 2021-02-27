@@ -18,9 +18,7 @@
 *
 *******************************************************************************/
 
-package common
-
-//This file needs to be in an extra package to break an import cycle.
+package fs
 
 import (
 	"io/ioutil"

@@ -1,0 +1,27 @@
+symlink   0777 ./etc/holorc
+../../../holorc
+----------------------------------------
+directory 0755 ./run/
+----------------------------------------
+directory 0755 ./tmp/
+----------------------------------------
+file      0755 ./usr/share/holo/generators/01-simple.sh
+#!/bin/sh
+mkdir -p "${OUT}/print/"
+echo "Simple generated file" > "${OUT}/print/file.txt"
+----------------------------------------
+file      0755 ./usr/share/holo/print/dir/static1.txt
+Simple static file 1
+----------------------------------------
+file      0755 ./usr/share/holo/print/dir/static2.txt
+Simple static file 2
+----------------------------------------
+file      0755 ./usr/share/holo/print/static.txt
+Simple static file
+----------------------------------------
+directory 0755 ./var/lib/holo/files/base/
+----------------------------------------
+directory 0755 ./var/lib/holo/files/provisioned/
+----------------------------------------
+directory 0755 ./var/lib/holo/print/
+----------------------------------------

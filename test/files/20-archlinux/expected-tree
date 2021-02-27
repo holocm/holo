@@ -30,6 +30,8 @@ directory 0755 ./tmp/
 symlink   0777 ./usr/share/holo/files/01-first/etc/targetfile-with-pacnew.conf.holoscript
 ../../../../../../../../../binwrap/sort
 ----------------------------------------
+directory 0755 ./usr/share/holo/generators/
+----------------------------------------
 file      0644 ./var/lib/holo/files/base/etc/targetfile-with-pacnew.conf
 d
 f

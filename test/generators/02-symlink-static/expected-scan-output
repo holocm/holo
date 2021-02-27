@@ -1,0 +1,16 @@
+
+list-resource-dir
+
+print:dir/static1.txt
+    found at target/usr/share/holo/print/dir/static1.txt
+
+print:dir/static2.txt
+    found at target/usr/share/holo/print/dir/static2.txt
+
+print:file.txt
+    found at target/usr/share/holo/generators/01-simple.sh::print/file.txt
+
+print:static.txt
+    found at target/usr/share/holo/print/static.txt
+
+exit status 0

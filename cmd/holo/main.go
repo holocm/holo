@@ -104,6 +104,20 @@ func Main() (exitCode int) {
 			selectors = append(selectors, &Selector{String: arg, Used: false})
 		}
 
+		//run generators before scan phase
+		err := impl.RunAllGenerators()
+		if err == nil {
+			err = impl.FinalizeVirtualResourceRoot()
+		}
+		if err != nil {
+			impl.Errorf(impl.Stderr, err.Error())
+			impl.Stderr.EndParagraph()
+			return 1
+		}
+		for _, plugin := range config.Plugins {
+			plugin.UseVirtualResourceRoot()
+		}
+
 		//ask all plugins to scan for entities
 		var entities []*impl.Entity
 		for _, plugin := range config.Plugins {

@@ -20,14 +20,14 @@
 
 package platform
 
-import "github.com/holocm/holo/cmd/holo-files/internal/common"
+import "github.com/holocm/holo/internal/fs"
 
 //apkImpl provides the platform.Impl for Alpine Linux and derivatives.
 type apkImpl struct{}
 
 func (p apkImpl) FindUpdatedTargetBase(targetPath string) (actualPath, reportedPath string, err error) {
 	apknewPath := targetPath + ".apk-new"
-	if common.IsManageableFile(apknewPath) {
+	if fs.IsManageableFile(apknewPath) {
 		return apknewPath, apknewPath, nil
 	}
 	return "", "", nil

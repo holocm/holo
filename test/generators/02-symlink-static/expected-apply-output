@@ -1,0 +1,37 @@
+
+Working on list-resource-dir
+
+file      0755 ./dir/static1.txt
+Simple static file 1
+----------------------------------------
+file      0755 ./dir/static2.txt
+Simple static file 2
+----------------------------------------
+file      0644 ./file.txt
+Simple generated file
+----------------------------------------
+file      0755 ./static.txt
+Simple static file
+----------------------------------------
+
+Working on print:dir/static1.txt
+  found at target/usr/share/holo/print/dir/static1.txt
+
+Simple static file 1
+
+Working on print:dir/static2.txt
+  found at target/usr/share/holo/print/dir/static2.txt
+
+Simple static file 2
+
+Working on print:file.txt
+  found at target/usr/share/holo/generators/01-simple.sh::print/file.txt
+
+Simple generated file
+
+Working on print:static.txt
+  found at target/usr/share/holo/print/static.txt
+
+Simple static file
+
+exit status 0

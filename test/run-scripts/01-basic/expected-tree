@@ -5,6 +5,8 @@ directory 0755 ./run/
 ----------------------------------------
 directory 0755 ./tmp/
 ----------------------------------------
+directory 0755 ./usr/share/holo/generators/
+----------------------------------------
 file      0755 ./usr/share/holo/run-scripts/01-successful.sh
 #!/bin/sh
 echo "Running provisioning script 01-successful.sh"

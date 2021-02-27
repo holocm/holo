@@ -1,0 +1,9 @@
+
+>> output from target/usr/share/holo/generators/03-chatty.sh: I'm just talking
+
+list-resource-dir
+
+print:file.txt
+    found at target/usr/share/holo/generators/01-simple.sh::print/file.txt
+
+exit status 0

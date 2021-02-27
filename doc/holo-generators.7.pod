@@ -1,0 +1,56 @@
+=encoding UTF-8
+
+=head1 NAME
+
+holo-generators - dynamically generate resource files for other plugins
+
+=head1 DESCRIPTION
+
+Generators are executable files placed under F</usr/share/holo/generators>.
+Holo will execute generators B<in lexical order> before asking plugins to scan
+their resource files. An output directory will be supplied to each generator in
+the environment variable C<$OUT>. Except for caching purposes (see below),
+generators shall only write to F<$OUT/>.
+
+The structure under F<$OUT/> is the same as for static resource files under
+F</usr/share/holo/>. For example, to generate resource files for
+L<holo-files(8)>, a generator may place files at F<$OUT/files/>.
+
+Generated files placed under F<$OUT/> and static files under F</usr/share/holo/>
+will be made available to plugins, with generated files taking precedence over
+static files. For instance, if a generator places a file at
+F<$OUT/files/20-webserver/etc/nginx/nginx.conf>, the L<holo-files(8)> plugin
+will see this file in its C<$HOLO_RESOURCE_DIR> instead of
+F</usr/share/holo/files/20-webserver/etc/nginx/nginx.conf>.
+
+=head1 ENVIRONMENT
+
+Besides C<$OUT>, generators are provided with the following environment variables.
+
+=over 4
+
+=item C<$HOLO_RESOURCE_ROOT> (default: F<$HOLO_ROOT_DIR/usr/share/holo>)
+
+Where all static resource files are located. Static resource files for a
+specific plugin are in F<$HOLO_RESOURCE_ROOT/$PLUGIN_ID/>.
+
+=item C<$HOLO_CACHE_DIR> (default: below C<${TMPDIR:-/tmp}>)
+
+Where the generator may store temporary data. Holo will create this directory
+for the generator, and clean it up after the generator has exited.
+
+=back
+
+=head1 SEE ALSO
+
+L<holo(8)> provides the user interface for this functionality.
+
+=head1 AUTHORS
+
+Peter Werner, Stefan Majewsky
+
+Further documentation is available at the project homepage: http://holocm.org
+
+Please report any issues and feature requests at GitHub: http://github.com/holocm/holo/issues
+
+=cut

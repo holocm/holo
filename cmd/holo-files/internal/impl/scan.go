@@ -27,6 +27,7 @@ import (
 	"strings"
 
 	"github.com/holocm/holo/cmd/holo-files/internal/common"
+	"github.com/holocm/holo/internal/fs"
 )
 
 //Scan returns a slice of all the Entities.
@@ -40,7 +41,7 @@ func Scan() []*Entity {
 			return err
 		}
 		//only look at manageable files (regular files or symlinks)
-		if !(resourceFileInfo.Mode().IsRegular() || common.IsFileInfoASymbolicLink(resourceFileInfo)) {
+		if !(resourceFileInfo.Mode().IsRegular() || fs.IsFileInfoASymbolicLink(resourceFileInfo)) {
 			return nil
 		}
 		// don't consider resourceDir itself to be a resource
@@ -74,7 +75,7 @@ func Scan() []*Entity {
 			return err
 		}
 		//only look at manageable files (regular files or symlinks)
-		if !(baseFileInfo.Mode().IsRegular() || common.IsFileInfoASymbolicLink(baseFileInfo)) {
+		if !(baseFileInfo.Mode().IsRegular() || fs.IsFileInfoASymbolicLink(baseFileInfo)) {
 			return nil
 		}
 		// don't consider baseDir itself to be a base (it

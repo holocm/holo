@@ -228,12 +228,14 @@ func renderFileDiff(fromPath, toPath string) ([]byte, error) {
 
 	//fix paths in headers, especially remove the unnecessary "a/" and "b/"
 	//path prefixes
+	fromPathToDisplay := TranslateIfResourcePath(fromPath)
+	toPathToDisplay := TranslateIfResourcePath(toPath)
 	rx = regexp.MustCompile(`(?m:^diff --git .*$)`)
-	result = rx.ReplaceAll(result, []byte(fmt.Sprintf("diff --holo %s %s", fromPath, toPath)))
+	result = rx.ReplaceAll(result, []byte(fmt.Sprintf("diff --holo %s %s", fromPathToDisplay, toPathToDisplay)))
 	rx = regexp.MustCompile(`(?m:^--- a/.*$)`)
-	result = rx.ReplaceAll(result, []byte("--- "+fromPath))
+	result = rx.ReplaceAll(result, []byte("--- "+fromPathToDisplay))
 	rx = regexp.MustCompile(`(?m:^\+\+\+ b/.*$)`)
-	result = rx.ReplaceAll(result, []byte("+++ "+toPath))
+	result = rx.ReplaceAll(result, []byte("+++ "+toPathToDisplay))
 
 	//colorize diff
 	rules := []LineColorizingRule{
