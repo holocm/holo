@@ -26,3 +26,27 @@ jobs:
 
       - name: Test
         run: make check
+
+      - name: Translate coverage report
+        uses: jandelgado/gcov2lcov-action@v1.0.8
+        with:
+          infile: test/cov.cov
+          outfile: test/cov.lcov
+
+      - name: Submit coverage report
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: test/cov.lcov
+          flag-name: go-${{ matrix.go }}
+          parallel: true
+
+  finish:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Finalize coverage report
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
