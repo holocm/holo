@@ -62,7 +62,7 @@ test/cov.cov: clean-tests build/holo.test
 %.func.txt: %.cov
 	$(GO) tool cover -func $< -o $@
 
-DIST_IDS = $(shell [ -f /etc/os-release ] && source /etc/os-release || source /usr/lib/os-release; echo "$$ID $$ID_LIKE")
+DIST_IDS = $(shell [ -f /etc/os-release ] && . /etc/os-release || . /usr/lib/os-release; echo "$$ID $$ID_LIKE")
 
 install: default conf/holorc conf/holorc.holo-files util/autocomplete.bash util/autocomplete.zsh
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files"

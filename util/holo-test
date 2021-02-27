@@ -57,13 +57,6 @@ run_testcase() (
     mkdir -p target/var/lib/holo/files/provisioned
     mkdir -p target/usr/share/holo/generators
 
-    # fix a bug with Travis (Travis has an ancient git which incorrectly prints
-    # paths relative to the nearest git root instead of the $PWD when called
-    # with the "git diff --no-index -- FILE FILE" syntax, which changes the
-    # diff-output of the unit tests for holo-files; to fix this, we put a
-    # temporary git root at the $PWD)
-    git init >/dev/null
-
     # setup environment for holo run
     export HOLO_ROOT_DIR="./target/"
     export TMPDIR="./target/tmp"
@@ -86,9 +79,6 @@ run_testcase() (
 
     # dump the contents of the target directory into a single file for diff'ing with the source-tree
     "${HOLO_TEST_SCRIPTPATH}/tree-to-dump.sh" target/ > tree
-
-    # clean up the useless Git repo we created earlier to fix a Travis bug
-    rm -rf -- .git
 
     local EXIT_CODE=0
 
