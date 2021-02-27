@@ -14,7 +14,7 @@ GO_DEPS       := $(GO) list -f '{{.ImportPath}}{{"\n"}}{{join .Deps "\n"}}'
 # which packages to test with static checkers
 allpkgs := $(shell go list ./...)
 # which files to test with static checkers (this contains a list of globs)
-allfiles := $(addsuffix /*.go,$(patsubst $(shell go list .),.,$(shell go list ./...)))
+allfiles := $(addsuffix /*.go,$(patsubst $(shell go list .)%,.%,$(shell go list ./...)))
 # to get around weird Makefile syntax restrictions, we need variables containing a space and comma
 space := $(null) $(null)
 comma := ,
@@ -43,8 +43,13 @@ build/man/%: doc/%.pod .version | build/man
 test: check # just a synonym
 check: default test/cov.html test/cov.func.txt
 test/cov.cov: clean-tests build/holo.test
-	@if s="$$(gofmt -l $(allfiles) 2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' gofmt  "$$s"; false; fi
-	@if s="$$(golint   $(allpkgs)  2>/dev/null)" && test -n "$$s"; then printf ' => %s\n%s\n' golint "$$s"; false; fi
+	@if ! hash golint 2>/dev/null; then printf "\e[1;36m>> Installing golint...\e[0m\n"; GO111MODULE=off go get -u golang.org/x/lint/golint; fi
+	@printf "\e[1;36m>> gofmt\e[0m\n"
+	@if s="$$(gofmt -l $(allfiles) 2>/dev/null)" && test -n "$$s"; then echo "$$s"; false; fi
+	@printf "\e[1;36m>> golint\e[0m\n"
+	@if s="$$(golint $(allpkgs) 2>/dev/null)" && test -n "$$s"; then echo "$$s"; false; fi
+	@printf "\e[1;36m>> go vet\e[0m\n"
+	@go vet $(GO_BUILDFLAGS) $(allpkgs)
 	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/holo-output.cov $(pkg)/cmd/holo/internal
 	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/ssh-keys-output.cov $(pkg)/cmd/holo-ssh-keys/impl
 	@HOLO_BINARY="$$PWD/build/holo.test" HOLO_TEST_COVERDIR=$$PWD/test/cov ./util/holo-test-help
