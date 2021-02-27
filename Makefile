@@ -45,7 +45,7 @@ check: default test/cov.html test/cov.func.txt
 test/cov.cov: clean-tests build/holo.test
 	@if ! hash golint 2>/dev/null; then printf "\e[1;36m>> Installing golint...\e[0m\n"; GO111MODULE=off go get -u golang.org/x/lint/golint; fi
 	@printf "\e[1;36m>> gofmt\e[0m\n"
-	@if s="$$(gofmt -l $(allfiles) 2>/dev/null)" && test -n "$$s"; then echo "$$s"; false; fi
+	@if s="$$(gofmt -s -d $(allfiles) 2>/dev/null)" && test -n "$$s"; then echo "$$s"; false; fi
 	@printf "\e[1;36m>> golint\e[0m\n"
 	@if s="$$(golint $(allpkgs) 2>/dev/null)" && test -n "$$s"; then echo "$$s"; false; fi
 	@printf "\e[1;36m>> go vet\e[0m\n"

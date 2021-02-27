@@ -148,8 +148,8 @@ func (p *Plugin) Command(arguments []string, stdout io.Writer, stderr io.Writer,
 	cmd.Stdin = nil
 	cmd.Stdout = stdout
 	cmd.Stderr = &LineColorizingWriter{Writer: stderr, Rules: []LineColorizingRule{
-		LineColorizingRule{[]byte("!! "), []byte("\x1B[1;31m")},
-		LineColorizingRule{[]byte(">> "), []byte("\x1B[1;33m")},
+		{[]byte("!! "), []byte("\x1B[1;31m")},
+		{[]byte(">> "), []byte("\x1B[1;33m")},
 	}}
 	if msg != nil {
 		cmd.ExtraFiles = []*os.File{msg}

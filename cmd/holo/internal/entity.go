@@ -239,14 +239,14 @@ func renderFileDiff(fromPath, toPath string) ([]byte, error) {
 
 	//colorize diff
 	rules := []LineColorizingRule{
-		LineColorizingRule{[]byte("diff "), []byte("\x1B[1m")},
-		LineColorizingRule{[]byte("new "), []byte("\x1B[1m")},
-		LineColorizingRule{[]byte("deleted "), []byte("\x1B[1m")},
-		LineColorizingRule{[]byte("--- "), []byte("\x1B[1m")},
-		LineColorizingRule{[]byte("+++ "), []byte("\x1B[1m")},
-		LineColorizingRule{[]byte("@@ "), []byte("\x1B[36m")},
-		LineColorizingRule{[]byte("-"), []byte("\x1B[31m")},
-		LineColorizingRule{[]byte("+"), []byte("\x1B[32m")},
+		{[]byte("diff "), []byte("\x1B[1m")},
+		{[]byte("new "), []byte("\x1B[1m")},
+		{[]byte("deleted "), []byte("\x1B[1m")},
+		{[]byte("--- "), []byte("\x1B[1m")},
+		{[]byte("+++ "), []byte("\x1B[1m")},
+		{[]byte("@@ "), []byte("\x1B[36m")},
+		{[]byte("-"), []byte("\x1B[31m")},
+		{[]byte("+"), []byte("\x1B[32m")},
 	}
 
 	return ColorizeLines(result, rules), nil
