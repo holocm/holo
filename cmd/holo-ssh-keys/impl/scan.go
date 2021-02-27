@@ -131,7 +131,7 @@ func scanDirectory(path string, entityNameWasSeen *map[string]bool) []error {
 
 func getFingerprint(key *Key) (string, error) {
 	//`ssh-keygen` cannot read the key from stdin for whatever reason, so use a temporary file
-	file, err := ioutil.TempFile("/tmp/", "holo-ssh-key")
+	file, err := ioutil.TempFile(os.Getenv("HOLO_CACHE_DIR"), "input-for-sshkeygen")
 	if err != nil {
 		return "", err
 	}
