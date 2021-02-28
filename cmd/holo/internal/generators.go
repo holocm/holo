@@ -23,6 +23,7 @@ package impl
 
 import (
 	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"os/exec"
@@ -55,7 +56,7 @@ func RunAllGenerators() error {
 func runGenerator(generatorPath, generatorRelPath string) error {
 	//prepare a cache directory with a unique name for the generator
 	generatorID := sha256.Sum256([]byte(generatorPath))
-	cacheDir := filepath.Join(CachePath(), string(generatorID[:]))
+	cacheDir := filepath.Join(CachePath(), hex.EncodeToString(generatorID[:]))
 	err := os.Mkdir(cacheDir, 0777)
 	if err != nil {
 		return err
