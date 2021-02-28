@@ -135,8 +135,9 @@ func Main() (exitCode int) {
 			selectedEntities := make([]*impl.Entity, 0, len(entities))
 			for _, entity := range entities {
 				isEntitySelected := false
+				isMatchingSelector := entity.AllMatchingSelectors()
 				for _, selector := range selectors {
-					if entity.MatchesSelector(selector.String) {
+					if isMatchingSelector[selector.String] {
 						isEntitySelected = true
 						selector.Used = true
 						//NOTE: don't break from the selectors loop; we want to

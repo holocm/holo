@@ -49,21 +49,22 @@ type Entity struct {
 //EntityID returns a string that uniquely identifies the entity.
 func (e *Entity) EntityID() string { return e.id }
 
-//MatchesSelector checks whether the given string is either the entity ID or a
-//source file of this entity.
-func (e *Entity) MatchesSelector(value string) bool {
-	if e.id == value {
-		return true
-	}
-	if e.plugin.id == value {
-		return true
+//AllMatchingSelectors returns all selectors that this entity matches.
+func (e *Entity) AllMatchingSelectors() map[string]bool {
+	result := map[string]bool{
+		e.id:        true,
+		e.plugin.id: true,
 	}
 	for _, file := range e.sourceFiles {
-		if file == value {
-			return true
+		result[file] = true
+		//for generated source files, `file` is "$GENERATOR_PATH::$RESOURCE_REL_PATH"
+		//and we want to match on `$GENERATOR_PATH` as a selector
+		if strings.Contains(file, "::") {
+			generatorFile := strings.SplitN(file, "::", 2)[0]
+			result[generatorFile] = true
 		}
 	}
-	return false
+	return result
 }
 
 //PrintReport prints the scan report describing this Entity.
