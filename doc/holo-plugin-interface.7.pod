@@ -323,8 +323,8 @@ L<holo-test(7)> (test runner for Holo plugins)
 
 Stefan Majewsky
 
-Further documentation is available at the project homepage: http://holocm.org
+Further documentation is available at the project homepage: https://holocm.org
 
-Please report any issues and feature requests at GitHub: http://github.com/holocm/holo/issues
+Please report any issues and feature requests at GitHub: https://github.com/holocm/holo/issues
 
 =cut
