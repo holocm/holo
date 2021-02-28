@@ -21,6 +21,12 @@ break existing plugins or scripts to warrant a major version bump.
 Further changes:
 
 - Generally proofread and improve documentation; both manpages and `holo --help`.
+- Update the build system to use Go modules.
+
+Packagers beware:
+
+- Because of the switch to Go modules, the build system now expects Go 1.14 or newer. Older Go versions might still
+  work, but you may have to patch or substitute the build invocation in the `build/holo` make target.
 
 Bugfixes:
 
