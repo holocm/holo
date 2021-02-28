@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sort"
 
 	impl "github.com/holocm/holo/cmd/holo/internal"
 )
@@ -69,6 +70,13 @@ func Main() (exitCode int) {
 		knownOpts = map[string]int{
 			"-s": optionScanShort, "--short": optionScanShort,
 			"-p": optionScanPorcelain, "--porcelain": optionScanPorcelain,
+		}
+	case "selectors":
+		command = commandSelectors
+		if len(os.Args) > 2 {
+			//`holo selectors` does not accept selectors as arguments
+			commandHelp(os.Stderr)
+			return 2
 		}
 	case "version", "--version":
 		fmt.Println(version)
@@ -181,6 +189,7 @@ func commandHelp(w io.Writer) {
 	fmt.Fprintf(w, "Usage: %s apply [-f|--force] [selector ...]\n", program)
 	fmt.Fprintf(w, "   or: %s diff [selector ...]\n", program)
 	fmt.Fprintf(w, "   or: %s scan [-s|--short|-p|--porcelain] [selector ...]\n", program)
+	fmt.Fprintf(w, "   or: %s selectors\n", program)
 	fmt.Fprintf(w, "   or: %s version\n", program)
 	fmt.Fprintf(w, "   or: %s help\n", program)
 	fmt.Fprintf(w, "\nSee `man 8 holo` for details.\n")
@@ -219,6 +228,24 @@ func commandScan(entities []*impl.Entity, options map[int]bool) (exitCode int) {
 		}
 	}
 
+	return 0
+}
+
+func commandSelectors(entities []*impl.Entity, options map[int]bool) (exitCode int) {
+	isSelector := make(map[string]bool)
+	for _, entity := range entities {
+		for selector := range entity.AllMatchingSelectors() {
+			isSelector[selector] = true
+		}
+	}
+	allSelectors := make([]string, 0, len(isSelector))
+	for selector := range isSelector {
+		allSelectors = append(allSelectors, selector)
+	}
+	sort.Strings(allSelectors)
+	for _, selector := range allSelectors {
+		fmt.Println(selector)
+	}
 	return 0
 }
 

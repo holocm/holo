@@ -8,6 +8,7 @@ typeset -A opt_args
         'apply:Apply available configuration to some or all entities'
         'diff:Diff some or all entities against the last provisioned version'
         'scan:Scan for provisionable entities'
+        'selectors:List all valid selectors'
     )
     _describe -t commands 'holo command' _commands
     return 0
@@ -15,14 +16,7 @@ typeset -A opt_args
 
 (( $+functions[_holo_selector] )) || _holo_selector()
 {
-    # 1. `holo scan --porcelain` is used to list entities and source files
-    # 2. `cat /etc/holorc ...` is used to list plugin IDs
-    _alternative "selectors:Holo selectors:($(
-        (
-            holo scan --porcelain | sed -n '/^ENTITY:\|^SOURCE:/ { s/^ENTITY: \|^SOURCE: //; p }'
-            cat /etc/holorc /etc/holorc.d/* | awk '/^plugin/{print$2}' | cut -d= -f1
-        ) | sort -u
-    ))"
+    _alternative "selectors:Holo selectors:($(holo selectors))"
     return 0
 }
 

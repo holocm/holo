@@ -12,6 +12,8 @@ holo B<diff> [I<selector> ...]
 
 holo B<scan> [I<-s|--short|-p|--porcelain>] [I<selector> ...]
 
+holo B<selectors>
+
 holo B<help>
 
 holo B<version>
@@ -84,6 +86,11 @@ C</usr/share/holo/files/40-desktop/etc/sddm/sddm.conf>), or a plugin ID (such
 as C<files>). A plugin ID as selector matches all entities known to that
 plugin.
 
+For resource files produced by a generator, additional valid selectors include
+the path to the generator (such as C</usr/share/holo/generators/foo.sh>), or a
+pseudo-path of the form C<$GENERATOR_PATH::$RESOURCE_REL_PATH> (such as
+C</usr/share/holo/generators/foo.sh::files/40-desktop/etc/sddm/sddm.conf>).
+
 =over 4
 
 =item B<scan> [I<-s|--short|-p|--porcelain>] [I<selector> ...]
@@ -98,6 +105,11 @@ With C<-p> or C<--porcelain>, show the raw scan report as received from the
 plugins. The format is documented in L<holo-plugin-interface(7)>. The format is
 more machine-readable and stable, and thus the preferred choice for parsing in
 scripts.
+
+=item B<selectors>
+
+Lists all valid selector strings that match at least one entity. This exists
+purely to make the implementation of shell completion functions easier.
 
 =item B<apply> [I<-f|--force>] [I<selector> ...]
 
