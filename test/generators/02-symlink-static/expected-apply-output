@@ -1,16 +1,16 @@
 
 Working on list-resource-dir
 
-file      0755 ./dir/static1.txt
+file      0700 ./dir/static1.txt
 Simple static file 1
 ----------------------------------------
-file      0755 ./dir/static2.txt
+file      0700 ./dir/static2.txt
 Simple static file 2
 ----------------------------------------
 file      0644 ./file.txt
 Simple generated file
 ----------------------------------------
-file      0755 ./static.txt
+file      0700 ./static.txt
 Simple static file
 ----------------------------------------
 

@@ -12,7 +12,11 @@ Special thanks to new contributor @Backfighter for contributing to the design an
 break existing plugins or scripts to warrant a major version bump.
 
 - Instead of `/usr/share/holo/$PLUGIN_ID`, plugins now receive a _virtualized resource directory_ as their
-  `$HOLO_RESOURCE_DIR`.
+  `$HOLO_RESOURCE_DIR`. The virtualized resource directory resides on transient storage and is destroyed when Holo
+  exits. All resource files from `/usr/share/holo/$PLUGIN_ID` are **copied** into this directory before invoking the
+  plugin's scan, apply and diff operations. File mode and ownership are not copied, except for the executable bit on
+  regular files. Plugins should not rely on any other file metadata being reflected correctly in the virtualized
+  resource directory.
 - In the output of `holo scan --porcelain`, `SOURCE` lines can now refer to generated resource files, using a special
   syntax that is not an actual file path. For example, if the generator `/usr/share/holo/generators/example.sh`
   generates the resource file `$HOLO_RESOURCE_DIR/foo/bar.toml`, the respective entities will report

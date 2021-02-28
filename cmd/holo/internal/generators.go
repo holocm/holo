@@ -138,7 +138,7 @@ func FinalizeVirtualResourceRoot() error {
 			//NOTE: We also cannot symlink static resource files since symlinks have
 			//special semantics in some plugins (most prominently in holo-files).
 			generatorForResourceFile[relPath] = "" //not generated
-			return fs.CopyFile(physicalPath, virtualPath)
+			return fs.CopyFile(physicalPath, virtualPath, fs.CopyContentsAndExecutableBitOnly)
 		case err != nil:
 			return err
 		default:

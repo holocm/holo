@@ -47,19 +47,29 @@ func IsFileInfoASymbolicLink(fileInfo os.FileInfo) bool {
 	return (fileInfo.Mode() & os.ModeType) == os.ModeSymlink
 }
 
+//CopyMode is an enumeration for the different modes of behavior for CopyFile().
+type CopyMode int
+
+const (
+	//CopyContentsFileModeAndOwnership is a CopyMode.
+	CopyContentsFileModeAndOwnership CopyMode = iota
+	//CopyContentsAndExecutableBitOnly is a CopyMode.
+	CopyContentsAndExecutableBitOnly
+)
+
 //CopyFile copies a regular file or symlink, including the file metadata.
-func CopyFile(fromPath, toPath string) error {
+func CopyFile(fromPath, toPath string, mode CopyMode) error {
 	info, err := os.Lstat(fromPath)
 	if err != nil {
 		return err
 	}
 	if info.Mode().IsRegular() {
-		return copyFileImpl(fromPath, toPath)
+		return copyFileImpl(fromPath, toPath, info, mode)
 	}
 	return copySymlinkImpl(fromPath, toPath)
 }
 
-func copyFileImpl(fromPath, toPath string) error {
+func copyFileImpl(fromPath, toPath string, fromInfo os.FileInfo, mode CopyMode) error {
 	//copy contents
 	data, err := ioutil.ReadFile(fromPath)
 	if err != nil {
@@ -70,7 +80,28 @@ func copyFileImpl(fromPath, toPath string) error {
 		return err
 	}
 
-	return ApplyFilePermissions(fromPath, toPath)
+	//apply permissions, ownership, modification date from source file to target file
+	//NOTE: We cannot just pass the FileMode in ioutil.WriteFile(), because its
+	//FileMode argument is only applied when a new file is created, not when
+	//an existing one is truncated.
+	switch mode {
+	case CopyContentsFileModeAndOwnership:
+		//apply permissions
+		err = os.Chmod(toPath, fromInfo.Mode())
+		if err != nil {
+			return err
+		}
+
+		//apply ownership
+		stat := fromInfo.Sys().(*syscall.Stat_t) // UGLY
+		return os.Chown(toPath, int(stat.Uid), int(stat.Gid))
+	case CopyContentsAndExecutableBitOnly:
+		//apply executable bit if set on source
+		return os.Chmod(toPath, 0600|(fromInfo.Mode()&0100))
+	default:
+		//unreachable, but we don't care
+		return nil
+	}
 }
 
 func copySymlinkImpl(fromPath, toPath string) error {
@@ -98,43 +129,9 @@ func copySymlinkImpl(fromPath, toPath string) error {
 //MoveFile is like CopyFile, but it removes the fromPath after successful
 //copying.
 func MoveFile(fromPath, toPath string) error {
-	err := CopyFile(fromPath, toPath)
+	err := CopyFile(fromPath, toPath, CopyContentsFileModeAndOwnership)
 	if err != nil {
 		return err
 	}
 	return os.Remove(fromPath)
-}
-
-//ApplyFilePermissions applies permission flags and ownership
-//from the first file to the second file.
-func ApplyFilePermissions(fromPath, toPath string) error {
-	//apply permissions, ownership, modification date from source file to target file
-	//NOTE: We cannot just pass the FileMode in WriteFile(), because its
-	//FileMode argument is only applied when a new file is created, not when
-	//an existing one is truncated.
-	info, err := os.Lstat(fromPath)
-	if err != nil {
-		return err
-	}
-	targetInfo, err := os.Lstat(toPath)
-	if err != nil {
-		return err
-	}
-
-	if !IsFileInfoASymbolicLink(targetInfo) {
-		//apply permissions
-		err = os.Chmod(toPath, info.Mode())
-		if err != nil {
-			return err
-		}
-
-		//apply ownership
-		stat := info.Sys().(*syscall.Stat_t) // UGLY
-		err = os.Chown(toPath, int(stat.Uid), int(stat.Gid))
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
