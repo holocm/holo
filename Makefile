@@ -1,8 +1,7 @@
 pkg = github.com/holocm/holo
 mans = holorc.5 holo-plugin-interface.7 holo-test.7 holo.8 holo-files.8 holo-run-scripts.8 holo-ssh-keys.8 holo-users-groups.8
 
-default: build/holo
-default: $(addprefix build/man/,$(mans))
+default: build/holo $(addprefix build/man/,$(mans))
 .PHONY: default
 
 GO            := go
@@ -13,6 +12,9 @@ GO_DEPS       := $(GO) list -f '{{.ImportPath}}{{"\n"}}{{join .Deps "\n"}}'
 
 # which packages to test with static checkers
 allpkgs := $(shell go list ./...)
+# which packages to test with "go test"
+# (the top-level package is filtered out because it has a custom TestMain)
+testpkgs := $(filter-out $(pkg),$(shell go list -f '{{if .TestGoFiles}}{{.ImportPath}}{{end}}' ./...))
 # which files to test with static checkers (this contains a list of globs)
 allfiles := $(addsuffix /*.go,$(patsubst $(shell go list .)%,.%,$(shell go list ./...)))
 # to get around weird Makefile syntax restrictions, we need variables containing a space and comma
@@ -41,8 +43,9 @@ build/man/%: doc/%.pod .version | build/man
 		$< $@
 
 test: check # just a synonym
-check: default test/cov.html test/cov.func.txt
-test/cov.cov: clean-tests build/holo.test
+check: default static-check test/cov.html test/cov.func.txt
+
+static-check:
 	@if ! hash golint 2>/dev/null; then printf "\e[1;36m>> Installing golint...\e[0m\n"; GO111MODULE=off go get -u golang.org/x/lint/golint; fi
 	@printf "\e[1;36m>> gofmt\e[0m\n"
 	@if s="$$(gofmt -s -d $(allfiles) 2>/dev/null)" && test -n "$$s"; then echo "$$s"; false; fi
@@ -50,18 +53,17 @@ test/cov.cov: clean-tests build/holo.test
 	@if s="$$(golint $(allpkgs) 2>/dev/null)" && test -n "$$s"; then echo "$$s"; false; fi
 	@printf "\e[1;36m>> go vet\e[0m\n"
 	@go vet $(GO_BUILDFLAGS) $(allpkgs)
-	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/holo-output.cov $(pkg)/cmd/holo/internal
-	@$(GO) test $(GO_TESTFLAGS) -coverprofile=test/cov/ssh-keys-output.cov $(pkg)/cmd/holo-ssh-keys/impl
-	@HOLO_BINARY="$$PWD/build/holo.test" HOLO_TEST_COVERDIR=$$PWD/test/cov ./util/holo-test-help
-	@\
-		export HOLO_BINARY=../../../build/holo.test && \
-		export HOLO_TEST_COVERDIR=$(abspath test/cov) && \
-		export HOLO_TEST_SCRIPTPATH=../../../util && \
-		$(foreach p,files run-scripts ssh-keys users-groups generators,\
-			ln -sfT ../build/holo.test test/holo-$p && \
-			./util/holo-test holo-$p $(sort $(wildcard test/$p/??-*)) && ) \
-		true
-	util/gocovcat.go test/cov/*.cov > test/cov.cov
+
+test/cov/all-unit-tests.cov: clean-tests
+	@$(GO) test $(GO_TESTFLAGS) -coverprofile=$@ $(testpkgs)
+test-ui: clean-tests build/holo.test
+	HOLO_BINARY="$(CURDIR)/build/holo.test" HOLO_TEST_COVERDIR="$(CURDIR)/test/cov" ./util/holo-test-help
+test-%: clean-tests build/holo.test FORCE
+	@ln -sfT ../build/holo.test test/holo-$*
+	HOLO_BINARY="$(CURDIR)/build/holo.test" HOLO_TEST_COVERDIR="$(CURDIR)/test/cov" HOLO_TEST_SCRIPTPATH="$(CURDIR)/util" ./util/holo-test holo-$* $(sort $(wildcard test/$*/??-*))
+
+test/cov.cov: test/cov/all-unit-tests.cov test-ui $(patsubst test/%/holorc,test-%,$(wildcard test/*/holorc))
+	util/gocovcat.go test/cov/*.cov > $@
 %.html: %.cov
 	$(GO) tool cover -html $< -o $@
 %.func.txt: %.cov
@@ -69,7 +71,7 @@ test/cov.cov: clean-tests build/holo.test
 
 DIST_IDS = $(shell [ -f /etc/os-release ] && . /etc/os-release || . /usr/lib/os-release; echo "$$ID $$ID_LIKE")
 
-install: default conf/holorc conf/holorc.holo-files util/autocomplete.bash util/autocomplete.zsh
+install: default conf/holorc conf/holorc.holo-files util/autocomplete.bash util/autocomplete.zsh FORCE
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files"
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files/base"
 	install -d -m 0755 "$(DESTDIR)/var/lib/holo/files/provisioned"
@@ -109,18 +111,17 @@ ifneq ($(filter arch,$(DIST_IDS)),)
 	install -D -m 0755 util/distribution-integration/alpm-hook.sh "$(DESTDIR)/usr/share/libalpm/scripts/holo-resolve-pacnew"
 endif
 
-clean: clean-tests
+clean: clean-tests FORCE
 	rm -fr -- build/
 	rm -f -- .version cmd/holo/version.go
-clean-tests:
-	rm -fr -- test/*/*/target
-	rm -f -- test/*/*/{tree,{colored-,}{apply,apply-force,diff,scan}-output}
-	rm -f -- test/cov.* test/cov/* test/holo-*
+clean-tests: FORCE
+	@rm -fr -- test/*/*/target
+	@rm -f -- test/*/*/{tree,{colored-,}{apply,apply-force,diff,scan}-output}
+	@rm -f -- test/cov.* test/cov/* test/holo-*
 
 vendor: FORCE
 	go mod tidy
 	go mod vendor
 	go mod verify
 
-.PHONY: test check install clean clean-tests vendor
 .PHONY: FORCE
