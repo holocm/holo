@@ -26,4 +26,4 @@ Holo includes several plugins for itself. Since
 [holo-build](https://github.com/holocm/holo-build) will also generate
 dependencies on these, the `holo` package must have a Provides relation (or
 whatever this is called in your package format) to `holo-files`,
-`holo-run-scripts`, `holo-ssh-keys` and `holo-users-groups`.
+`holo-generators`, `holo-run-scripts`, `holo-ssh-keys` and `holo-users-groups`.

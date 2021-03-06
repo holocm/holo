@@ -31,6 +31,8 @@ Packagers beware:
 
 - Because of the switch to Go modules, the build system now expects Go 1.14 or newer. Older Go versions might still
   work, but you may have to patch or substitute the build invocation in the `build/holo` make target.
+- Packages should add a `Provides` relation on the virtual package `holo-generators` since holo-build will generate
+  dependencies on that package when files are installed to `/usr/share/holo/generators`.
 
 Bugfixes:
 
