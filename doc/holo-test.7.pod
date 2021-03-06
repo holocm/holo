@@ -117,8 +117,8 @@ L<holo(8)>, L<holo-plugin-interface(7)>
 
 Stefan Majewsky
 
-Further documentation is available at the project homepage: https://holocm.org
+Further documentation is available at the project homepage: L<https://holocm.org>
 
-Please report any issues and feature requests at GitHub: https://github.com/holocm/holo/issues
+Please report any issues and feature requests at GitHub: L<https://github.com/holocm/holo/issues>
 
 =cut
