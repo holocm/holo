@@ -1,4 +1,4 @@
-# v3.0.0 (TBD)
+# v3.0.0 (2021-03-06)
 
 The headline feature for this release are **generators**, as described in detail in the new `holo-generators(7)`
 manpage. It is still strongly encouraged to supply resource files statically in configuration packages if possible.
