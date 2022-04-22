@@ -4,8 +4,8 @@ Type = File
 Target = *
 
 [Action]
-Description = Checking for .pacnew files that can be resolved by Holo...
+Description = Applying pending changes configured via Holo...
 When = PostTransaction
 Depends = holo
-Exec = /usr/share/libalpm/scripts/holo-resolve-pacnew
+Exec = /usr/share/libalpm/scripts/holo-apply
 NeedsTargets

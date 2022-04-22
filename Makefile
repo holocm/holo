@@ -107,8 +107,8 @@ install: default conf/holorc conf/holorc.holo-files util/autocomplete.bash util/
 	ln -sfT ../../bin/holo "$(DESTDIR)/usr/lib/holo/holo-ssh-keys"
 	ln -sfT ../../bin/holo "$(DESTDIR)/usr/lib/holo/holo-users-groups"
 ifneq ($(filter arch,$(DIST_IDS)),)
-	install -D -m 0644 util/distribution-integration/alpm.hook    "$(DESTDIR)/usr/share/libalpm/hooks/01-holo-resolve-pacnew.hook"
-	install -D -m 0755 util/distribution-integration/alpm-hook.sh "$(DESTDIR)/usr/share/libalpm/scripts/holo-resolve-pacnew"
+	install -D -m 0644 util/distribution-integration/alpm.hook    "$(DESTDIR)/usr/share/libalpm/hooks/01-holo-apply.hook"
+	install -D -m 0755 util/distribution-integration/alpm-hook.sh "$(DESTDIR)/usr/share/libalpm/scripts/holo-apply"
 endif
 
 clean: clean-tests FORCE
