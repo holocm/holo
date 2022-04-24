@@ -22,118 +22,71 @@
 package impl
 
 import (
-	"bytes"
-	"fmt"
-	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 
 	"github.com/holocm/holo/cmd/holo-files/internal/common"
 )
 
-//Resource represents a single file in $HOLO_RESOURCE_DIR. The string
-//stored in it is the path to the repo file (also accessible as Path()).
-type Resource string
+//Resource represents a single file in $HOLO_RESOURCE_DIR.
+type Resource interface {
+	// Path returns the path to this resource in the file system.
+	Path() string
+
+	// Disambiguator returns the disambiguator, i.e. the Path()
+	// element before the EntityPath() that disambiguates multiple
+	// resources for the same entity.
+	Disambiguator() string
+
+	// EntityPath returns the path to the corresponding entity.
+	EntityPath() string
+
+	// ApplicationStrategy returns the human-readable name for the
+	// strategy that will be employed to apply this resource.
+	ApplicationStrategy() string
+
+	// DiscardsPreviousBuffer indicates whether applying this
+	// resource will discard the previous file buffer (and thus
+	// the effect of all previous resources).  This is used as a
+	// hint by the application algorithm to decide whether
+	// application steps can be skipped completely.
+	DiscardsPreviousBuffer() bool
+
+	// ApplyTo applies this Resource to a file buffer, as part of
+	// the `holo apply` algorithm.
+	ApplyTo(entityBuffer common.FileBuffer) (common.FileBuffer, error)
+}
+
+type rawResource struct {
+	path          string
+	disambiguator string
+	entityPath    string
+}
+
+func (resource rawResource) Path() string          { return resource.path }
+func (resource rawResource) Disambiguator() string { return resource.disambiguator }
+func (resource rawResource) EntityPath() string    { return resource.entityPath }
 
 //NewResource creates a Resource instance when its path in the file system is
 //known.
 func NewResource(path string) Resource {
-	return Resource(path)
-}
-
-//Path returns the path to this resource in the file system.
-func (resource Resource) Path() string {
-	return string(resource)
-}
-
-//EntityPath returns the path to the corresponding entity.
-func (resource Resource) EntityPath() string {
-	//the optional ".holoscript" suffix appears only on resources
-	path := resource.Path()
-	path = strings.TrimSuffix(path, ".holoscript")
-
-	//make path relative
 	relPath, _ := filepath.Rel(common.ResourceDirectory(), path)
-	//remove the disambiguation path element to get to the relPath for the ConfigFile
-	//e.g. path     = '/usr/share/holo/files/23-foo/etc/foo.conf'
-	//  -> relPath  = '23-foo/etc/foo.conf'
-	//  -> relPath  = 'etc/foo.conf'
-	segments := strings.SplitN(relPath, fmt.Sprintf("%c", filepath.Separator), 2)
-	relPath = segments[1]
-
-	return relPath
-}
-
-//Disambiguator returns the disambiguator, i.e. the Path() element before the
-//EntityPath() that disambiguates multiple resources for the same entity.
-func (resource Resource) Disambiguator() string {
-	//make path relative to ResourceDirectory()
-	relPath, _ := filepath.Rel(common.ResourceDirectory(), resource.Path())
-	//the disambiguator is the first path element in there
-	segments := strings.SplitN(relPath, fmt.Sprintf("%c", filepath.Separator), 2)
-	return segments[0]
-}
-
-//ApplicationStrategy returns the human-readable name for the strategy that
-//will be employed to apply this repo file.
-func (resource Resource) ApplicationStrategy() string {
-	if strings.HasSuffix(resource.Path(), ".holoscript") {
-		return "passthru"
+	segments := strings.SplitN(relPath, string(filepath.Separator), 2)
+	ext := filepath.Ext(segments[1])
+	raw := rawResource{
+		path:          path,
+		disambiguator: segments[0],
+		entityPath:    strings.TrimSuffix(segments[1], ext),
 	}
-	return "apply"
-}
-
-//DiscardsPreviousBuffer indicates whether applying this file will discard the
-//previous file buffer (and thus the effect of all previous application steps).
-//This is used as a hint by the application algorithm to decide whether
-//application steps can be skipped completely.
-func (resource Resource) DiscardsPreviousBuffer() bool {
-	return resource.ApplicationStrategy() == "apply"
-}
-
-//ApplyTo applies this Resource to a file buffer, as part of the `holo apply`
-//algorithm. Regular repofiles will replace the file buffer, while a holoscript
-//will be executed on the file buffer to obtain the new buffer.
-func (resource Resource) ApplyTo(entityBuffer common.FileBuffer) (common.FileBuffer, error) {
-	if resource.ApplicationStrategy() == "apply" {
-		resourceBuffer, err := common.NewFileBuffer(resource.Path())
-		if err != nil {
-			return common.FileBuffer{}, err
-		}
-		entityBuffer.Contents = resourceBuffer.Contents
-		entityBuffer.Mode = (entityBuffer.Mode &^ os.ModeType) | (resourceBuffer.Mode & os.ModeType)
-
-		//since Linux disregards mode flags on symlinks and always reports 0777 perms,
-		//normalize the mode thusly to make FileBuffer.EqualTo() work reliably
-		if entityBuffer.Mode&os.ModeSymlink != 0 {
-			entityBuffer.Mode = os.ModeSymlink | os.ModePerm
-		}
-		return entityBuffer, nil
+	switch ext {
+	case ".holoscript":
+		return Holoscript{raw}
+	case ".patch":
+		return Patchfile{raw}
+	default:
+		raw.entityPath += ext
+		return StaticResource{raw}
 	}
-
-	//application of a holoscript requires file contents
-	entityBuffer, err := entityBuffer.ResolveSymlink()
-	if err != nil {
-		return common.FileBuffer{}, err
-	}
-
-	//run command, fetch result file into buffer (not into the entity
-	//directly, in order not to corrupt the file there if the script run fails)
-	var stdout bytes.Buffer
-	cmd := exec.Command(resource.Path())
-	cmd.Stdin = strings.NewReader(entityBuffer.Contents)
-	cmd.Stdout = &stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
-	if err != nil {
-		return common.FileBuffer{}, fmt.Errorf("execution of %s failed: %s", resource.Path(), err.Error())
-	}
-
-	//result is the stdout of the script
-	entityBuffer.Mode &^= os.ModeType
-	entityBuffer.Contents = stdout.String()
-	return entityBuffer, nil
 }
 
 //Resources holds a slice of Resource instances, and implements some methods

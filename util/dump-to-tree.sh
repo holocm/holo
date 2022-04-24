@@ -40,7 +40,7 @@ while read_and_inc FILE_TYPE FILE_MODE FILE_PATH; do
     file)
       install -D -m "${FILE_MODE}" /dev/null "${FILE_PATH}"
       # header is followed by file content, terminated by a separator line like "---------------"
-      while IFS='' read_and_inc_or_fail LINE; do
+      while IFS='' read_and_inc_or_fail -r LINE; do
         if [[ "${LINE}" =~ ^-+$ ]]; then
           break
         fi

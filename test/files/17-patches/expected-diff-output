@@ -1,0 +1,59 @@
+diff --holo target/var/lib/holo/files/provisioned/etc/symlink target/etc/symlink
+new file mode 120000
+--- /dev/null
++++ target/etc/symlink
+@@ -0,0 +1 @@
++txtfile
+\ No newline at end of file
+diff --holo target/var/lib/holo/files/provisioned/etc/symlink-to-plain target/etc/symlink-to-plain
+new file mode 120000
+--- /dev/null
++++ target/etc/symlink-to-plain
+@@ -0,0 +1 @@
++txtfile
+\ No newline at end of file
+diff --holo target/var/lib/holo/files/provisioned/etc/txtfile target/etc/txtfile
+new file mode 100644
+--- /dev/null
++++ target/etc/txtfile
+@@ -0,0 +1,6 @@
++foo
++foo
++foo
++baz
++bar
++bar
+diff --holo target/var/lib/holo/files/provisioned/etc/txtfile-to-symlink target/etc/txtfile-to-symlink
+new file mode 100644
+--- /dev/null
++++ target/etc/txtfile-to-symlink
+@@ -0,0 +1,6 @@
++foo
++foo
++foo
++baz
++bar
++bar
+diff --holo target/var/lib/holo/files/provisioned/etc/txtfile-with-fuzz target/etc/txtfile-with-fuzz
+new file mode 100644
+--- /dev/null
++++ target/etc/txtfile-with-fuzz
+@@ -0,0 +1,6 @@
++foo
++foo
++foo
++baz
++bar
++bar
+diff --holo target/var/lib/holo/files/provisioned/etc/txtfile-with-garbage target/etc/txtfile-with-garbage
+new file mode 100644
+--- /dev/null
++++ target/etc/txtfile-with-garbage
+@@ -0,0 +1,6 @@
++foo
++foo
++foo
++baz
++bar
++bar
+exit status 0

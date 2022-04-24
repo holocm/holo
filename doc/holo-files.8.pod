@@ -40,14 +40,20 @@ Resource files are applied on the B<target base>, the initial version of the
 target file that was found during the first C<holo apply> run. This target base
 is saved at F</var/lib/holo/files/base/$target>.
 
-Resource files that are plain files or symlinks will just overwrite the target
-base (or all previous entries), whereas executable resource files with an extra
-C<.holoscript> suffix can be used to modify the target base (or the result of a
-previous application step). The target contents will be piped through the
-script. This is typically used when the default configuration for an
-application shall be used, but with some minor modifications. The following
-example uses the default configuration for L<pacman(8)>, but enables the
-"Color" and "TotalDownload" options:
+How resource files are applied to the target depends on each resource's file
+extension:
+
+=over 4
+
+=item C<.holoscript> The resource file is understood to be an executable program
+that can be used to modify the target. The target contents (either the original
+target base, or the result of a previous resource application) will be piped
+through the holoscript program.
+
+This is typically used when the default configuration for an application shall
+be used, but with some minor modifications.  The following example uses the
+default configuration for L<pacman(8)>, but enables the "Color" and
+"TotalDownload" options:
 
     $ cat /usr/share/holo/files/20-enable-color/etc/pacman.conf.holoscript
     #!/bin/sh
@@ -59,10 +65,32 @@ example uses the default configuration for L<pacman(8)>, but enables the
       store at /var/lib/holo/files/base/etc/pacman.conf
       passthru /usr/share/holo/files/20-enable-color/etc/pacman.conf.holoscript
 
-When writing the new target file, ownership and permissions will be copied from
-the target base, and thus from the original target file. Furthermore, a copy of
-the provisioned target file is written to
-F</var/lib/holo/files/provisioned/$target> for use by C<holo diff file:$target>.
+This allows the file contents to be modified; however, the file permissions and
+ownership are not changed, and are inherited from the target base or the
+previous resource application step.
+
+=item C<.patch> The resource file is understood to be a patch file that can be
+fed to the L<patch(1)> program.  Some patch formats have the ability to change
+file type and file permissions; this is respected, making this is the only
+resource format that can change file permissions.
+
+The filename to modify is not passed to L<patch(1)>; instead, a copy of the
+target is available as the only file in the directory passed to the C<-d> flag.
+This means that the filename used within the patch file must have the same
+basename as the entity being operated on.  Any other files that the patch file
+may create are ignored.
+
+=item Otherwise, the resource file is a plain file or symlink that will just
+overwrite the contents of the target base (and all previous resource application
+steps).  The ownership and file permissions are not set from the resource file,
+and are inherited from the target base or the previous resource application
+step.
+
+=back
+
+When writing the new target file, a copy of the provisioned target file is
+written to F</var/lib/holo/files/provisioned/$target> for use by C<holo diff
+file:$target>.
 
 In normal operation, holo-files will refuse to operate on a target file that
 has been modified or deleted by the user or by another program. Apply
