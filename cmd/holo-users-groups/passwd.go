@@ -48,11 +48,11 @@ func init() {
 	}
 }
 
-//StoreAppliedState is a no-op during normal operation. During unit tests, it
-//records Apply()ed definitions, so that the next GetProvisionedState() of the
-//same entity will present a consistent result.
+// StoreAppliedState is a no-op during normal operation. During unit tests, it
+// records Apply()ed definitions, so that the next GetProvisionedState() of the
+// same entity will present a consistent result.
 //
-//The `previous` argument contains the actual state before the apply operation.
+// The `previous` argument contains the actual state before the apply operation.
 func StoreAppliedState(def EntityDefinition, previous EntityDefinition) {
 	if appliedStates != nil {
 		//mark applied states with a fake numeric ID
@@ -76,13 +76,13 @@ func StoreAppliedState(def EntityDefinition, previous EntityDefinition) {
 	}
 }
 
-//Getent reads entries from a UNIX user/group database (e.g. /etc/passwd
-//or /etc/group) and returns the first entry matching the given predicate.
-//For example, to locate the user with name "foo":
+// Getent reads entries from a UNIX user/group database (e.g. /etc/passwd
+// or /etc/group) and returns the first entry matching the given predicate.
+// For example, to locate the user with name "foo":
 //
-//    fields, err := Getent("/etc/passwd", func(fields []string) bool {
-//        return fields[0] == "foo"
-//    })
+//	fields, err := Getent("/etc/passwd", func(fields []string) bool {
+//	    return fields[0] == "foo"
+//	})
 func Getent(databaseFile string, predicate func([]string) bool) ([]string, error) {
 	//read database file
 	contents, err := ioutil.ReadFile(databaseFile)
@@ -104,7 +104,7 @@ func Getent(databaseFile string, predicate func([]string) bool) ([]string, error
 	return nil, nil
 }
 
-//GetProvisionedState implements the EntityDefinition interface.
+// GetProvisionedState implements the EntityDefinition interface.
 func (g *GroupDefinition) GetProvisionedState() (EntityDefinition, error) {
 	//special case for test runs
 	if appliedStates != nil {
@@ -135,7 +135,7 @@ func (g *GroupDefinition) GetProvisionedState() (EntityDefinition, error) {
 	}, err
 }
 
-//GetProvisionedState implements the EntityDefinition interface.
+// GetProvisionedState implements the EntityDefinition interface.
 func (u *UserDefinition) GetProvisionedState() (EntityDefinition, error) {
 	//special case for test runs
 	if appliedStates != nil {

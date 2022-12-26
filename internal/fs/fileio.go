@@ -26,8 +26,8 @@ import (
 	"syscall"
 )
 
-//IsManageableFile returns whether the file can be managed by Holo (i.e. is a
-//regular file or a symlink).
+// IsManageableFile returns whether the file can be managed by Holo (i.e. is a
+// regular file or a symlink).
 func IsManageableFile(path string) bool {
 	info, err := os.Lstat(path)
 	if err != nil {
@@ -36,18 +36,18 @@ func IsManageableFile(path string) bool {
 	return info.Mode().IsRegular() || IsFileInfoASymbolicLink(info)
 }
 
-//IsManageableFileInfo returns whether the given FileInfo refers to a
-//manageable file (i.e. a regular file or a symlink).
+// IsManageableFileInfo returns whether the given FileInfo refers to a
+// manageable file (i.e. a regular file or a symlink).
 func IsManageableFileInfo(info os.FileInfo) bool {
 	return info.Mode().IsRegular() || IsFileInfoASymbolicLink(info)
 }
 
-//IsFileInfoASymbolicLink returns whether the given FileInfo describes a symlink.
+// IsFileInfoASymbolicLink returns whether the given FileInfo describes a symlink.
 func IsFileInfoASymbolicLink(fileInfo os.FileInfo) bool {
 	return (fileInfo.Mode() & os.ModeType) == os.ModeSymlink
 }
 
-//CopyMode is an enumeration for the different modes of behavior for CopyFile().
+// CopyMode is an enumeration for the different modes of behavior for CopyFile().
 type CopyMode int
 
 const (
@@ -57,7 +57,7 @@ const (
 	CopyContentsAndExecutableBitOnly
 )
 
-//CopyFile copies a regular file or symlink, including the file metadata.
+// CopyFile copies a regular file or symlink, including the file metadata.
 func CopyFile(fromPath, toPath string, mode CopyMode) error {
 	info, err := os.Lstat(fromPath)
 	if err != nil {
@@ -126,8 +126,8 @@ func copySymlinkImpl(fromPath, toPath string) error {
 	return nil
 }
 
-//MoveFile is like CopyFile, but it removes the fromPath after successful
-//copying.
+// MoveFile is like CopyFile, but it removes the fromPath after successful
+// copying.
 func MoveFile(fromPath, toPath string) error {
 	err := CopyFile(fromPath, toPath, CopyContentsFileModeAndOwnership)
 	if err != nil {

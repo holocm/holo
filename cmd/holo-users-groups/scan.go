@@ -31,7 +31,7 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-//Scan returns a slice of all the defined entities.
+// Scan returns a slice of all the defined entities.
 func Scan() ([]*Entity, []error) {
 	//call into migration code
 	err := migrateOldRegistry()
@@ -109,14 +109,14 @@ func (e entitiesByName) Less(i, j int) bool {
 	return e[i].Definition.EntityID() < e[j].Definition.EntityID()
 }
 
-//FileInvalidError contains the set of errors that were encountered
-//while parsing a file.
+// FileInvalidError contains the set of errors that were encountered
+// while parsing a file.
 type FileInvalidError struct {
 	path   string
 	errors []error
 }
 
-//Error implements the error interface.
+// Error implements the error interface.
 func (e *FileInvalidError) Error() string {
 	str := fmt.Sprintf("File %s is invalid:", e.path)
 	for _, suberr := range e.errors {
@@ -188,7 +188,7 @@ func readDefinitionFile(definitionPath string, entities *map[string]*Entity) err
 	return nil
 }
 
-//Migration path for the old registry at `/var/lib/holo/users-groups/state.toml`.
+// Migration path for the old registry at `/var/lib/holo/users-groups/state.toml`.
 func migrateOldRegistry() error {
 	//read state.toml (if it exists)
 	statePath := filepath.Join(os.Getenv("HOLO_STATE_DIR"), "state.toml")

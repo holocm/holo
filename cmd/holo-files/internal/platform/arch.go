@@ -29,7 +29,7 @@ import (
 	"github.com/holocm/holo/internal/fs"
 )
 
-//archImpl provides the platform.Impl for Arch Linux and derivatives.
+// archImpl provides the platform.Impl for Arch Linux and derivatives.
 type archImpl struct{}
 
 func (p archImpl) FindUpdatedTargetBase(targetPath string) (actualPath, reportedPath string, err error) {

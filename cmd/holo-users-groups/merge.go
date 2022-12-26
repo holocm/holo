@@ -26,7 +26,7 @@ import (
 	"strings"
 )
 
-//MergeError is used by Merge().
+// MergeError is used by Merge().
 type MergeError struct {
 	Field    string
 	EntityID string
@@ -34,14 +34,14 @@ type MergeError struct {
 	Value2   interface{}
 }
 
-//MergeError implements the error interface.
+// MergeError implements the error interface.
 func (e MergeError) Error() string {
 	return fmt.Sprintf("conflicting %s for %s (%v vs. %v)",
 		e.Field, e.EntityID, e.Value1, e.Value2,
 	)
 }
 
-//Merge implements the EntityDefinition interface.
+// Merge implements the EntityDefinition interface.
 func (g *GroupDefinition) Merge(other EntityDefinition, mMethod MergeMethod, sMethod SkipMethod) (EntityDefinition, []error) {
 	//start by cloning `other`
 	if other.EntityID() != g.EntityID() {
@@ -72,7 +72,7 @@ func (g *GroupDefinition) Merge(other EntityDefinition, mMethod MergeMethod, sMe
 	return &result, e
 }
 
-//Merge implements the EntityDefinition interface.
+// Merge implements the EntityDefinition interface.
 func (u *UserDefinition) Merge(other EntityDefinition, mMethod MergeMethod, sMethod SkipMethod) (EntityDefinition, []error) {
 	//start by cloning `other`
 	if other.EntityID() != u.EntityID() {

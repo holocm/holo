@@ -37,8 +37,8 @@ var (
 	ErrExist         = errors.New("target exists and is not a manageable file")
 )
 
-//FileBuffer represents a file, loaded into memory. It is used in holo.Apply() as
-//an intermediary product of application steps.
+// FileBuffer represents a file, loaded into memory. It is used in holo.Apply() as
+// an intermediary product of application steps.
 type FileBuffer struct {
 	Path     string
 	Mode     os.FileMode
@@ -49,8 +49,8 @@ type FileBuffer struct {
 	Manageable bool
 }
 
-//NewFileBuffer creates a FileBuffer object by reading the manageable file at
-//the given path.
+// NewFileBuffer creates a FileBuffer object by reading the manageable file at
+// the given path.
 func NewFileBuffer(path string) (FileBuffer, error) {
 	return newFileBuffer(path, false)
 }
@@ -136,13 +136,13 @@ func (fb FileBuffer) Write(path string) error {
 	return os.Lchown(path, fb.UID, fb.GID)
 }
 
-//ResolveSymlink takes a FileBuffer that contains a symlink, resolves it and
-//returns a new FileBuffer containing the contents of the symlink target. This
-//operation is used by application strategies that require text input. If
-//the given FileBuffer contains file contents, the same buffer is returned
-//unaltered.
+// ResolveSymlink takes a FileBuffer that contains a symlink, resolves it and
+// returns a new FileBuffer containing the contents of the symlink target. This
+// operation is used by application strategies that require text input. If
+// the given FileBuffer contains file contents, the same buffer is returned
+// unaltered.
 //
-//It uses the FileBuffer's Path to resolve relative symlinks.
+// It uses the FileBuffer's Path to resolve relative symlinks.
 func (fb FileBuffer) ResolveSymlink() (FileBuffer, error) {
 	//if the buffer has contents already, we can use that
 	if fb.Mode&os.ModeSymlink == 0 {
@@ -159,7 +159,7 @@ func (fb FileBuffer) ResolveSymlink() (FileBuffer, error) {
 	return newFileBuffer(target, true)
 }
 
-//EqualTo returns whether two file buffers have the same content (or link target).
+// EqualTo returns whether two file buffers have the same content (or link target).
 func (fb FileBuffer) EqualTo(fa FileBuffer) bool {
 	fb.Path = fa.Path
 	return fa == fb

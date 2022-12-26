@@ -29,7 +29,7 @@ import (
 
 var stateFilePath = filepath.Join(os.Getenv("HOLO_STATE_DIR"), "provisioned-entities")
 
-//ProvisionedEntities returns all entity names for which keys have been provisioned.
+// ProvisionedEntities returns all entity names for which keys have been provisioned.
 func ProvisionedEntities() ([]string, error) {
 	contents, err := ioutil.ReadFile(stateFilePath)
 	if err != nil {
@@ -42,8 +42,8 @@ func ProvisionedEntities() ([]string, error) {
 	return strings.Split(str, "\n"), nil
 }
 
-//SetEntityProvisioned adds or removes an entity name from the list of
-//ProvisionedEntities().
+// SetEntityProvisioned adds or removes an entity name from the list of
+// ProvisionedEntities().
 func SetEntityProvisioned(entityName string, provisioned bool) error {
 	entities, err := ProvisionedEntities()
 	if err != nil {

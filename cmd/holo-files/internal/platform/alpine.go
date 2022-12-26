@@ -22,7 +22,7 @@ package platform
 
 import "github.com/holocm/holo/internal/fs"
 
-//apkImpl provides the platform.Impl for Alpine Linux and derivatives.
+// apkImpl provides the platform.Impl for Alpine Linux and derivatives.
 type apkImpl struct{}
 
 func (p apkImpl) FindUpdatedTargetBase(targetPath string) (actualPath, reportedPath string, err error) {

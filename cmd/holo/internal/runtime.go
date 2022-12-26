@@ -32,8 +32,8 @@ var (
 	absVirtualResourceRoot string
 )
 
-//WithCacheDirectory executes the worker function after having set up a cache
-//directory, and ensures that the cache directory is cleaned up afterwards.
+// WithCacheDirectory executes the worker function after having set up a cache
+// directory, and ensures that the cache directory is cleaned up afterwards.
 func WithCacheDirectory(worker func() (exitCode int)) (exitCode int) {
 	var err error
 	cachePath, err = ioutil.TempDir(os.TempDir(), "holo.")
@@ -57,7 +57,7 @@ func WithCacheDirectory(worker func() (exitCode int)) (exitCode int) {
 	return worker()
 }
 
-//CachePath returns the path below which plugin cache directories can be allocated.
+// CachePath returns the path below which plugin cache directories can be allocated.
 func CachePath() string {
 	if cachePath == "" {
 		panic("Tried to use cachePath outside WithCacheDirectory() call!")
@@ -65,16 +65,16 @@ func CachePath() string {
 	return cachePath
 }
 
-//VirtualResourceRoot returns the path below CachePath() where we compile all
-//resource files, both static and generated. This file is the generated counterpart for `$HOLO_ROOT_DIR/usr/share/holo`.
+// VirtualResourceRoot returns the path below CachePath() where we compile all
+// resource files, both static and generated. This file is the generated counterpart for `$HOLO_ROOT_DIR/usr/share/holo`.
 func VirtualResourceRoot() string {
 	return virtualResourceRoot
 }
 
-//AbsoluteVirtualResourceRoot returns the same path as VirtualResourceRoot, but
-//as an absolute path. Since VirtualResourceRoot is below TMPDIR, this is not a
-//difference in production runs where TMPDIR is `/tmp` and thus already
-//absolute, but test runs typically specify TMPDIR as a relative path.
+// AbsoluteVirtualResourceRoot returns the same path as VirtualResourceRoot, but
+// as an absolute path. Since VirtualResourceRoot is below TMPDIR, this is not a
+// difference in production runs where TMPDIR is `/tmp` and thus already
+// absolute, but test runs typically specify TMPDIR as a relative path.
 func AbsoluteVirtualResourceRoot() string {
 	return absVirtualResourceRoot
 }

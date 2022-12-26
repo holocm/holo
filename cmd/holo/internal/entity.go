@@ -30,13 +30,13 @@ import (
 	"syscall"
 )
 
-//InfoLine represents a line in the information section of an Entity.
+// InfoLine represents a line in the information section of an Entity.
 type InfoLine struct {
 	attribute string
 	value     string
 }
 
-//Entity represents an entity known to some Holo plugin.
+// Entity represents an entity known to some Holo plugin.
 type Entity struct {
 	plugin       *Plugin
 	id           string
@@ -46,10 +46,10 @@ type Entity struct {
 	infoLines    []InfoLine
 }
 
-//EntityID returns a string that uniquely identifies the entity.
+// EntityID returns a string that uniquely identifies the entity.
 func (e *Entity) EntityID() string { return e.id }
 
-//AllMatchingSelectors returns all selectors that this entity matches.
+// AllMatchingSelectors returns all selectors that this entity matches.
 func (e *Entity) AllMatchingSelectors() map[string]bool {
 	result := map[string]bool{
 		e.id:        true,
@@ -67,7 +67,7 @@ func (e *Entity) AllMatchingSelectors() map[string]bool {
 	return result
 }
 
-//PrintReport prints the scan report describing this Entity.
+// PrintReport prints the scan report describing this Entity.
 func (e *Entity) PrintReport(withAction bool) {
 	//print initial line with action and entity ID
 	//(note that Stdout != os.Stdout)
@@ -93,7 +93,7 @@ func (e *Entity) PrintReport(withAction bool) {
 	os.Stdout.Sync()
 }
 
-//PrintScanReport reproduces the original scan report for this Entity.
+// PrintScanReport reproduces the original scan report for this Entity.
 func (e *Entity) PrintScanReport() {
 	fmt.Fprintf(Stdout, "ENTITY: %s\n", e.EntityID())
 	switch {
@@ -113,7 +113,7 @@ func (e *Entity) PrintScanReport() {
 	Stdout.EndParagraph()
 }
 
-//Apply performs the complete application algorithm for the given Entity.
+// Apply performs the complete application algorithm for the given Entity.
 func (e *Entity) Apply(withForce bool) {
 	command := "apply"
 	if withForce {
@@ -170,10 +170,10 @@ func (e *Entity) Apply(withForce bool) {
 	}
 }
 
-//RenderDiff creates a unified diff of a target file and its last provisioned
-//version, similar to `diff /var/lib/holo/files/provisioned/$FILE $FILE`, but it also
-//handles symlinks and missing files gracefully. The output is always a patch
-//that can be applied to last provisioned version into the current version.
+// RenderDiff creates a unified diff of a target file and its last provisioned
+// version, similar to `diff /var/lib/holo/files/provisioned/$FILE $FILE`, but it also
+// handles symlinks and missing files gracefully. The output is always a patch
+// that can be applied to last provisioned version into the current version.
 func (e *Entity) RenderDiff() ([]byte, error) {
 	cmdText, err := e.plugin.RunCommandWithFD3([]string{"diff", e.id}, Stdout, Stderr)
 	if err != nil {

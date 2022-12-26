@@ -26,19 +26,19 @@ import (
 	"path/filepath"
 )
 
-//Entity contains attributes and logic that are shared between entity types.
+// Entity contains attributes and logic that are shared between entity types.
 type Entity struct {
 	Definition      EntityDefinition
 	DefinitionFiles []string //paths to the files defining this entity
 	IsBroken        bool     //whether any of these are invalid (default: false)
 }
 
-//IsOrphaned returns whether all definitions for this entity have been deleted.
+// IsOrphaned returns whether all definitions for this entity have been deleted.
 func (e *Entity) IsOrphaned() bool {
 	return len(e.DefinitionFiles) == 0
 }
 
-//PrintReport prints the scan report for this entity on stdout.
+// PrintReport prints the scan report for this entity on stdout.
 func (e *Entity) PrintReport() {
 	fmt.Printf("ENTITY: %s\n", e.Definition.EntityID())
 	if e.IsOrphaned() {
@@ -54,9 +54,9 @@ func (e *Entity) PrintReport() {
 	}
 }
 
-//Apply performs the complete application algorithm for the given Entity.
-//If the entity does not exist yet, it is created. If it does exist, but some
-//attributes do not match, it will be updated, but only if withForce is given.
+// Apply performs the complete application algorithm for the given Entity.
+// If the entity does not exist yet, it is created. If it does exist, but some
+// attributes do not match, it will be updated, but only if withForce is given.
 func (e *Entity) Apply(withForce bool) error {
 	def := e.Definition
 
@@ -186,7 +186,7 @@ func (e *Entity) Apply(withForce bool) error {
 	return ProvisionedImageDir.SaveImage(actualState)
 }
 
-//PrepareDiff creates temporary files that the frontend can use to generate a diff.
+// PrepareDiff creates temporary files that the frontend can use to generate a diff.
 func (e *Entity) PrepareDiff() error {
 	//prepare directory to write files into
 	tempDir := filepath.Join(os.Getenv("HOLO_CACHE_DIR"), e.Definition.EntityID())
@@ -230,7 +230,7 @@ func (e *Entity) PrepareDiff() error {
 	return nil
 }
 
-//PrintCommandMessage formats and prints a message on file descriptor 3.
+// PrintCommandMessage formats and prints a message on file descriptor 3.
 func PrintCommandMessage(msg string, arguments ...interface{}) {
 	if len(arguments) > 0 {
 		msg = fmt.Sprintf(msg, arguments...)

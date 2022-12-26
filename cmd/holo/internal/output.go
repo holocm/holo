@@ -28,7 +28,7 @@ import (
 	"strings"
 )
 
-//Errorf formats and prints an error message on stderr.
+// Errorf formats and prints an error message on stderr.
 func Errorf(writer io.Writer, text string, args ...interface{}) {
 	if len(args) > 0 {
 		text = fmt.Sprintf(text, args...)
@@ -36,7 +36,7 @@ func Errorf(writer io.Writer, text string, args ...interface{}) {
 	fmt.Fprintf(writer, "\x1b[1;31m!! %s\x1b[0m\n", strings.TrimSuffix(text, "\n"))
 }
 
-//Warnf formats and prints an warning message on stderr.
+// Warnf formats and prints an warning message on stderr.
 func Warnf(writer io.Writer, text string, args ...interface{}) {
 	if len(args) > 0 {
 		text = fmt.Sprintf(text, args...)
@@ -44,20 +44,20 @@ func Warnf(writer io.Writer, text string, args ...interface{}) {
 	fmt.Fprintf(writer, "\x1b[1;33m>> %s\x1b[0m\n", strings.TrimSuffix(text, "\n"))
 }
 
-//ParagraphTracker is used in conjunction with ParagraphWriter. See explanation
-//over there.
+// ParagraphTracker is used in conjunction with ParagraphWriter. See explanation
+// over there.
 type ParagraphTracker struct {
 	PrimaryWriter        io.Writer
 	hadOutput            bool
 	trailingNewlineCount int
 }
 
-//ParagraphWriter is an io.Writer that forwards to another io.Writer, but
-//ensures that input is written in paragraphs, with newlines in between.
+// ParagraphWriter is an io.Writer that forwards to another io.Writer, but
+// ensures that input is written in paragraphs, with newlines in between.
 //
-//Since, in this usecase, both stdout and stderr need to be PrologueWriter
-//instances, the logic that prints the additional newlines must be shared by
-//both. Thus the newlines are tracked with a ParagraphTracker instance.
+// Since, in this usecase, both stdout and stderr need to be PrologueWriter
+// instances, the logic that prints the additional newlines must be shared by
+// both. Thus the newlines are tracked with a ParagraphTracker instance.
 type ParagraphWriter struct {
 	Writer  io.Writer
 	Tracker *ParagraphTracker
@@ -65,10 +65,10 @@ type ParagraphWriter struct {
 
 var stdTracker = &ParagraphTracker{PrimaryWriter: os.Stdout}
 
-//Stdout wraps os.Stdout into a ParagraphWriter.
+// Stdout wraps os.Stdout into a ParagraphWriter.
 var Stdout = &ParagraphWriter{Writer: os.Stdout, Tracker: stdTracker}
 
-//Stderr wraps os.Stderr into a ParagraphWriter.
+// Stderr wraps os.Stderr into a ParagraphWriter.
 var Stderr = &ParagraphWriter{Writer: os.Stderr, Tracker: stdTracker}
 
 func (t *ParagraphTracker) observeOutput(p []byte) {
@@ -90,13 +90,13 @@ func (t *ParagraphTracker) observeOutput(p []byte) {
 	}
 }
 
-//Write implements the io.Writer interface.
+// Write implements the io.Writer interface.
 func (w *ParagraphWriter) Write(p []byte) (n int, e error) {
 	w.Tracker.observeOutput(p)
 	return w.Writer.Write(p)
 }
 
-//EndParagraph inserts newlines to start the next paragraph of output.
+// EndParagraph inserts newlines to start the next paragraph of output.
 func (w *ParagraphWriter) EndParagraph() {
 	if !w.Tracker.hadOutput {
 		return
@@ -106,13 +106,13 @@ func (w *ParagraphWriter) EndParagraph() {
 	}
 }
 
-//PrologueTracker is used in conjunction with PrologueWriter. See explanation
-//over there.
+// PrologueTracker is used in conjunction with PrologueWriter. See explanation
+// over there.
 type PrologueTracker struct {
 	Printer func()
 }
 
-//Exec prints the prologue if it has not been printed before.
+// Exec prints the prologue if it has not been printed before.
 func (t *PrologueTracker) Exec() {
 	//print prologue exactly once
 	if t.Printer != nil {
@@ -121,20 +121,20 @@ func (t *PrologueTracker) Exec() {
 	}
 }
 
-//PrologueWriter is an io.Writer that ensures that a prologue is printed before
-//any writes to the underlying io.Writer occur. This is used by entity.Apply()
-//to print the scan report before any other output, but only if there is output.
+// PrologueWriter is an io.Writer that ensures that a prologue is printed before
+// any writes to the underlying io.Writer occur. This is used by entity.Apply()
+// to print the scan report before any other output, but only if there is output.
 //
-//Since, in this usecase, both stdout and stderr need to be PrologueWriter
-//instances, the function that prints the prologue must be shared by both, and
-//it needs to be made sure that the prologue is only printed once. Thus the
-//prologue is tracked with a PrologueTracker instance.
+// Since, in this usecase, both stdout and stderr need to be PrologueWriter
+// instances, the function that prints the prologue must be shared by both, and
+// it needs to be made sure that the prologue is only printed once. Thus the
+// prologue is tracked with a PrologueTracker instance.
 type PrologueWriter struct {
 	Writer  io.Writer
 	Tracker *PrologueTracker
 }
 
-//Write implements the io.Writer interface.
+// Write implements the io.Writer interface.
 func (w *PrologueWriter) Write(p []byte) (n int, e error) {
 	//skip empty writes
 	if len(p) == 0 {
@@ -146,14 +146,14 @@ func (w *PrologueWriter) Write(p []byte) (n int, e error) {
 	return w.Writer.Write(p)
 }
 
-//LineColorizingRule is a rule for the LineColorizingWriter (see there).
+// LineColorizingRule is a rule for the LineColorizingWriter (see there).
 type LineColorizingRule struct {
 	Prefix []byte
 	Color  []byte
 }
 
-//ColorizeLine adds color to the given line according to the first of the given
-//`rules` that matches.
+// ColorizeLine adds color to the given line according to the first of the given
+// `rules` that matches.
 func ColorizeLine(line []byte, rules []LineColorizingRule) []byte {
 	for _, rule := range rules {
 		if bytes.HasPrefix(line, rule.Prefix) {
@@ -163,7 +163,7 @@ func ColorizeLine(line []byte, rules []LineColorizingRule) []byte {
 	return line
 }
 
-//ColorizeLines is like ColorizeLine, but acts on multiple lines.
+// ColorizeLines is like ColorizeLine, but acts on multiple lines.
 func ColorizeLines(lines []byte, rules []LineColorizingRule) []byte {
 	sep := []byte{'\n'}
 	in := bytes.Split(lines, sep)
@@ -174,25 +174,24 @@ func ColorizeLines(lines []byte, rules []LineColorizingRule) []byte {
 	return bytes.Join(out, sep)
 }
 
-//LineColorizingWriter is an io.Writer that adds ANSI colors to lines of text
-//written into it. It then passes the colorized lines to another writer.
-//Coloring is based on prefixes. For example, to turn all lines with a "!!"
-//prefix red, use
+// LineColorizingWriter is an io.Writer that adds ANSI colors to lines of text
+// written into it. It then passes the colorized lines to another writer.
+// Coloring is based on prefixes. For example, to turn all lines with a "!!"
+// prefix red, use
 //
-//    colorizer = &LineColorizingWriter {
-//        Writer: otherWriter,
-//        Rules: []LineColorizingRule {
-//            LineColorizingRule { []byte("!!"), []byte("\x1B[1;31m") },
-//        },
-//    }
-//
+//	colorizer = &LineColorizingWriter {
+//	    Writer: otherWriter,
+//	    Rules: []LineColorizingRule {
+//	        LineColorizingRule { []byte("!!"), []byte("\x1B[1;31m") },
+//	    },
+//	}
 type LineColorizingWriter struct {
 	Writer io.Writer
 	Rules  []LineColorizingRule
 	buffer []byte
 }
 
-//Write implements the io.Writer interface.
+// Write implements the io.Writer interface.
 func (w *LineColorizingWriter) Write(p []byte) (n int, err error) {
 	//append `p` to buffer and report everything as written
 	w.buffer = append(w.buffer, p...)

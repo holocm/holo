@@ -32,8 +32,8 @@ var (
 	lockFile *os.File
 )
 
-//AcquireLockfile will create a lock file to ensure that only one instance of
-//Holo is running at the same time. Returns whether the operation succeeded.
+// AcquireLockfile will create a lock file to ensure that only one instance of
+// Holo is running at the same time. Returns whether the operation succeeded.
 func AcquireLockfile() bool {
 	lockPath = filepath.Join(RootDirectory(), "run/holo.pid")
 
@@ -56,7 +56,7 @@ func AcquireLockfile() bool {
 	return true
 }
 
-//ReleaseLockfile removes the lock file created by AcquireLockfile.
+// ReleaseLockfile removes the lock file created by AcquireLockfile.
 func ReleaseLockfile() {
 	err := lockFile.Close()
 	if err != nil {

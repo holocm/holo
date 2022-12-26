@@ -29,7 +29,7 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-//MergeMethod is the second argument for EntityDefinition.Merge().
+// MergeMethod is the second argument for EntityDefinition.Merge().
 type MergeMethod uint
 
 const (
@@ -43,7 +43,7 @@ const (
 	MergeNumericIDOnly
 )
 
-//SkipMethod is the third argument for EntityDefinition.Merge().
+// SkipMethod is the third argument for EntityDefinition.Merge().
 type SkipMethod uint
 
 const (
@@ -54,9 +54,9 @@ const (
 	SkipEnabled
 )
 
-//EntityDefinition contains data from a definition file that describes an entity
-//(a user account or group). Definitions can also be obtained by scanning the
-//user/group databases.
+// EntityDefinition contains data from a definition file that describes an entity
+// (a user account or group). Definitions can also be obtained by scanning the
+// user/group databases.
 type EntityDefinition interface {
 	//TypeName returns the part of the entity ID before the ":", i.e. either
 	//"group" or "user".
@@ -95,7 +95,7 @@ type EntityDefinition interface {
 	Cleanup() error
 }
 
-//SerializeDefinition returns a TOML representation of this EntityDefinition.
+// SerializeDefinition returns a TOML representation of this EntityDefinition.
 func SerializeDefinition(def EntityDefinition) ([]byte, error) {
 	//write header
 	var buf bytes.Buffer
@@ -109,7 +109,7 @@ func SerializeDefinition(def EntityDefinition) ([]byte, error) {
 	return buf.Bytes(), err
 }
 
-//SerializeDefinitionIntoFile writes the given EntityDefinition as a TOML file.
+// SerializeDefinitionIntoFile writes the given EntityDefinition as a TOML file.
 func SerializeDefinitionIntoFile(def EntityDefinition, path string) error {
 	bytes, err := SerializeDefinition(def)
 	if err != nil {
@@ -118,14 +118,14 @@ func SerializeDefinitionIntoFile(def EntityDefinition, path string) error {
 	return ioutil.WriteFile(path, bytes, 0644)
 }
 
-//GroupDefinition represents a UNIX group (as registered in /etc/group).
+// GroupDefinition represents a UNIX group (as registered in /etc/group).
 type GroupDefinition struct {
 	Name   string `toml:"name"`             //the group name (the first field in /etc/group)
 	GID    int    `toml:"gid,omitzero"`     //the GID (the third field in /etc/group), or 0 if no specific GID is enforced
 	System bool   `toml:"system,omitempty"` //whether the group is a system group (this influences the GID selection if GID = 0)
 }
 
-//UserDefinition represents a UNIX user account (as registered in /etc/passwd).
+// UserDefinition represents a UNIX user account (as registered in /etc/passwd).
 type UserDefinition struct {
 	Name           string   `toml:"name"`                     //the user name (the first field in /etc/passwd)
 	Comment        string   `toml:"comment,omitempty"`        //the full name (sometimes also called "comment"; the fifth field in /etc/passwd)
@@ -138,25 +138,25 @@ type UserDefinition struct {
 	SkipBaseGroups bool     `toml:"skipBaseGroups,omitempty"` //whether to consider supplementary groups in the base image during merging
 }
 
-//TypeName implements the EntityDefinition interface.
+// TypeName implements the EntityDefinition interface.
 func (g *GroupDefinition) TypeName() string { return "group" }
 
-//TypeName implements the EntityDefinition interface.
+// TypeName implements the EntityDefinition interface.
 func (u *UserDefinition) TypeName() string { return "user" }
 
-//EntityID implements the EntityDefinition interface.
+// EntityID implements the EntityDefinition interface.
 func (g *GroupDefinition) EntityID() string { return "group:" + g.Name }
 
-//EntityID implements the EntityDefinition interface.
+// EntityID implements the EntityDefinition interface.
 func (u *UserDefinition) EntityID() string { return "user:" + u.Name }
 
-//IsProvisioned implements the EntityDefinition interface.
+// IsProvisioned implements the EntityDefinition interface.
 func (g *GroupDefinition) IsProvisioned() bool { return g.GID > 0 }
 
-//IsProvisioned implements the EntityDefinition interface.
+// IsProvisioned implements the EntityDefinition interface.
 func (u *UserDefinition) IsProvisioned() bool { return u.UID != nil }
 
-//Attributes implements the EntityDefinition interface.
+// Attributes implements the EntityDefinition interface.
 func (g *GroupDefinition) Attributes() string {
 	var attrs []string
 	if g.System {
@@ -168,7 +168,7 @@ func (g *GroupDefinition) Attributes() string {
 	return strings.Join(attrs, ", ")
 }
 
-//Attributes implements the EntityDefinition interface.
+// Attributes implements the EntityDefinition interface.
 func (u *UserDefinition) Attributes() string {
 	var attrs []string
 	if u.System {
@@ -199,7 +199,7 @@ func (u *UserDefinition) Attributes() string {
 	return strings.Join(attrs, ", ")
 }
 
-//WithSerializableState implements the EntityDefinition interface.
+// WithSerializableState implements the EntityDefinition interface.
 func (g *GroupDefinition) WithSerializableState(callback func(EntityDefinition)) {
 	//we don't want to serialize the `system` attribute in diffs etc.
 	system := g.System
@@ -208,7 +208,7 @@ func (g *GroupDefinition) WithSerializableState(callback func(EntityDefinition))
 	g.System = system
 }
 
-//WithSerializableState implements the EntityDefinition interface.
+// WithSerializableState implements the EntityDefinition interface.
 func (u *UserDefinition) WithSerializableState(callback func(EntityDefinition)) {
 	//we don't want to serialize the `system` and `skipBaseGroups` attributes in diffs etc.
 	system := u.System

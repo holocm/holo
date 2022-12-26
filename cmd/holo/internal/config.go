@@ -38,18 +38,18 @@ func init() {
 	}
 }
 
-//RootDirectory returns the environment variable $HOLO_ROOT_DIR, or else the
-//default value "/".
+// RootDirectory returns the environment variable $HOLO_ROOT_DIR, or else the
+// default value "/".
 func RootDirectory() string {
 	return rootDirectory
 }
 
-//Configuration contains the parsed contents of /etc/holorc.
+// Configuration contains the parsed contents of /etc/holorc.
 type Configuration struct {
 	Plugins []*Plugin
 }
 
-//List config snippets in /etc/holorc.d.
+// List config snippets in /etc/holorc.d.
 func listConfigSnippets() ([]string, error) {
 	dirPath := filepath.Join(RootDirectory(), "etc/holorc.d")
 	dir, err := os.Open(dirPath)
@@ -74,7 +74,7 @@ func listConfigSnippets() ([]string, error) {
 	return paths, nil
 }
 
-//The part of ReadConfiguration that reads all the holorc files.
+// The part of ReadConfiguration that reads all the holorc files.
 func readConfigLines() ([]string, error) {
 	//enumerate snippets
 	paths, err := listConfigSnippets()
@@ -96,7 +96,7 @@ func readConfigLines() ([]string, error) {
 	return lines, nil
 }
 
-//ReadConfiguration reads the configuration file /etc/holorc.
+// ReadConfiguration reads the configuration file /etc/holorc.
 func ReadConfiguration() *Configuration {
 	lines, err := readConfigLines()
 	if err != nil {

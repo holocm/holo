@@ -32,22 +32,22 @@ import (
 	"github.com/holocm/holo/cmd/holo-files/internal/common"
 )
 
-//Resource represents a single file in $HOLO_RESOURCE_DIR. The string
-//stored in it is the path to the repo file (also accessible as Path()).
+// Resource represents a single file in $HOLO_RESOURCE_DIR. The string
+// stored in it is the path to the repo file (also accessible as Path()).
 type Resource string
 
-//NewResource creates a Resource instance when its path in the file system is
-//known.
+// NewResource creates a Resource instance when its path in the file system is
+// known.
 func NewResource(path string) Resource {
 	return Resource(path)
 }
 
-//Path returns the path to this resource in the file system.
+// Path returns the path to this resource in the file system.
 func (resource Resource) Path() string {
 	return string(resource)
 }
 
-//EntityPath returns the path to the corresponding entity.
+// EntityPath returns the path to the corresponding entity.
 func (resource Resource) EntityPath() string {
 	//the optional ".holoscript" suffix appears only on resources
 	path := resource.Path()
@@ -65,8 +65,8 @@ func (resource Resource) EntityPath() string {
 	return relPath
 }
 
-//Disambiguator returns the disambiguator, i.e. the Path() element before the
-//EntityPath() that disambiguates multiple resources for the same entity.
+// Disambiguator returns the disambiguator, i.e. the Path() element before the
+// EntityPath() that disambiguates multiple resources for the same entity.
 func (resource Resource) Disambiguator() string {
 	//make path relative to ResourceDirectory()
 	relPath, _ := filepath.Rel(common.ResourceDirectory(), resource.Path())
@@ -75,8 +75,8 @@ func (resource Resource) Disambiguator() string {
 	return segments[0]
 }
 
-//ApplicationStrategy returns the human-readable name for the strategy that
-//will be employed to apply this repo file.
+// ApplicationStrategy returns the human-readable name for the strategy that
+// will be employed to apply this repo file.
 func (resource Resource) ApplicationStrategy() string {
 	if strings.HasSuffix(resource.Path(), ".holoscript") {
 		return "passthru"
@@ -84,17 +84,17 @@ func (resource Resource) ApplicationStrategy() string {
 	return "apply"
 }
 
-//DiscardsPreviousBuffer indicates whether applying this file will discard the
-//previous file buffer (and thus the effect of all previous application steps).
-//This is used as a hint by the application algorithm to decide whether
-//application steps can be skipped completely.
+// DiscardsPreviousBuffer indicates whether applying this file will discard the
+// previous file buffer (and thus the effect of all previous application steps).
+// This is used as a hint by the application algorithm to decide whether
+// application steps can be skipped completely.
 func (resource Resource) DiscardsPreviousBuffer() bool {
 	return resource.ApplicationStrategy() == "apply"
 }
 
-//ApplyTo applies this Resource to a file buffer, as part of the `holo apply`
-//algorithm. Regular repofiles will replace the file buffer, while a holoscript
-//will be executed on the file buffer to obtain the new buffer.
+// ApplyTo applies this Resource to a file buffer, as part of the `holo apply`
+// algorithm. Regular repofiles will replace the file buffer, while a holoscript
+// will be executed on the file buffer to obtain the new buffer.
 func (resource Resource) ApplyTo(entityBuffer common.FileBuffer) (common.FileBuffer, error) {
 	if resource.ApplicationStrategy() == "apply" {
 		resourceBuffer, err := common.NewFileBuffer(resource.Path())
@@ -136,8 +136,8 @@ func (resource Resource) ApplyTo(entityBuffer common.FileBuffer) (common.FileBuf
 	return entityBuffer, nil
 }
 
-//Resources holds a slice of Resource instances, and implements some methods
-//to satisfy the sort.Interface interface.
+// Resources holds a slice of Resource instances, and implements some methods
+// to satisfy the sort.Interface interface.
 type Resources []Resource
 
 func (f Resources) Len() int           { return len(f) }

@@ -30,7 +30,7 @@ import (
 	"strings"
 )
 
-//Scan reports all entities that exist on stdout.
+// Scan reports all entities that exist on stdout.
 func Scan() []error {
 	//list entries in resource directory
 	dir, err := os.Open(resourceDirPath)

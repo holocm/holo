@@ -33,13 +33,13 @@ import (
 	"strings"
 )
 
-//PluginAPIVersion is the version of holo-plugin-interface(7) implemented by this.
+// PluginAPIVersion is the version of holo-plugin-interface(7) implemented by this.
 const PluginAPIVersion = 3
 
-//ErrPluginExecutableMissing indicates that a plugin's executable file is missing.
+// ErrPluginExecutableMissing indicates that a plugin's executable file is missing.
 var ErrPluginExecutableMissing = errors.New("ErrPluginExecutableMissing")
 
-//Plugin describes a plugin executable adhering to the holo-plugin-interface(7).
+// Plugin describes a plugin executable adhering to the holo-plugin-interface(7).
 type Plugin struct {
 	id                      string
 	executablePath          string
@@ -47,15 +47,15 @@ type Plugin struct {
 	usesVirtualResourceRoot bool              //can only be set once VirtualResourceRoot() is finalized
 }
 
-//NewPlugin creates a new Plugin.
+// NewPlugin creates a new Plugin.
 func NewPlugin(id string) (*Plugin, error) {
 	executablePath := filepath.Join(RootDirectory(), "usr/lib/holo/holo-"+id)
 	return NewPluginWithExecutablePath(id, executablePath)
 }
 
-//NewPluginWithExecutablePath creates a new Plugin whose executable resides in
-//a non-standard location. (This is used exclusively for testing plugins before
-//they are installed.)
+// NewPluginWithExecutablePath creates a new Plugin whose executable resides in
+// a non-standard location. (This is used exclusively for testing plugins before
+// they are installed.)
 func NewPluginWithExecutablePath(id string, executablePath string) (*Plugin, error) {
 	p := &Plugin{id, executablePath, make(map[string]string), false}
 
@@ -104,18 +104,18 @@ func NewPluginWithExecutablePath(id string, executablePath string) (*Plugin, err
 	return p, nil
 }
 
-//ID returns the plugin ID.
+// ID returns the plugin ID.
 func (p *Plugin) ID() string {
 	return p.id
 }
 
-//UseVirtualResourceRoot makes ResourceDirectory() use the VirtualResourceRoot().
+// UseVirtualResourceRoot makes ResourceDirectory() use the VirtualResourceRoot().
 func (p *Plugin) UseVirtualResourceRoot() {
 	p.usesVirtualResourceRoot = true
 }
 
-//ResourceDirectory returns the path to the directory where this plugin may
-//find its resources (entity definitions etc.).
+// ResourceDirectory returns the path to the directory where this plugin may
+// find its resources (entity definitions etc.).
 func (p *Plugin) ResourceDirectory() string {
 	if p.usesVirtualResourceRoot {
 		return filepath.Join(VirtualResourceRoot(), p.id)
@@ -123,26 +123,26 @@ func (p *Plugin) ResourceDirectory() string {
 	return filepath.Join(RootDirectory(), "usr/share/holo/"+p.id)
 }
 
-//CacheDirectory returns the path to the directory where this plugin may
-//store temporary data.
+// CacheDirectory returns the path to the directory where this plugin may
+// store temporary data.
 func (p *Plugin) CacheDirectory() string {
 	return filepath.Join(CachePath(), p.id)
 }
 
-//StateDirectory returns the path to the directory where this plugin may
-//store persistent data.
+// StateDirectory returns the path to the directory where this plugin may
+// store persistent data.
 func (p *Plugin) StateDirectory() string {
 	return filepath.Join(RootDirectory(), "var/lib/holo/"+p.id)
 }
 
-//Command returns an os.exec.Command structure that is set up to run the plugin
-//with the given arguments, producing output on the given output and error
-//channels. For commands that use file descriptor 3 as an extra output channel,
-//the `msg` file can be given (nil is acceptable too).
+// Command returns an os.exec.Command structure that is set up to run the plugin
+// with the given arguments, producing output on the given output and error
+// channels. For commands that use file descriptor 3 as an extra output channel,
+// the `msg` file can be given (nil is acceptable too).
 //
-//Note that if a write end of an os.Pipe() is passed for `msg`, it must be
-//Close()d after the child is Start()ed. Otherwise, reads from the read end
-//will block forever.
+// Note that if a write end of an os.Pipe() is passed for `msg`, it must be
+// Close()d after the child is Start()ed. Otherwise, reads from the read end
+// will block forever.
 func (p *Plugin) Command(arguments []string, stdout io.Writer, stderr io.Writer, msg *os.File) *exec.Cmd {
 	cmd := exec.Command(p.executablePath, arguments...)
 	cmd.Stdin = nil
@@ -169,9 +169,9 @@ func (p *Plugin) Command(arguments []string, stdout io.Writer, stderr io.Writer,
 	return cmd
 }
 
-//RunCommandWithFD3 extends the Command function with automatic setup and
-//reading of the file-descriptor 3, that is used by some plugin commands to
-//report structured messages to Holo.
+// RunCommandWithFD3 extends the Command function with automatic setup and
+// reading of the file-descriptor 3, that is used by some plugin commands to
+// report structured messages to Holo.
 func (p *Plugin) RunCommandWithFD3(arguments []string, stdout, stderr io.Writer) (string, error) {
 	//the command channel (file descriptor 3 on the side of the plugin) can
 	//only be set up with an *os.File instance, so use a pipe that the plugin
@@ -200,7 +200,7 @@ func (p *Plugin) RunCommandWithFD3(arguments []string, stdout, stderr io.Writer)
 	return string(cmdBytes), cmd.Wait()
 }
 
-//For reproducibility in tests.
+// For reproducibility in tests.
 func normalizePath(path string) string {
 	if path == "/" {
 		return "/"

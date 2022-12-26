@@ -40,22 +40,22 @@ func init() {
 	resourceDirectory = strings.TrimSuffix(os.Getenv("HOLO_RESOURCE_DIR"), "/")
 }
 
-//TargetDirectory is $HOLO_ROOT_DIR (or "/" if not set).
+// TargetDirectory is $HOLO_ROOT_DIR (or "/" if not set).
 func TargetDirectory() string {
 	return rootDirectory
 }
 
-//ResourceDirectory is $HOLO_RESOURCE_DIR.
+// ResourceDirectory is $HOLO_RESOURCE_DIR.
 func ResourceDirectory() string {
 	return resourceDirectory
 }
 
-//BaseDirectory is $HOLO_STATE_DIR/base.
+// BaseDirectory is $HOLO_STATE_DIR/base.
 func BaseDirectory() string {
 	return stateDirectory + "/base"
 }
 
-//ProvisionedDirectory is $HOLO_STATE_DIR/provisioned.
+// ProvisionedDirectory is $HOLO_STATE_DIR/provisioned.
 func ProvisionedDirectory() string {
 	return stateDirectory + "/provisioned"
 }

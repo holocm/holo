@@ -26,7 +26,7 @@ import (
 	"github.com/holocm/holo/internal/fs"
 )
 
-//rpmImpl provides the platform.Impl for RPM-based distributions.
+// rpmImpl provides the platform.Impl for RPM-based distributions.
 type rpmImpl struct{}
 
 func (p rpmImpl) FindUpdatedTargetBase(targetPath string) (actualPath, reportedPath string, err error) {

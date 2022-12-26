@@ -29,7 +29,7 @@ import (
 	impl "github.com/holocm/holo/cmd/holo/internal"
 )
 
-//this is populated at compile-time, see Makefile
+// this is populated at compile-time, see Makefile
 var version = "unknown"
 
 const (
@@ -38,9 +38,9 @@ const (
 	optionScanPorcelain
 )
 
-//Selector represents a command-line argument that selects entities. The Used
-//field tracks whether entities match this selector (to report unrecognized
-//selectors).
+// Selector represents a command-line argument that selects entities. The Used
+// field tracks whether entities match this selector (to report unrecognized
+// selectors).
 type Selector struct {
 	String string
 	Used   bool

@@ -29,11 +29,11 @@ import (
 	"strings"
 )
 
-//KeyFile provides methods for reading and writing a file containing SSH public
-//keys.
+// KeyFile provides methods for reading and writing a file containing SSH public
+// keys.
 type KeyFile string
 
-//Key represents a single public key, i.e. a non-comment line in a KeyFile.
+// Key represents a single public key, i.e. a non-comment line in a KeyFile.
 type Key struct {
 	Options string
 	KeyType string
@@ -41,8 +41,8 @@ type Key struct {
 	Comment string
 }
 
-//list of valid SSH key types, as extracted from man:sshd(8), section
-//"authorized_keys file format"
+// list of valid SSH key types, as extracted from man:sshd(8), section
+// "authorized_keys file format"
 var isKeyType = map[string]bool{
 	"ecdsa-sha2-nistp256": true,
 	"ecdsa-sha2-nistp384": true,
@@ -54,7 +54,7 @@ var isKeyType = map[string]bool{
 var whiteSpaceRx = regexp.MustCompile(`\s+`)
 var whiteSpaceAtEndRx = regexp.MustCompile(`\s+$`)
 
-//ParseKey creates a Key struct by parsing a line from a KeyFile.
+// ParseKey creates a Key struct by parsing a line from a KeyFile.
 func ParseKey(line string) (*Key, error) {
 	var key Key
 
@@ -108,7 +108,7 @@ func ParseKey(line string) (*Key, error) {
 	return &key, nil
 }
 
-//String creates the string representation of this key.
+// String creates the string representation of this key.
 func (k *Key) String() string {
 	allFields := []string{k.Options, k.KeyType, k.Key, k.Comment}
 	fields := make([]string, 0, len(allFields))
@@ -120,17 +120,17 @@ func (k *Key) String() string {
 	return strings.Join(fields, " ")
 }
 
-//Identifier is like String(), but omits the Comment. This can be used to
-//compare keys for functional identity.
+// Identifier is like String(), but omits the Comment. This can be used to
+// compare keys for functional identity.
 func (k *Key) Identifier() string {
 	copyOfKey := *k
 	copyOfKey.Comment = ""
 	return copyOfKey.String()
 }
 
-//Process reads the key file, pipes every key in it through keyCallback, runs
-//the endCallback in the end to add new lines, then writes the result if it has
-//changed.
+// Process reads the key file, pipes every key in it through keyCallback, runs
+// the endCallback in the end to add new lines, then writes the result if it has
+// changed.
 func (f KeyFile) Process(keyCallback func(key *Key) *Key, endCallback func() (newKeys []*Key)) (changed bool, err error) {
 	//the bulk is in doProcess(), this method just generates better errors
 	changed, err = f.doProcess(keyCallback, endCallback)
@@ -140,7 +140,7 @@ func (f KeyFile) Process(keyCallback func(key *Key) *Key, endCallback func() (ne
 	return
 }
 
-//Walk is the readonly variant of Process.
+// Walk is the readonly variant of Process.
 func (f KeyFile) Walk(callback func(key *Key)) error {
 	_, err := f.Process(func(key *Key) *Key {
 		callback(key)

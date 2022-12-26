@@ -20,8 +20,8 @@
 
 package platform
 
-//genericImpl provides the platform.Impl for unrecognized Linux distributions
-//or generic unit tests.
+// genericImpl provides the platform.Impl for unrecognized Linux distributions
+// or generic unit tests.
 type genericImpl struct{}
 
 func (p genericImpl) FindUpdatedTargetBase(targetPath string) (actualPath, reportedPath string, err error) {

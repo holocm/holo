@@ -26,7 +26,7 @@ import (
 	"github.com/holocm/holo/internal/fs"
 )
 
-//dpkgImpl provides the platform.Impl for dpkg-based distributions (Debian and derivatives).
+// dpkgImpl provides the platform.Impl for dpkg-based distributions (Debian and derivatives).
 type dpkgImpl struct{}
 
 func (p dpkgImpl) FindUpdatedTargetBase(targetPath string) (actualPath, reportedPath string, err error) {

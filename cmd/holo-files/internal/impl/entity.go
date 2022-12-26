@@ -30,48 +30,48 @@ import (
 	"github.com/holocm/holo/cmd/holo-files/internal/common"
 )
 
-//Entity represents a configuration file that can be provisioned by holo-files.
+// Entity represents a configuration file that can be provisioned by holo-files.
 type Entity struct {
 	relPath   string // the entity path relative to the common.TargetDirectory()
 	resources Resources
 }
 
-//NewEntity creates a Entity instance for which a path is known.
+// NewEntity creates a Entity instance for which a path is known.
 //
-//    entity := NewEntity("etc/locale.conf")
+//	entity := NewEntity("etc/locale.conf")
 func NewEntity(relPath string) *Entity {
 	return &Entity{relPath: relPath}
 }
 
-//PathIn returns the path to this entity relative to the given directory.
+// PathIn returns the path to this entity relative to the given directory.
 //
-//    var (
-//        targetPath      = entity.pathIn(common.TargetDirectory())      // e.g. "/etc/foo.conf"
-//        basePath        = entity.pathIn(common.BaseDirectory())        // e.g. "/var/lib/holo/files/base/etc/foo.conf"
-//        provisionedPath = entity.pathIn(common.ProvisionedDirectory()) // e.g. "/var/lib/holo/files/provisioned/etc/foo.conf"
-//    )
+//	var (
+//	    targetPath      = entity.pathIn(common.TargetDirectory())      // e.g. "/etc/foo.conf"
+//	    basePath        = entity.pathIn(common.BaseDirectory())        // e.g. "/var/lib/holo/files/base/etc/foo.conf"
+//	    provisionedPath = entity.pathIn(common.ProvisionedDirectory()) // e.g. "/var/lib/holo/files/provisioned/etc/foo.conf"
+//	)
 func (entity *Entity) PathIn(directory string) string {
 	return filepath.Join(directory, entity.relPath)
 }
 
-//AddResource registers a new resource in this Entity instance.
+// AddResource registers a new resource in this Entity instance.
 func (entity *Entity) AddResource(resource Resource) {
 	entity.resources = append(entity.resources, resource)
 }
 
-//Resources returns an ordered list of all resources for this Entity.
+// Resources returns an ordered list of all resources for this Entity.
 func (entity *Entity) Resources() Resources {
 	sort.Sort(entity.resources)
 	return entity.resources
 }
 
-//EntityID returns the entity ID for this entity.
+// EntityID returns the entity ID for this entity.
 func (entity *Entity) EntityID() string {
 	return "file:" + entity.PathIn("/")
 }
 
-//PrintReport prints the report required by the "scan" operation for this
-//entity.
+// PrintReport prints the report required by the "scan" operation for this
+// entity.
 func (entity *Entity) PrintReport() {
 	fmt.Printf("ENTITY: %s\n", entity.EntityID())
 
@@ -88,15 +88,15 @@ func (entity *Entity) PrintReport() {
 	}
 }
 
-//ErrNeedForceToOverwrite is used to signal a command message upwards in the
-//call chain.
+// ErrNeedForceToOverwrite is used to signal a command message upwards in the
+// call chain.
 var ErrNeedForceToOverwrite = errors.New("NeedForceToOverwrite")
 
-//ErrNeedForceToRestore is used to signal a command message upwards in the call
-//chain.
+// ErrNeedForceToRestore is used to signal a command message upwards in the call
+// chain.
 var ErrNeedForceToRestore = errors.New("NeedForceToRestore")
 
-//Apply applies the entity.
+// Apply applies the entity.
 func (entity *Entity) Apply(withForce bool) (skipReport, needForceToOverwrite, needForceToRestore bool) {
 	if len(entity.resources) == 0 {
 		errs := entity.applyOrphan()

@@ -18,8 +18,8 @@
 *
 *******************************************************************************/
 
-//Package platform implements integration points with the platform that Holo is
-//running (most notably the package manager).
+// Package platform implements integration points with the platform that Holo is
+// running (most notably the package manager).
 package platform
 
 import (
@@ -34,7 +34,7 @@ import (
 	"github.com/holocm/holo/cmd/holo-files/internal/common"
 )
 
-//Impl provides integration points with a distribution's toolchain.
+// Impl provides integration points with a distribution's toolchain.
 type Impl interface {
 	//FindUpdatedTargetBase is called as part of the repo file application
 	//algorithm. If the system package manager updates a file which has been
@@ -58,8 +58,8 @@ type Impl interface {
 
 var impl Impl
 
-//Implementation returns the most suitable platform implementation for the
-//current system.
+// Implementation returns the most suitable platform implementation for the
+// current system.
 func Implementation() Impl {
 	if impl == nil {
 		//which distribution are we running on?
@@ -83,8 +83,8 @@ func Implementation() Impl {
 	return impl
 }
 
-//GetCurrentDistribution returns a set of distribution IDs, drawing on the ID=
-//and ID_LIKE= fields of os-release(5).
+// GetCurrentDistribution returns a set of distribution IDs, drawing on the ID=
+// and ID_LIKE= fields of os-release(5).
 func GetCurrentDistribution() map[string]bool {
 	//read /etc/os-release, fall back to /usr/lib/os-release if not available
 	bytes, err := ioutil.ReadFile(filepath.Join(common.TargetDirectory(), "etc/os-release"))
@@ -137,8 +137,8 @@ func GetCurrentDistribution() map[string]bool {
 	return result
 }
 
-//ReportUnsupportedDistribution prints the standard warning that the current
-//executable is running on an unsupported distribution.
+// ReportUnsupportedDistribution prints the standard warning that the current
+// executable is running on an unsupported distribution.
 func ReportUnsupportedDistribution(isDist map[string]bool) {
 	dists := make([]string, 0, len(isDist))
 	for dist := range isDist {

@@ -31,10 +31,10 @@ import (
 	"github.com/holocm/holo/cmd/holo-files/internal/platform"
 )
 
-//applyNonOrphan performs the complete application algorithm for the given Entity.
-//This includes taking a copy of the base if necessary, applying all
-//resources, and saving the result in the target path with the correct
-//file metadata.
+// applyNonOrphan performs the complete application algorithm for the given Entity.
+// This includes taking a copy of the base if necessary, applying all
+// resources, and saving the result in the target path with the correct
+// file metadata.
 func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error) {
 	//step 1: check if a system update installed a new version of the stock
 	//configuration
@@ -172,25 +172,25 @@ func (entity *Entity) applyNonOrphan(withForce bool) (skipReport bool, err error
 	return true, nil
 }
 
-//GetBase return the package manager-supplied base version of the
-//entity, as recorded the last time it was provisioned.
+// GetBase return the package manager-supplied base version of the
+// entity, as recorded the last time it was provisioned.
 func (entity *Entity) GetBase() (common.FileBuffer, error) {
 	return common.NewFileBuffer(entity.PathIn(common.BaseDirectory()))
 }
 
-//GetProvisioned returns the recorded last-provisioned state of the
-//entity.
+// GetProvisioned returns the recorded last-provisioned state of the
+// entity.
 func (entity *Entity) GetProvisioned() (common.FileBuffer, error) {
 	return common.NewFileBuffer(entity.PathIn(common.ProvisionedDirectory()))
 }
 
-//GetCurrent returns the current version of the entity.
+// GetCurrent returns the current version of the entity.
 func (entity *Entity) GetCurrent() (common.FileBuffer, error) {
 	return common.NewFileBuffer(entity.PathIn(common.TargetDirectory()))
 }
 
-//GetNewBase returns the base version of the entity, if it has been
-//updated by the package manager since last applied.
+// GetNewBase returns the base version of the entity, if it has been
+// updated by the package manager since last applied.
 func (entity *Entity) GetNewBase() (path string, buf common.FileBuffer, err error) {
 	realPath, path, err := platform.Implementation().FindUpdatedTargetBase(entity.PathIn(common.TargetDirectory()))
 	if err != nil {
@@ -203,7 +203,7 @@ func (entity *Entity) GetNewBase() (path string, buf common.FileBuffer, err erro
 	return
 }
 
-//GetDesired applies all the resources for this Entity onto the base.
+// GetDesired applies all the resources for this Entity onto the base.
 func (entity *Entity) GetDesired(base common.FileBuffer) (common.FileBuffer, error) {
 	resources := entity.Resources()
 

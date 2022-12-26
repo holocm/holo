@@ -28,10 +28,10 @@ import (
 	"strings"
 )
 
-//Scan discovers entities available for the given entity. Errors are reported
-//immediately and will result in nil being returned. "No entities found" will
-//be reported as a non-nil empty slice.
-//there are no entities.
+// Scan discovers entities available for the given entity. Errors are reported
+// immediately and will result in nil being returned. "No entities found" will
+// be reported as a non-nil empty slice.
+// there are no entities.
 func (p *Plugin) Scan() []*Entity {
 	//invoke scan operation
 	stdout, hadError := p.runScanOperation()

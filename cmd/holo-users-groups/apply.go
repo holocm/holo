@@ -29,7 +29,7 @@ import (
 	"strings"
 )
 
-//Apply implements the EntityDefinition interface.
+// Apply implements the EntityDefinition interface.
 func (g *GroupDefinition) Apply(theProvisioned EntityDefinition) error {
 	//fix type on argument
 	provisioned := theProvisioned.(*GroupDefinition)
@@ -53,12 +53,12 @@ func (g *GroupDefinition) Apply(theProvisioned EntityDefinition) error {
 	return ExecProgramOrMock(command, args...)
 }
 
-//Cleanup implements the EntityDefinition interface.
+// Cleanup implements the EntityDefinition interface.
 func (g *GroupDefinition) Cleanup() error {
 	return ExecProgramOrMock("groupdel", g.Name)
 }
 
-//Apply implements the EntityDefinition interface.
+// Apply implements the EntityDefinition interface.
 func (u *UserDefinition) Apply(theProvisioned EntityDefinition) error {
 	//fix type on argument
 	provisioned := theProvisioned.(*UserDefinition)
@@ -107,14 +107,14 @@ func groupsToString(groups []string) string {
 	return strings.Join(groups, ",")
 }
 
-//Cleanup implements the EntityDefinition interface.
+// Cleanup implements the EntityDefinition interface.
 func (u *UserDefinition) Cleanup() error {
 	return ExecProgramOrMock("userdel", u.Name)
 }
 
-//ExecProgramOrMock is a wrapper around exec.Command().Run() that, if run in a
-//test environment, only prints the command line instead of executing the
-//command.
+// ExecProgramOrMock is a wrapper around exec.Command().Run() that, if run in a
+// test environment, only prints the command line instead of executing the
+// command.
 func ExecProgramOrMock(command string, arguments ...string) (err error) {
 	mock := os.Getenv("HOLO_ROOT_DIR") != "/"
 	if mock {

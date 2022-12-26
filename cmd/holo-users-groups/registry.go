@@ -30,13 +30,13 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-//ImageDir is a path to a directory containing serialized entity definitions.
+// ImageDir is a path to a directory containing serialized entity definitions.
 type ImageDir string
 
-//BaseImageDir is usually /var/lib/holo/users-groups/base.
+// BaseImageDir is usually /var/lib/holo/users-groups/base.
 var BaseImageDir ImageDir
 
-//ProvisionedImageDir is usually /var/lib/holo/users-groups/provisioned.
+// ProvisionedImageDir is usually /var/lib/holo/users-groups/provisioned.
 var ProvisionedImageDir ImageDir
 
 func init() {
@@ -45,13 +45,13 @@ func init() {
 	ProvisionedImageDir = ImageDir(filepath.Join(stateDir, "provisioned"))
 }
 
-//ImagePathFor returns the path where an image of the given entity definition
-//will be stored in this directory.
+// ImagePathFor returns the path where an image of the given entity definition
+// will be stored in this directory.
 func (dir ImageDir) ImagePathFor(def EntityDefinition) string {
 	return filepath.Join(string(dir), def.EntityID()+".toml")
 }
 
-//ProvisionedEntityIDs returns a list of all entities for which base images exist.
+// ProvisionedEntityIDs returns a list of all entities for which base images exist.
 func ProvisionedEntityIDs() ([]string, error) {
 	//open base image directory
 	dir, err := os.Open(string(BaseImageDir))
@@ -73,8 +73,8 @@ func ProvisionedEntityIDs() ([]string, error) {
 	return ids, nil
 }
 
-//LoadImageFor retrieves a stored image for this entity, which was previously
-//written by SaveImage.
+// LoadImageFor retrieves a stored image for this entity, which was previously
+// written by SaveImage.
 func (dir ImageDir) LoadImageFor(def EntityDefinition) (EntityDefinition, error) {
 	blob, err := ioutil.ReadFile(dir.ImagePathFor(def))
 	if err != nil {
@@ -97,12 +97,12 @@ func (dir ImageDir) LoadImageFor(def EntityDefinition) (EntityDefinition, error)
 	return result, err
 }
 
-//SaveImage writes an image for this entity to the specified image directory.
+// SaveImage writes an image for this entity to the specified image directory.
 func (dir ImageDir) SaveImage(def EntityDefinition) error {
 	return SerializeDefinitionIntoFile(def, dir.ImagePathFor(def))
 }
 
-//DeleteImageFor deletes the image for this entity from this image directory.
+// DeleteImageFor deletes the image for this entity from this image directory.
 func DeleteImageFor(def EntityDefinition, dir ImageDir) error {
 	err := os.Remove(dir.ImagePathFor(def))
 	//ignore does-not-exist error

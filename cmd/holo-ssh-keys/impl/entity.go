@@ -28,8 +28,8 @@ import (
 	"regexp"
 )
 
-//Entity represents a key file in the source directory, and the keys
-//provisioned by it.
+// Entity represents a key file in the source directory, and the keys
+// provisioned by it.
 type Entity struct {
 	FilePath string //e.g. "/usr/share/holo/ssh-keys/john-doe/login.pub"
 	Name     string //e.g. "ssh-keyset:john-doe/login"
@@ -42,7 +42,7 @@ var userNameRxStr = `([a-z_][a-z0-9_-]*\$?)` //from man:useradd(8)
 var fileNameRxStr = `([^/]+)`                //forbid unexpected subdirectories
 var entityNameRx = regexp.MustCompile(fmt.Sprintf(`^ssh-keyset:%s/%s$`, userNameRxStr, fileNameRxStr))
 
-//filePathRx is for the part below HOLO_RESOURCE_DIR
+// filePathRx is for the part below HOLO_RESOURCE_DIR
 var filePathRx = regexp.MustCompile(fmt.Sprintf(`^%s/%s.pub$`, userNameRxStr, fileNameRxStr))
 
 func makeEntity(userName, baseName string) *Entity {
@@ -54,7 +54,7 @@ func makeEntity(userName, baseName string) *Entity {
 	}
 }
 
-//NewEntityFromName constructs a new Entity from the entity name.
+// NewEntityFromName constructs a new Entity from the entity name.
 func NewEntityFromName(entityName string) (*Entity, error) {
 	//check entity name format and deparse into userName + fileName
 	match := entityNameRx.FindStringSubmatch(entityName)
@@ -64,7 +64,7 @@ func NewEntityFromName(entityName string) (*Entity, error) {
 	return makeEntity(match[1], match[2]), nil
 }
 
-//NewEntityFromKeyfilePath constructs a new Entity from the path to the key file.
+// NewEntityFromKeyfilePath constructs a new Entity from the path to the key file.
 func NewEntityFromKeyfilePath(path string) (*Entity, error) {
 	//make path relative to resourceDirPath
 	relPath, err := filepath.Rel(resourceDirPath, path)
@@ -80,7 +80,7 @@ func NewEntityFromKeyfilePath(path string) (*Entity, error) {
 	return makeEntity(match[1], match[2]), nil
 }
 
-//Keys lists the keys in the key file for this entity.
+// Keys lists the keys in the key file for this entity.
 func (e *Entity) Keys() ([]*Key, error) {
 	var result []*Key
 	err := KeyFile(e.FilePath).Walk(func(key *Key) {
@@ -90,7 +90,7 @@ func (e *Entity) Keys() ([]*Key, error) {
 	return result, err
 }
 
-//Apply applies this entity.
+// Apply applies this entity.
 func (e *Entity) Apply() error {
 	//get User instance (to locate the authorized_keys file)
 	user, err := NewUser(e.UserName)
@@ -156,8 +156,8 @@ func (e *Entity) Apply() error {
 	return nil
 }
 
-//PrepareDiff creates temporary files that the frontend can use to generate a
-//diff.
+// PrepareDiff creates temporary files that the frontend can use to generate a
+// diff.
 func (e *Entity) PrepareDiff() (expectedState string, actualState string, ee error) {
 	//get User instance (to locate the authorized_keys file)
 	user, err := NewUser(e.UserName)

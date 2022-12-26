@@ -29,8 +29,8 @@ import (
 	"path/filepath"
 )
 
-//User represents a user account on the system. The methods on this struct
-//inspect and modify this user's authorized_keys file.
+// User represents a user account on the system. The methods on this struct
+// inspect and modify this user's authorized_keys file.
 type User struct {
 	Name string
 	Home string
@@ -40,7 +40,7 @@ type User struct {
 
 var rootDir = os.Getenv("HOLO_ROOT_DIR") //determines whether we run in unit-test mode
 
-//NewUser returns the User with the given name.
+// NewUser returns the User with the given name.
 func NewUser(name string) (*User, error) {
 	if rootDir == "/" {
 		return newUserActual(name)
@@ -81,13 +81,13 @@ func newUserMock(name string) (*User, error) {
 	}, nil
 }
 
-//KeyFile returns a KeyFile struct for the authorized_keys file for this user.
+// KeyFile returns a KeyFile struct for the authorized_keys file for this user.
 func (u *User) KeyFile() KeyFile {
 	return KeyFile(filepath.Join(u.Home, ".ssh/authorized_keys"))
 }
 
-//CheckPermissions checks the permissions on the user's .ssh directory and
-//authorized_keys file.
+// CheckPermissions checks the permissions on the user's .ssh directory and
+// authorized_keys file.
 func (u *User) CheckPermissions() error {
 	pathHome := u.Home
 	pathDssh := filepath.Join(pathHome, ".ssh")
