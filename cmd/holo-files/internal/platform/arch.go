@@ -21,7 +21,7 @@
 package platform
 
 import (
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -48,23 +48,27 @@ func (p archImpl) AdditionalCleanupTargets(targetPath string) (ret []string) {
 
 	// check for .pacsave.+[0-9]
 	dir := filepath.Dir(targetPath)
-	fileinfos, err := ioutil.ReadDir(dir)
+	entries, err := os.ReadDir(dir)
 	if err != nil {
 		return
 	}
 	base := filepath.Base(targetPath) + ".pacsave."
-	for _, fileinfo := range fileinfos {
-		if !strings.HasPrefix(fileinfo.Name(), base) {
+	for _, entry := range entries {
+		if !strings.HasPrefix(entry.Name(), base) {
 			continue
 		}
-		suffix := strings.TrimPrefix(fileinfo.Name(), base)
+		suffix := strings.TrimPrefix(entry.Name(), base)
 		if _, err := strconv.ParseUint(suffix, 10, 0); err != nil {
+			continue
+		}
+		fileinfo, err := entry.Info()
+		if err != nil {
 			continue
 		}
 		if !fs.IsManageableFileInfo(fileinfo) {
 			continue
 		}
-		ret = append(ret, filepath.Join(dir, fileinfo.Name()))
+		ret = append(ret, filepath.Join(dir, entry.Name()))
 	}
 
 	return
