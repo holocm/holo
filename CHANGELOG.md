@@ -8,6 +8,7 @@ Changes:
 
 Packagers beware:
 
+- The build system now expects Go 1.16 or newer.
 - Since the results of `golangci-lint` are known to be unstable over time, esp. between different Go versions, packagers
   are advised to set the environment variable `SKIP_STATIC_CHECK=true` when running `make check` (as explained above).
 
