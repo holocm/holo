@@ -1,3 +1,16 @@
+# v3.0.1 (TBD)
+
+Changes:
+
+- Update the build system to use [golangci-lint](https://golangci-lint.run/) instead of the deprecated golint tool.
+- The `make check` target can now be instructed to skip installing and running golangci-lint by setting
+  `SKIP_STATIC_CHECK=true`.
+
+Packagers beware:
+
+- Since the results of `golangci-lint` are known to be unstable over time, esp. between different Go versions, packagers
+  are advised to set the environment variable `SKIP_STATIC_CHECK=true` when running `make check` (as explained above).
+
 # v3.0.0 (2021-03-06)
 
 The headline feature for this release are **generators**, as described in detail in the new `holo-generators(7)`

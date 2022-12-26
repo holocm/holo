@@ -22,7 +22,6 @@ package entrypoint
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
@@ -131,7 +130,7 @@ func readDefinitionFile(definitionPath string, entities *map[string]*Entity) err
 		Group []*GroupDefinition
 		User  []*UserDefinition
 	}
-	blob, err := ioutil.ReadFile(definitionPath)
+	blob, err := os.ReadFile(definitionPath)
 	if err != nil {
 		return &FileInvalidError{definitionPath, []error{err}}
 	}
@@ -192,7 +191,7 @@ func readDefinitionFile(definitionPath string, entities *map[string]*Entity) err
 func migrateOldRegistry() error {
 	//read state.toml (if it exists)
 	statePath := filepath.Join(os.Getenv("HOLO_STATE_DIR"), "state.toml")
-	blob, err := ioutil.ReadFile(statePath)
+	blob, err := os.ReadFile(statePath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			//file is gone already, no upgrade necessary

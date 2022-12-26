@@ -27,3 +27,9 @@ Holo includes several plugins for itself. Since
 dependencies on these, the `holo` package must have a Provides relation (or
 whatever this is called in your package format) to `holo-files`,
 `holo-generators`, `holo-run-scripts`, `holo-ssh-keys` and `holo-users-groups`.
+
+Since the results of `golangci-lint` are known to be unstable over time, esp.
+between different Go versions, packagers are advised to set the environment
+variable `SKIP_STATIC_CHECK=true` when running `make check`. This setting will
+skip the potentially unstable checks while still running the vast majority of
+useful tests.

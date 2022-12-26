@@ -4,11 +4,11 @@ mans = holorc.5 holo-plugin-interface.7 holo-test.7 holo.8 holo-files.8 holo-run
 default: build/holo $(addprefix build/man/,$(mans))
 .PHONY: default
 
-GO            := go
-GO_BUILDFLAGS :=
-GO_LDFLAGS    := -s -w
-GO_TESTFLAGS  := -covermode=count
-GO_DEPS       := $(GO) list -f '{{.ImportPath}}{{"\n"}}{{join .Deps "\n"}}'
+GO                ?= go
+GO_BUILDFLAGS     ?=
+GO_LDFLAGS        ?= -s -w
+GO_TESTFLAGS      ?= -covermode=count
+SKIP_STATIC_CHECK ?= false
 
 # which packages to test with static checkers
 allpkgs := $(shell go list ./...)
@@ -45,14 +45,20 @@ build/man/%: doc/%.pod .version | build/man
 test: check # just a synonym
 check: default static-check test/cov.html test/cov.func.txt
 
-static-check:
-	@if ! hash golint 2>/dev/null; then printf "\e[1;36m>> Installing golint...\e[0m\n"; GO111MODULE=off go get -u golang.org/x/lint/golint; fi
-	@printf "\e[1;36m>> gofmt\e[0m\n"
-	@if s="$$(gofmt -s -d $(allfiles) 2>/dev/null)" && test -n "$$s"; then echo "$$s"; false; fi
-	@printf "\e[1;36m>> golint\e[0m\n"
-	@if s="$$(golint $(allpkgs) 2>/dev/null)" && test -n "$$s"; then echo "$$s"; false; fi
-	@printf "\e[1;36m>> go vet\e[0m\n"
-	@go vet $(GO_BUILDFLAGS) $(allpkgs)
+prepare-static-check: FORCE
+ifeq ($(SKIP_STATIC_CHECK),true)
+	@true
+else
+	@if ! hash golangci-lint 2>/dev/null; then printf "\e[1;36m>> Installing golangci-lint (this may take a while)...\e[0m\n"; go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; fi
+endif
+
+static-check: FORCE prepare-static-check
+ifeq ($(SKIP_STATIC_CHECK),true)
+	@printf "\e[1;36m>> golangci-lint skipped!\e[0m\n"
+else
+	@printf "\e[1;36m>> golangci-lint\e[0m\n"
+	@golangci-lint run
+endif
 
 test/cov/all-unit-tests.cov: clean-tests
 	@$(GO) test $(GO_TESTFLAGS) -coverprofile=$@ $(testpkgs)

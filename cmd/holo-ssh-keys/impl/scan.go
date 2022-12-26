@@ -23,7 +23,6 @@ package impl
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -131,7 +130,7 @@ func scanDirectory(path string, entityNameWasSeen *map[string]bool) []error {
 
 func getFingerprint(key *Key) (string, error) {
 	//`ssh-keygen` cannot read the key from stdin for whatever reason, so use a temporary file
-	file, err := ioutil.TempFile(os.Getenv("HOLO_CACHE_DIR"), "input-for-sshkeygen")
+	file, err := os.CreateTemp(os.Getenv("HOLO_CACHE_DIR"), "input-for-sshkeygen")
 	if err != nil {
 		return "", err
 	}
@@ -151,5 +150,5 @@ func getFingerprint(key *Key) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return strings.TrimSpace(string(buf.Bytes())), nil
+	return strings.TrimSpace(buf.String()), nil
 }

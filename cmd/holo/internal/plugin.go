@@ -25,7 +25,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -75,7 +74,7 @@ func NewPluginWithExecutablePath(id string, executablePath string) (*Plugin, err
 	if err != nil {
 		return nil, err
 	}
-	lines := strings.Split(string(buf.Bytes()), "\n")
+	lines := strings.Split(buf.String(), "\n")
 	for _, line := range lines {
 		//ignore esp. blank lines
 		if !strings.Contains(line, "=") {
@@ -189,7 +188,7 @@ func (p *Plugin) RunCommandWithFD3(arguments []string, stdout, stderr io.Writer)
 	}
 
 	cmdWriterForPlugin.Close() //or next line will block (see Plugin.Command docs)
-	cmdBytes, err := ioutil.ReadAll(cmdReader)
+	cmdBytes, err := io.ReadAll(cmdReader)
 	if err != nil {
 		return "", err
 	}

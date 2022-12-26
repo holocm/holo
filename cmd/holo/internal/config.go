@@ -22,7 +22,6 @@ package impl
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
@@ -87,7 +86,7 @@ func readConfigLines() ([]string, error) {
 	//read snippets in order
 	var lines []string
 	for _, path := range paths {
-		contents, err := ioutil.ReadFile(path)
+		contents, err := os.ReadFile(path)
 		if err != nil {
 			return nil, fmt.Errorf("cannot read %s: %s", path, err.Error())
 		}

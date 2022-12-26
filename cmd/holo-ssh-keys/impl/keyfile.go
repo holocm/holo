@@ -22,7 +22,6 @@ package impl
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -151,7 +150,7 @@ func (f KeyFile) Walk(callback func(key *Key)) error {
 
 func (f KeyFile) doProcess(keyCallback func(key *Key) *Key, endCallback func() (newKeys []*Key)) (bool, error) {
 	//read file
-	contents, err := ioutil.ReadFile(string(f))
+	contents, err := os.ReadFile(string(f))
 	if err != nil {
 		if os.IsNotExist(err) {
 			contents = nil
@@ -223,5 +222,5 @@ func (f KeyFile) doProcess(keyCallback func(key *Key) *Key, endCallback func() (
 	newContents := strings.Join(resultLines, "\n") + "\n"
 	//the only files that we will ever write are user's authorized_keys
 	//files, so it's a good idea to go with filemode 0600 from the start
-	return true, ioutil.WriteFile(path, []byte(newContents), 0600)
+	return true, os.WriteFile(path, []byte(newContents), 0600)
 }

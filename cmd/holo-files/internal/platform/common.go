@@ -24,7 +24,6 @@ package platform
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -87,10 +86,10 @@ func Implementation() Impl {
 // and ID_LIKE= fields of os-release(5).
 func GetCurrentDistribution() map[string]bool {
 	//read /etc/os-release, fall back to /usr/lib/os-release if not available
-	bytes, err := ioutil.ReadFile(filepath.Join(common.TargetDirectory(), "etc/os-release"))
+	bytes, err := os.ReadFile(filepath.Join(common.TargetDirectory(), "etc/os-release"))
 	if err != nil {
 		if os.IsNotExist(err) {
-			bytes, err = ioutil.ReadFile(filepath.Join(common.TargetDirectory(), "usr/lib/os-release"))
+			bytes, err = os.ReadFile(filepath.Join(common.TargetDirectory(), "usr/lib/os-release"))
 		}
 	}
 	if err != nil {

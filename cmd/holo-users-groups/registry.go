@@ -22,7 +22,6 @@ package entrypoint
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -76,7 +75,7 @@ func ProvisionedEntityIDs() ([]string, error) {
 // LoadImageFor retrieves a stored image for this entity, which was previously
 // written by SaveImage.
 func (dir ImageDir) LoadImageFor(def EntityDefinition) (EntityDefinition, error) {
-	blob, err := ioutil.ReadFile(dir.ImagePathFor(def))
+	blob, err := os.ReadFile(dir.ImagePathFor(def))
 	if err != nil {
 		return nil, err
 	}

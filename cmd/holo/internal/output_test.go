@@ -38,7 +38,7 @@ func checkParagraphWriter(t *testing.T, expected string, callback func(w *Paragr
 	w := ParagraphWriter{Writer: &b, Tracker: &tr}
 	callback(&w)
 
-	checkStringEqual(t, "output", expected, string(b.Bytes()))
+	checkStringEqual(t, "output", expected, b.String())
 }
 
 func TestParagraphWriter(t *testing.T) {
@@ -125,9 +125,9 @@ func TestPrologueWriter(t *testing.T) {
 	//check that empty write does not produce the prologue
 	writer.Write(nil)
 	writer.Write([]byte(""))
-	checkStringEqual(t, "buffer content", "", string(buf.Bytes()))
+	checkStringEqual(t, "buffer content", "", buf.String())
 
 	//check that non-empty write prepends the prologue
 	writer.Write([]byte("xxx"))
-	checkStringEqual(t, "buffer content", "PPPxxx", string(buf.Bytes()))
+	checkStringEqual(t, "buffer content", "PPPxxx", buf.String())
 }

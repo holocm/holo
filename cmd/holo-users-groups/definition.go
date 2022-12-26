@@ -23,7 +23,7 @@ package entrypoint
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -115,7 +115,7 @@ func SerializeDefinitionIntoFile(def EntityDefinition, path string) error {
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(path, bytes, 0644)
+	return os.WriteFile(path, bytes, 0644)
 }
 
 // GroupDefinition represents a UNIX group (as registered in /etc/group).

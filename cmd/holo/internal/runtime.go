@@ -21,7 +21,6 @@
 package impl
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -36,7 +35,7 @@ var (
 // directory, and ensures that the cache directory is cleaned up afterwards.
 func WithCacheDirectory(worker func() (exitCode int)) (exitCode int) {
 	var err error
-	cachePath, err = ioutil.TempDir(os.TempDir(), "holo.")
+	cachePath, err = os.MkdirTemp(os.TempDir(), "holo.")
 	if err != nil {
 		Errorf(Stderr, err.Error())
 		return 255

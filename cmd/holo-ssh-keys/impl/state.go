@@ -21,7 +21,6 @@
 package impl
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -31,7 +30,7 @@ var stateFilePath = filepath.Join(os.Getenv("HOLO_STATE_DIR"), "provisioned-enti
 
 // ProvisionedEntities returns all entity names for which keys have been provisioned.
 func ProvisionedEntities() ([]string, error) {
-	contents, err := ioutil.ReadFile(stateFilePath)
+	contents, err := os.ReadFile(stateFilePath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, nil
@@ -75,5 +74,5 @@ func SetEntityProvisioned(entityName string, provisioned bool) error {
 
 	//write changed list
 	str := strings.Join(entities, "\n") + "\n"
-	return ioutil.WriteFile(stateFilePath, []byte(str), 0644)
+	return os.WriteFile(stateFilePath, []byte(str), 0644)
 }

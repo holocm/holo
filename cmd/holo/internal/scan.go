@@ -125,7 +125,7 @@ func (p *Plugin) runScanOperation() (stdout string, hadError bool) {
 		Errorf(Stderr, "scan with plugin %s failed: %s", p.ID(), err.Error())
 	}
 
-	return string(stdoutBuffer.Bytes()), err != nil
+	return stdoutBuffer.String(), err != nil
 }
 
 type entitiesByID []*Entity

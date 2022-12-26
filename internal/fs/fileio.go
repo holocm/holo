@@ -21,7 +21,6 @@
 package fs
 
 import (
-	"io/ioutil"
 	"os"
 	"syscall"
 )
@@ -71,17 +70,17 @@ func CopyFile(fromPath, toPath string, mode CopyMode) error {
 
 func copyFileImpl(fromPath, toPath string, fromInfo os.FileInfo, mode CopyMode) error {
 	//copy contents
-	data, err := ioutil.ReadFile(fromPath)
+	data, err := os.ReadFile(fromPath)
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(toPath, data, 0600)
+	err = os.WriteFile(toPath, data, 0600)
 	if err != nil {
 		return err
 	}
 
 	//apply permissions, ownership, modification date from source file to target file
-	//NOTE: We cannot just pass the FileMode in ioutil.WriteFile(), because its
+	//NOTE: We cannot just pass the FileMode in os.WriteFile(), because its
 	//FileMode argument is only applied when a new file is created, not when
 	//an existing one is truncated.
 	switch mode {

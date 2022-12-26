@@ -23,7 +23,6 @@ package common
 
 import (
 	"errors"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"syscall"
@@ -82,7 +81,7 @@ func newFileBuffer(path string, follow bool) (fb FileBuffer, err error) {
 		fb.Manageable = true
 	} else if fb.Mode.IsRegular() {
 		var contents []byte
-		contents, err = ioutil.ReadFile(path)
+		contents, err = os.ReadFile(path)
 		if err != nil {
 			return
 		}
@@ -125,7 +124,7 @@ func (fb FileBuffer) Write(path string) error {
 	//a manageable file is either a regular file...
 	if fb.Mode&os.ModeSymlink == 0 {
 		// regular file
-		err = ioutil.WriteFile(path, []byte(fb.Contents), fb.Mode)
+		err = os.WriteFile(path, []byte(fb.Contents), fb.Mode)
 	} else {
 		// symlink
 		err = os.Symlink(fb.Contents, path)

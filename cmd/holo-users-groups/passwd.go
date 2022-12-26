@@ -22,7 +22,6 @@ package entrypoint
 
 import (
 	"errors"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
@@ -85,7 +84,7 @@ func StoreAppliedState(def EntityDefinition, previous EntityDefinition) {
 //	})
 func Getent(databaseFile string, predicate func([]string) bool) ([]string, error) {
 	//read database file
-	contents, err := ioutil.ReadFile(databaseFile)
+	contents, err := os.ReadFile(databaseFile)
 	if err != nil {
 		return nil, err
 	}

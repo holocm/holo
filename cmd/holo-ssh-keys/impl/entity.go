@@ -22,7 +22,6 @@ package impl
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -209,7 +208,7 @@ func (e *Entity) PrepareDiff() (expectedState string, actualState string, ee err
 	//if Process() did not write a file (because len(provisionedKeys) == 0),
 	//write an empty one
 	if !wasWritten {
-		err = ioutil.WriteFile(actualPath, nil, 0600)
+		err = os.WriteFile(actualPath, nil, 0600)
 	}
 	return e.FilePath, actualPath, err
 }
