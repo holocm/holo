@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # When run in the repository root directory, prints the application version.
 #
