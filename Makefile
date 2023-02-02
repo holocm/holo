@@ -1,5 +1,5 @@
 pkg = github.com/holocm/holo
-mans = holorc.5 holo-plugin-interface.7 holo-test.7 holo.8 holo-files.8 holo-run-scripts.8 holo-ssh-keys.8 holo-users-groups.8
+mans = holorc.5 holo-generators.7 holo-plugin-interface.7 holo-test.7 holo.8 holo-files.8 holo-run-scripts.8 holo-ssh-keys.8 holo-users-groups.8
 
 default: build/holo $(addprefix build/man/,$(mans))
 .PHONY: default

@@ -1,3 +1,10 @@
+# v3.0.2 (TBD)
+
+Changes:
+
+- We now install the manpage holo-generators(7). This manpage has existed since v3.0.0, but it was not added to the
+  install phase of the Makefile.
+
 # v3.0.1 (2022-12-26)
 
 Changes:
